@@ -1,0 +1,36 @@
+# Local build outputs and working data
+/20-build/**
+!/20-build/**/
+!/20-build/**/.gitkeep
+/30-artifacts/**
+!/30-artifacts/**/
+!/30-artifacts/**/.gitkeep
+/50-logs/**
+!/50-logs/**/
+!/50-logs/**/.gitkeep
+/90-temp/**
+!/90-temp/**/
+!/90-temp/**/.gitkeep
+.DS_Store
+target/
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+.gradle/
+local.properties
+
+# Credentials and signing material
+.env
+.env.*
+!.env.example
+!.env.sample
+secrets/
+*.key
+*.pem
+*.jks
+*.keystore
+
+# Keil generated outputs and per-user settings
+/10-source/stm32/stm32-h7-dm/CtrBoard-H7_ALL/MDK-ARM/CtrBoard-H7_ALL/
+*.uvguix.*

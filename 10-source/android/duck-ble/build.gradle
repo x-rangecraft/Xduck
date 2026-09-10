@@ -1,0 +1,5 @@
+plugins { id 'com.android.application' version '8.9.1' apply false }
+layout.buildDirectory = file("../../../20-build/android/duck-ble/root")
+subprojects {
+    layout.buildDirectory = rootProject.file("../../../20-build/android/duck-ble/${project.name}")
+}

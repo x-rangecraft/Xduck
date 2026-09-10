@@ -1,0 +1,29 @@
+[Unit]
+Description=Flydigi Xbox-compatible USB to evdev driver
+Documentation=file:/opt/robot/daemon/current/docs/architecture.md
+After=systemd-udevd.service
+Before=padd.service
+Conflicts=xboxdrv.service
+
+[Service]
+Type=simple
+ExecStart=/opt/robot/daemon/current/bin/xpad-usbd
+Restart=always
+RestartSec=2s
+
+# The daemon is the hardware boundary: it needs only the matching USB node and
+# /dev/uinput. It does not receive robot IPC access or own robot behavior.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_UNIX AF_NETLINK
+RestrictNamespaces=yes
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target

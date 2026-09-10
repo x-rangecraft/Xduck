@@ -1,0 +1,1757 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<title>xduck1 机器人控制台</title>
+<!--
+  The robot's console. One file, no build step, no dependencies — `mediad` embeds this page and
+  serves it, so reaching it is an address and not a command:
+
+      http://<robot>:8080/          — or `duckctl open`, which finds the robot for you
+
+  **The robot serves it, and that is what makes the signalling target derivable.** The page was
+  served by the robot it is about to talk to, so the host is `location.hostname` and the port is
+  filled in by mediad as it serves (see SERVED_PORT below). Nothing is typed, and nothing here
+  holds a second copy of the port — or of the API version the skew banner compares against.
+
+  It speaks gst-plugins-rs's signalling protocol directly rather than using its gstwebrtc-api
+  JS library, for one reason: a client that needs npm is a client nobody runs. The protocol is
+  small and the exact shapes are below, read off net/webrtc/protocol at 0.15.3.
+
+  **One file is a constraint, not an accident** — it is what makes this runnable at all. If it
+  outgrows one file it becomes three (index.html, app.js, app.css, three `include_str!`s), still
+  with no build step and still with no npm.
+
+  Served over http, never https: ws:// from an https page is mixed content and blocked outright,
+  and a robot on a LAN has no certificate to offer wss. docs/design/webrtc-console.md §1.3 says
+  what that costs — a microphone, and on some browsers a gamepad — and when it changes.
+
+  Opening this file from a checkout still works for development: with no port substituted it
+  falls back to 8443, and the host comes from wherever it is served. A file:// page cannot reach
+  a robot at all — Chrome's Private Network Access blocks requests from an opaque origin to a
+  private address — so serve it, or let the robot serve it.
+
+  What it drives is what `mediad/src/route.rs` permits, and no more. The two calls it refuses are
+  in the console drawer at the bottom, because they prove the route table is consulted rather than
+  drive the robot.
+-->
+<style>
+  :root {
+    color-scheme: light dark;
+    --line: color-mix(in srgb, currentColor 15%, transparent);
+    --fill: color-mix(in srgb, currentColor 8%, transparent);
+  }
+  * { box-sizing: border-box; }
+  body { font: 14px/1.5 ui-sans-serif, system-ui, sans-serif; margin: 0; padding: 1rem;
+         display: grid; gap: 1rem; }
+  h1 { font-size: 1rem; margin: 0; font-weight: 600; }
+  h2 { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; opacity: .55;
+       margin: 0 0 .5rem; }
+  button, select, input, textarea { font: inherit; padding: .3rem .55rem; border-radius: 4px;
+       border: 1px solid var(--line); background: var(--fill); color: inherit; }
+  button { cursor: pointer; }
+  button:hover:not(:disabled) { background: color-mix(in srgb, currentColor 16%, transparent); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+
+  header { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+  header .grow { flex: 1; }
+  .pill { padding: .1rem .5rem; border-radius: 99px; font-size: 12px; background: var(--fill);
+          white-space: nowrap; }
+  .in { color: #2a7; } .out { color: #59f; } .bad { color: #e55; } .warn { color: #d90; }
+  .dim { opacity: .55; }
+
+  #banner { padding: .5rem .75rem; border-radius: 4px; border: 1px solid #d90;
+            background: color-mix(in srgb, #d90 12%, transparent); }
+
+  main { display: grid; gap: 1rem; grid-template-columns: minmax(340px, 1.3fr) minmax(300px, 1fr); }
+  @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+  section { border: 1px solid var(--line); border-radius: 6px; padding: .75rem; }
+  .row { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; }
+  .hint { margin: .5rem 0 0; font-size: 12px; opacity: .6; }
+
+  #control-live { margin: 0 0 .6rem; }
+  #control-feedback, #skill-feedback, #sound-feedback {
+    margin: .6rem 0 0; padding: .5rem .65rem; border: 1px solid var(--line);
+    border-radius: 4px; background: var(--fill); min-height: 2.5rem;
+  }
+
+  /* 16/9 is the placeholder, held until the robot says what the video is. The camera is mounted a
+     quarter turn off and nothing on the robot rotates the picture — so this does, on the GPU.
+
+     **The wrapper is the only box in flow.** A rotated element still takes up its *pre-transform*
+     box, so the turned video — landscape, inside a portrait wrapper — used to be the widest thing in
+     the grid cell and sized it: the wrapper came out landscape, the video fitted its picture back
+     into that with `object-fit: contain`, and anything drawn over the wrapper (the detector's boxes)
+     landed below and wider than the picture it described. Absolutely positioned, the video cannot
+     size anything, and the wrapper is exactly the upright picture. */
+  #videobox { position: relative; width: 100%; max-width: 100%; line-height: 0;
+              container-type: size; aspect-ratio: 16/9; }
+  #videobox > video { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                      width: 100%; height: 100%; background: #111;
+                      border-radius: 4px; display: block; touch-action: none; cursor: crosshair; }
+  /* `100cqh`/`100cqw` are the wrapper's own height and width — the quarter turn's axis swap, done by
+     the browser, and it survives a resize with no JavaScript. */
+  #videobox > video.turn90, #videobox > video.turn270 { width: 100cqh; height: 100cqw; }
+  #videobox > video.turn90  { transform: translate(-50%, -50%) rotate(90deg); }
+  #videobox > video.turn270 { transform: translate(-50%, -50%) rotate(-90deg); }
+  #videobox > video.turn180 { transform: translate(-50%, -50%) rotate(180deg); }
+  /* `inset: 0` on the wrapper, which *is* the upright picture — and the viewBox is the upright
+     frame's own pixels, so a box lands where the duck is with no arithmetic on this side. */
+  #videobox > svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  #camera-offline { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center;
+                    background: #000; color: #ddd; font-size: 15px; line-height: 1.5;
+                    border-radius: 4px; }
+  #camera-offline[hidden] { display: none; }
+  #boxes rect { fill: none; stroke: #00e676; stroke-width: 2; vector-effect: non-scaling-stroke; }
+  #boxes text { fill: #00e676; font: 600 11px ui-monospace, monospace; }
+  .stats { margin-top: .5rem; font: 12px/1.4 ui-monospace, monospace; gap: .75rem; }
+  .stats b { font-weight: 600; opacity: .55; font-size: 11px; text-transform: uppercase; }
+
+  .pads { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
+  .pad { position: relative; background: var(--fill); border: 1px solid var(--line);
+         border-radius: 8px; touch-action: none; }
+  #pad-move { width: 150px; height: 150px; }
+  #pad-turn { width: 150px; height: 44px; }
+  .knob { position: absolute; width: 26px; height: 26px; margin: -13px 0 0 -13px; left: 50%;
+          top: 50%; border-radius: 50%; background: currentColor; opacity: .5;
+          pointer-events: none; }
+  .pad-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; opacity: .5;
+               margin-bottom: .25rem; }
+  .control-links { margin-top: 1rem; max-width: 24rem; border: 1px solid var(--line);
+                   border-radius: 6px; overflow: hidden; }
+  .control-link { display: flex; align-items: center; justify-content: space-between;
+                  gap: 1rem; padding: .45rem .65rem; }
+  .control-link + .control-link { border-top: 1px solid var(--line); }
+  .control-link span:first-child { opacity: .7; }
+
+  table { border-collapse: collapse; width: 100%; font: 12px/1.6 ui-monospace, monospace; }
+  th { text-align: left; font-weight: 600; opacity: .55; text-transform: uppercase;
+       font-size: 11px; letter-spacing: .04em; padding-right: .75rem; white-space: nowrap; }
+  td { text-align: right; }
+
+  .motor-panel { grid-column: 1 / -1; }
+  .motor-box { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .motor-table { table-layout: fixed; font-size: 11px; }
+  .motor-table th, .motor-table td { padding: .28rem .4rem; border-bottom: 1px solid var(--line);
+                                     overflow-wrap: anywhere; vertical-align: middle;
+                                     text-align: right; }
+  .motor-table th:nth-child(-n+2), .motor-table td:nth-child(-n+2) { text-align: left; }
+  .motor-table tr:last-child td { border-bottom: 0; }
+  .motor-table th:nth-child(1) { width: 20%; }
+  .motor-table th:nth-child(2) { width: 24%; }
+  .motor-table th:nth-child(n+3) { width: 14%; }
+  @media (max-width: 650px) {
+    .motor-table { font-size: 10px; line-height: 1.25; }
+    .motor-table th, .motor-table td { padding: .25rem .18rem; }
+  }
+  details { border: 1px solid var(--line); border-radius: 6px; padding: .5rem .75rem; }
+  summary { cursor: pointer; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em;
+            opacity: .55; }
+  details > *:not(summary) { margin-top: .75rem; }
+  #raw { flex: 1; min-width: 18rem; font: 12px ui-monospace, monospace; }
+  pre { margin: 0; padding: .5rem; background: var(--fill); border-radius: 4px; height: 16rem;
+        overflow: auto; white-space: pre-wrap; font: 12px/1.45 ui-monospace, monospace; }
+</style>
+
+<header>
+  <h1 id="robot">xduck1</h1>
+  <span id="release" class="pill dim">版本未知</span>
+  <span id="api" class="pill dim">API 未知</span>
+  <span class="grow"></span>
+  <span id="state" class="pill">未连接</span>
+  <span id="dcstate" class="pill dim">控制通道未连接</span>
+  <span id="signalling" class="pill dim"></span>
+  <button id="connect">连接</button>
+</header>
+
+<div id="banner" hidden></div>
+
+<main>
+  <section>
+    <h2>视频</h2>
+    <!-- The wrapper is the *upright* picture and the video is turned inside it, because the robot
+         no longer rotates pixels: doing that in the pipeline cost the encoder its zero-copy path to
+         the 2D engine, and the board 22 fps. Everything that reads coordinates off this — the
+         drag-to-look below — keeps working, because the wrapper is the space it always was. -->
+    <div id="videobox">
+      <video id="video" autoplay muted playsinline></video>
+      <div id="camera-offline" hidden>摄像头已断开</div>
+      <!-- The boxes, on an SVG whose viewBox is the *upright frame's* own pixels — so the browser
+           does the scaling, and neither a resize nor a change of mount rotation needs any code. -->
+      <svg id="boxes" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+    <div class="row stats">
+      <span><b>码率</b> <span id="bitrate">–</span></span>
+      <span><b>目标</b> <span id="detections">–</span></span>
+      <span><b>帧率</b> <span id="fps">–</span></span>
+      <span><b>丢包</b> <span id="loss">–</span></span>
+      <span><b>延迟</b> <span id="rtt">–</span></span>
+      <span id="gaze" class="pill dim" hidden>视线已到限位</span>
+    </div>
+    <p class="hint">在画面上拖动可控制机器人看向指定位置；目标超出范围时会显示限位提示。</p>
+  </section>
+
+  <section>
+    <h2>移动控制</h2>
+    <div class="row">
+      <label for="control-source">当前控制方式</label>
+      <select id="control-source" disabled>
+        <option value="keyboard">按键控制</option>
+        <option value="gamepad" disabled>手柄控制（优先）</option>
+        <option value="drag" selected>拖动控制</option>
+        <option value="bluetooth" disabled>蓝牙控制（App 接管）</option>
+      </select>
+    </div>
+    <p class="hint">自动优先级：手柄 → 蓝牙接管 → 网页拖动 → 键盘。释放输入后自动切换。</p>
+    <div class="pads">
+      <div>
+        <div class="pad-label">前后 · 平移</div>
+        <div class="pad" id="pad-move"><div class="knob" id="knob-move"></div></div>
+      </div>
+      <div>
+        <div class="pad-label">转向</div>
+        <div class="pad" id="pad-turn"><div class="knob" id="knob-turn"></div></div>
+      </div>
+    </div>
+    <p class="hint">
+      <b>W</b>/<b>S</b> 前后，<b>A</b>/<b>D</b> 左右平移，<b>Q</b>/<b>E</b> 转向；方向键也可移动和转向。
+      最大线速度 0.3 m/s，最大角速度 1.5 rad/s。按住时以 10 Hz 发送指令；
+      500 ms 未收到新指令时机器人自动停止。
+    </p>
+    <div class="control-links" aria-label="控制设备连接状态">
+      <div class="control-link"><span>蓝牙连接状态</span><span id="bluetooth-link" class="dim">未连接</span></div>
+      <div class="control-link"><span>手柄连接状态</span><span id="gamepad-link" class="dim">未连接</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>机器人控制</h2>
+    <p id="control-live" class="hint" role="status">实时状态：等待机器人反馈</p>
+    <div class="row">
+      <button id="policy-toggle" data-call="robot.enable" data-params='{"on":true,"toggle":true}'>策略开启/关闭</button>
+      <button data-call="robot.init">初始化</button>
+      <button data-call="robot.relax">放松</button>
+      <button data-call="robot.stop">停止</button>
+      <button data-call="robot.shutdown" data-confirm="确定关闭机器人吗？">关机</button>
+    </div>
+    <p id="control-feedback" role="status" aria-live="polite">操作结果会显示在这里。</p>
+    <p class="hint">
+      <b>停止</b>仅将当前移动指令清零，不是切断舵机电源的物理急停。
+      <b>策略开启/关闭</b>切换运动策略；关闭策略仍保持关节力矩。
+      <b>初始化</b>先使能电机，再回到默认姿态；<b>放松</b>释放关节力矩。
+    </p>
+  </section>
+
+  <section>
+    <h2>动作 · 声音</h2>
+    <div class="row">
+      <select id="skill">
+        <option value="sit_toggle">坐下 ⇄ 站立</option>
+        <option value="ground_pick">拾取地面物体</option>
+        <option value="kick_left">左脚踢球</option>
+        <option value="kick_right">右脚踢球</option>
+        <option value="roulade">翻滚</option>
+      </select>
+      <button id="do">执行</button>
+      <span class="grow"></span>
+      <select id="sound">
+        <option value="chirp">啾啾</option>
+        <option value="greet">问候</option>
+        <option value="inquire">询问</option>
+        <option value="alarm">警报</option>
+        <option value="peck">啄击声</option>
+        <option value="coo">咕咕声</option>
+        <option value="wheee">滑行声（按住）</option>
+      </select>
+      <button id="play">播放</button>
+    </div>
+    <p id="skill-feedback" role="status" aria-live="polite">动作结果会显示在这里。</p>
+    <p id="sound-feedback" role="status" aria-live="polite">声音结果会显示在这里。</p>
+    <p class="hint">
+      每次请求执行一个动作；选择“滑行声”时需按住<b>播放</b>，松开即停止。<br>
+      手柄中间键：<b>Select/View 短按</b>初始化（长按 2 秒关机），<b>Start/Menu</b>策略开启/关闭，
+      <b>Mode/Home</b>放松。<br>
+      动作键：<b>十字键下</b>坐下/站立，<b>A</b>拾取，<b>LB/RB</b>左右脚踢球，
+      <b>X</b>翻滚（按住可连续翻滚），<b>RT</b>啾啾，<b>LT</b>按住播放滑行声。
+      问候、询问、警报、啄击声和咕咕声没有手柄快捷键。
+    </p>
+  </section>
+
+  <section>
+    <h2>运行状态</h2>
+    <table>
+      <tr><th>模式</th><td id="t-mode">–</td></tr>
+      <tr><th>策略</th><td id="t-policy">–</td></tr>
+      <tr><th>当前控制模式</th><td id="t-control-source">手柄控制</td></tr>
+      <tr><th>控制循环</th><td id="t-loop">–</td></tr>
+      <tr><th>安全状态</th><td id="t-safety">–</td></tr>
+      <tr><th>请求速度</th><td id="t-requested">–</td></tr>
+      <tr><th>实测速度</th><td id="t-applied">–</td></tr>
+      <tr><th>重力投影 X</th><td id="t-roll">–</td></tr>
+      <tr><th>重力投影 Y</th><td id="t-pitch">–</td></tr>
+      <tr><th>重力投影 Z</th><td id="t-yaw">–</td></tr>
+      <tr><th>健康状态</th><td id="t-health">–</td></tr>
+      <tr><th>电池</th><td id="t-battery">–</td></tr>
+      <tr><th>主板温度</th><td id="t-temps">–</td></tr>
+    </table>
+    <p class="hint">页面运行数据通过 <code>robot.subscribe</code> 以 10 Hz 刷新，机器人控制循环仍保持 50 Hz；健康状态、电池和温度通过
+      <code>robot.health</code> 定时查询。</p>
+  </section>
+
+  <section id="model-panel">
+    <h2>策略模型 · 导入与回滚</h2>
+    <p id="model-safety" class="hint" role="status">等待连接；只有放松且电机确认失能后才能替换。</p>
+    <div class="row"><label>替换模型 <select id="model-slot" aria-label="替换模型"><option value="">连接后读取模型</option></select></label><button id="model-refresh">刷新</button></div>
+    <p id="model-current" class="hint">连接后读取现有模型</p>
+    <div class="row"><label>本地模型 <input id="model-file" type="file" accept=".pt,.pth,.onnx"></label></div>
+    <div class="row"><label>PPO 激活函数 <select id="model-activation"><option value="elu">ELU（UniLab 默认）</option><option value="relu">ReLU</option><option value="tanh">Tanh</option><option value="selu">SELU</option><option value="leaky_relu">LeakyReLU</option></select></label></div>
+    <div class="row"><label>观测归一化 ε <input id="model-epsilon" type="number" value="0.01" min="0.000000000001" max="1" step="any" style="width:90px"></label><span class="hint">RSL-RL 默认 0.01；无归一化时忽略</span></div>
+    <p class="hint">兼容 UniLab / Isaac Sim · Isaac Lab 的 RSL-RL PPO .pt/.pth，以及 ONNX（≤64 MiB）。激活函数须与训练配置一致。模型须采用本机 61 维观测、14 维动作及相同关节顺序/缩放；结构校验不能证明实际运动效果。</p>
+    <div class="row"><button id="model-import" disabled>校验 → 转 ONNX → 替换</button></div>
+    <p id="model-steps" class="hint" aria-label="导入步骤">① 上传 → ② ONNX 转换 → ③ 校验 → ④ 替换</p>
+    <progress id="model-progress" max="100" value="0" style="width:100%" aria-label="模型导入进度"></progress>
+    <p id="model-feedback" class="hint" role="status" aria-live="polite" style="white-space:pre-wrap;overflow-wrap:anywhere">尚未导入模型</p>
+    <h2>ONNX 历史 · 最近两条</h2>
+    <div id="model-history" class="hint">暂无历史记录</div>
+  </section>
+
+  <section class="motor-panel">
+    <h2>STM32 电机状态（14 槽）</h2>
+    <div class="motor-box"><table class="motor-table">
+      <thead><tr><th>槽位 / 电机</th><th>状态</th><th>速度<br>rad/s</th><th>位置<br>rad</th><th>力矩<br>N·m</th><th>温度<br>°C</th></tr></thead>
+      <tbody id="motor-rows"><tr><td colspan="6">等待 STM32 数据…</td></tr></tbody>
+    </table></div>
+    <p class="hint">状态取自 STM32 DMUSB V4 flags；空槽显示“空槽”，不会把全零数据误判为在线电机。</p>
+  </section>
+  <section class="motor-panel" id="calibration-panel">
+    <details id="calibration-details">
+    <summary>电机标定与默认站姿</summary>
+    <p class="hint">预留全部 14 个电机位置；未配置槽位可提前填写默认站姿，接入并配置电机后再标零和设置限位。先放松，待全部已配置电机确认失能后手动摆位。零位将当前位置写入电机；限位和默认站姿以电机零位为基准，单位 rad。先标零位，再设置限位与站姿。</p>
+    <div class="row"><button id="calibration-refresh">读取已保存设置</button></div>
+    <div class="motor-box"><table class="motor-table">
+      <thead><tr><th>电机</th><th>当前位置</th><th>下限</th><th>上限</th><th>默认站姿</th><th>电机零位</th></tr></thead>
+      <tbody id="calibration-rows"><tr><td colspan="6">连接后读取标定设置</td></tr></tbody>
+    </table></div>
+    <div class="row">
+      <button id="calibration-limits" data-calibration-edit disabled>保存限位</button>
+      <button id="calibration-capture-home" data-calibration-edit disabled>用当前位置填写默认站姿</button>
+      <button id="calibration-home" data-calibration-edit disabled>保存默认站姿</button>
+    </div>
+    <p class="hint">保存设置不会使能或移动电机。点击“初始化”才会前往默认站姿。STM32 将超范围的位置给定裁剪到边界；例如上限 4 rad，给定 5 rad，则发送 4 rad。</p>
+    <p id="calibration-feedback" role="status" aria-live="polite">等待连接。标定操作仅在未使能时可用。</p>
+    </details>
+  </section>
+</main>
+
+<details>
+  <summary>调试控制台 — 原始调用、拒绝记录和日志</summary>
+
+  <div class="row">
+    <!-- Permitted over BLE and refused here, because reconfiguring wifi would take this session
+         with it. The interesting buttons: they prove the route table is being consulted. -->
+    <button data-call="net.connect" data-params='{"ssid":"x","psk":"y"}'>net.connect
+      <span class="dim">（已禁止）</span></button>
+    <button data-call="system.pairingPin">system.pairingPin <span class="dim">（已禁止）</span></button>
+  </div>
+
+  <div class="row">
+    <input id="raw" type="text" spellcheck="false"
+           value='{"jsonrpc":"2.0","id":99,"method":"robot.health"}'>
+    <button id="send">发送</button>
+  </div>
+
+  <pre id="log"></pre>
+</details>
+
+<script>
+"use strict";
+
+// ── what the robot filled in ───────────────────────────────────────────────────
+//
+// mediad replaces both tokens as it serves this page (`web.rs`), so neither the port nor the API
+// version has a second home. NaN means nobody substituted them — this page was opened from a
+// checkout rather than served by a robot — and that fact is load-bearing twice below: it picks the
+// right diagnosis for a signalling port that does not answer, and it is the only case in which the
+// version banner can fire at all, since a page served by a robot ships with that robot's release.
+const SERVED_PORT = Number("{{SIGNALLING_PORT}}");
+const SERVED_API = Number("{{API_VERSION}}");
+const SERVED_BY_ROBOT = Number.isFinite(SERVED_PORT);
+const SIGNALLING_PORT = SERVED_BY_ROBOT ? SERVED_PORT : 8443;
+const SIGNALLING_URL = `ws://${location.hostname || "localhost"}:${SIGNALLING_PORT}`;
+
+// Full deflection, matching `padd`'s defaults rather than inventing a second set of numbers:
+// 0.3 m/s and 1.5 rad/s. The robot clamps what it must; these are what a stick at the stop means.
+const MAX_LINEAR = 0.3;
+const MAX_ANGULAR = 1.5;
+// Continuous intents are resent, not latched. `safety.deadman_ms` is 500, so 10 Hz has margin for
+// a link that hiccups without the robot deciding the client is gone.
+const INTENT_HZ = 10;
+// Where a drag on the picture aims: a point a metre in front of the trunk, moved within about a
+// half-metre box. The IK clamps and reports it, which is why this can be a generous guess rather
+// than a calibration.
+const LOOK = { x: 1.0, y: 0.7, z: 0.2, dz: 0.45 };
+
+const $ = (id) => document.getElementById(id);
+const logEl = $("log");
+
+function log(cls, ...parts) {
+  const line = document.createElement("div");
+  line.className = cls;
+  line.textContent = parts.join(" ");
+  logEl.append(line);
+  while (logEl.childElementCount > 400) logEl.firstElementChild.remove();
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function setState(text, cls = "pill") { $("state").textContent = text; $("state").className = cls + " pill"; }
+function setDc(text, cls = "dim") { $("dcstate").textContent = text; $("dcstate").className = cls + " pill"; }
+
+function banner(html) { $("banner").innerHTML = html; $("banner").hidden = false; }
+
+// ── signalling ─────────────────────────────────────────────────────────────────
+
+let ws = null, pc = null, sessionId = null, control = null;
+
+function send(msg) {
+  log("out", "→", JSON.stringify(msg));
+  ws.send(JSON.stringify(msg));
+}
+
+$("signalling").textContent = SIGNALLING_URL;
+
+$("connect").onclick = () => {
+  if (ws) { ws.close(); return; }
+  ws = new WebSocket(SIGNALLING_URL);
+  setState("正在连接…");
+
+  ws.onopen = () => { setState("信令已连接"); $("connect").textContent = "断开连接"; };
+  // The one failure two ports can produce, named in words rather than as `websocket error`. If this
+  // page arrived from the robot, the robot is up and reachable and one of its two ports is not —
+  // which is a firewall between them far more often than it is mediad, since mediad serves both.
+  ws.onerror = () => log("bad", SERVED_BY_ROBOT
+    ? `!! 页面由机器人提供，但信令端口 ${SIGNALLING_PORT} 无响应。`
+      + `请检查防火墙，并通过 \`journalctl -u mediad -b\` 查看管线日志。`
+    : `!! ${SIGNALLING_URL} 无响应：地址错误或 mediad 未运行。`
+      + `请使用机器人提供的控制台页面。`);
+  ws.onclose = () => {
+    setState("已断开", "bad"); setDc("控制通道未连接");
+    $("connect").textContent = "连接";
+    ws = null; sessionId = null; control = null;
+    releaseDriveControls();
+    stopTelemetry();
+    if (pc) { pc.close(); pc = null; }
+  };
+
+  ws.onmessage = async (event) => {
+    const msg = JSON.parse(event.data);
+    // Skip the noisy ones so the log stays readable.
+    if (msg.type !== "peerStatusChanged") log("in", "←", event.data.slice(0, 400));
+
+    switch (msg.type) {
+      case "welcome":
+        // The server assigns us an id, then we ask who is producing. `list` takes no fields.
+        send({ type: "list" });
+        break;
+
+      case "list": {
+        const producer = msg.producers && msg.producers[0];
+        if (!producer) {
+          log("bad", "!! 未找到视频生产者，请检查 mediad 管线日志。");
+          setState("无视频源", "bad");
+          return;
+        }
+        // The producer's `meta` names the robot before a session exists — `mediad/src/producer.rs`
+        // is what puts it there. Shown straight away, so the header is filled in before the
+        // datachannel opens and re-filled from `system.info` and `hello` when it does.
+        const meta = producer.meta || {};
+        log("dim", "producer:", producer.id, JSON.stringify(meta));
+        if (meta.name) $("robot").textContent = meta.name;
+        if (meta.release) $("release").textContent = meta.release;
+        if (meta.api_version) $("api").textContent = `api v${meta.api_version}`;
+        // No `offer`, so the producer offers and we answer. That is the direction webrtcsink
+        // wants: it knows what it is sending.
+        send({ type: "startSession", peerId: producer.id });
+        break;
+      }
+
+      case "sessionStarted":
+        sessionId = msg.sessionId;
+        setState("正在协商");
+        newPeerConnection();
+        break;
+
+      // `peer` carries either an sdp or an ice, flattened alongside sessionId — the shapes are
+      // `{type:"peer", sessionId, sdp:{type:"offer"|"answer", sdp}}` and
+      // `{type:"peer", sessionId, ice:{candidate, sdpMLineIndex}}`. Getting these wrong is the
+      // one mistake that produces silence rather than an error, so they are read off
+      // net/webrtc/protocol rather than guessed.
+      case "peer":
+        if (msg.sdp) {
+          await pc.setRemoteDescription(msg.sdp);
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          send({ type: "peer", sessionId, sdp: { type: "answer", sdp: answer.sdp } });
+        } else if (msg.ice) {
+          await pc.addIceCandidate({
+            candidate: msg.ice.candidate,
+            sdpMLineIndex: msg.ice.sdpMLineIndex,
+          });
+        }
+        break;
+
+      case "endSession":
+        log("dim", "机器人已结束会话");
+        if (pc) { pc.close(); pc = null; }
+        setState("信令已连接"); setDc("控制通道未连接");
+        stopTelemetry();
+        break;
+
+      case "error":
+        log("bad", "!! 服务器错误：", msg.details);
+        break;
+    }
+  };
+};
+
+function newPeerConnection() {
+  // No ICE servers: this is a LAN client talking to a robot on the same network, which is the
+  // case §3 exists for. Reaching a robot elsewhere goes through the bridge (§7) and would need
+  // STUN, which is that design's problem rather than this page's.
+  pc = new RTCPeerConnection();
+
+  pc.ontrack = (event) => {
+    log("dim", "track:", event.track.kind);
+    $("video").srcObject = event.streams[0];
+  };
+
+  // Take the box's shape from the stream rather than assuming landscape. `loadedmetadata` is the
+  // first point the dimensions are known, and `resize` covers a stream that changes shape while
+  // playing — which a `--rotate` change on the robot does, without the page reloading.
+  const fitVideoBox = () => {
+    // `onVideoInfo` owns the sizing when the camera is mounted off upright.
+    if (mountRotation) return;
+    const { videoWidth: w, videoHeight: h } = $("video");
+    sizeVideoBox(w, h);
+  };
+  $("video").addEventListener("loadedmetadata", fitVideoBox);
+  $("video").addEventListener("resize", fitVideoBox);
+
+  pc.onicecandidate = (event) => {
+    if (!event.candidate) return;
+    send({
+      type: "peer",
+      sessionId,
+      ice: {
+        candidate: event.candidate.candidate,
+        sdpMLineIndex: event.candidate.sdpMLineIndex,
+      },
+    });
+  };
+
+  pc.onconnectionstatechange = () => {
+    const labels = {
+      "new": "初始化", "connecting": "正在连接", "connected": "已连接",
+      "disconnected": "已断开", "failed": "连接失败", "closed": "已关闭",
+    };
+    setState(labels[pc.connectionState] || pc.connectionState,
+      pc.connectionState === "failed" ? "bad" : "pill");
+  };
+
+  // **The robot creates the datachannel, so we receive it.** mediad calls
+  // `create-data-channel` on each consumer's webrtcbin rather than waiting for the peer, so a
+  // client that opens nothing still gets a control surface — and a client that opens its own
+  // would get a second, unrouted channel.
+  pc.ondatachannel = (event) => {
+    control = event.channel;
+    log("dim", "datachannel:", control.label);
+    control.onopen = () => { setDc("控制通道已连接", "in"); startTelemetry(); };
+    control.onclose = () => {
+      setDc("控制通道已关闭", "bad");
+      releaseDriveControls();
+      stopTelemetry();
+      // The detector's boxes came down this channel; with it gone they are stale by definition.
+      clearDetections("–");
+    };
+    control.onmessage = (e) => onControl(e.data);
+  };
+}
+
+// ── JSON-RPC over the control channel ──────────────────────────────────────────
+//
+// Ids are handed out here and answers are matched to them, which is what lets a caller `await` one.
+// A line with no id is a notification — `robot.state` is the only one that streams today — and it
+// goes to the telemetry panel rather than to a pending promise.
+
+let nextId = 1;
+const inflight = new Map();
+
+function open() { return control && control.readyState === "open"; }
+
+// **`quiet` is what keeps the log readable.** A twist at 10 Hz and a health poll every two seconds
+// are the page working, not something a person did — logging their requests and their answers would
+// bury the one line anybody opens this drawer to read. Errors are logged whatever `quiet` says.
+function call(method, params = {}, quiet = false) {
+  if (!open()) {
+    log("bad", "!! 控制通道尚未连接");
+    return Promise.reject(new Error("控制通道未连接"));
+  }
+  const id = nextId++;
+  const line = JSON.stringify({ jsonrpc: "2.0", id, method, params });
+  if (!quiet) log("out", "control →", line);
+  control.send(line);
+  return new Promise((resolve, reject) => {
+    inflight.set(id, { resolve, reject, quiet });
+    // Not a budget on the robot's behalf — a promise nobody settles is a leak, and a method that
+    // never answers is worth seeing rather than a panel that quietly stopped updating.
+    setTimeout(() => {
+      if (inflight.delete(id)) reject(new Error(`${method}：10 秒内未收到回复，执行结果未知，请先检查状态`));
+    }, 10_000);
+  });
+}
+
+// Fire-and-forget, for the continuous intents: a twist resent at 10 Hz does not want a promise per
+// frame, and its answer carries nothing a knob can show. The id is still registered, so the reply it
+// produces is recognised as this rather than logged as an answer to something nobody asked.
+function tell(method, params) {
+  if (!open()) return false;
+  const id = nextId++;
+  inflight.set(id, { quiet: true });
+  setTimeout(() => inflight.delete(id), 10_000);
+  control.send(JSON.stringify({ jsonrpc: "2.0", id, method, params }));
+  return true;
+}
+
+function onControl(data) {
+  let msg;
+  try { msg = JSON.parse(data); } catch { log("bad", "control ← unparseable:", data); return; }
+
+  // No id is a notification, and `robot.state` is the only one that streams today. Anything else
+  // arriving this way is worth seeing in full rather than summarised.
+  if (msg.id === undefined || msg.id === null) {
+    if (msg.method === "robot.state") { onState(msg.params); return; }
+    // How far the camera is mounted from upright. Sent once when the channel opens.
+    if (msg.method === "media.video") { onVideoInfo(msg.params); return; }
+    // The duck detector, a couple of times a second. Not logged: it streams, and a line per
+    // sighting would bury everything a person opened the drawer to read.
+    if (msg.method === "media.detections") { onDetections(msg.params); return; }
+    log("in", "control ←", data.slice(0, 400));
+    return;
+  }
+
+  const waiting = inflight.get(msg.id);
+  if (!waiting) { log("in", "control ←", data.slice(0, 400)); return; }
+  inflight.delete(msg.id);
+
+  if (msg.error) {
+    log("bad", "control ←", data.slice(0, 400));
+    if (waiting.reject) waiting.reject(msg.error);
+    return;
+  }
+  if (!waiting.quiet) log("in", "control ←", data.slice(0, 400));
+  if (waiting.resolve) waiting.resolve(msg.result);
+}
+
+// ── who this robot is, and whether we agree about the API ──────────────────────
+//
+// Sent when the channel opens rather than clicked: a header that needs a button pressed to fill in
+// is a header nobody reads.
+
+async function identify() {
+  try {
+    // `0` when this page was not served by a robot: it genuinely does not know which version it
+    // speaks, and claiming the robot's own would make the comparison below meaningless. A
+    // difference is reported and served either way — a robot refuses a call it does not know, not a
+    // version it does not share.
+    const hello = await call("hello", { api_version: SERVED_API || 0 });
+    $("api").textContent = `api v${hello.api_version}`;
+    if (hello.daemon_version) {
+      $("release").textContent = hello.revision
+        ? `${hello.daemon_version} (${hello.revision.slice(0, 7)})`
+        : `${hello.daemon_version}`;
+    }
+    // **A version difference is a banner, not a locked door.** Everything below keeps working, and
+    // the calls that a difference actually breaks fail with a message naming the method. A page
+    // served by a robot ships with that robot's release, so this can only fire for a page opened
+    // from a checkout — which is exactly the case worth saying out loud.
+    if (SERVED_API && hello.api_version !== SERVED_API) {
+      banner(`当前页面使用 API v${SERVED_API}，机器人使用 v${hello.api_version}。`
+        + `基本功能仍可使用，不支持的调用会返回明确错误。`);
+    } else if (!SERVED_BY_ROBOT) {
+      banner(`当前页面不是由机器人提供，无法确认 API 版本是否匹配。`);
+    }
+  } catch (e) {
+    log("bad", "!! hello failed:", e.message || JSON.stringify(e));
+  }
+
+  try {
+    const info = await call("system.info");
+    if (info.name) $("robot").textContent = info.name;
+    $("robot").title = info.serial ? `序列号 ${info.serial}` : "本设备无序列号";
+  } catch (e) {
+    log("bad", "!! system.info failed:", e.message || JSON.stringify(e));
+  }
+}
+
+// ── telemetry ──────────────────────────────────────────────────────────────────
+
+let healthTimer = null, statsTimer = null, cameraTimer = null;
+const MOTOR_JOINTS = [
+  [0, "左髋偏航"], [1, "左髋侧摆"], [2, "左髋俯仰"], [3, "左膝"], [4, "左踝"],
+  [5, "颈部俯仰"], [6, "头部俯仰"], [7, "头部偏航"], [8, "头部侧摆"],
+  [10, "右髋偏航"], [11, "右髋侧摆"], [12, "右髋俯仰"], [13, "右膝"], [14, "右踝"],
+];
+
+function startTelemetry() {
+  identify();
+  refreshCalibration(true);
+  // **Asked, not waited for.** The robot also pushes this when the channel appears, which races
+  // this page's datachannel and loses — the picture then stays sideways with nothing in the log to
+  // say why. Asking once the channel is open cannot arrive too early.
+  refreshVideoInfo();
+  cameraTimer = setInterval(refreshVideoInfo, 500);
+  // The browser is an operator overview, not a controller. Two updates per second keep motor state
+  // responsive while JSON/WebRTC/UI work stays well below the 50 Hz real-time loop.
+  subscribeRobotState();
+  poll();
+  healthTimer = setInterval(poll, 2000);
+  statsTimer = setInterval(readStats, 1000);
+}
+
+function stopTelemetry() {
+  clearInterval(healthTimer); healthTimer = null;
+  clearInterval(statsTimer); statsTimer = null;
+  clearInterval(cameraTimer); cameraTimer = null;
+  // Rejected rather than dropped: a promise that is merely forgotten leaves its awaiting caller
+  // hanging for the life of the page, which is how a reconnect ends up with two of everything.
+  for (const [id, waiting] of inflight) {
+    if (waiting.reject) waiting.reject(new Error("控制通道已断开，执行结果未知"));
+    inflight.delete(id);
+  }
+  lastStats = null;
+  postureState = null;
+  lastOperatorEventKey = null;
+  pendingPostureEvent = null;
+  pendingSkillEvent = null;
+  $("control-live").textContent = "实时状态：连接已断开，状态未知";
+}
+
+// `robot.health` and `robot.mode` are calls rather than stream fields, and neither is on the frame:
+// the mode is what the loop is running (walk or roller) and the health row is where anything wrong
+// gets named — a hot servo, a flat pack, a bus that stopped answering.
+async function poll() {
+  if (!open()) return;
+  try {
+    const mode = await call("robot.mode", {}, true);
+    const modeLabels = { walk: "行走", roller: "轮式", idle: "待机" };
+    $("t-mode").textContent = modeLabels[mode.mode] || mode.mode || "–";
+  } catch { /* logged by `call` */ }
+  try {
+    const health = await call("robot.health", {}, true);
+    const verdict = health.healthy ? "正常" : (health.degraded ? "降级" : "异常");
+    const reason = health.reason
+      ? health.reason.replace(
+          /STM32 motor\/IMU gateway unavailable after (\d+) attempts; check power, \/dev\/ttyACM0, and USB wiring/,
+          "STM32 电机/IMU 网关已尝试 $1 次仍不可用；请检查供电、/dev/ttyACM0 和 USB 接线"
+        )
+      : null;
+    $("t-health").textContent = reason ? `${verdict} — ${reason}` : verdict;
+    $("t-health").className = health.healthy ? "" : (health.degraded ? "warn" : "bad");
+    // Absent is *not known yet* — the first second after startup, or a bus that cannot answer —
+    // and rendering it as an empty pack would be a lie a reader acts on.
+    $("t-battery").textContent = health.battery
+      ? `${health.battery.volts.toFixed(2)} V · ${Math.round(health.battery.percent)}%`
+      : "未读取";
+    const cpu = health.cpu_temp_c !== undefined && health.cpu_temp_c !== null
+      ? `${health.cpu_temp_c.toFixed(0)} °C` : null;
+    $("t-temps").textContent = cpu || "未读取";
+  } catch { /* logged by `call` */ }
+}
+
+let lastOperatorEventKey = null;
+let pendingPostureEvent = null;
+let pendingSkillEvent = null;
+
+const OPERATOR_LABELS = {
+  init: "初始化", policy_on: "策略开启", policy_off: "策略关闭", relax: "放松",
+  stop: "停止", shutdown: "关机", sit_toggle: "坐下/站立", ground_pick: "拾取地面物体",
+  kick_left: "左脚踢球", kick_right: "右脚踢球", roulade: "翻滚",
+  chirp: "啾啾", greet: "问候", inquire: "询问", alarm: "警报", peck: "啄击声",
+  coo: "咕咕声", wheee: "滑行声", wheee_stop: "滑行声停止",
+};
+
+function observeOperatorEvent(state) {
+  const event = state.operator_event;
+  if (!event || !Number.isFinite(event.sequence)) return;
+  const key = `${event.sequence}/${event.t}`;
+  if (key === lastOperatorEventKey) return;
+  const first = lastOperatorEventKey === null;
+  lastOperatorEventKey = key;
+  // The daemon retains its last event. A newly opened page must not present an old button press as
+  // something that just happened, but it should catch a press made while the first frame arrived.
+  if (first && (!Number.isFinite(event.t) || state.t - event.t > 3)) return;
+
+  const label = OPERATOR_LABELS[event.action] || event.action;
+  if (!event.accepted) {
+    const reason = event.reason || "机器人拒绝了请求";
+    if (event.kind === "posture") showControlFeedback(`${label}失败：${reason}`, "bad");
+    if (event.kind === "skill") showSkillFeedback(`${label}失败：${reason}`, "bad");
+    if (event.kind === "sound") showSoundFeedback(`${label}失败：${reason}`, "bad");
+    if (event.kind === "posture") pendingPostureEvent = null;
+    if (event.kind === "skill") pendingSkillEvent = null;
+    return;
+  }
+
+  if (event.kind === "posture") {
+    const text = {
+      init: "请求已接受，正在回到默认姿态…",
+      policy_on: "请求已接受，等待策略接管…",
+      policy_off: "请求已接受，正在停止策略并回默认姿态…",
+      relax: "请求已接受，正在释放关节力矩…",
+      stop: "移动指令已清零。",
+      shutdown: "请求已接受，正在关机。",
+    }[event.action] || "请求已接受。";
+    showControlFeedback(`${label}：${text}`, event.action === "stop" ? "in" : "warn");
+    pendingPostureEvent = event;
+  } else if (event.kind === "skill") {
+    showSkillFeedback(`${label}：请求已接受，等待实时状态确认…`, "warn");
+    pendingSkillEvent = event;
+  } else if (event.kind === "sound") {
+    showSoundFeedback(`${label}：机器人已接受播放请求。`, "in");
+  }
+}
+
+function confirmOperatorEvent(state) {
+  const motors = MOTOR_JOINTS.map(([joint]) => (state.motor_flags || [])[joint] || 0)
+    .filter(flags => flags & 1);
+  const enabled = motors.length > 0 && motors.every(flags => (flags & 6) === 6 && !(flags & 8));
+  const relaxed = motors.length > 0 && motors.every(flags => (flags & 2) && !(flags & 4));
+
+  const event = pendingPostureEvent;
+  if (event) {
+    if (event.action === "init" && enabled && state.home_position_reached) {
+      showControlFeedback("初始化：已确认到达默认姿态。", "in");
+      pendingPostureEvent = null;
+    } else if (event.action === "policy_on" && enabled && state.policy && state.policy !== "held") {
+      showControlFeedback(`策略开启：已确认运行（${state.policy}）。`, "in");
+      pendingPostureEvent = null;
+    } else if (event.action === "policy_off" && state.policy === "held") {
+      showControlFeedback("策略关闭：已确认停止，关节继续保持力矩。", "in");
+      pendingPostureEvent = null;
+    } else if (event.action === "relax" && relaxed) {
+      showControlFeedback("放松：已确认所有已配置电机失能。", "in");
+      pendingPostureEvent = null;
+    }
+  }
+
+  const skill = pendingSkillEvent;
+  if (skill && SKILL_POLICIES[skill.action]?.has(state.policy)) {
+    showSkillFeedback(`${OPERATOR_LABELS[skill.action]}：已确认执行（运行状态：${SKILL_POLICY_NAMES[state.policy]}）。`, "in");
+    pendingSkillEvent = null;
+  }
+}
+
+function onState(state) {
+  if (!state) return;
+  postureState = { state, received: performance.now() };
+  renderControlState();
+  observeOperatorEvent(state);
+  confirmOperatorEvent(state);
+  $("t-policy").textContent = state.policy || "–";
+  const loop = state.loop || {};
+  $("t-loop").textContent = `实际 ${(loop.hz || 0).toFixed(2)} Hz · 目标 50.00 Hz · ${loop.ticks || 0} ticks · ${loop.missed || 0} missed`;
+
+  const safety = state.safety || {};
+  const flags = [safety.fallen ? "已跌倒" : null, safety.limp ? "未使能" : null].filter(Boolean);
+  $("t-safety").textContent = flags.length ? flags.join(" · ") : "站立";
+  $("t-safety").className = flags.length ? "bad" : "";
+
+  const move = state.move || {};
+  $("t-requested").textContent = formatTwist(move.requested);
+  $("t-applied").textContent = formatTwist((state.odom || {}).velocity);
+  $("t-applied").className = "";
+  const sourceLabels = { keyboard: "按键控制", gamepad: "手柄控制", drag: "网页拖动控制", bluetooth: "蓝牙控制" };
+  const source = state.control_source || "drag";
+  $("t-control-source").textContent = sourceLabels[source] || source;
+  if (["gamepad", "bluetooth"].includes(source) && $("control-source").value !== source) releaseDriveControls();
+  $("control-source").value = source;
+  const showLink = (id, connected) => {
+    $(id).textContent = connected ? "已连接" : "未连接";
+    $(id).className = connected ? "in" : "dim";
+  };
+  showLink("bluetooth-link", state.bluetooth_connected === true);
+  showLink("gamepad-link", state.gamepad_connected === true);
+
+  const gravity = safety.gravity || [];
+  const projection = (index) => Number.isFinite(gravity[index]) ? gravity[index].toFixed(3) : "–";
+  $("t-roll").textContent = projection(0);
+  $("t-pitch").textContent = projection(1);
+  $("t-yaw").textContent = projection(2);
+
+  renderMotors(state);
+}
+
+function renderMotors(state) {
+  const positions = state.joints || [];
+  const velocities = state.motor_velocities || [];
+  const torques = state.motor_torques_nm || [];
+  const motorFlags = state.motor_flags || [];
+  const temperatures = state.motor_temperatures_c || [];
+  const number = (values, joint) => Number.isFinite(values[joint]) ? values[joint].toFixed(3) : "–";
+
+  $("motor-rows").innerHTML = MOTOR_JOINTS.map(([joint, name], slot) => {
+    const flags = motorFlags[joint] || 0;
+    const configured = (flags & 0x01) !== 0;
+    const online = (flags & 0x02) !== 0;
+    const enabled = (flags & 0x04) !== 0;
+    const fault = (flags & 0x08) !== 0;
+    const expired = (flags & 0x20) !== 0;
+    let status = "空槽", statusClass = "dim";
+    if (configured) {
+      const parts = [online ? "在线" : "离线", enabled ? "已使能" : "未使能"];
+      if (fault) parts.push("硬件故障");
+      if (expired) parts.push("命令过期");
+      status = parts.join(" · ");
+      statusClass = fault || !online ? "bad" : (enabled ? "" : "warn");
+    }
+    const value = (values) => configured ? number(values, joint) : "–";
+    const temp = configured && Number.isFinite(temperatures[joint])
+      ? `${temperatures[joint].toFixed(0)} °C` : "–";
+    return `<tr><td>槽位 ${slot} · ${name}</td><td class="${statusClass}">${status}</td>`
+      + `<td>${value(velocities)}</td><td>${value(positions)}</td>`
+      + `<td>${value(torques)}</td><td>${temp.replace(" °C", "")}</td></tr>`;
+  }).join("");
+}
+
+// ── link quality ───────────────────────────────────────────────────────────────
+//
+// A stream that degrades is otherwise a picture that looks worse and a log that says nothing.
+
+let lastStats = null;
+
+async function readStats() {
+  if (!pc) return;
+  const report = await pc.getStats();
+  let inbound = null, pair = null;
+  report.forEach((s) => {
+    if (s.type === "inbound-rtp" && s.kind === "video") inbound = s;
+    if (s.type === "candidate-pair" && s.nominated) pair = s;
+  });
+  if (inbound) {
+    if (lastStats && inbound.timestamp > lastStats.timestamp) {
+      const seconds = (inbound.timestamp - lastStats.timestamp) / 1000;
+      const bits = (inbound.bytesReceived - lastStats.bytesReceived) * 8;
+      $("bitrate").textContent = `${Math.round(bits / seconds / 1000)} kbps`;
+      const lost = (inbound.packetsLost ?? 0) - (lastStats.packetsLost ?? 0);
+      const got = (inbound.packetsReceived ?? 0) - (lastStats.packetsReceived ?? 0);
+      const share = got + lost > 0 ? (100 * lost) / (got + lost) : 0;
+      $("loss").textContent = `${share.toFixed(1)}%`;
+      $("loss").className = share > 2 ? "bad" : "";
+    }
+    $("fps").textContent = inbound.framesPerSecond !== undefined
+      ? `${Math.round(inbound.framesPerSecond)}` : "–";
+    lastStats = inbound;
+  }
+  if (pair && pair.currentRoundTripTime !== undefined) {
+    $("rtt").textContent = `${Math.round(pair.currentRoundTripTime * 1000)} ms`;
+  }
+}
+
+// ── driving ────────────────────────────────────────────────────────────────────
+//
+// One twist, written by the keys and by both pads, resent at a fixed rate while it is non-zero and
+// once more when it returns to zero. The robot's deadman stops it if the sending stops — that is
+// what makes a dropped link safe — but an explicit zero stops it now rather than in half a second.
+
+const twist = { vx: 0, vy: 0, vyaw: 0 };
+const keys = new Set();
+const activeDragPads = new Set();
+let sending = false;
+let driveSource = "drag";
+
+function formatTwist(v) {
+  const shown = (value) => (Math.abs(value) < 0.005 ? 0 : value).toFixed(2);
+  return v
+    ? `前进 ${shown(v[0])} m/s · 横移 ${shown(v[1])} m/s · 转向 ${shown(v[2])} rad/s`
+    : "–";
+}
+
+function keyTwist() {
+  const held = (...names) => names.some((name) => keys.has(name));
+  const axis = (positive, negative) => (held(...positive) ? 1 : 0) - (held(...negative) ? 1 : 0);
+  return {
+    vx: axis(["w", "arrowup"], ["s", "arrowdown"]) * MAX_LINEAR,
+    vy: axis(["a"], ["d"]) * MAX_LINEAR,
+    vyaw: axis(["q", "arrowleft"], ["e", "arrowright"]) * MAX_ANGULAR,
+  };
+}
+
+const padTwist = { vx: 0, vy: 0, vyaw: 0 };
+
+function refreshTwist() {
+  const fromKeys = keyTwist();
+  const source = activeDragPads.size ? "drag" : "keyboard";
+  const active = activeDragPads.size > 0 || keys.size > 0;
+  const selected = source === "drag" ? padTwist : fromKeys;
+  if (sending && (!active || source !== driveSource)) {
+    tell("robot.move", {vx: 0, vy: 0, vyaw: 0, source: driveSource, release_source: true});
+    sending = false;
+  }
+  twist.vx = selected.vx;
+  twist.vy = selected.vy;
+  twist.vyaw = selected.vyaw;
+
+  if (active) { driveSource = source; sending = true; }
+}
+
+setInterval(() => {
+  if (sending && !["gamepad", "bluetooth"].includes($("control-source").value))
+    tell("robot.move", { vx: twist.vx, vy: twist.vy, vyaw: twist.vyaw, source: driveSource });
+}, 1000 / INTENT_HZ);
+
+addEventListener("keydown", (event) => {
+  // Keys are the robot's while nothing text-shaped has focus — the raw box in the drawer is a
+  // text field, and typing `robot.mode` into it should not walk the robot across the room. The
+  // optional call is for a keydown whose target is the document itself, which has no `matches`.
+  if (event.target?.matches?.("input, textarea, select")) return;
+  const key = event.key.toLowerCase();
+  if (!["w", "a", "s", "d", "q", "e", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(key)) return;
+  event.preventDefault();
+  if (["gamepad", "bluetooth"].includes($("control-source").value)) return;
+  if (!open()) { setDc("控制通道未连接", "bad"); return; }
+  keys.add(key);
+  refreshTwist();
+});
+addEventListener("keyup", (event) => { keys.delete(event.key.toLowerCase()); refreshTwist(); });
+
+// A pad is a pointer inside a box: the fraction of the way from the centre to each edge, clamped,
+// with the knob drawn where the finger is so a stick that is not centred is visible rather than
+// inferred from the robot moving.
+function wirePad(pad, knob, onMove) {
+  let activePointer = null;
+  const clamp = (v) => Math.max(-1, Math.min(1, v));
+  const read = (event) => {
+    const box = pad.getBoundingClientRect();
+    return {
+      x: clamp((2 * (event.clientX - box.left)) / box.width - 1),
+      y: clamp((2 * (event.clientY - box.top)) / box.height - 1),
+    };
+  };
+  const draw = (x, y) => {
+    const radius = knob.offsetWidth / 2;
+    knob.style.left = `${radius + (pad.clientWidth - 2 * radius) * (x + 1) / 2}px`;
+    knob.style.top = `${radius + (pad.clientHeight - 2 * radius) * (y + 1) / 2}px`;
+  };
+  pad.addEventListener("pointerdown", (event) => {
+    if (["gamepad", "bluetooth"].includes($("control-source").value)) return;
+    if (!open() || activePointer !== null) {
+      if (!open()) setDc("控制通道未连接", "bad");
+      return;
+    }
+    activePointer = event.pointerId;
+    activeDragPads.add(pad);
+    pad.setPointerCapture(event.pointerId);
+    const at = read(event);
+    draw(at.x, at.y); onMove(at);
+  });
+  pad.addEventListener("pointermove", (event) => {
+    if (!pad.hasPointerCapture(event.pointerId)) return;
+    const at = read(event);
+    draw(at.x, at.y); onMove(at);
+  });
+  const release = (event) => {
+    if (event && activePointer !== null && event.pointerId !== activePointer) return;
+    const pointer = activePointer;
+    activePointer = null;
+    activeDragPads.delete(pad);
+    if (pointer !== null && pad.hasPointerCapture(pointer)) pad.releasePointerCapture(pointer);
+    draw(0, 0);
+    onMove({ x: 0, y: 0 });
+  };
+  pad.addEventListener("pointerup", release);
+  pad.addEventListener("pointercancel", release);
+  pad.addEventListener("lostpointercapture", release);
+  return release;
+}
+
+const releaseMovePad = wirePad($("pad-move"), $("knob-move"), (at) => {
+  // Up is forward, and `vy` is positive to the left — the trunk frame the protocol fixes, stated
+  // once in `duck-ipc-proto` so no consumer has to rediscover it.
+  padTwist.vx = -at.y * MAX_LINEAR;
+  padTwist.vy = -at.x * MAX_LINEAR;
+  refreshTwist();
+});
+
+const releaseTurnPad = wirePad($("pad-turn"), $("knob-turn"), (at) => {
+  padTwist.vyaw = -at.x * MAX_ANGULAR;
+  refreshTwist();
+});
+
+function releaseDriveControls() {
+  keys.clear();
+  releaseMovePad();
+  releaseTurnPad();
+}
+
+// Pointer capture can be lost without a pointerup when the tab, window or datachannel disappears.
+addEventListener("blur", releaseDriveControls);
+addEventListener("pagehide", releaseDriveControls);
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) releaseDriveControls();
+});
+
+// ── looking ────────────────────────────────────────────────────────────────────
+//
+// A drag on the picture is a point in the trunk frame, and `robot.look` solves the IK for it — so
+// this page never has to know which way a positive head yaw turns. `clamped` in the reply is the
+// robot saying the point is beyond the head's reach; shown, because a gaze that stopped following
+// the pointer with nothing said reads as a broken page.
+
+const video = $("video");
+let looking = false;
+let lookAt = null;
+
+video.addEventListener("pointerdown", (event) => {
+  video.setPointerCapture(event.pointerId);
+  looking = true;
+  aim(event);
+});
+video.addEventListener("pointermove", (event) => { if (looking) aim(event); });
+const stopLooking = () => { looking = false; lookAt = null; $("gaze").hidden = true; };
+video.addEventListener("pointerup", stopLooking);
+video.addEventListener("pointercancel", stopLooking);
+
+// ── the camera is mounted sideways, and the robot does not rotate the pixels ───────────────────
+//
+// Rotating in the pipeline cost 145% of a core: `videoflip`'s buffers are ones the SoC's 2D engine
+// refuses, so the encoder converted every frame in software — 97 °C, the CPU throttled to 408 MHz,
+// 8 fps out of a 30 fps camera. Here the turn is a GPU transform and costs nothing.
+//
+// **The wrapper stays upright.** It is the space `aim` maps a drag from, and the space anything drawn
+// over the video would be in; only the <video> inside it turns. So nothing else on this page has to
+// know about the mount.
+let mountRotation = 0;
+let lastVideoInfo = "";
+
+function refreshVideoInfo() {
+  if (!open()) return;
+  call("media.video", {}, true).then(onVideoInfo).catch(() => {});
+}
+
+function onVideoInfo({ width, height, rotate, camera_state }) {
+  mountRotation = ((rotate % 360) + 360) % 360;
+  // Older robots did not report this field and necessarily had a live camera if the channel
+  // existed. Treat only that old shape as connected; new releases report all three states.
+  const cameraState = camera_state || "connected";
+  const signature = `${width}x${height}/${mountRotation}/${cameraState}`;
+  if (signature !== lastVideoInfo) {
+    log("dim", `video ${width}x${height}, camera ${cameraState}, mounted ${mountRotation}° off upright`);
+    lastVideoInfo = signature;
+  }
+
+  const offline = $("camera-offline");
+  offline.hidden = cameraState === "connected";
+  offline.textContent = cameraState === "disabled" ? "摄像头未启用" : "摄像头已断开";
+
+  const quarter = mountRotation === 90 || mountRotation === 270;
+  const [uw, uh] = quarter ? [height, width] : [width, height];
+  sizeVideoBox(uw, uh);
+  $("video").className = mountRotation ? `turn${mountRotation}` : "";
+}
+
+// The wrapper's size, and the only place it is set. Its **width is always definite** so that
+// `aspect-ratio` can derive the height from it: a block box with `width: auto` fills its column and
+// ignores the ratio entirely, which is how a 9:16 picture used to end up in a 16:9 box. Portrait is
+// capped by height instead of filling the column, or a tall picture pushes the rest of the page off
+// the screen.
+const PORTRAIT_HEIGHT = "min(70vh, 80vw)";
+
+function sizeVideoBox(uw, uh) {
+  if (!uw || !uh) return;
+  const box = $("videobox");
+  box.style.aspectRatio = `${uw} / ${uh}`;
+  box.style.width = uh > uw ? `calc(${PORTRAIT_HEIGHT} * ${uw} / ${uh})` : "100%";
+}
+
+// ── the duck detector's boxes ──────────────────────────────────────────────────
+//
+// Coordinates arrive in the *upright* frame, which is the wrapper's own space — so these boxes need
+// to know nothing about the mount rotation, and neither does `aim` below.
+let detectionsStale = null;
+
+// **Boxes expire.** At 2 Hz, two and a half seconds of silence means the detector stopped — turned
+// off in `robotctl configure`, or mediad restarted — and the alternative to clearing is the last
+// duck it saw painted on the video for ever, which looks exactly like a duck that is still there.
+const DETECTION_TIMEOUT_MS = 2500;
+
+function clearDetections(reason) {
+  $("boxes").replaceChildren();
+  const detail = $("detections");
+  if (detail) detail.textContent = reason;
+}
+
+function onDetections({ width, height, boxes, took_ms }) {
+  clearTimeout(detectionsStale);
+  detectionsStale = setTimeout(() => clearDetections("–"), DETECTION_TIMEOUT_MS);
+
+  const svg = $("boxes");
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+  // Rebuilt rather than diffed: two frames a second, a handful of boxes, and a diff would be more
+  // code than it saves.
+  svg.replaceChildren();
+  for (const b of boxes || []) {
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", b.x0);
+    rect.setAttribute("y", b.y0);
+    rect.setAttribute("width", Math.max(0, b.x1 - b.x0));
+    rect.setAttribute("height", Math.max(0, b.y1 - b.y0));
+    svg.appendChild(rect);
+
+    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    label.setAttribute("x", b.x0);
+    // Above the box, unless the box is at the top of the frame — a label off-screen is a label
+    // nobody reads.
+    label.setAttribute("y", b.y0 > 16 ? b.y0 - 4 : b.y1 + 14);
+    // **No number.** The quantised model's output tensor shares one scale with the box
+    // coordinates, so every real detection reads about 1.3 and a "confidence" of 1.3 is worse than
+    // no confidence at all. The count and the time are in the stats row, where they mean something.
+    label.textContent = "目标";
+    svg.appendChild(label);
+  }
+
+  const detail = $("detections");
+  if (detail) {
+    detail.textContent = boxes.length
+      ? `${boxes.length} (${took_ms.toFixed(0)} ms)`
+      : `无 (${took_ms.toFixed(0)} ms)`;
+  }
+}
+
+function aim(event) {
+  const box = video.getBoundingClientRect();
+  const x = (2 * (event.clientX - box.left)) / box.width - 1;
+  const y = (2 * (event.clientY - box.top)) / box.height - 1;
+  lookAt = { x: LOOK.x, y: -x * LOOK.y, z: LOOK.z - y * LOOK.dz, neck_pitch: 0 };
+}
+
+// Its own timer rather than the twist's: a gaze and a velocity are separate intents, and one
+// stopping must not stop the other.
+setInterval(async () => {
+  if (!looking || !lookAt || !open()) return;
+  const point = lookAt;
+  try {
+    const result = await call("robot.look", point, true);
+    $("gaze").hidden = !result.clamped;
+  } catch { /* logged by `call` */ }
+}, 1000 / INTENT_HZ);
+
+// ── posture, skills, sounds ────────────────────────────────────────────────────
+
+let postureState = null;
+
+// Calibration stays behind the same robotd control lane as all motor operations.
+let CALIBRATION_MOTORS = [];
+let calibrationConfig = null, calibrationBusy = false, calibrationStatus = null;
+let calibrationRefreshing = false, calibrationDirty = false, calibrationConflict = false;
+let calibrationSnapshot = "";
+function calibrationFeedback(message, bad = false) {
+  $("calibration-feedback").textContent = message;
+  $("calibration-feedback").className = bad ? "hint bad" : "hint";
+}
+function calibrationEditable() {
+  const sample = postureState;
+  return open() && !calibrationBusy && !calibrationConflict && calibrationStatus?.editable === true
+    && CALIBRATION_MOTORS.length > 0
+    && sample && performance.now() - sample.received < 1000
+    && CALIBRATION_MOTORS.every(([, joint]) =>
+      ((sample.state.motor_flags || [])[joint] & 15) === 3
+      && (sample.state.motor_feedback_age_ms || [])[joint] <= 500);
+}
+function calibrationControls() {
+  const enabled = Boolean(calibrationConfig && calibrationEditable());
+  for (const element of document.querySelectorAll("[data-calibration-edit]")) element.disabled = !enabled;
+  for (const [id, joint] of CALIBRATION_MOTORS) {
+    const cell = $("cal-current-" + id);
+    if (cell) cell.textContent = postureState && performance.now() - postureState.received < 1000
+      ? Number(postureState.state.joints?.[joint]).toFixed(3) : "—";
+  }
+}
+function renderCalibration(config) {
+  calibrationConfig = config;
+  calibrationSnapshot = JSON.stringify({config, motors: CALIBRATION_MOTORS});
+  calibrationDirty = false;
+  calibrationConflict = false;
+  $("calibration-rows").innerHTML = MOTOR_JOINTS.map(([joint, name], slot) => {
+    const id = CALIBRATION_MOTORS.find(([, index]) => index === joint)?.[0];
+    const limit = config.limits.find(value => value.motor_id === id);
+    if (!limit) return `<tr><td>${name}<br><span class="hint">槽位 ${slot + 1} · 未配置</span></td>
+      <td>—</td><td><input type="number" style="width:6.5rem" placeholder="接入后设置" aria-label="${name} 下限" disabled></td>
+      <td><input type="number" style="width:6.5rem" placeholder="接入后设置" aria-label="${name} 上限" disabled></td>
+      <td><input type="number" step="any" min="-12.5" max="12.5" style="width:6.5rem"
+        id="cal-home-slot-${joint}" value="${Number(config.home[joint])}" aria-label="${name} 默认站姿" data-calibration-edit disabled></td>
+      <td><button disabled>接入后标零</button></td></tr>`;
+    const field = (kind, value, label) => `<input type="number" step="${kind === "home" ? "any" : "0.001"}" min="-12.5" max="12.5"
+      style="width:6.5rem" id="cal-${kind}-${id}" value="${Number(value)}"
+      aria-label="电机 ${id} ${label}" data-calibration-edit disabled>`;
+    return `<tr><td>${name}<br><span class="hint">槽位 ${slot + 1} · ID ${id}</span></td><td id="cal-current-${id}">—</td>
+      <td>${field("min", limit.min_rad, "下限")}<br><button data-cal-capture="min" data-motor="${id}" data-calibration-edit disabled>记录下限</button></td>
+      <td>${field("max", limit.max_rad, "上限")}<br><button data-cal-capture="max" data-motor="${id}" data-calibration-edit disabled>记录上限</button></td>
+      <td>${field("home", config.home[joint], "默认站姿")}</td>
+      <td><button data-cal-zero="${id}" data-calibration-edit disabled>当前位置设为零位</button></td></tr>`;
+  }).join("");
+  calibrationControls();
+}
+async function refreshCalibration(render = true, quiet = false) {
+  if (!open() || calibrationBusy || calibrationRefreshing) return;
+  calibrationRefreshing = true;
+  try {
+    const status = await call("robot.calibration", {action: "get"}, quiet);
+    if (calibrationBusy) return;
+    calibrationStatus = status;
+    const motors = calibrationStatus.motors || [];
+    const changed = JSON.stringify({config: status.config, motors}) !== calibrationSnapshot;
+    calibrationConflict = changed && calibrationDirty && !render;
+    if (calibrationConflict) {
+      calibrationFeedback("设备标定设置已变化，已保留未保存的输入。请先记下修改，再点击“读取已保存设置”核对后重新编辑。", true);
+    } else if (render || !calibrationConfig || changed) {
+      CALIBRATION_MOTORS = motors;
+      renderCalibration(status.config);
+      if (!render) calibrationFeedback("已更新设备保存的标定设置。");
+    }
+    const error = status.error || status.home_error;
+    if (error) log("bad", "!! 标定状态：", error);
+    if (!calibrationConflict && (render || error)) calibrationFeedback(error
+      || (calibrationStatus.synced ? "已读取保存的设置，限位已同步到 STM32。" : "设置已读取，等待 STM32 限位同步。"),
+      Boolean(error));
+  } catch (error) {
+    calibrationStatus = null;
+    log("bad", "!! 标定读取失败：", error.message || JSON.stringify(error));
+    calibrationFeedback(error.message || "读取标定失败", true);
+  } finally {
+    calibrationRefreshing = false;
+    calibrationControls();
+  }
+}
+async function submitCalibration(params) {
+  if (!calibrationEditable()) { calibrationFeedback("请先放松并等待全部已配置电机在线、失能的最新反馈。", true); return; }
+  calibrationBusy = true;
+  calibrationControls();
+  calibrationFeedback("正在处理，请等待 STM32 与保存结果…");
+  try {
+    const queued = await call("robot.calibration", params);
+    const deadline = performance.now() + 8000;
+    while (performance.now() < deadline && open()) {
+      await new Promise(resolve => setTimeout(resolve, 200));
+      const status = await call("robot.calibration", {action: "get"}, true);
+      if (status.request_id !== queued.request_id) throw new Error("另一端提交了新标定，请重新读取设置核对。");
+      if (status.busy) continue;
+      calibrationStatus = status;
+      if (status.error) throw new Error(status.error);
+      CALIBRATION_MOTORS = status.motors || [];
+      renderCalibration(status.config);
+      calibrationFeedback(params.action === "mark_zero"
+        ? "零位指令已发送，已确认电机失能且位置接近 0 rad。请重新核对限位和默认站姿。"
+        : (status.home_error || "设置已保存。限位在 STM32 执行，默认站姿将在下次初始化时使用。"),
+        Boolean(status.home_error));
+      return;
+    }
+    throw new Error("未确认完成，请重新读取设置核对；不要自动重复零位写入。");
+  } catch (error) {
+    log("bad", "!! 标定失败：", error.message || JSON.stringify(error));
+    calibrationFeedback(error.message || "标定失败", true);
+  }
+  finally { calibrationBusy = false; calibrationControls(); }
+}
+function calibrationNumber(id) {
+  const field = $(id);
+  if (field.value.trim() === "" || !field.checkValidity()) throw new Error("请填写 ±12.5 rad 内的有效数值。");
+  return Number(field.value);
+}
+$("calibration-refresh").onclick = () => refreshCalibration(true);
+$("calibration-rows").oninput = () => { calibrationDirty = true; };
+$("calibration-limits").onclick = () => {
+  try {
+    const limits = CALIBRATION_MOTORS.map(([motor_id]) => ({motor_id,
+      min_rad: calibrationNumber(`cal-min-${motor_id}`), max_rad: calibrationNumber(`cal-max-${motor_id}`)}));
+    if (limits.some(l => l.min_rad >= l.max_rad)) throw new Error("每个电机的下限必须小于上限。");
+    submitCalibration({action: "set_limits", limits});
+  } catch (error) { calibrationFeedback(error.message, true); }
+};
+$("calibration-home").onclick = () => {
+  try {
+    const positions = [...calibrationConfig.home];
+    for (const [joint] of MOTOR_JOINTS) {
+      const id = CALIBRATION_MOTORS.find(([, index]) => index === joint)?.[0];
+      positions[joint] = calibrationNumber(id === undefined ? `cal-home-slot-${joint}` : `cal-home-${id}`);
+    }
+    submitCalibration({action: "set_home", positions});
+  } catch (error) { calibrationFeedback(error.message, true); }
+};
+$("calibration-capture-home").onclick = () => {
+  if (!calibrationEditable()) return;
+  calibrationDirty = true;
+  for (const [id, joint] of CALIBRATION_MOTORS) $("cal-home-" + id).value = Number(postureState.state.joints[joint]).toFixed(3);
+  calibrationFeedback("已填写已配置电机的当前位置；预留槽位保留原值。点击“保存默认站姿”后生效。");
+};
+$("calibration-rows").onclick = event => {
+  if (!calibrationEditable()) return;
+  const button = event.target.closest("button");
+  if (!button || button.disabled) return;
+  if (button.dataset.calZero) {
+    submitCalibration({action: "mark_zero", motor_id: Number(button.dataset.calZero)});
+  } else if (button.dataset.calCapture) {
+    calibrationDirty = true;
+    const id = Number(button.dataset.motor);
+    const joint = CALIBRATION_MOTORS.find(([motor]) => motor === id)[1];
+    $(`cal-${button.dataset.calCapture}-${id}`).value = Number(postureState.state.joints[joint]).toFixed(3);
+    calibrationFeedback("已记录当前边界，点击“保存限位”后生效。");
+  }
+};
+setInterval(calibrationControls, 250);
+function refreshVisibleCalibration() {
+  if ($("calibration-details").open && !document.hidden) return refreshCalibration(false, true);
+}
+$("calibration-details").ontoggle = refreshVisibleCalibration;
+document.addEventListener("visibilitychange", refreshVisibleCalibration);
+setInterval(refreshVisibleCalibration, 10_000);
+
+let lastSubscribeAttempt = -Infinity;
+let actionSerial = 0;
+const POSTURE_METHODS = new Set([
+  "robot.enable", "robot.init", "robot.relax", "robot.stop", "robot.shutdown",
+]);
+function renderControlState() {
+  if (!postureState || performance.now() - postureState.received > 3000) {
+    // A robotd restart closes only the upstream state stream; the WebRTC channel and
+    // operation calls can stay alive. Retry only while state is stale, so a healthy
+    // subscription remains one quiet, long-lived request.
+    if (performance.now() - lastSubscribeAttempt > 2000) subscribeRobotState();
+    $("control-live").textContent = "实时状态：尚无最新反馈，无法确认机器人状态";
+    return;
+  }
+  const state = postureState.state;
+  const motors = (state.motor_flags || []).filter(flags => flags & 1);
+  const online = motors.filter(flags => flags & 2).length;
+  const enabled = motors.filter(flags => flags & 4).length;
+  const faults = motors.filter(flags => flags & 8).length;
+  const policy = !state.policy ? "未知" : state.policy === "held" ? "未运行" : `运行中（${state.policy}）`;
+  const motorText = motors.length
+    ? `${online}/${motors.length} 在线，${enabled}/${motors.length} 已使能，${faults} 故障`
+    : "尚无已配置电机反馈";
+  $("control-live").textContent = `策略：${policy} · 电机：${motorText}`
+    + (state.motor_control_error ? ` · 控制异常：${state.motor_control_error}` : "");
+  $("control-live").className = state.motor_control_error || faults || online !== motors.length ? "hint bad" : "hint";
+}
+setInterval(renderControlState, 1000);
+
+function subscribeRobotState() {
+  if (!open()) return;
+  lastSubscribeAttempt = performance.now();
+  // Ten hertz catches the shortest skill (a 500 ms kick) reliably enough to confirm it
+  // entered its policy instead of merely reporting that the request was queued.
+  call("robot.subscribe", { hz: 10 }, true).catch(() => {});
+}
+
+function showControlFeedback(text, kind = "") {
+  $("control-feedback").textContent = text;
+  $("control-feedback").className = kind;
+}
+
+async function verifyPosture(method, result, started, serial, label) {
+  if (method === "robot.stop") {
+    showControlFeedback(`${label}：移动指令已清零；后续输入仍可使机器人移动。`, "in");
+    return;
+  }
+  if (method === "robot.shutdown") {
+    showControlFeedback(`${label}：请求已接受，正在请求系统关机；连接断开不能证明关机完成。`, "warn");
+    return;
+  }
+  const disabled = method === "robot.enable" && result.reason?.startsWith("disabled");
+  if (disabled) {
+    showControlFeedback(`${label}：策略开关已关闭，关节继续保持力矩；实际姿态请查看实时反馈。`, "in");
+    return;
+  }
+  showControlFeedback(`${label}：请求已接受，等待机器人状态确认…`, "warn");
+  // An RPC acknowledgment only queues init/relax. Verify fresh observations separately.
+  while (performance.now() - started < 8000 && serial === actionSerial && open()) {
+    const sample = postureState;
+    if (sample && sample.received > started && performance.now() - sample.received < 1500) {
+      const state = sample.state;
+      if ((method === "robot.init" || method === "robot.enable") && state.motor_control_error) {
+        showControlFeedback(`${label}失败：${state.motor_control_error}`, "bad");
+        return;
+      }
+      const motors = MOTOR_JOINTS.map(([joint]) => ({
+        flags: (state.motor_flags || [])[joint] || 0,
+        age: (state.motor_feedback_age_ms || [])[joint],
+      })).filter(motor => motor.flags & 1);
+      const fresh = motors.length > 0 && motors.every(motor =>
+        (motor.flags & 2) && Number.isFinite(motor.age) && motor.age <= 500);
+      if (method === "robot.relax" && fresh && motors.every(motor => !(motor.flags & 4))) {
+        showControlFeedback(`${label}：已确认所有已配置电机失能。`, "in");
+        return;
+      }
+      if (method === "robot.init" && fresh && state.home_position_reached
+          && motors.every(motor => (motor.flags & 4) && !(motor.flags & 8))) {
+        showControlFeedback(`${label}：已确认所有已配置电机使能，并到达默认姿态（误差不超过 0.1 rad）。`, "in");
+        return;
+      }
+      if (method === "robot.enable" && fresh && motors.every(motor =>
+        (motor.flags & 4) && !(motor.flags & 8)) && state.policy && state.policy !== "held") {
+        showControlFeedback(`${label}：已确认策略运行，已配置电机在线、已使能且无故障。`, "in");
+        return;
+      }
+    }
+    await new Promise(resolve => setTimeout(resolve, 200));
+  }
+  if (serial === actionSerial) showControlFeedback(
+    `${label}：请求已接受，但未确认动作完成。请查看电机和健康状态；不要将已接受当作成功。`, "warn");
+}
+
+for (const button of document.querySelectorAll("button[data-call]")) {
+  button.onclick = async () => {
+    const method = button.dataset.call;
+    const posture = POSTURE_METHODS.has(method);
+    const confirmation = button.dataset.confirm;
+    if (confirmation && !confirm(confirmation)) {
+      if (posture) { ++actionSerial; showControlFeedback("已取消，未发送指令。"); }
+      return;
+    }
+    const label = button.textContent;
+    const serial = posture ? ++actionSerial : 0;
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    button.textContent = `${label} · 发送中…`;
+    if (posture) showControlFeedback(`${label}：正在发送，等待回复…`);
+    try {
+      const params = button.dataset.params ? JSON.parse(button.dataset.params) : {};
+      const result = await call(method, params);
+      if (result?.accepted === false) throw new Error(result.reason || "机器人拒绝了此操作");
+      if (posture && serial === actionSerial) {
+        if (result?.accepted !== true) throw new Error("收到回复，但未返回明确的接受结果");
+        button.textContent = `${label} · 等待状态…`;
+        await verifyPosture(method, result, performance.now(), serial, label);
+      }
+    } catch (error) {
+      if (posture && serial === actionSerial) showControlFeedback(
+        `${label}：${error.message || JSON.stringify(error)}`, "bad");
+    } finally {
+      button.disabled = false;
+      button.removeAttribute("aria-busy");
+      button.textContent = label;
+    }
+  };
+}
+
+const SKILL_POLICIES = {
+  sit_toggle: new Set(["sit", "rise"]),
+  ground_pick: new Set(["ground_pick"]),
+  kick_left: new Set(["kick_left"]),
+  kick_right: new Set(["kick_right"]),
+  roulade: new Set(["roulade"]),
+};
+const SKILL_POLICY_NAMES = {
+  sit: "坐下", rise: "起立", ground_pick: "拾取地面物体",
+  kick_left: "左脚踢球", kick_right: "右脚踢球", roulade: "翻滚",
+};
+let skillSerial = 0;
+
+function showSkillFeedback(text, kind = "") {
+  $("skill-feedback").textContent = text;
+  $("skill-feedback").className = kind;
+}
+
+async function verifySkill(skill, label, started, serial) {
+  showSkillFeedback(`${label}：请求已接受，等待实时状态确认…`, "warn");
+  while (performance.now() - started < 5000 && serial === skillSerial && open()) {
+    const sample = postureState;
+    if (sample && sample.received > started && performance.now() - sample.received < 1000) {
+      const policy = sample.state.policy;
+      if (SKILL_POLICIES[skill].has(policy)) {
+        showSkillFeedback(`${label}：已确认执行（运行状态：${SKILL_POLICY_NAMES[policy]}）。`, "in");
+        return;
+      }
+    }
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  if (serial === skillSerial) showSkillFeedback(
+    `${label}：机器人已接受请求，但未观察到对应动作。请确认策略已开启且没有其他动作占用。`,
+    "warn",
+  );
+}
+
+$("do").onclick = async () => {
+  const button = $("do");
+  const skill = $("skill").value;
+  const label = $("skill").selectedOptions[0].textContent;
+  const serial = ++skillSerial;
+  const started = performance.now();
+  button.disabled = true;
+  button.textContent = "执行中…";
+  showSkillFeedback(`${label}：正在发送请求…`);
+  try {
+    const result = await call("robot.do", { skill });
+    if (result?.accepted !== true) throw new Error(result?.reason || "机器人未明确接受动作");
+    await verifySkill(skill, label, started, serial);
+  } catch (error) {
+    if (serial === skillSerial) showSkillFeedback(`${label}失败：${error.message || error}`, "bad");
+  } finally {
+    button.disabled = false;
+    button.textContent = "执行";
+  }
+};
+
+// `wheee` is the held ride: `hold: true` keeps it going and the hold decays on its own if the trues
+// stop arriving, so a page that is closed mid-ride does not leave the robot going "wheee" forever.
+let riding = null;
+let rideHeld = false;
+let soundSerial = 0;
+function showSoundFeedback(text, kind = "") {
+  $("sound-feedback").textContent = text;
+  $("sound-feedback").className = kind;
+}
+$("play").addEventListener("pointerdown", async () => {
+  const button = $("play");
+  const tag = $("sound").value;
+  const label = $("sound").selectedOptions[0].textContent;
+  const serial = ++soundSerial;
+  rideHeld = tag === "wheee";
+  if (!rideHeld) {
+    button.disabled = true;
+    button.textContent = "播放中…";
+  }
+  showSoundFeedback(`${label}：正在发送播放请求…`);
+  try {
+    const params = tag === "wheee" ? { tag, hold: true } : { tag };
+    const result = await call("robot.sound", params);
+    if (result?.accepted !== true) throw new Error(result?.reason || "机器人未明确接受播放请求");
+    if (serial !== soundSerial) return;
+    showSoundFeedback(
+      tag === "wheee" ? `${label}：已开始；松开“播放”即停止。` : `${label}：播放请求已被机器人接受。`,
+      "in",
+    );
+    if (tag === "wheee" && rideHeld) {
+      riding = setInterval(() => tell("robot.sound", { tag: "wheee", hold: true }), 200);
+    }
+  } catch (error) {
+    if (serial === soundSerial) showSoundFeedback(`${label}失败：${error.message || error}`, "bad");
+  } finally {
+    if (tag !== "wheee") {
+      button.disabled = false;
+      button.textContent = "播放";
+    }
+  }
+});
+const endRide = () => {
+  if (!rideHeld && !riding) return;
+  rideHeld = false;
+  ++soundSerial;
+  if (riding) { clearInterval(riding); riding = null; }
+  tell("robot.sound", { tag: "wheee", hold: false });
+  showSoundFeedback("滑行声：已发送停止播放指令。", "in");
+};
+$("play").addEventListener("pointerup", endRide);
+$("play").addEventListener("pointercancel", endRide);
+addEventListener("blur", endRide);
+
+// ── the raw box ────────────────────────────────────────────────────────────────
+//
+// A whole line rather than a method and params, because what it is for is sending something this
+// page has no button for — including something malformed, to see what the robot says about it.
+
+$("send").onclick = () => {
+  if (!open()) { log("bad", "!! 控制通道尚未连接"); return; }
+  const line = $("raw").value;
+  log("out", "control →", line);
+  control.send(line);
+};
+
+// The server commits in its bus-owning loop; UI locks are only an operator hint.
+let modelStatus = null, modelBusy = false, modelPolling = false;
+const MODEL_LABELS = {walk:"行走",stand:"站立",sitstand:"坐下 ↔ 站立",ground_pick:"拾取",kick_left:"左踢",kick_right:"右踢",roulade:"翻滚"};
+const MODEL_PHASES = {idle:0,uploading:15,converting:45,validating:75,pending:90,done:100,error:0};
+let modelStatusAt = 0, modelSlotsKey = "", modelHistoryKey = "", modelClientError = "";
+function modelLocked() { return modelBusy || ["converting","validating","pending"].includes(modelStatus?.phase); }
+function modelEditable() { return open() && modelStatus?.editable === true && Date.now()-modelStatusAt < 3000; }
+function modelControls() {
+  const safe = modelEditable();
+  $("model-import").disabled = !safe || modelLocked() || !$("model-file").files.length || !$("model-slot").value;
+  for (const id of ["model-slot","model-file","model-activation","model-epsilon"]) $(id).disabled = modelLocked();
+  for (const button of $("model-history").querySelectorAll("button")) button.disabled = !safe || modelLocked();
+  $("model-safety").textContent = safe ? "已确认放松 · 全部配置电机已失能，可以替换/回滚" : "替换已锁定 · 请先放松并等待全部配置电机失能反馈";
+}
+function renderModelHistory() {
+  const slot = modelStatus?.slots.find(s => s.id === $("model-slot").value);
+  $("model-current").textContent = slot ? `当前：${slot.active?.name || slot.file}` : "没有可替换的已配置策略";
+  const historyKey = JSON.stringify(slot || null);
+  if (historyKey === modelHistoryKey) { modelControls(); return; }
+  modelHistoryKey = historyKey;
+  $("model-history").replaceChildren();
+  if (!slot?.history.length) $("model-history").textContent = "暂无历史记录；首次替换后自动保存旧 ONNX。";
+  for (const version of slot?.history || []) {
+    const row = document.createElement("div"); row.className = "row";
+    const label = document.createElement("span");
+    const timestamp = Number(version.id.split("-")[0]);
+    label.textContent = `${version.name} · ${new Date(timestamp).toLocaleString()}`;
+    const button = document.createElement("button"); button.textContent = "回滚";
+    button.onclick = () => runModelRequest({action:"rollback",slot:slot.id,version:version.id});
+    row.append(label,button); $("model-history").append(row);
+  }
+  modelControls();
+}
+function showModelStatus(status) {
+  modelStatus = status; modelStatusAt = Date.now();
+  const slotsKey = JSON.stringify(status.slots.map(s => [s.id,s.file]));
+  if (slotsKey !== modelSlotsKey) {
+    modelSlotsKey = slotsKey;
+    const selected = $("model-slot").value;
+    $("model-slot").replaceChildren(...status.slots.map(slot => { const option = document.createElement("option"); option.value=slot.id; option.textContent=`${MODEL_LABELS[slot.id] || slot.id} · ${slot.file}`; return option; }));
+    if (status.slots.some(s=>s.id===selected)) $("model-slot").value=selected;
+  }
+  $("model-feedback").textContent = modelClientError ? `${modelClientError}\n机器人当前结果：${status.detail}` : status.detail;
+  $("model-feedback").className = status.phase === "error" || modelClientError ? "hint bad" : "hint";
+  const stage = {uploading:0,converting:1,validating:2,pending:3,done:4}[status.failed_phase || status.phase] ?? -1;
+  $("model-steps").textContent = ["上传","ONNX 转换","校验","替换"].map((label,i) => `${i<stage ? "✓" : i===stage ? (status.phase==="error" ? "✗" : "●") : "○"} ${label}`).join(" → ");
+  $("model-steps").className = status.phase === "error" ? "hint bad" : status.phase === "done" ? "hint in" : "hint";
+  if (!modelBusy) $("model-progress").value = MODEL_PHASES[status.phase] || 0;
+  renderModelHistory();
+}
+async function refreshModels() {
+  if (!open() || modelPolling || modelBusy) { modelControls(); return; }
+  modelPolling = true;
+  try { showModelStatus(await call("robot.models", {action:"list"}, true)); }
+  catch(error) { modelStatus=null; $("model-feedback").textContent=error.message; modelControls(); }
+  finally { modelPolling=false; }
+}
+async function runModelRequest(params) {
+  if (!modelEditable() || modelLocked()) return;
+  modelClientError=""; modelBusy=true; modelControls();
+  try { showModelStatus(await call("robot.models",params,true)); }
+  catch(error) { modelClientError=error.message; $("model-feedback").textContent=modelClientError; }
+  finally { modelBusy=false; modelControls(); }
+}
+$("model-import").onclick = async () => {
+  const file = $("model-file").files[0];
+  if (!file || !modelEditable() || modelLocked()) return;
+  if (!/\.(pt|pth|onnx)$/i.test(file.name) || !file.size || file.size>64*1024*1024) { $("model-feedback").textContent="请选择不超过 64 MiB 的 .pt/.pth/.onnx 文件"; return; }
+  modelClientError=""; modelBusy=true; modelControls();
+  try {
+    const upload = await call("robot.models",{action:"begin",slot:$("model-slot").value,filename:file.name,size:file.size,activation:$("model-activation").value,normalizer_epsilon:Number($("model-epsilon").value)},true);
+    for(let offset=0;offset<file.size;offset+=8192) {
+      const data = new Uint8Array(await file.slice(offset,offset+8192).arrayBuffer());
+      const hex = Array.from(data,b=>b.toString(16).padStart(2,"0")).join("");
+      await call("robot.models",{action:"chunk",token:upload.token,offset,hex},true);
+      const percent=Math.round(100*(offset+data.length)/file.size);
+      $("model-progress").value=percent*0.3;
+      $("model-feedback").textContent=`正在上传 ${file.name} · ${percent}%`;
+    }
+    showModelStatus(await call("robot.models",{action:"finish",token:upload.token},true));
+  } catch(error) { modelClientError=`导入请求未确认：${error.message}。请刷新核对结果；上传中断可重新导入。`; $("model-feedback").textContent=modelClientError; modelStatus=null; }
+  finally { modelBusy=false; modelControls(); }
+};
+$("model-slot").onchange=()=>{modelHistoryKey="";renderModelHistory();};
+$("model-file").onchange=modelControls;
+$("model-refresh").onclick=()=>{modelClientError="";refreshModels();};
+setInterval(refreshModels,1000);
+setInterval(modelControls,250);
+</script>
+</html>
