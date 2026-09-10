@@ -503,6 +503,12 @@ pub fn start(
     sink.set_property("run-signalling-server", true);
     sink.set_property("signalling-server-host", host);
     sink.set_property("signalling-server-port", port);
+    // This producer serves LAN peers (the browser also has no ICE servers).
+    // webrtcsink otherwise probes Google's STUN server, delaying ICE gathering
+    // by its network timeout on boards without access to that external service.
+    sink.set_property("stun-server", None::<String>);
+    tracing::info!(stun_server = ?sink.property::<Option<String>>("stun-server"),
+        "LAN WebRTC uses host ICE candidates");
 
     // Who this robot is, handed to every peer in the signalling server's `list` answer — so a
     // client knows which robot it found before it negotiates anything. [`crate::producer`] is what
@@ -969,12 +975,27 @@ fn bridge_gstreamer_log() {
 
     // This is called from arbitrary GStreamer threads and from C, so — as everywhere in this file
     // — it must not panic. It formats and forwards, and nothing else.
-    gst::log::add_log_function(|category, level, file, _function, line, object, message| {
+    let warning_gate = std::sync::Mutex::new(crate::log_throttle::CaptureWarning::default());
+    let warning_epoch = std::time::Instant::now();
+    gst::log::add_log_function(move |category, level, file, _function, line, object, message| {
         let text = message.get().unwrap_or_default();
+        let cat = category.name();
+        let suppressed = if level == gst::DebugLevel::Warning {
+            let decision = warning_gate.lock().unwrap_or_else(|e| e.into_inner())
+                .record(warning_epoch.elapsed(), cat, text.as_ref().as_str());
+            match decision {
+                Some(count) => count,
+                None => return,
+            }
+        } else { 0 };
         let src = object
             .map(|o| o.to_string())
             .unwrap_or_else(|| "-".to_string());
-        let cat = category.name();
+        if suppressed > 0 {
+            tracing::warn!(target: "gst", %cat, %src, %file, line, suppressed,
+                window_seconds = 60, "repeated capture warning (duplicates aggregated): {text}");
+            return;
+        }
         match level {
             gst::DebugLevel::Error => {
                 tracing::error!(target: "gst", %cat, %src, %file, line, "{text}")
@@ -1597,6 +1618,9 @@ fn wire_consumers(
     consumers: Consumers,
     keyframe_pad: Option<gst::Pad>,
 ) -> Result<()> {
+    if let Some(pad) = keyframe_pad.as_ref() {
+        wire_encoded_video_start(sink, pad, &runtime)?;
+    }
     // Counted here rather than inferred from the log, so `robotctl health` can say whether anyone
     // is actually watching. `consumer-removed` is guarded the same way `consumer-added` is: a
     // signal that has moved upstream should degrade the count, not abort the daemon.
@@ -1636,15 +1660,6 @@ fn wire_consumers(
             .and_then(|v| v.get::<String>().ok())
             .unwrap_or_else(|| "?".into());
 
-        if let Some(pad) = keyframe_pad.as_ref() {
-            let event = gst_video::UpstreamForceKeyUnitEvent::builder()
-                .all_headers(true)
-                .build();
-            if !pad.send_event(event) {
-                tracing::warn!(peer, "the UVC encoder rejected a reconnect keyframe request");
-            }
-        }
-
         match open_control_channel(&webrtcbin, &peer, &runtime) {
             Ok(channel) => {
                 // A full queue means nobody is accepting sessions, which is a bug rather than
@@ -1655,6 +1670,78 @@ fn wire_consumers(
             }
             Err(e) => tracing::error!(peer, error = %e, "could not open a control channel"),
         }
+        None
+    });
+    Ok(())
+}
+
+/// Drain each new viewer's appsrc until ICE/DTLS is ready, then start on an IDR.
+/// Blocking this pad would fill appsrc's 500ms queue and repeatedly reset the
+/// upstream StreamProducer to waiting-for-keyframe while negotiation is pending.
+fn wire_encoded_video_start(
+    sink: &gst::Element,
+    encoder_src: &gst::Pad,
+    runtime: &tokio::runtime::Handle,
+) -> Result<()> {
+    if glib::subclass::signal::SignalId::lookup("consumer-pipeline-created", sink.type_()).is_none() {
+        return Err(anyhow!("encoded video requires consumer-pipeline-created for startup gating"));
+    }
+    let encoder_src = encoder_src.downgrade();
+    let runtime = runtime.clone();
+    sink.connect("consumer-pipeline-created", false, move |values| {
+        let Some(pipeline) = values.get(2).and_then(|v| v.get::<gst::Pipeline>().ok()) else {
+            tracing::error!("consumer-pipeline-created did not provide a pipeline");
+            return None;
+        };
+        let peer = values.get(1).and_then(|v| v.get::<String>().ok()).unwrap_or_default();
+        let gate = Arc::new(std::sync::Mutex::new(crate::video_start::VideoStart::default()));
+        let encoder_src = encoder_src.clone();
+        let runtime = runtime.clone();
+        pipeline.connect_deep_element_added(move |_, _, element| {
+            let Some(factory) = element.factory() else { return; };
+            if factory.name() == "webrtcbin" {
+                let gate = gate.clone();
+                let encoder_src = encoder_src.clone();
+                let runtime = runtime.clone();
+                let peer = peer.clone();
+                element.connect_notify(Some("connection-state"), move |element, _| {
+                    let ready = element.property::<gst_webrtc::WebRTCPeerConnectionState>("connection-state")
+                        == gst_webrtc::WebRTCPeerConnectionState::Connected;
+                    let request = gate.lock().unwrap_or_else(|e| e.into_inner()).set_ready(ready);
+                    if request {
+                        tracing::info!(%peer, "video transport ready; requesting a fresh keyframe");
+                        // Do not send an upstream event while inside webrtcbin's notification locks.
+                        let encoder_src = encoder_src.clone();
+                        let peer = peer.clone();
+                        runtime.spawn_blocking(move || {
+                            if let Some(pad) = encoder_src.upgrade() {
+                                let event = gst_video::UpstreamForceKeyUnitEvent::builder().all_headers(true).build();
+                                if !pad.send_event(event) {
+                                    tracing::warn!(%peer, "the UVC encoder rejected a ready-time keyframe request");
+                                }
+                            }
+                        });
+                    }
+                });
+            } else if factory.name() == "appsrc" && element.name().starts_with("video_") {
+                let Some(pad) = element.static_pad("src") else { return; };
+                let gate = gate.clone();
+                let peer = peer.clone();
+                pad.add_probe(gst::PadProbeType::BUFFER, move |_, info| {
+                    let Some(buffer) = info.buffer() else { return gst::PadProbeReturn::Ok; };
+                    let frame = gate.lock().unwrap_or_else(|e| e.into_inner())
+                        .frame(!buffer.flags().contains(gst::BufferFlags::DELTA_UNIT));
+                    match frame {
+                        crate::video_start::Frame::Drop => gst::PadProbeReturn::Drop,
+                        crate::video_start::Frame::First { skipped } => {
+                            tracing::info!(%peer, skipped, "video started on a fresh keyframe");
+                            gst::PadProbeReturn::Ok
+                        }
+                        crate::video_start::Frame::Forward => gst::PadProbeReturn::Ok,
+                    }
+                });
+            }
+        });
         None
     });
     Ok(())
@@ -1689,10 +1776,10 @@ fn open_control_channel(
         )
         .ok_or_else(|| anyhow!("webrtcbin returned no data channel"))?;
 
-    // Same reasoning for the channel's own signals: `connect` and `emit_by_name` both panic when a
-    // name is absent, and both run where a panic aborts. Checked together so the failure is one
-    // clear message rather than whichever fires first.
-    for signal in ["on-message-string", "send-string"] {
+    // Same reasoning for the channel's receive signal: `connect` panics when a name is absent and
+    // runs where a panic aborts. Sending uses `send_string_full` below rather than the deprecated
+    // `send-string` action signal, because the latter asserts when teardown races a queued write.
+    for signal in ["on-message-string"] {
         if glib::subclass::signal::SignalId::lookup(signal, channel.type_()).is_none() {
             return Err(anyhow!(
                 "the data channel has no {signal} signal; gst-plugins-rs may have changed it"
@@ -1721,7 +1808,17 @@ fn open_control_channel(
     let peer_label = peer.to_owned();
     runtime.spawn(async move {
         while let Some(line) = outbound_rx.recv().await {
-            writer.emit_by_name::<()>("send-string", &[&line]);
+            // A subscription can produce its first state while SCTP is still connecting. The
+            // GStreamer 1.22 implementation logs a failed precondition even through the fallible
+            // API, so wait for an open channel. State subscriptions refresh continuously, and RPC
+            // requests cannot arrive from the browser before its matching channel is open.
+            if writer.ready_state() != gst_webrtc::WebRTCDataChannelState::Open {
+                continue;
+            }
+            if let Err(error) = writer.send_string_full(Some(&line)) {
+                tracing::debug!(peer = %peer_label, %error, "control channel writer stopped");
+                break;
+            }
         }
         tracing::debug!(peer = %peer_label, "control channel writer ended");
     });

@@ -175,6 +175,9 @@ pub struct Sound {
     bank: PathBuf,
     device: String,
     child: Option<Child>,
+    /// Operator-facing name of what currently owns the PCM. Unlike the last requested sound,
+    /// this is cleared after the `aplay` child actually exits.
+    current: Option<String>,
     /// The wheee rider loops while this is true. Shared with the writer thread; clearing
     /// it *without* killing the child is what makes the end segment play.
     wheee_held: Arc<AtomicBool>,
@@ -202,6 +205,7 @@ impl Sound {
             bank,
             device,
             child: None,
+            current: None,
             wheee_held: Arc::new(AtomicBool::new(false)),
             ride: Ride::Off,
             warned_missing: false,
@@ -243,6 +247,7 @@ impl Sound {
         }
         self.singing = None;
         self.ride = Ride::Off;
+        self.current = None;
         if let Some(mut child) = self.child.take()
             && let Ok(None) = child.try_wait()
         {
@@ -271,6 +276,7 @@ impl Sound {
             None | Some(Ok(Some(_))) | Some(Err(_)) => {
                 self.child = None;
                 self.ride = Ride::Off;
+                self.current = None;
             }
             Some(Ok(None)) => {}
         }
@@ -311,7 +317,10 @@ impl Sound {
             .spawn();
         match child {
             Ok(mut c) if blocking => wait_bounded(&mut c, BLOCKING_PLAY_MAX),
-            Ok(c) => self.child = Some(c),
+            Ok(c) => {
+                self.child = Some(c);
+                self.current = Some(tag.to_owned());
+            }
             Err(e) => tracing::debug!(error = %e, tag, "aplay failed"),
         }
     }
@@ -367,6 +376,7 @@ impl Sound {
         };
         self.child = Some(child);
         self.ride = Ride::Theremin;
+        self.current = Some("theremin".into());
 
         let live = Arc::new(Live::new());
         self.live = Some(live.clone());
@@ -460,6 +470,7 @@ impl Sound {
             return false;
         };
         self.ride = Ride::Singing;
+        self.current = Some("chorale".into());
         self.singing = Some((score.name.clone(), part));
 
         let live = Arc::new(Live::new());
@@ -643,6 +654,19 @@ impl Sound {
         }
     }
 
+    /// What is audibly active now. Checking a plain one-shot also reaps it, so the page returns to
+    /// “no sound” after playback rather than retaining the last request indefinitely.
+    pub fn current(&mut self) -> Option<String> {
+        if self.ride == Ride::Off
+            && let Some(child) = self.child.as_mut()
+            && !matches!(child.try_wait(), Ok(None))
+        {
+            self.child = None;
+            self.current = None;
+        }
+        self.current.clone()
+    }
+
     /// This robot's voice, for anyone that needs its register or its seed — the chorale casts from
     /// the first and identifies itself with a byte of the second.
     pub fn personality(&mut self) -> Option<Personality> {
@@ -765,6 +789,7 @@ impl Sound {
         };
         self.child = Some(child);
         self.ride = Ride::Riding;
+        self.current = Some("wheee".into());
         self.wheee_held.store(true, Ordering::Relaxed);
         let held = self.wheee_held.clone();
 

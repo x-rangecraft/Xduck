@@ -630,11 +630,13 @@ impl Server {
             | Call::RobotLook(_)
             | Call::RobotStop
             | Call::RobotEnable(_)
+            | Call::RobotExperiment(_)
             | Call::RobotCalibration(_)
             | Call::RobotModels(_)
             | Call::RobotInit
             | Call::RobotRelax
             | Call::RobotDo(_)
+            | Call::RobotVolume(_)
             | Call::RobotSound(_)
             | Call::RobotPose(_)
             | Call::RobotMouth(_)

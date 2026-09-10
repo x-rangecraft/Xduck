@@ -145,6 +145,14 @@ impl<T: RobotIo> Safety<T> {
         self.io.motor_control_error()
     }
 
+    pub fn write_motor_commands(&mut self, commands: &[duck_ipc_proto::MotorCommand], limits: &[crate::io::MotorPositionLimit]) -> Result<u16, IoError> {
+        crate::bus::validate_motor_commands(commands, limits)?;
+        if !self.imu_ready() || self.motor_control_error().is_some() {
+            return Err(IoError::Bus("motor/IMU safety is not ready".into()));
+        }
+        self.io.write_motor_commands(commands)
+    }
+
     pub fn set_position_limits(&mut self, limits: &[crate::io::MotorPositionLimit]) -> Result<(), IoError> {
         self.io.set_position_limits(limits)
     }
@@ -248,6 +256,17 @@ impl<T: RobotIo> Safety<T> {
         hold: [f64; NUM_JOINTS],
         running_gain: u16,
     ) -> Result<Applied, IoError> {
+        self.apply_with_pd(targets, hold, running_gain, None)
+    }
+
+    /// Policy overrides travel with this frame, so holding/homing cannot inherit them.
+    pub fn apply_with_pd(
+        &mut self,
+        targets: [f64; NUM_JOINTS],
+        hold: [f64; NUM_JOINTS],
+        running_gain: u16,
+        pd: Option<[f64; 2]>,
+    ) -> Result<Applied, IoError> {
         let mut applied = Applied::default();
 
         // Note what is *not* here: a fall gate. Being down does not stop the caller
@@ -276,7 +295,9 @@ impl<T: RobotIo> Safety<T> {
             }
         }
 
-        self.io.write(&JointTargets::new(safe))?;
+        let mut command = JointTargets::new(safe);
+        command.pd = pd;
+        self.io.write(&command)?;
         Ok(applied)
     }
 

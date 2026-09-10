@@ -31,6 +31,9 @@ extern "C" {
 #define DMUSB_CAP_CALIBRATION     0x0004U
 /* Dynamic state bit; clears on MCU reset until the host installs limits. */
 #define DMUSB_STATE_LIMITS_READY  0x0008U
+/* imu.reserved[0:2] carries the last protection fault's motor ID and route.
+ * It survives disable/recovery; ID 0 / route 0xff means no specific motor. */
+#define DMUSB_CAP_FAULT_DIAGNOSTICS 0x0010U
 
 /* Exact-length payload: request_seq:u16, count:u8, reserved:u8, then
  * count records {motor_id:u8, reserved[3], min_mrad:i32, max_mrad:i32}.

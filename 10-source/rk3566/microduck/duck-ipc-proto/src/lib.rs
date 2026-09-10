@@ -168,7 +168,10 @@ pub const JSONRPC_VERSION: &str = "2.0";
 /// requests may originate in `padd`, the web console, or another client; publishing the latest
 /// accepted/refused request lets every subscribed UI report the result instead of only the client
 /// that happened to send it. The field is optional and absent until the first event.
-pub const API_VERSION: u32 = 17;
+/// # v18 — speaker volume
+/// `robot.volume` reads or sets the onboard speaker mixer percentage. It runs on the
+/// operation lane so mixer access does not block movement intents.
+pub const API_VERSION: u32 = 18;
 
 /// The longest an update may legitimately go quiet, in seconds — the pre-install hook's ceiling.
 ///
@@ -341,6 +344,7 @@ pub mod method {
     /// else can be tested.
     pub const ROBOT_INIT: &str = "robot.init";
     pub const ROBOT_MODELS: &str = "robot.models";
+    pub const ROBOT_EXPERIMENT: &str = "robot.experiment";
     pub const ROBOT_CALIBRATION: &str = "robot.calibration";
 
     /// Cut power to the joints. **The robot will collapse** if nothing is holding it.
@@ -378,6 +382,7 @@ pub mod method {
     /// is diagnostics, not danger), but "accepted" from a robot that cannot make a sound
     /// would make `robotctl quack` lie about which duck answered.
     pub const ROBOT_SOUND: &str = "robot.sound";
+    pub const ROBOT_VOLUME: &str = "robot.volume";
     /// Pick the ToF theremin up, or put it down: the head's depth sensor becomes an
     /// instrument, and the distance of a hand in front of the beak is the pitch — and the
     /// mouth opening, which rises with it, so the note is visible as well as audible.
@@ -593,6 +598,48 @@ pub struct CalibrationLimit {
     pub max_rad: f64,
 }
 
+/// A complete per-motor MIT command. SI units, hardware-zero coordinates.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MotorCommand {
+    pub motor_id: u8,
+    pub p: f64,
+    pub v: f64,
+    pub tau: f64,
+    pub kp: f64,
+    pub kd: f64,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
+pub enum ExperimentParams {
+    Capabilities {},
+    Task { request: ExperimentTaskParams },
+}
+
+/// Durable, precomputed experiments. Chunk operations are internal HTTP adapters;
+/// all files and actuator decisions belong to robotd.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
+pub enum ExperimentTaskParams {
+    List {},
+    UploadBegin { bytes: u64, sha256: String },
+    UploadChunk { id: String, offset: u64, data: Vec<u8> },
+    UploadCommit { id: String },
+    UploadAbort { id: String },
+    Status { id: String },
+    Start { id: String },
+    /// Stop a running task. `run_token` is returned only by the successful start call, so a
+    /// second experiment client cannot stop a run it does not own merely by listing its task id.
+    Stop {
+        id: String,
+        #[serde(default)]
+        run_token: Option<String>,
+    },
+    Download { id: String },
+    Delete { id: String, sha256: String },
+}
+
 /// Calibration changes are executed by robotd's bus-owning loop while disabled.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
@@ -603,12 +650,35 @@ pub enum CalibrationParams {
     MarkZero { motor_id: u8 },
 }
 
+/// Control values bound to one imported policy version, shared by its controlled joints.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ModelControl {
+    pub kp: f64,
+    pub kd: f64,
+    pub action_scale: f64,
+}
+impl ModelControl {
+    pub fn validate(&self) -> Result<(), &'static str> {
+        if !self.kp.is_finite() || !(0.0..=500.0).contains(&self.kp) {
+            return Err("Kp 必须是 0 至 500 的有限数值");
+        }
+        if !self.kd.is_finite() || !(0.0..=5.0).contains(&self.kd) {
+            return Err("Kd 必须是 0 至 5 的有限数值");
+        }
+        if !self.action_scale.is_finite() || self.action_scale <= 0.0 || self.action_scale > 5.0 {
+            return Err("动作缩放必须大于 0 且不超过 5");
+        }
+        Ok(())
+    }
+}
+
 /// Chunked policy imports. Paths are always resolved by robotd, never supplied by a peer.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ModelParams {
     List {},
-    Begin { slot: String, filename: String, size: usize, activation: String, normalizer_epsilon: f64 },
+    Begin { slot: String, filename: String, size: usize, activation: String, normalizer_epsilon: f64, control: ModelControl },
     Chunk { token: String, offset: usize, hex: String },
     Finish { token: String },
     Rollback { slot: String, version: String },
@@ -655,6 +725,7 @@ pub enum Call {
     RobotEnable(EnableParams),
     /// Power the joints and ramp to the home pose. No policy needed.
     RobotInit,
+    RobotExperiment(ExperimentParams),
     RobotCalibration(CalibrationParams),
     RobotModels(ModelParams),
     /// Cut power to the joints. The robot collapses if nothing holds it.
@@ -667,6 +738,8 @@ pub enum Call {
     RobotMouth(MouthParams),
     /// Play a voice-bank sound.
     RobotSound(SoundParams),
+    /// Read or set the speaker volume (0–100).
+    RobotVolume(VolumeParams),
     /// Pick the ToF theremin up or put it down. Discrete; the answer is [`ThereminResult`].
     RobotTheremin(ThereminParams),
     /// Start or stop looking for other ducks to sing with. Discrete; the answer is
@@ -798,6 +871,7 @@ impl Call {
             Call::RobotStop => method::ROBOT_STOP,
             Call::RobotEnable(_) => method::ROBOT_ENABLE,
             Call::RobotInit => method::ROBOT_INIT,
+            Call::RobotExperiment(_) => method::ROBOT_EXPERIMENT,
             Call::RobotCalibration(_) => method::ROBOT_CALIBRATION,
             Call::RobotModels(_) => method::ROBOT_MODELS,
             Call::RobotRelax => method::ROBOT_RELAX,
@@ -805,6 +879,7 @@ impl Call {
             Call::RobotPose(_) => method::ROBOT_POSE,
             Call::RobotMouth(_) => method::ROBOT_MOUTH,
             Call::RobotSound(_) => method::ROBOT_SOUND,
+            Call::RobotVolume(_) => method::ROBOT_VOLUME,
             Call::RobotTheremin(_) => method::ROBOT_THEREMIN,
             Call::RobotChorale(_) => method::ROBOT_CHORALE,
             Call::ChoraleSubscribe => method::CHORALE_SUBSCRIBE,
@@ -908,6 +983,7 @@ impl Call {
             Call::Subscribe => (Updater, Stream),
 
             // ── robotd ──────────────────────────────────────────────────────
+            Call::RobotExperiment(ExperimentParams::Task { request: ExperimentTaskParams::Download { .. } }) => (Robot, Stream),
             Call::RobotSafeToRestart
             | Call::RobotHealth
             | Call::RobotModelApi
@@ -920,6 +996,7 @@ impl Call {
             | Call::RobotLook(_)
             | Call::RobotStop
             | Call::RobotEnable(_)
+            | Call::RobotExperiment(_)
             | Call::RobotCalibration(_)
             | Call::RobotModels(_)
             | Call::RobotInit
@@ -932,6 +1009,8 @@ impl Call {
             | Call::RobotChorale(_)
             | Call::RobotSetMode(_)
             | Call::RobotShutdown => (Robot, Prompt),
+            // Mixer subprocesses must never queue in front of movement intents.
+            Call::RobotVolume(_) => (Robot, Operation),
             Call::RobotSubscribe(_) => (Robot, Stream),
             // `btd` asking what to put on the air. The answering connection carries the beacon
             // stream down and `chorale.heard` notifications up.
@@ -1012,6 +1091,7 @@ impl Call {
             Call::RobotHead(p) => encode(p),
             Call::RobotLook(p) => encode(p),
             Call::RobotEnable(p) => encode(p),
+            Call::RobotExperiment(p) => encode(p),
             Call::RobotCalibration(p) => encode(p),
             Call::RobotModels(p) => encode(p),
             Call::RobotDo(p) => encode(p),
@@ -1019,6 +1099,7 @@ impl Call {
             Call::RobotMouth(p) => encode(p),
             Call::RobotSetMode(p) => encode(p),
             Call::RobotSound(p) => encode(p),
+            Call::RobotVolume(p) => encode(p),
             Call::RobotTheremin(p) => encode(p),
             Call::RobotChorale(p) => encode(p),
             Call::ChoraleBeaconSet(p) => encode(p),
@@ -1089,6 +1170,7 @@ impl Call {
             method::ROBOT_STOP => Call::RobotStop,
             method::ROBOT_ENABLE => Call::RobotEnable(decode(params)?),
             method::ROBOT_INIT => Call::RobotInit,
+            method::ROBOT_EXPERIMENT => Call::RobotExperiment(decode(params)?),
             method::ROBOT_CALIBRATION => Call::RobotCalibration(decode(params)?),
             method::ROBOT_MODELS => Call::RobotModels(decode(params)?),
             method::ROBOT_RELAX => Call::RobotRelax,
@@ -1096,6 +1178,7 @@ impl Call {
             method::ROBOT_POSE => Call::RobotPose(decode(params)?),
             method::ROBOT_MOUTH => Call::RobotMouth(decode(params)?),
             method::ROBOT_SOUND => Call::RobotSound(decode(params)?),
+            method::ROBOT_VOLUME => Call::RobotVolume(decode(params)?),
             method::ROBOT_THEREMIN => Call::RobotTheremin(decode(params)?),
             method::ROBOT_CHORALE => Call::RobotChorale(decode(params)?),
             method::CHORALE_SUBSCRIBE => Call::ChoraleSubscribe,
@@ -1223,6 +1306,7 @@ pub mod test_support {
                 on: true,
                 toggle: false,
             }),
+            Call::RobotExperiment(ExperimentParams::Capabilities {}),
             Call::RobotCalibration(CalibrationParams::Get {}),
             Call::RobotModels(ModelParams::List {}),
             Call::RobotInit,
@@ -1237,6 +1321,7 @@ pub mod test_support {
                 active: true,
             }),
             Call::RobotMouth(MouthParams { open: 0.5 }),
+            Call::RobotVolume(VolumeParams { percent: Some(50) }),
             Call::RobotSound(SoundParams {
                 tag: SoundTag::Chirp,
                 hold: None,
@@ -2648,6 +2733,14 @@ pub struct RobotState {
     pub head: [f64; 4],
     /// Which policy drove this tick: `walk`, `stand`, or `held` when none did.
     pub policy: String,
+    /// Operator-facing control lifecycle, such as `relaxed`, `initializing`, `policy_on` or
+    /// `policy_off`. Kept separate from `policy`: `held` cannot distinguish initialization from
+    /// an initialized robot deliberately holding with the policy switched off.
+    #[serde(default)]
+    pub control_state: String,
+    /// What currently owns the robot's single PCM device. Absent after playback has ended.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sound_state: Option<String>,
     #[serde(default)]
     pub control_source: ControlSource,
     /// A real evdev gamepad is visible to `padd`, not merely selected in the UI.
@@ -3984,10 +4077,37 @@ mod tests {
     }
 
     #[test]
+    fn experiment_tasks_round_trip_and_legacy_actions_are_refused() {
+        for action in [
+            ExperimentParams::Capabilities {},
+            ExperimentParams::Task { request: ExperimentTaskParams::List {} },
+            ExperimentParams::Task { request: ExperimentTaskParams::Start { id: "a".repeat(32) } },
+            ExperimentParams::Task {
+                request: ExperimentTaskParams::Stop {
+                    id: "a".repeat(32),
+                    run_token: Some("b".repeat(32)),
+                },
+            },
+        ] {
+            let call = Call::RobotExperiment(action);
+            let request = Request::call(Id::Number(1), &call);
+            let decoded: Request = serde_json::from_slice(&serde_json::to_vec(&request).unwrap()).unwrap();
+            assert_eq!(decoded.as_call().unwrap(), call);
+        }
+        assert_eq!(Call::RobotExperiment(ExperimentParams::Task { request: ExperimentTaskParams::List {} }).destination(), Some((Service::Robot, Lane::Prompt)));
+        let bad: Request = serde_json::from_value(serde_json::json!({"jsonrpc":"2.0","id":1,"method":"robot.experiment","params":{"action":"subscribe","token":"extra"}})).unwrap();
+        assert!(bad.as_call().is_err());
+        for action in ["acquire", "command", "release", "subscribe"] {
+            let request: Request = serde_json::from_value(serde_json::json!({"jsonrpc":"2.0","id":1,"method":"robot.experiment","params":{"action":action}})).unwrap();
+            assert!(request.as_call().is_err());
+        }
+    }
+
+    #[test]
     fn every_call_covers_every_variant() {
         assert_eq!(
             every_call().len(),
-            48,
+            50,
             "a Call variant was added or removed — update every_call() and this count"
         );
     }
@@ -4574,6 +4694,8 @@ mod tests {
             },
             head: [0.0; 4],
             policy: "stand".into(),
+            control_state: "policy_on".into(),
+            sound_state: None,
             control_source: ControlSource::Gamepad,
             gamepad_connected: false,
             bluetooth_connected: false,
@@ -4644,6 +4766,8 @@ mod tests {
             },
             head: [0.0; 4],
             policy: "walk".into(),
+            control_state: "policy_on".into(),
+            sound_state: None,
             control_source: ControlSource::Gamepad,
             gamepad_connected: true,
             bluetooth_connected: false,
@@ -5023,4 +5147,15 @@ mod tests {
             released
         );
     }
+}
+
+/// Omit percent to read the current hardware volume. Writes accept integers 0–100.
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct VolumeParams {
+    pub percent: Option<u8>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VolumeResult {
+    pub percent: u8,
 }

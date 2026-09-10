@@ -42,7 +42,7 @@ use std::net::SocketAddr;
 use anyhow::{Context, Result};
 use axum::Router;
 use axum::response::Html;
-use axum::routing::get;
+use axum::routing::{get, post};
 use duck_ipc_proto as proto;
 
 /// The page as it sits in the source tree.
@@ -89,6 +89,19 @@ pub async fn serve(host: &str, port: u16, page: String) -> Result<()> {
 /// One route, returning `page`.
 fn router(page: String) -> Router {
     Router::new().route("/", get(move || std::future::ready(Html(page))))
+        .route("/api/control", post(crate::control_http::call))
+        .route("/api/motor-experiment/capabilities", get(crate::experiment_tasks_http::capabilities))
+        .route("/api/motor-experiment/tasks", get(crate::experiment_tasks_http::list))
+        .route("/api/motor-experiment/tasks/upload", post(crate::experiment_tasks_http::upload))
+        .route("/api/motor-experiment/tasks/{id}", get(crate::experiment_tasks_http::status))
+        .route("/api/motor-experiment/tasks/{id}/start", post(crate::experiment_tasks_http::start))
+        .route("/api/motor-experiment/tasks/{id}/stop", post(crate::experiment_tasks_http::stop))
+        .route("/api/motor-experiment/tasks/{id}/result", get(crate::experiment_tasks_http::download))
+        .route("/api/motor-experiment/tasks/{id}/acknowledge", post(crate::experiment_tasks_http::acknowledge))
+        .route("/api/logs", get(crate::journal_http::download))
+        .route("/motor-experiment.md", get(|| async { ([("content-type","text/plain; charset=utf-8")], include_str!("../webclient/motor-experiment.md")) }))
+        .route("/motor_experiment.py", get(|| async { ([("content-type","text/x-python; charset=utf-8"),("content-disposition","attachment; filename=motor_experiment.py")], include_str!("../webclient/motor_experiment.py")) }))
+        .layer(axum::extract::DefaultBodyLimit::max(16 * 1024))
 }
 
 #[cfg(test)]

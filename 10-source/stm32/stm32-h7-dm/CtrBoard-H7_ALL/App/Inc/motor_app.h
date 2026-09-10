@@ -57,6 +57,8 @@ void MotorApp_Tick(void);
 unsigned char MotorApp_IsEnabled(void);
 unsigned char MotorApp_IsFault(void);
 unsigned char MotorApp_GetFailedMotorID(void);
+unsigned char MotorApp_GetLastFaultMotorID(void);
+unsigned char MotorApp_GetLastFaultRouteIndex(void);
 unsigned long MotorApp_GetFaultFlags(void);
 unsigned char MotorApp_GetMode(void);
 void MotorApp_GetStatus(MotorApp_Status_t *Status);

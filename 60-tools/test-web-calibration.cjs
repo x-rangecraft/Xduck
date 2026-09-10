@@ -31,7 +31,7 @@ let connected = true, readError = null;
 const context = vm.createContext({
   $:element, MOTOR_JOINTS:[0,1,2,3,4,5,6,7,8,10,11,12,13,14].map(joint => [joint,'joint']),
   postureState: {state:sensors,received:now}, performance:{now:()=>now}, open:()=>connected,
-  log(...args){logs.push(args);},
+  reportConnectionIssue(...args){logs.push(args);},
   setInterval(callback,ms){timers.push({callback,ms});},setTimeout(callback){callback();},
   document:{hidden:false, querySelectorAll:()=>[...elements.values()],addEventListener(name,callback){listeners[name]=callback;}},
   async call(method, params, quiet) {

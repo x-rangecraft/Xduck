@@ -1,6 +1,6 @@
 //! Policy files have one owner: robotd. Workers prepare; only the bus loop commits.
 use duck_control::policy::{Net, PolicyPaths, PreparedNetwork};
-use duck_ipc_proto::ModelParams;
+use duck_ipc_proto::{ModelParams, ModelControl};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::{
@@ -19,6 +19,8 @@ struct Version {
     id: String,
     name: String,
     path: PathBuf,
+    #[serde(default)]
+    control: Option<ModelControl>,
 }
 #[derive(Clone, Default, Serialize, Deserialize)]
 struct Record {
@@ -39,6 +41,7 @@ struct Upload {
     received: usize,
     activation: String,
     normalizer_epsilon: f64,
+    control: ModelControl,
     path: PathBuf,
 }
 struct Pending {
@@ -70,8 +73,12 @@ impl Default for Models {
 impl Models {
     fn at(root: PathBuf) -> Self {
         let (records, load_error) = match fs::read(root.join("manifest.json")) {
-            Ok(data) => match serde_json::from_slice(&data) {
-                Ok(records) => (records, None),
+            Ok(data) => match serde_json::from_slice::<BTreeMap<String, Record>>(&data) {
+                Ok(records) => {
+                    let error = records.values().flat_map(|r| r.active.iter().chain(r.history.iter()))
+                        .filter_map(|v| v.control).find_map(|c| c.validate().err());
+                    (records, error.map(|e| format!("模型控制参数清单损坏：{e}")))
+                },
                 Err(e) => (BTreeMap::new(), Some(format!("模型历史清单损坏：{e}"))),
             },
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => (BTreeMap::new(), None),
@@ -127,14 +134,21 @@ impl Models {
             }
         }
     }
+    pub fn restore_controls(&self, controller: &mut crate::control::Controller) {
+        let inner = self.inner.lock().unwrap();
+        for slot in inner.slots.values() {
+            let control = inner.records.get(&slot.key).and_then(|r| r.active.as_ref()).and_then(|v| v.control);
+            controller.set_model_control(slot.net, control);
+        }
+    }
     pub fn load_error(&self) -> Option<String> {
         self.inner.lock().unwrap().load_error.clone()
     }
     fn status(inner: &Inner) -> Value {
         let slots: Vec<_> = inner.slots.iter().map(|(id, slot)| {
             let record = inner.records.get(&slot.key).cloned().unwrap_or_default();
-            json!({"id": id, "file": slot.path.file_name().unwrap_or_default().to_string_lossy(), "active": record.active.as_ref().map(|v| json!({"id":v.id,"name":v.name})),
-                "history": record.history.iter().map(|v| json!({"id":v.id,"name":v.name})).collect::<Vec<_>>()})
+            json!({"id": id, "file": slot.path.file_name().unwrap_or_default().to_string_lossy(), "active": record.active.as_ref().map(|v| json!({"id":v.id,"name":v.name,"control":v.control})),
+                "history": record.history.iter().map(|v| json!({"id":v.id,"name":v.name,"control":v.control})).collect::<Vec<_>>()})
         }).collect();
         json!({"slots":slots,"phase":inner.phase,"failed_phase":inner.failed_phase,"detail":inner.load_error.as_ref().unwrap_or(&inner.detail),
             "editable":inner.editable && inner.observed.elapsed() < Duration::from_millis(500) && inner.load_error.is_none(),
@@ -160,6 +174,7 @@ impl Models {
                 size,
                 activation,
                 normalizer_epsilon,
+                control,
             } => {
                 if matches!(
                     inner.phase.as_str(),
@@ -186,6 +201,7 @@ impl Models {
                 if !normalizer_epsilon.is_finite() || !(1e-12..=1.0).contains(&normalizer_epsilon) {
                     return Err("归一化 epsilon 必须介于 1e-12 和 1".into());
                 }
+                control.validate()?;
                 fs::create_dir_all(&self.root).map_err(|e| e.to_string())?;
                 if let Some(old) = inner.upload.take() {
                     let _ = fs::remove_file(old.path);
@@ -201,6 +217,7 @@ impl Models {
                     received: 0,
                     activation,
                     normalizer_epsilon,
+                    control,
                     path,
                 });
                 inner.failed_phase = None;
@@ -307,6 +324,7 @@ impl Models {
                     id: upload.token,
                     name: upload.name,
                     path: target.clone(),
+                    control: Some(upload.control),
                 },
                 network,
             })
@@ -358,9 +376,9 @@ impl Models {
         match self.commit(&inner.records, &pending.slot, &pending.version) {
             Ok(records) => {
                 let old = std::mem::replace(&mut inner.records, records);
-                controller
-                    .unwrap()
-                    .replace_network(pending.slot.net, pending.network);
+                let controller = controller.unwrap();
+                controller.replace_network(pending.slot.net, pending.network);
+                controller.set_model_control(pending.slot.net, pending.version.control);
                 inner.phase = "done".into();
                 inner.detail = "替换成功并已即时加载；机器人保持放松，需手动初始化/开启策略。保留最近两条 ONNX 历史。".into();
                 for record in old.values() {
@@ -415,6 +433,7 @@ impl Models {
                         .to_string_lossy()
                         .into_owned(),
                     path,
+                    control: None,
                 }
             }
         };
@@ -538,6 +557,7 @@ mod tests {
             id: id.into(),
             name: format!("{id}.pt"),
             path,
+            control: None,
         }
     }
     #[test]
@@ -593,6 +613,24 @@ mod tests {
         assert_eq!(fs::read(store.root.join("manifest.json")).unwrap(), before);
     }
     #[test]
+    fn invalid_controls_are_rejected_before_upload_and_on_restart() {
+        let dir = tempfile::tempdir().unwrap();
+        let (store, _) = configured(dir.path());
+        for control in [
+            ModelControl { kp: 501.0, kd: 4.0, action_scale: 1.0 },
+            ModelControl { kp: 60.0, kd: -0.1, action_scale: 1.0 },
+            ModelControl { kp: 60.0, kd: 4.0, action_scale: 0.0 },
+            ModelControl { kp: f64::NAN, kd: 4.0, action_scale: 1.0 },
+        ] {
+            assert!(store.request(ModelParams::Begin { slot: "walk".into(), filename: "a.onnx".into(), size: 1, activation: "elu".into(), normalizer_epsilon: 0.01, control }).is_err());
+            assert!(store.inner.lock().unwrap().upload.is_none());
+        }
+        fs::write(store.root.join("manifest.json"), r#"{"walk--original.onnx":{"active":{"id":"a","name":"a","path":"a.onnx","control":{"kp":999,"kd":4,"action_scale":1}},"history":[]}}"#).unwrap();
+        assert!(Models::at(store.root.clone()).load_error().is_some());
+        let legacy: Version = serde_json::from_str(r#"{"id":"a","name":"a","path":"a.onnx"}"#).unwrap();
+        assert_eq!(legacy.control, None);
+    }
+    #[test]
     fn chunks_require_token_exact_offset_and_declared_size() {
         let dir = tempfile::tempdir().unwrap();
         let (store, _) = configured(dir.path());
@@ -603,6 +641,7 @@ mod tests {
                 size: 2,
                 activation: "elu".into(),
                 normalizer_epsilon: 0.01,
+                control: ModelControl { kp: 60.0, kd: 4.0, action_scale: 1.0 },
             })
             .unwrap();
         let token = result["token"].as_str().unwrap().to_owned();
@@ -663,6 +702,7 @@ mod tests {
                     size: 1,
                     activation: "elu".into(),
                     normalizer_epsilon: 0.01,
+                control: ModelControl { kp: 60.0, kd: 4.0, action_scale: 1.0 },
                 })
                 .is_err(),
             "a forged RPC must not bypass stale feedback"
@@ -678,7 +718,8 @@ mod tests {
                     filename: "x.pt".into(),
                     size: 1,
                     activation: "elu".into(),
-                    normalizer_epsilon: 0.01
+                    normalizer_epsilon: 0.01,
+                    control: ModelControl { kp: 60.0, kd: 4.0, action_scale: 1.0 },
                 })
                 .is_err()
         );
@@ -722,7 +763,8 @@ mod tests {
         .unwrap();
         let mut controller =
             crate::control::Controller::new(policy, Default::default(), Default::default());
-        let candidate = version(&store, "candidate");
+        let mut candidate = version(&store, "candidate");
+        candidate.control = Some(ModelControl { kp: 60.25, kd: 1.234, action_scale: 1.0 });
         fs::copy(&bundled, &candidate.path).unwrap();
         store.prepared(Ok(Pending {
             slot: slot.clone(),
@@ -747,6 +789,13 @@ mod tests {
             store.request(ModelParams::List {}).unwrap()["phase"],
             "done"
         );
+        assert_eq!(controller.model_control(Net::Walk), candidate.control);
+        let reloaded = Models::at(store.root.clone());
+        let mut paths = PolicyPaths { walk: slot.path.clone(), ..Default::default() };
+        reloaded.resolve(&mut paths);
+        controller.set_model_control(Net::Walk, None);
+        reloaded.restore_controls(&mut controller);
+        assert_eq!(controller.model_control(Net::Walk), candidate.control);
         let previous = store.inner.lock().unwrap().records[&slot.key].history[0].clone();
         store
             .request(ModelParams::Rollback {
@@ -766,5 +815,7 @@ mod tests {
             previous.id
         );
         assert_eq!(inner.records[&slot.key].history[0].id, candidate.id);
+        assert_eq!(inner.records[&slot.key].history[0].control, candidate.control);
+        assert_eq!(controller.model_control(Net::Walk), None, "rollback to legacy restores defaults");
     }
 }

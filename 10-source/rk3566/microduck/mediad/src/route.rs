@@ -51,6 +51,7 @@ pub enum Route {
 fn permits(call: &proto::Call) -> bool {
     use proto::Call::*;
     match call {
+        RobotExperiment(_) => false,
         // The version handshake. Must be reachable or no client can establish anything.
         Hello(_) => true,
 
@@ -66,7 +67,7 @@ fn permits(call: &proto::Call) -> bool {
         RobotHead(_) | RobotLook(_) | RobotPose(_) | RobotMouth(_) => true,
         // The theremin rides with the sounds: it is one, and a browser that can quack a duck
         // may pick its instrument up too.
-        RobotDo(_) | RobotSound(_) | RobotTheremin(_) => true,
+        RobotDo(_) | RobotSound(_) | RobotVolume(_) | RobotTheremin(_) => true,
 
         // The chorale is between robots, over BLE — a browser is neither in the room nor a duck.
         // Its daemon-to-daemon plumbing has even less business on a WebRTC channel.
@@ -290,6 +291,7 @@ mod tests {
                     | proto::Call::RobotHead(_)
                     | proto::Call::RobotLook(_)
                     | proto::Call::RobotStop
+                    | proto::Call::RobotVolume(_)
                     | proto::Call::RobotSubscribe(_)
                     | proto::Call::TofStream
                     | proto::Call::PadInput

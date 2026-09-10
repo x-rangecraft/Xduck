@@ -128,6 +128,18 @@
        font-size: 11px; letter-spacing: .04em; padding-right: .75rem; white-space: nowrap; }
   td { text-align: right; }
 
+  .runtime-panel { display: grid; grid-template-rows: auto 1fr auto; min-width: 0; }
+  .runtime-panel h2 { font-size: 14px; opacity: .7; margin-bottom: .65rem; }
+  .runtime-panel table { height: 100%; font-size: 14px; line-height: 1.8; letter-spacing: .02em; }
+  .runtime-panel th, .runtime-panel td { padding-top: .3rem; padding-bottom: .3rem; vertical-align: middle; }
+  .runtime-panel th { font-size: 13px; opacity: .65; }
+  .runtime-panel td { overflow-wrap: anywhere; }
+  .runtime-panel .hint { margin-top: .85rem; line-height: 1.7; }
+  @media (max-width: 800px) {
+    .runtime-panel table { font-size: 13px; letter-spacing: 0; }
+    .runtime-panel th { font-size: 12px; }
+  }
+
   .motor-panel { grid-column: 1 / -1; }
   .motor-box { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
   .motor-table { table-layout: fixed; font-size: 11px; }
@@ -147,7 +159,6 @@
   summary { cursor: pointer; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em;
             opacity: .55; }
   details > *:not(summary) { margin-top: .75rem; }
-  #raw { flex: 1; min-width: 18rem; font: 12px ui-monospace, monospace; }
   pre { margin: 0; padding: .5rem; background: var(--fill); border-radius: 4px; height: 16rem;
         overflow: auto; white-space: pre-wrap; font: 12px/1.45 ui-monospace, monospace; }
 </style>
@@ -168,13 +179,17 @@
 <main>
   <section>
     <h2>视频</h2>
+    <div class="row">
+      <button id="video-toggle" type="button" disabled>打开视频</button>
+      <span id="video-state" class="pill dim">视频已关闭</span>
+    </div>
     <!-- The wrapper is the *upright* picture and the video is turned inside it, because the robot
          no longer rotates pixels: doing that in the pipeline cost the encoder its zero-copy path to
          the 2D engine, and the board 22 fps. Everything that reads coordinates off this — the
          drag-to-look below — keeps working, because the wrapper is the space it always was. -->
     <div id="videobox">
       <video id="video" autoplay muted playsinline></video>
-      <div id="camera-offline" hidden>摄像头已断开</div>
+      <div id="camera-offline">视频已关闭，按需打开</div>
       <!-- The boxes, on an SVG whose viewBox is the *upright frame's* own pixels — so the browser
            does the scaling, and neither a resize nor a change of mount rotation needs any code. -->
       <svg id="boxes" preserveAspectRatio="none" aria-hidden="true"></svg>
@@ -225,6 +240,7 @@
 
   <section>
     <h2>机器人控制</h2>
+    <p id="control-status" role="status" aria-live="polite"><b>当前状态：</b>等待机器人反馈</p>
     <p id="control-live" class="hint" role="status">实时状态：等待机器人反馈</p>
     <div class="row">
       <button id="policy-toggle" data-call="robot.enable" data-params='{"on":true,"toggle":true}'>策略开启/关闭</button>
@@ -243,6 +259,8 @@
 
   <section>
     <h2>动作 · 声音</h2>
+    <p id="action-status" role="status" aria-live="polite"><b>动作状态：</b>当前无动作执行</p>
+    <p id="sound-status" role="status" aria-live="polite"><b>声音状态：</b>当前无声音执行</p>
     <div class="row">
       <select id="skill">
         <option value="sit_toggle">坐下 ⇄ 站立</option>
@@ -265,6 +283,13 @@
       <button id="play">播放</button>
     </div>
     <p id="skill-feedback" role="status" aria-live="polite">动作结果会显示在这里。</p>
+    <div class="row" style="margin-top:10px">
+      <label for="speaker-volume">扬声器音量</label>
+      <input id="speaker-volume" type="range" min="0" max="100" step="1" value="0" disabled style="width:160px" aria-describedby="volume-feedback">
+      <output id="speaker-volume-value" for="speaker-volume">—</output>
+      <button id="volume-refresh" type="button">读取音量</button>
+      <span id="volume-feedback" role="status" aria-live="polite">连接后读取设备音量</span>
+    </div>
     <p id="sound-feedback" role="status" aria-live="polite">声音结果会显示在这里。</p>
     <p class="hint">
       每次请求执行一个动作；选择“滑行声”时需按住<b>播放</b>，松开即停止。<br>
@@ -276,7 +301,7 @@
     </p>
   </section>
 
-  <section>
+  <section class="runtime-panel">
     <h2>运行状态</h2>
     <table>
       <tr><th>模式</th><td id="t-mode">–</td></tr>
@@ -303,6 +328,12 @@
     <div class="row"><label>替换模型 <select id="model-slot" aria-label="替换模型"><option value="">连接后读取模型</option></select></label><button id="model-refresh">刷新</button></div>
     <p id="model-current" class="hint">连接后读取现有模型</p>
     <div class="row"><label>本地模型 <input id="model-file" type="file" accept=".pt,.pth,.onnx"></label></div>
+    <div class="row">
+      <label>Kp <input id="model-kp" type="number" min="0" max="500" step="0.01" value="60" style="width:80px"></label>
+      <label>Kd <input id="model-kd" type="number" min="0" max="5" step="0.001" value="4" style="width:80px"></label>
+      <label>动作缩放 <input id="model-scale" type="number" min="0.001" max="5" step="0.001" value="1" style="width:80px"></label>
+    </div>
+    <p class="hint">三个参数随本次模型保存，对该策略控制的关节统一生效；切换/回滚一起恢复。请按训练配置填写，初始值为 60 / 4 / 1。</p>
     <div class="row"><label>PPO 激活函数 <select id="model-activation"><option value="elu">ELU（UniLab 默认）</option><option value="relu">ReLU</option><option value="tanh">Tanh</option><option value="selu">SELU</option><option value="leaky_relu">LeakyReLU</option></select></label></div>
     <div class="row"><label>观测归一化 ε <input id="model-epsilon" type="number" value="0.01" min="0.000000000001" max="1" step="any" style="width:90px"></label><span class="hint">RSL-RL 默认 0.01；无归一化时忽略</span></div>
     <p class="hint">兼容 UniLab / Isaac Sim · Isaac Lab 的 RSL-RL PPO .pt/.pth，以及 ONNX（≤64 MiB）。激活函数须与训练配置一致。模型须采用本机 61 维观测、14 维动作及相同关节顺序/缩放；结构校验不能证明实际运动效果。</p>
@@ -322,8 +353,9 @@
     </table></div>
     <p class="hint">状态取自 STM32 DMUSB V4 flags；空槽显示“空槽”，不会把全零数据误判为在线电机。</p>
   </section>
-  <section class="motor-panel" id="calibration-panel">
-    <details id="calibration-details">
+</main>
+
+<details id="calibration-details">
     <summary>电机标定与默认站姿</summary>
     <p class="hint">预留全部 14 个电机位置；未配置槽位可提前填写默认站姿，接入并配置电机后再标零和设置限位。先放松，待全部已配置电机确认失能后手动摆位。零位将当前位置写入电机；限位和默认站姿以电机零位为基准，单位 rad。先标零位，再设置限位与站姿。</p>
     <div class="row"><button id="calibration-refresh">读取已保存设置</button></div>
@@ -338,29 +370,33 @@
     </div>
     <p class="hint">保存设置不会使能或移动电机。点击“初始化”才会前往默认站姿。STM32 将超范围的位置给定裁剪到边界；例如上限 4 rad，给定 5 rad，则发送 4 rad。</p>
     <p id="calibration-feedback" role="status" aria-live="polite">等待连接。标定操作仅在未使能时可用。</p>
-    </details>
-  </section>
-</main>
-
-<details>
-  <summary>调试控制台 — 原始调用、拒绝记录和日志</summary>
-
-  <div class="row">
-    <!-- Permitted over BLE and refused here, because reconfiguring wifi would take this session
-         with it. The interesting buttons: they prove the route table is being consulted. -->
-    <button data-call="net.connect" data-params='{"ssid":"x","psk":"y"}'>net.connect
-      <span class="dim">（已禁止）</span></button>
-    <button data-call="system.pairingPin">system.pairingPin <span class="dim">（已禁止）</span></button>
-  </div>
-
-  <div class="row">
-    <input id="raw" type="text" spellcheck="false"
-           value='{"jsonrpc":"2.0","id":99,"method":"robot.health"}'>
-    <button id="send">发送</button>
-  </div>
-
-  <pre id="log"></pre>
 </details>
+
+<details id="experiment-panel">
+  <summary>电机实验接口 · <span id="experiment-ownership" class="dim">正在查询状态</span></summary>
+  <p>电脑预先生成每 20 ms 一帧的完整指令文件。上传校验后单独启动，设备本地执行并记录，结束后下载校验并删除设备副本。</p>
+  <p>接口地址：<code id="experiment-address"></code></p>
+  <div class="row">
+    <a href="/motor-experiment.md" target="_blank" rel="noopener">查看接口说明</a>
+    <a href="/motor_experiment.py" download>下载 Python 示例</a>
+    <button id="experiment-capabilities">查询设备能力（只读）</button>
+  </div>
+  <p id="experiment-status" role="status" aria-live="polite">正在查询设备是否被实验任务占用。</p>
+  <p>任务运行不依赖无线连接，断网继续按既定时长执行；结束、停止或本地保护触发后全部失能。当前固件统一使能全部配置电机，未选中电机为零增益、零前馈。</p>
+  <pre id="experiment-capabilities-result" hidden></pre>
+</details>
+<details id="journal-panel">
+  <summary>本体日志下载</summary>
+  <p>将 RK3566 已保留的运行日志直接下载到当前电脑。</p>
+  <div class="row">
+    <label>时间 <select id="journal-range"><option value="all">全部保留日志</option><option value="3600">最近 1 小时</option><option value="86400">最近 24 小时</option></select></label>
+    <label>服务 <select id="journal-unit"><option value="all">全部（含系统与内核）</option><option>robotd</option><option>mediad</option><option>configd</option><option>btd</option><option>padd</option><option>updaterd</option><option>tofd</option></select></label>
+    <label>格式 <select id="journal-format"><option value="text">文本</option><option value="jsonl">JSON Lines</option></select></label>
+    <a id="journal-download" href="/api/logs" download>下载日志</a>
+  </div>
+  <p>容量上限 500 MB；已轮转删除的日志无法恢复。电机实验数据保存在独立任务结果包中，下载校验后删除。</p>
+</details>
+<p id="connection-error" role="status" hidden></p>
 
 <script>
 "use strict";
@@ -391,15 +427,12 @@ const INTENT_HZ = 10;
 const LOOK = { x: 1.0, y: 0.7, z: 0.2, dz: 0.45 };
 
 const $ = (id) => document.getElementById(id);
-const logEl = $("log");
-
-function log(cls, ...parts) {
-  const line = document.createElement("div");
-  line.className = cls;
-  line.textContent = parts.join(" ");
-  logEl.append(line);
-  while (logEl.childElementCount > 400) logEl.firstElementChild.remove();
-  logEl.scrollTop = logEl.scrollHeight;
+// Keep only the latest connection error; no raw RPC console or message history.
+function reportConnectionIssue(cls, ...parts) {
+  if (cls !== "bad") return;
+  const status = $("connection-error");
+  status.textContent = parts.join(" ");
+  status.hidden = false;
 }
 
 function setState(text, cls = "pill") { $("state").textContent = text; $("state").className = cls + " pill"; }
@@ -409,17 +442,52 @@ function banner(html) { $("banner").innerHTML = html; $("banner").hidden = false
 
 // ── signalling ─────────────────────────────────────────────────────────────────
 
-let ws = null, pc = null, sessionId = null, control = null;
+let ws = null, pc = null, sessionId = null, control = null, producerId = null;
+let videoEnabled = false, restartingForVideo = false, videoReconnectAttempts = 0;
+let httpControl = false, httpStateTimer = null, httpStatePending = false;
+
+function renderVideoSwitch() {
+  $("video-toggle").textContent = videoEnabled ? "关闭视频" : "打开视频";
+  $("video-state").textContent = videoEnabled ? "视频正在连接" : "视频已关闭";
+  $("video-state").className = videoEnabled ? "pill warn" : "pill dim";
+  if (!videoEnabled) {
+    $("video").srcObject = null;
+    $("camera-offline").hidden = false;
+    $("camera-offline").textContent = "视频已关闭，按需打开";
+    clearDetections("–");
+    for (const id of ["bitrate", "fps", "loss", "rtt"]) $(id).textContent = "–";
+    $("loss").className = "";
+  }
+}
 
 function send(msg) {
-  log("out", "→", JSON.stringify(msg));
+  reportConnectionIssue("out", "→", JSON.stringify(msg));
   ws.send(JSON.stringify(msg));
 }
 
 $("signalling").textContent = SIGNALLING_URL;
 
 $("connect").onclick = () => {
+  if (httpControl) {
+    httpControl = false;
+    $("connect").textContent = "连接";
+    $("video-toggle").disabled = true;
+    setState("已断开", "bad"); setDc("控制通道未连接");
+    releaseDriveControls();
+    stopTelemetry();
+    return;
+  }
   if (ws) { ws.close(); return; }
+  if (!videoEnabled && !restartingForVideo) {
+    startHttpControl();
+    return;
+  }
+  // A video switch may have ended the old WebRTC session by closing this signaller connection.
+  // Preserve that requested mode for the automatic reconnect; a deliberate new connection still
+  // starts control-only so every browser load keeps video opt-in.
+  if (!restartingForVideo) videoEnabled = false;
+  producerId = null;
+  renderVideoSwitch();
   ws = new WebSocket(SIGNALLING_URL);
   setState("正在连接…");
 
@@ -427,24 +495,53 @@ $("connect").onclick = () => {
   // The one failure two ports can produce, named in words rather than as `websocket error`. If this
   // page arrived from the robot, the robot is up and reachable and one of its two ports is not —
   // which is a firewall between them far more often than it is mediad, since mediad serves both.
-  ws.onerror = () => log("bad", SERVED_BY_ROBOT
-    ? `!! 页面由机器人提供，但信令端口 ${SIGNALLING_PORT} 无响应。`
-      + `请检查防火墙，并通过 \`journalctl -u mediad -b\` 查看管线日志。`
-    : `!! ${SIGNALLING_URL} 无响应：地址错误或 mediad 未运行。`
-      + `请使用机器人提供的控制台页面。`);
+  ws.onerror = () => {
+    // Switching a peer briefly closes this version of webrtcsink's signaller socket. The close
+    // handler retries after the old peer has drained; show the network diagnostic only if those
+    // bounded retries are exhausted.
+    if (restartingForVideo) return;
+    reportConnectionIssue("bad", SERVED_BY_ROBOT
+      ? `!! 页面由机器人提供，但信令端口 ${SIGNALLING_PORT} 无响应。`
+        + `请检查防火墙，并通过 \`journalctl -u mediad -b\` 查看管线日志。`
+      : `!! ${SIGNALLING_URL} 无响应：地址错误或 mediad 未运行。`
+        + `请使用机器人提供的控制台页面。`);
+  };
   ws.onclose = () => {
+    const reconnectForVideo = restartingForVideo;
     setState("已断开", "bad"); setDc("控制通道未连接");
     $("connect").textContent = "连接";
-    ws = null; sessionId = null; control = null;
+    ws = null; sessionId = null; control = null; producerId = null;
+    $("video-toggle").disabled = true;
     releaseDriveControls();
     stopTelemetry();
     if (pc) { pc.close(); pc = null; }
+    if (reconnectForVideo) {
+      if (!videoEnabled) {
+        restartingForVideo = false;
+        videoReconnectAttempts = 0;
+        setTimeout(startHttpControl, 300);
+        return;
+      }
+      // webrtcsink versions differ here: some acknowledge `endSession` on this WebSocket, while
+      // the RK3566 signaller closes it and needs a moment to drain the old peer. Reopen without
+      // losing the operator's choice, with a bound so a real signaller outage is still visible.
+      videoReconnectAttempts += 1;
+      if (videoReconnectAttempts <= 5) {
+        setState("切换视频后重新连接…", "warn");
+        setTimeout(() => {
+          if (!ws && restartingForVideo) $("connect").click();
+        }, 300 * videoReconnectAttempts);
+      } else {
+        restartingForVideo = false;
+        reportConnectionIssue("bad", "!! 切换视频后无法重新连接信令，请重试。");
+      }
+    }
   };
 
   ws.onmessage = async (event) => {
     const msg = JSON.parse(event.data);
     // Skip the noisy ones so the log stays readable.
-    if (msg.type !== "peerStatusChanged") log("in", "←", event.data.slice(0, 400));
+    if (msg.type !== "peerStatusChanged") reportConnectionIssue("in", "←", event.data.slice(0, 400));
 
     switch (msg.type) {
       case "welcome":
@@ -455,7 +552,7 @@ $("connect").onclick = () => {
       case "list": {
         const producer = msg.producers && msg.producers[0];
         if (!producer) {
-          log("bad", "!! 未找到视频生产者，请检查 mediad 管线日志。");
+          reportConnectionIssue("bad", "!! 未找到视频生产者，请检查 mediad 管线日志。");
           setState("无视频源", "bad");
           return;
         }
@@ -463,13 +560,14 @@ $("connect").onclick = () => {
         // is what puts it there. Shown straight away, so the header is filled in before the
         // datachannel opens and re-filled from `system.info` and `hello` when it does.
         const meta = producer.meta || {};
-        log("dim", "producer:", producer.id, JSON.stringify(meta));
+        producerId = producer.id;
+        reportConnectionIssue("dim", "producer:", producer.id, JSON.stringify(meta));
         if (meta.name) $("robot").textContent = meta.name;
         if (meta.release) $("release").textContent = meta.release;
         if (meta.api_version) $("api").textContent = `api v${meta.api_version}`;
         // No `offer`, so the producer offers and we answer. That is the direction webrtcsink
         // wants: it knows what it is sending.
-        send({ type: "startSession", peerId: producer.id });
+        send({ type: "startSession", peerId: producerId });
         break;
       }
 
@@ -486,10 +584,7 @@ $("connect").onclick = () => {
       // net/webrtc/protocol rather than guessed.
       case "peer":
         if (msg.sdp) {
-          await pc.setRemoteDescription(msg.sdp);
-          const answer = await pc.createAnswer();
-          await pc.setLocalDescription(answer);
-          send({ type: "peer", sessionId, sdp: { type: "answer", sdp: answer.sdp } });
+          await answerPeerOffer(msg.sdp);
         } else if (msg.ice) {
           await pc.addIceCandidate({
             candidate: msg.ice.candidate,
@@ -499,18 +594,37 @@ $("connect").onclick = () => {
         break;
 
       case "endSession":
-        log("dim", "机器人已结束会话");
+        reportConnectionIssue("dim", "机器人已结束会话");
         if (pc) { pc.close(); pc = null; }
+        sessionId = null;
         setState("信令已连接"); setDc("控制通道未连接");
         stopTelemetry();
+        if (restartingForVideo && ws && producerId) {
+          if (videoEnabled) send({ type: "startSession", peerId: producerId });
+          else ws.close();
+        }
         break;
 
       case "error":
-        log("bad", "!! 服务器错误：", msg.details);
+        reportConnectionIssue("bad", "!! 服务器错误：", msg.details);
         break;
     }
   };
 };
+
+async function answerPeerOffer(description) {
+  await pc.setRemoteDescription(description);
+  // The producer offers video and the robot-created control data channel together. An inactive
+  // video answer keeps the data channel while preventing this page from receiving a stream.
+  for (const transceiver of pc.getTransceivers()) {
+    if (transceiver.receiver.track.kind === "video") {
+      transceiver.direction = videoEnabled ? "recvonly" : "inactive";
+    }
+  }
+  const answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer);
+  send({ type: "peer", sessionId, sdp: { type: "answer", sdp: answer.sdp } });
+}
 
 function newPeerConnection() {
   // No ICE servers: this is a LAN client talking to a robot on the same network, which is the
@@ -519,8 +633,12 @@ function newPeerConnection() {
   pc = new RTCPeerConnection();
 
   pc.ontrack = (event) => {
-    log("dim", "track:", event.track.kind);
-    $("video").srcObject = event.streams[0];
+    reportConnectionIssue("dim", "track:", event.track.kind);
+    if (videoEnabled) {
+      $("video").srcObject = event.streams[0];
+      $("video-state").textContent = "视频已打开";
+      $("video-state").className = "pill in";
+    }
   };
 
   // Take the box's shape from the stream rather than assuming landscape. `loadedmetadata` is the
@@ -562,10 +680,19 @@ function newPeerConnection() {
   // would get a second, unrouted channel.
   pc.ondatachannel = (event) => {
     control = event.channel;
-    log("dim", "datachannel:", control.label);
-    control.onopen = () => { setDc("控制通道已连接", "in"); startTelemetry(); };
+    reportConnectionIssue("dim", "datachannel:", control.label);
+    control.onopen = () => {
+      restartingForVideo = false;
+      videoReconnectAttempts = 0;
+      setDc("控制通道已连接", "in");
+      $("video-toggle").disabled = false;
+      startTelemetry();
+      refreshVolume();
+    };
     control.onclose = () => {
       setDc("控制通道已关闭", "bad");
+      $("speaker-volume").disabled = true;
+      $("volume-feedback").textContent = "控制通道已断开";
       releaseDriveControls();
       stopTelemetry();
       // The detector's boxes came down this channel; with it gone they are stale by definition.
@@ -574,6 +701,29 @@ function newPeerConnection() {
     control.onmessage = (e) => onControl(e.data);
   };
 }
+
+$("video-toggle").onclick = () => {
+  if ((!ws && !httpControl) || restartingForVideo) return;
+  videoEnabled = !videoEnabled;
+  renderVideoSwitch();
+  releaseDriveControls();
+  restartingForVideo = true;
+  videoReconnectAttempts = 0;
+  $("video-toggle").disabled = true;
+  if (httpControl) {
+    httpControl = false;
+    $("connect").textContent = "连接";
+    stopTelemetry();
+    $("connect").click();
+    return;
+  }
+  if (!videoEnabled) {
+    // This signaller does not consistently acknowledge a consumer `endSession`. Closing its
+    // socket is the authoritative peer teardown and lets `onclose` restore HTTP control.
+    ws.close();
+    return;
+  }
+};
 
 // ── JSON-RPC over the control channel ──────────────────────────────────────────
 //
@@ -584,19 +734,53 @@ function newPeerConnection() {
 let nextId = 1;
 const inflight = new Map();
 
-function open() { return control && control.readyState === "open"; }
+function open() { return httpControl || (control && control.readyState === "open"); }
+
+function startHttpControl() {
+  if (httpControl || ws || videoEnabled) return;
+  httpControl = true;
+  $("connect").textContent = "断开连接";
+  $("video-toggle").disabled = false;
+  setState("已连接", "in");
+  setDc("控制通道已连接", "in");
+  startTelemetry();
+  refreshVolume();
+}
 
 // **`quiet` is what keeps the log readable.** A twist at 10 Hz and a health poll every two seconds
 // are the page working, not something a person did — logging their requests and their answers would
 // bury the one line anybody opens this drawer to read. Errors are logged whatever `quiet` says.
 function call(method, params = {}, quiet = false) {
   if (!open()) {
-    log("bad", "!! 控制通道尚未连接");
+    reportConnectionIssue("bad", "!! 控制通道尚未连接");
     return Promise.reject(new Error("控制通道未连接"));
   }
   const id = nextId++;
   const line = JSON.stringify({ jsonrpc: "2.0", id, method, params });
-  if (!quiet) log("out", "control →", line);
+  if (!quiet) reportConnectionIssue("out", "control →", line);
+  if (httpControl) {
+    return fetch("/api/control", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: line,
+    }).then(async response => {
+      const text = await response.text();
+      let msg;
+      try { msg = JSON.parse(text); }
+      catch { throw new Error(`控制网关返回了无效响应：${text.slice(0, 160)}`); }
+      if (msg.id === undefined || msg.id === null) {
+        onControl(text);
+        return msg.params;
+      }
+      if (msg.error) {
+        reportConnectionIssue("bad", "control ←", text.slice(0, 400));
+        throw msg.error;
+      }
+      if (!response.ok) throw new Error(`控制网关 HTTP ${response.status}`);
+      if (!quiet) reportConnectionIssue("in", "control ←", text.slice(0, 400));
+      return msg.result;
+    });
+  }
   control.send(line);
   return new Promise((resolve, reject) => {
     inflight.set(id, { resolve, reject, quiet });
@@ -613,6 +797,10 @@ function call(method, params = {}, quiet = false) {
 // produces is recognised as this rather than logged as an answer to something nobody asked.
 function tell(method, params) {
   if (!open()) return false;
+  if (httpControl) {
+    call(method, params, true).catch(() => {});
+    return true;
+  }
   const id = nextId++;
   inflight.set(id, { quiet: true });
   setTimeout(() => inflight.delete(id), 10_000);
@@ -622,7 +810,7 @@ function tell(method, params) {
 
 function onControl(data) {
   let msg;
-  try { msg = JSON.parse(data); } catch { log("bad", "control ← unparseable:", data); return; }
+  try { msg = JSON.parse(data); } catch { reportConnectionIssue("bad", "control ← unparseable:", data); return; }
 
   // No id is a notification, and `robot.state` is the only one that streams today. Anything else
   // arriving this way is worth seeing in full rather than summarised.
@@ -633,20 +821,20 @@ function onControl(data) {
     // The duck detector, a couple of times a second. Not logged: it streams, and a line per
     // sighting would bury everything a person opened the drawer to read.
     if (msg.method === "media.detections") { onDetections(msg.params); return; }
-    log("in", "control ←", data.slice(0, 400));
+    reportConnectionIssue("in", "control ←", data.slice(0, 400));
     return;
   }
 
   const waiting = inflight.get(msg.id);
-  if (!waiting) { log("in", "control ←", data.slice(0, 400)); return; }
+  if (!waiting) { reportConnectionIssue("in", "control ←", data.slice(0, 400)); return; }
   inflight.delete(msg.id);
 
   if (msg.error) {
-    log("bad", "control ←", data.slice(0, 400));
+    reportConnectionIssue("bad", "control ←", data.slice(0, 400));
     if (waiting.reject) waiting.reject(msg.error);
     return;
   }
-  if (!waiting.quiet) log("in", "control ←", data.slice(0, 400));
+  if (!waiting.quiet) reportConnectionIssue("in", "control ←", data.slice(0, 400));
   if (waiting.resolve) waiting.resolve(msg.result);
 }
 
@@ -679,7 +867,7 @@ async function identify() {
       banner(`当前页面不是由机器人提供，无法确认 API 版本是否匹配。`);
     }
   } catch (e) {
-    log("bad", "!! hello failed:", e.message || JSON.stringify(e));
+    reportConnectionIssue("bad", "!! hello failed:", e.message || JSON.stringify(e));
   }
 
   try {
@@ -687,7 +875,7 @@ async function identify() {
     if (info.name) $("robot").textContent = info.name;
     $("robot").title = info.serial ? `序列号 ${info.serial}` : "本设备无序列号";
   } catch (e) {
-    log("bad", "!! system.info failed:", e.message || JSON.stringify(e));
+    reportConnectionIssue("bad", "!! system.info failed:", e.message || JSON.stringify(e));
   }
 }
 
@@ -706,20 +894,24 @@ function startTelemetry() {
   // **Asked, not waited for.** The robot also pushes this when the channel appears, which races
   // this page's datachannel and loses — the picture then stays sideways with nothing in the log to
   // say why. Asking once the channel is open cannot arrive too early.
-  refreshVideoInfo();
-  cameraTimer = setInterval(refreshVideoInfo, 500);
+  if (videoEnabled) {
+    refreshVideoInfo();
+    cameraTimer = setInterval(refreshVideoInfo, 500);
+  }
   // The browser is an operator overview, not a controller. Two updates per second keep motor state
   // responsive while JSON/WebRTC/UI work stays well below the 50 Hz real-time loop.
   subscribeRobotState();
   poll();
   healthTimer = setInterval(poll, 2000);
-  statsTimer = setInterval(readStats, 1000);
+  if (videoEnabled) statsTimer = setInterval(readStats, 1000);
 }
 
 function stopTelemetry() {
   clearInterval(healthTimer); healthTimer = null;
   clearInterval(statsTimer); statsTimer = null;
   clearInterval(cameraTimer); cameraTimer = null;
+  clearTimeout(httpStateTimer); httpStateTimer = null;
+  httpStatePending = false;
   // Rejected rather than dropped: a promise that is merely forgotten leaves its awaiting caller
   // hanging for the life of the page, which is how a reconnect ends up with two of everything.
   for (const [id, waiting] of inflight) {
@@ -732,6 +924,9 @@ function stopTelemetry() {
   pendingPostureEvent = null;
   pendingSkillEvent = null;
   $("control-live").textContent = "实时状态：连接已断开，状态未知";
+  $("control-status").innerHTML = "<b>当前状态：</b>连接已断开，状态未知";
+  $("action-status").innerHTML = "<b>动作状态：</b>当前无动作执行";
+  $("sound-status").innerHTML = "<b>声音状态：</b>当前无声音执行";
 }
 
 // `robot.health` and `robot.mode` are calls rather than stream fields, and neither is on the frame:
@@ -849,12 +1044,43 @@ function confirmOperatorEvent(state) {
   }
 }
 
+function renderOperatorStatus(state) {
+  const controlLabels = {
+    relaxed: "当前处于放松状态",
+    initializing: "当前处于初始化",
+    preparing_policy: "当前正在准备策略",
+    policy_on: "当前处于策略开启",
+    policy_off: "当前处于策略关闭",
+    waiting_policy: "策略已请求开启，正在等待硬件和 IMU 就绪",
+    experiment: "当前由电机实验占用",
+    powered_off: "当前正在关机或已关机",
+  };
+  const inferredControl = state.policy && state.policy !== "held"
+    ? "当前处于策略开启" : state.home_position_reached
+      ? "当前处于策略关闭" : "当前处于未初始化或放松状态";
+  $("control-status").innerHTML = `<b>当前状态：</b>${controlLabels[state.control_state] || inferredControl}`;
+
+  const actionLabels = {
+    sit: "当前正在执行坐下", rise: "当前正在执行站立",
+    ground_pick: "当前正在执行拾取地面物体", kick_left: "当前正在执行左脚踢球",
+    kick_right: "当前正在执行右脚踢球", roulade: "当前正在执行翻滚",
+  };
+  $("action-status").innerHTML = `<b>动作状态：</b>${actionLabels[state.policy] || "当前无动作执行"}`;
+  const soundLabels = {
+    chirp: "当前正在播放啾啾", greet: "当前正在播放问候", inquire: "当前正在播放询问",
+    alarm: "当前正在播放警报", peck: "当前正在播放啄击声", coo: "当前正在播放咕咕声",
+    wheee: "当前正在播放滑行声", theremin: "当前正在演奏感应琴", chorale: "当前正在合唱",
+  };
+  $("sound-status").innerHTML = `<b>声音状态：</b>${soundLabels[state.sound_state] || "当前无声音执行"}`;
+}
+
 function onState(state) {
   if (!state) return;
   postureState = { state, received: performance.now() };
   renderControlState();
   observeOperatorEvent(state);
   confirmOperatorEvent(state);
+  renderOperatorStatus(state);
   $("t-policy").textContent = state.policy || "–";
   const loop = state.loop || {};
   $("t-loop").textContent = `实际 ${(loop.hz || 0).toFixed(2)} Hz · 目标 50.00 Hz · ${loop.ticks || 0} ticks · ${loop.missed || 0} missed`;
@@ -929,7 +1155,9 @@ let lastStats = null;
 
 async function readStats() {
   if (!pc) return;
-  const report = await pc.getStats();
+  const statsPeer = pc;
+  const report = await statsPeer.getStats();
+  if (!videoEnabled || pc !== statsPeer) return;
   let inbound = null, pair = null;
   report.forEach((s) => {
     if (s.type === "inbound-rtp" && s.kind === "video") inbound = s;
@@ -1133,7 +1361,9 @@ let lastVideoInfo = "";
 
 function refreshVideoInfo() {
   if (!open()) return;
-  call("media.video", {}, true).then(onVideoInfo).catch(() => {});
+  call("media.video", {}, true)
+    .then(info => { if (videoEnabled) onVideoInfo(info); })
+    .catch(() => {});
 }
 
 function onVideoInfo({ width, height, rotate, camera_state }) {
@@ -1143,7 +1373,7 @@ function onVideoInfo({ width, height, rotate, camera_state }) {
   const cameraState = camera_state || "connected";
   const signature = `${width}x${height}/${mountRotation}/${cameraState}`;
   if (signature !== lastVideoInfo) {
-    log("dim", `video ${width}x${height}, camera ${cameraState}, mounted ${mountRotation}° off upright`);
+    reportConnectionIssue("dim", `video ${width}x${height}, camera ${cameraState}, mounted ${mountRotation}° off upright`);
     lastVideoInfo = signature;
   }
 
@@ -1318,13 +1548,13 @@ async function refreshCalibration(render = true, quiet = false) {
       if (!render) calibrationFeedback("已更新设备保存的标定设置。");
     }
     const error = status.error || status.home_error;
-    if (error) log("bad", "!! 标定状态：", error);
+    if (error) reportConnectionIssue("bad", "!! 标定状态：", error);
     if (!calibrationConflict && (render || error)) calibrationFeedback(error
       || (calibrationStatus.synced ? "已读取保存的设置，限位已同步到 STM32。" : "设置已读取，等待 STM32 限位同步。"),
       Boolean(error));
   } catch (error) {
     calibrationStatus = null;
-    log("bad", "!! 标定读取失败：", error.message || JSON.stringify(error));
+    reportConnectionIssue("bad", "!! 标定读取失败：", error.message || JSON.stringify(error));
     calibrationFeedback(error.message || "读取标定失败", true);
   } finally {
     calibrationRefreshing = false;
@@ -1356,7 +1586,7 @@ async function submitCalibration(params) {
     }
     throw new Error("未确认完成，请重新读取设置核对；不要自动重复零位写入。");
   } catch (error) {
-    log("bad", "!! 标定失败：", error.message || JSON.stringify(error));
+    reportConnectionIssue("bad", "!! 标定失败：", error.message || JSON.stringify(error));
     calibrationFeedback(error.message || "标定失败", true);
   }
   finally { calibrationBusy = false; calibrationControls(); }
@@ -1448,7 +1678,18 @@ function subscribeRobotState() {
   lastSubscribeAttempt = performance.now();
   // Ten hertz catches the shortest skill (a 500 ms kick) reliably enough to confirm it
   // entered its policy instead of merely reporting that the request was queued.
-  call("robot.subscribe", { hz: 10 }, true).catch(() => {});
+  if (httpControl) {
+    if (httpStatePending) return;
+    httpStatePending = true;
+    call("robot.subscribe", { hz: 10 }, true)
+      .catch(() => {})
+      .finally(() => {
+        httpStatePending = false;
+        if (httpControl) httpStateTimer = setTimeout(subscribeRobotState, 100);
+      });
+  } else {
+    call("robot.subscribe", { hz: 10 }, true).catch(() => {});
+  }
 }
 
 function showControlFeedback(text, kind = "") {
@@ -1604,6 +1845,41 @@ $("do").onclick = async () => {
 // stop arriving, so a page that is closed mid-ride does not leave the robot going "wheee" forever.
 let riding = null;
 let rideHeld = false;
+// A mixer write is discrete: preview while dragging, commit on release/keyboard change.
+let volumeBusy = false;
+let confirmedVolume = null;
+async function refreshVolume(percent) {
+  if (volumeBusy) return;
+  volumeBusy = true;
+  const slider = $("speaker-volume");
+  slider.disabled = true;
+  $("volume-refresh").disabled = true;
+  $("volume-feedback").textContent = percent === undefined ? "正在读取…" : "正在设置…";
+  try {
+    const result = await call("robot.volume", percent === undefined ? {} : { percent });
+    if (!Number.isInteger(result.percent) || result.percent < 0 || result.percent > 100) throw new Error("设备返回了无效音量");
+    confirmedVolume = result.percent;
+    slider.value = result.percent;
+    $("speaker-volume-value").textContent = `${result.percent}%`;
+    $("volume-feedback").textContent = result.percent === 0 ? "已静音" : "设备音量已同步";
+  } catch (error) {
+    if (confirmedVolume !== null) {
+      slider.value = confirmedVolume;
+      $("speaker-volume-value").textContent = `${confirmedVolume}%`;
+    }
+    $("volume-feedback").textContent = `音量操作失败：${error.message || error}`;
+  } finally {
+    volumeBusy = false;
+    slider.disabled = !open() || confirmedVolume === null;
+    $("volume-refresh").disabled = false;
+  }
+}
+$("speaker-volume").addEventListener("input", () => {
+  $("speaker-volume-value").textContent = `${$("speaker-volume").value}%`;
+});
+$("speaker-volume").addEventListener("change", () => refreshVolume(Number($("speaker-volume").value)));
+$("volume-refresh").addEventListener("click", () => refreshVolume());
+
 let soundSerial = 0;
 function showSoundFeedback(text, kind = "") {
   $("sound-feedback").textContent = text;
@@ -1653,17 +1929,55 @@ $("play").addEventListener("pointerup", endRide);
 $("play").addEventListener("pointercancel", endRide);
 addEventListener("blur", endRide);
 
-// ── the raw box ────────────────────────────────────────────────────────────────
-//
-// A whole line rather than a method and params, because what it is for is sending something this
-// page has no button for — including something malformed, to see what the robot says about it.
-
-$("send").onclick = () => {
-  if (!open()) { log("bad", "!! 控制通道尚未连接"); return; }
-  const line = $("raw").value;
-  log("out", "control →", line);
-  control.send(line);
-};
+// Experiment discovery and Journal downloads do not require a video connection.
+$("experiment-address").textContent = `${location.origin}/api/motor-experiment/tasks`;
+let experimentStatusBusy = false;
+async function refreshExperimentStatus(showDetails = false) {
+  if (document.hidden && !showDetails) return;
+  if (experimentStatusBusy) return;
+  experimentStatusBusy = true;
+  const button = $("experiment-capabilities"), status = $("experiment-status");
+  button.disabled = true;
+  if (showDetails) status.textContent = "正在查询…";
+  try {
+    const response = await fetch("/api/motor-experiment/capabilities", {cache: "no-store"});
+    const value = await response.json();
+    if (!response.ok || value.error) throw new Error(value.error?.message || value.error || "查询失败");
+    const ownership = $("experiment-ownership");
+    ownership.textContent = value.active ? "当前已占用" : "当前未占用";
+    ownership.className = value.active ? "warn" : "in";
+    const phase = value.stopping ? "正在安全停止" : value.running ? "正在运行" : "正在准备";
+    status.textContent = value.active
+      ? `当前已被一个实验任务占用（${phase}，任务 ${value.task_id || "未知"}）；其他脚本不能启动或停止该任务。`
+      : value.ready
+        ? "当前未占用；设备已放松，可启动一个已校验任务。"
+        : "当前未占用；请先放松并检查硬件状态，之后才能启动任务。";
+    if (showDetails) {
+      $("experiment-capabilities-result").textContent = JSON.stringify(value, null, 2);
+      $("experiment-capabilities-result").hidden = false;
+    }
+  } catch (error) {
+    $("experiment-ownership").textContent = "状态未知";
+    $("experiment-ownership").className = "bad";
+    status.textContent = `查询失败：${error.message || error}`;
+  } finally {
+    experimentStatusBusy = false;
+    button.disabled = false;
+  }
+}
+$("experiment-capabilities").onclick = () => refreshExperimentStatus(true);
+$("experiment-panel").addEventListener("toggle", () => {
+  if ($("experiment-panel").open) refreshExperimentStatus();
+});
+refreshExperimentStatus();
+setInterval(refreshExperimentStatus, 2000);
+function updateJournalDownload() {
+  const query = new URLSearchParams({unit: $("journal-unit").value, format: $("journal-format").value});
+  if ($("journal-range").value !== "all") query.set("since", String(Math.floor(Date.now()/1000)-Number($("journal-range").value)));
+  $("journal-download").href = `/api/logs?${query}`;
+}
+for (const id of ["journal-range","journal-unit","journal-format"]) $(id).addEventListener("change", updateJournalDownload);
+$("journal-download").addEventListener("click", updateJournalDownload);
 
 // The server commits in its bus-owning loop; UI locks are only an operator hint.
 let modelStatus = null, modelBusy = false, modelPolling = false;
@@ -1675,13 +1989,16 @@ function modelEditable() { return open() && modelStatus?.editable === true && Da
 function modelControls() {
   const safe = modelEditable();
   $("model-import").disabled = !safe || modelLocked() || !$("model-file").files.length || !$("model-slot").value;
-  for (const id of ["model-slot","model-file","model-activation","model-epsilon"]) $(id).disabled = modelLocked();
+  for (const id of ["model-slot","model-file","model-activation","model-epsilon","model-kp","model-kd","model-scale"]) $(id).disabled = modelLocked();
   for (const button of $("model-history").querySelectorAll("button")) button.disabled = !safe || modelLocked();
   $("model-safety").textContent = safe ? "已确认放松 · 全部配置电机已失能，可以替换/回滚" : "替换已锁定 · 请先放松并等待全部配置电机失能反馈";
 }
+function modelControlText(control) {
+  return control ? `Kp ${control.kp} · Kd ${control.kd} · 动作缩放 ${control.action_scale}` : "沿用程序默认控制参数";
+}
 function renderModelHistory() {
   const slot = modelStatus?.slots.find(s => s.id === $("model-slot").value);
-  $("model-current").textContent = slot ? `当前：${slot.active?.name || slot.file}` : "没有可替换的已配置策略";
+  $("model-current").textContent = slot ? `当前：${slot.active?.name || slot.file} · ${modelControlText(slot.active?.control)}` : "没有可替换的已配置策略";
   const historyKey = JSON.stringify(slot || null);
   if (historyKey === modelHistoryKey) { modelControls(); return; }
   modelHistoryKey = historyKey;
@@ -1691,7 +2008,7 @@ function renderModelHistory() {
     const row = document.createElement("div"); row.className = "row";
     const label = document.createElement("span");
     const timestamp = Number(version.id.split("-")[0]);
-    label.textContent = `${version.name} · ${new Date(timestamp).toLocaleString()}`;
+    label.textContent = `${version.name} · ${new Date(timestamp).toLocaleString()} · ${modelControlText(version.control)}`;
     const button = document.createElement("button"); button.textContent = "回滚";
     button.onclick = () => runModelRequest({action:"rollback",slot:slot.id,version:version.id});
     row.append(label,button); $("model-history").append(row);
@@ -1733,9 +2050,14 @@ $("model-import").onclick = async () => {
   const file = $("model-file").files[0];
   if (!file || !modelEditable() || modelLocked()) return;
   if (!/\.(pt|pth|onnx)$/i.test(file.name) || !file.size || file.size>64*1024*1024) { $("model-feedback").textContent="请选择不超过 64 MiB 的 .pt/.pth/.onnx 文件"; return; }
+  const values = ["model-kp","model-kd","model-scale"].map(id => $(id).value.trim());
+  const [kp,kd,action_scale] = values.map(Number);
+  if (values.some(v=>!v) || ![kp,kd,action_scale].every(Number.isFinite) || kp<0 || kp>500 || kd<0 || kd>5 || action_scale<=0 || action_scale>5) {
+    $("model-feedback").textContent="请填写有效参数：Kp 0～500，Kd 0～5，动作缩放大于 0 且不超过 5"; return;
+  }
   modelClientError=""; modelBusy=true; modelControls();
   try {
-    const upload = await call("robot.models",{action:"begin",slot:$("model-slot").value,filename:file.name,size:file.size,activation:$("model-activation").value,normalizer_epsilon:Number($("model-epsilon").value)},true);
+    const upload = await call("robot.models",{action:"begin",slot:$("model-slot").value,filename:file.name,size:file.size,activation:$("model-activation").value,normalizer_epsilon:Number($("model-epsilon").value),control:{kp,kd,action_scale}},true);
     for(let offset=0;offset<file.size;offset+=8192) {
       const data = new Uint8Array(await file.slice(offset,offset+8192).arrayBuffer());
       const hex = Array.from(data,b=>b.toString(16).padStart(2,"0")).join("");

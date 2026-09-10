@@ -9,7 +9,7 @@ use std::time::{Duration, Instant};
 
 use crate::imu::ImuData;
 use crate::io::{MotorPositionLimit, ImuStale, IoError, JointTargets, Result, RobotIo, Sensors, SlowSensors};
-use crate::model::NUM_JOINTS;
+use crate::model::{JOINT_NAMES, NUM_JOINTS};
 
 const MAGIC: u16 = 0x4D47;
 const VERSION: u8 = 4;
@@ -39,6 +39,7 @@ const CONFIGURED_MOTOR_IDS: [u8; 5] = [0x02, 0x01, 0x0D, 0x0E, 0x0F];
 /// Compatible STM32 firmware advertises sparse-command and enable-list support.
 /// Older v4 firmware remains read-only even though motor control is now permitted.
 const CONTROL_CAPABILITIES: u16 = 0x0003;
+const FAULT_DIAGNOSTICS_CAPABILITY: u16 = 0x0010;
 pub const STM32_MOTOR_IDS: [u8; STM32_MOTOR_COUNT] = [
     0x02, 0, 0, 0, 0, 0x01, 0, 0, 0, 0x0D, 0x0E, 0x0F, 0, 0,
 ];
@@ -288,6 +289,7 @@ impl DynamixelIo {
 
     fn parse_and_observe_state(&mut self, payload: &[u8]) -> Result<Sensors> {
         let parsed = parse_state(payload)?;
+        log_gateway_fault_change(self.gateway_faults, &parsed);
         self.stale_imu.observe(parsed.imu_sequence);
         self.imu_sensor_ok = parsed.imu_flags & IMU_SENSOR_OK != 0;
         self.imu_ready = parsed.imu_flags & IMU_CALIBRATED != 0;
@@ -324,6 +326,19 @@ impl DynamixelIo {
 impl RobotIo for DynamixelIo {
     fn read(&mut self) -> Result<Sensors> {
         self.read_state()
+    }
+    fn write_motor_commands(&mut self, commands: &[duck_ipc_proto::MotorCommand]) -> Result<u16> {
+        if let Some(reason) = self.motor_control_error() {
+            return Err(IoError::Bus(reason.into()));
+        }
+        if self.motor_torque_enabled() != Some(true) {
+            return Err(IoError::Bus("experiment motors are not enabled".into()));
+        }
+        self.command_seq = self.command_seq.wrapping_add(1);
+        let payload = encode_motor_commands(commands, self.command_seq, self.tick_us())?;
+        let seq = self.next_seq();
+        self.write_all(&pack(MSG_COMMAND, seq, self.tick_us(), 0, &payload))?;
+        Ok(self.command_seq)
     }
     fn write(&mut self, targets: &JointTargets) -> Result<()> { self.write_targets(targets) }
     fn set_gain(&mut self, kp: u16) -> Result<()> { self.kp_centi = kp.saturating_mul(100); Ok(()) }
@@ -408,6 +423,9 @@ fn motor_control_problem(capabilities: u16, faults: u32,
     // HOST_COMMAND_STALE is a recoverable stop, cleared by an explicit enable.
     if faults & 0x20 != 0 { return Some("STM32 CAN 发送失败或队列已满，电机控制已停止"); }
     if faults & 0x100 != 0 { return Some("STM32 IMU 保护已触发，全电机控制已停止"); }
+    if faults & 0x02 != 0 && faults & !0x82 == 0 {
+        return Some("STM32 电机反馈超时，控制已停止");
+    }
     if faults & !0x80 != 0 { return Some("STM32 电机网关报告故障，请检查故障状态"); }
     for (slot, &joint) in STM32_TO_CONTROL_JOINT.iter().enumerate() {
         let flags = sensors.motor_flags[joint];
@@ -446,8 +464,57 @@ fn configured_motors_enabled(sensors: &Sensors) -> bool {
         STM32_MOTOR_IDS[slot] == 0 || sensors.motor_flags[joint] & 0x07 == 0x07)
 }
 
+/// Bounds are the deployed STM32 command guards, not the wider CAN encoding range.
+pub fn motor_command_bounds(id: u8) -> Option<(f64, f64)> {
+    match id { 1 | 2 => Some((15.708, 10.0)), 13..=15 => Some((10.0, 28.0)), _ => None }
+}
+
+pub fn validate_motor_commands(commands: &[duck_ipc_proto::MotorCommand], limits: &[MotorPositionLimit]) -> Result<()> {
+    if commands.is_empty() || commands.len() > CONFIGURED_MOTOR_IDS.len() {
+        return Err(IoError::Bus("invalid motor count".into()));
+    }
+    let mut seen = Vec::new();
+    for c in commands {
+        let (vmax, tmax) = motor_command_bounds(c.motor_id).ok_or_else(|| IoError::Bus("unknown motor ID".into()))?;
+        let limit = limits.iter().find(|l| l.motor_id == c.motor_id).ok_or_else(|| IoError::Bus("missing calibrated limit".into()))?;
+        if seen.contains(&c.motor_id) || [c.p,c.v,c.tau,c.kp,c.kd].iter().any(|x| !x.is_finite())
+            || c.p < limit.min_mrad as f64 / 1000.0 || c.p > limit.max_mrad as f64 / 1000.0
+            || c.v.abs() > vmax || c.tau.abs() > tmax || !(0.0..=500.0).contains(&c.kp) || !(0.0..=5.0).contains(&c.kd) {
+            return Err(IoError::Bus(format!("motor {} has duplicate ID or out-of-range parameters", c.motor_id)));
+        }
+        seen.push(c.motor_id);
+    }
+    Ok(())
+}
+
+fn encode_motor_commands(commands: &[duck_ipc_proto::MotorCommand], sequence: u16, tick_us: u32) -> Result<Vec<u8>> {
+    let limits: Vec<_> = CONFIGURED_MOTOR_IDS.iter().map(|&motor_id| MotorPositionLimit { motor_id, min_mrad: -12500, max_mrad: 12500 }).collect();
+    validate_motor_commands(commands, &limits)?;
+    if commands.len() != CONFIGURED_MOTOR_IDS.len() { return Err(IoError::Bus("wire frame must contain every configured motor".into())); }
+    let mut p = vec![0; COMMAND_PREFIX_LEN + STM32_MOTOR_COUNT * MOTOR_COMMAND_LEN];
+    put_u16(&mut p[0..2], sequence); p[2] = MODE_MIT; p[3] = STM32_MOTOR_COUNT as u8;
+    put_u32(&mut p[4..8], tick_us);
+    for c in commands {
+        let slot = STM32_MOTOR_IDS.iter().position(|&id| id == c.motor_id).unwrap();
+        let b = COMMAND_PREFIX_LEN + slot * MOTOR_COMMAND_LEN;
+        put_i32(&mut p[b..b+4], (c.p*1000.0).round() as i32);
+        put_i32(&mut p[b+4..b+8], (c.v*1000.0).round() as i32);
+        put_i32(&mut p[b+8..b+12], (c.tau*1000.0).round() as i32);
+        put_u16(&mut p[b+12..b+14], (c.kp*100.0).round() as u16);
+        put_u16(&mut p[b+14..b+16], (c.kd*1000.0).round() as u16);
+        put_u16(&mut p[b+16..b+18], 1);
+    }
+    Ok(p)
+}
+
 fn encode_targets(targets: &JointTargets, kp_centi: u16, command_seq: u16,
                   tick_us: u32) -> Result<Vec<u8>> {
+    let (kp_centi, kd_milli) = if let Some([kp, kd]) = targets.pd {
+        if !kp.is_finite() || !kd.is_finite() || !(0.0..=500.0).contains(&kp) || !(0.0..=5.0).contains(&kd) {
+            return Err(IoError::Bus("拒绝发送无效的策略 Kp/Kd".into()));
+        }
+        ((kp * 100.0).round() as u16, (kd * 1000.0).round() as u16)
+    } else { (kp_centi, 4_000) };
     let mut p = vec![0u8; COMMAND_PREFIX_LEN + STM32_MOTOR_COUNT * MOTOR_COMMAND_LEN];
     put_u16(&mut p[0..2], command_seq);
     p[2] = MODE_MIT;
@@ -463,7 +530,7 @@ fn encode_targets(targets: &JointTargets, kp_centi: u16, command_seq: u16,
         let pos = (position * 1000.0).round().clamp(i32::MIN as f64, i32::MAX as f64) as i32;
         put_i32(&mut p[b..b + 4], pos);
         put_u16(&mut p[b + 12..b + 14], kp_centi);
-        put_u16(&mut p[b + 14..b + 16], 4_000);
+        put_u16(&mut p[b + 14..b + 16], kd_milli);
         put_u16(&mut p[b + 16..b + 18], 1);
     }
     Ok(p)
@@ -473,9 +540,61 @@ struct ParsedState {
     sensors: Sensors,
     control_capabilities: u16,
     gateway_faults: u32,
+    fault_motor: Option<FaultMotor>,
     imu_sequence: u32,
     imu_flags: u8,
     temps_c: [f64; NUM_JOINTS],
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct FaultMotor {
+    id: u8,
+    route: u8,
+    joint: &'static str,
+}
+
+fn gateway_fault_names(faults: u32) -> String {
+    const NAMES: [&str; 9] = [
+        "enable_failed", "feedback_timeout", "mos_over_temperature",
+        "rotor_over_temperature", "motor_hardware_fault", "can_tx_drop",
+        "timeout_config_failed", "host_command_timeout", "imu_invalid",
+    ];
+    let mut names: Vec<&str> = NAMES.iter().enumerate()
+        .filter_map(|(bit, name)| (faults & (1 << bit) != 0).then_some(*name)).collect();
+    if faults & !0x1ff != 0 { names.push("unknown"); }
+    names.join(",")
+}
+
+// Journal is the durable history. Log transitions once, not every 50 Hz frame;
+// clearing a current fault never removes the entry describing its occurrence.
+fn log_gateway_fault_change(previous: u32, state: &ParsedState) {
+    let current = state.gateway_faults;
+    if current == previous { return; }
+    let raised = current & !previous;
+    let cleared = previous & !current;
+    if raised != 0 {
+        tracing::warn!(
+            fault_flags = format_args!("0x{current:08x}"),
+            raised = format_args!("0x{raised:08x}"),
+            reason = %gateway_fault_names(raised),
+            stm32_tick_ms = state.sensors.gateway_tick_ms,
+            last_fault_motor = ?state.fault_motor,
+            motor_flags = ?state.sensors.motor_flags,
+            feedback_age_ms = ?state.sensors.motor_feedback_age_ms,
+            "STM32 gateway fault asserted"
+        );
+    }
+    if cleared != 0 {
+        tracing::info!(
+            fault_flags = format_args!("0x{current:08x}"),
+            cleared = format_args!("0x{cleared:08x}"),
+            reason = %gateway_fault_names(cleared),
+            stm32_tick_ms = state.sensors.gateway_tick_ms,
+            last_fault_motor = ?state.fault_motor,
+            motors_disabled = configured_motors_disabled(&state.sensors),
+            "STM32 gateway fault cleared; this does not request motor enable"
+        );
+    }
 }
 
 fn parse_state(payload: &[u8]) -> Result<ParsedState> {
@@ -497,6 +616,8 @@ fn parse_state(payload: &[u8]) -> Result<ParsedState> {
     let mut out = Sensors::default();
     let mut temps_c = [0.0; NUM_JOINTS];
     let stm32_tick_ms = get_u32(&payload[4..8]);
+    out.gateway_tick_ms = stm32_tick_ms;
+    out.ack_command_seq = get_u16(&payload[2..4]);
     for axis in 0..3 {
         out.imu.gyro[axis] = get_f32(&payload[16 + axis * 4..20 + axis * 4]) as f64;
         out.imu.gravity[axis] = get_f32(&payload[28 + axis * 4..32 + axis * 4]) as f64;
@@ -534,10 +655,21 @@ fn parse_state(payload: &[u8]) -> Result<ParsedState> {
         };
         temps_c[joint] = temperature_c;
     }
+    let control_capabilities = get_u16(&payload[14..16]);
+    let route = payload[62] as usize;
+    // Old v4 firmware left these bytes reserved. Do not invent a fault location
+    // from zeros or malformed diagnostics, and never use diagnostics to enable.
+    let fault_motor = if control_capabilities & FAULT_DIAGNOSTICS_CAPABILITY != 0
+        && route < STM32_MOTOR_COUNT && payload[61] != 0
+        && STM32_MOTOR_IDS[route] == payload[61] {
+        Some(FaultMotor { id: payload[61], route: route as u8,
+            joint: JOINT_NAMES[STM32_TO_CONTROL_JOINT[route]] })
+    } else { None };
     Ok(ParsedState {
         sensors: out,
-        control_capabilities: get_u16(&payload[14..16]),
+        control_capabilities,
         gateway_faults: get_u32(&payload[8..12]),
+        fault_motor,
         imu_sequence: get_u32(&payload[56..60]),
         imu_flags: payload[60],
         temps_c,
@@ -623,6 +755,76 @@ fn put_f32(p: &mut [u8], v: f32) { p[..4].copy_from_slice(&v.to_le_bytes()); }
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn fault_diagnostics_are_optional_and_validate_the_motor_route() {
+        let mut payload = test_state_payload(false);
+        payload[61] = 1;
+        payload[62] = 5;
+        assert_eq!(parse_state(&payload).unwrap().fault_motor, None, "old firmware has reserved bytes");
+        put_u16(&mut payload[14..16], 0x1f);
+        assert_eq!(parse_state(&payload).unwrap().fault_motor,
+            Some(FaultMotor { id: 1, route: 5, joint: "neck_pitch" }));
+        for (id, route) in [(1, 255), (2, 5), (0, 1), (1, 14)] {
+            payload[61] = id;
+            payload[62] = route;
+            assert_eq!(parse_state(&payload).unwrap().fault_motor, None);
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn feedback_fault_recovery_is_logged_once_and_never_sends_enable() {
+        use serialport::SerialPort;
+        use std::sync::{Arc, Mutex};
+        use tracing::{Event, Metadata, Subscriber, field::{Field, Visit}, span::{Attributes, Id, Record}};
+        #[derive(Clone, Default)]
+        struct Capture(Arc<Mutex<Vec<String>>>);
+        struct Fields(String);
+        impl Visit for Fields {
+            fn record_debug(&mut self, field: &Field, value: &dyn std::fmt::Debug) {
+                use std::fmt::Write;
+                write!(&mut self.0, " {}={value:?}", field.name()).unwrap();
+            }
+        }
+        impl Subscriber for Capture {
+            fn enabled(&self, _: &Metadata<'_>) -> bool { true }
+            fn new_span(&self, _: &Attributes<'_>) -> Id { Id::from_u64(1) }
+            fn record(&self, _: &Id, _: &Record<'_>) {}
+            fn record_follows_from(&self, _: &Id, _: &Id) {}
+            fn event(&self, event: &Event<'_>) {
+                let mut fields = Fields(String::new());
+                event.record(&mut fields);
+                self.0.lock().unwrap().push(fields.0);
+            }
+            fn enter(&self, _: &Id) {}
+            fn exit(&self, _: &Id) {}
+        }
+        let capture = Capture::default();
+        let (firmware, host) = serialport::TTYPort::pair().unwrap();
+        let mut io = DynamixelIo::from_port(Box::new(host));
+        let mut payload = test_state_payload(false);
+        put_u16(&mut payload[14..16], 0x1f);
+        payload[61] = 1;
+        payload[62] = 5;
+        tracing::subscriber::with_default(capture.clone(), || {
+            for (seq, fault) in [0, 2, 2, 2, 0, 0].into_iter().enumerate() {
+                put_u32(&mut payload[8..12], fault);
+                put_u32(&mut payload[56..60], seq as u32);
+                io.parse_and_observe_state(&payload).unwrap();
+                assert_eq!(io.motor_control_error().is_some(), fault != 0);
+                assert_eq!(io.motor_torque_enabled(), Some(false));
+                io.write_targets(&JointTargets::new([0.0; NUM_JOINTS])).unwrap();
+            }
+        });
+        assert_eq!(firmware.bytes_to_read().unwrap(), 0, "recovery must not send commands or enable");
+        let logs = capture.0.lock().unwrap();
+        assert_eq!(logs.len(), 2, "unchanged fault frames must not flood Journal: {logs:?}");
+        assert!(logs[0].contains("asserted") && logs[0].contains("0x00000002"));
+        assert!(logs[0].contains("feedback_timeout") && logs[0].contains("neck_pitch"));
+        assert!(logs[1].contains("cleared") && logs[1].contains("motors_disabled=true"));
+        assert!(logs[1].contains("neck_pitch"), "recovery retains the original fault motor");
+    }
 
     fn ready_motor_sample() -> Sensors {
         let mut sensors = Sensors::default();
@@ -898,5 +1100,47 @@ mod tests {
         assert!(rpy[0].abs() < 1e-12);
         assert!(rpy[1].abs() < 1e-12);
         assert!((rpy[2] - std::f64::consts::PI).abs() < 1e-12);
+    }
+}
+
+#[cfg(test)]
+mod experiment_wire_tests {
+    use super::*;
+    #[test]
+    fn batch_encodes_all_five_mit_fields_and_keeps_empty_slots_zero() {
+        let commands:Vec<_>=CONFIGURED_MOTOR_IDS.iter().map(|&motor_id|duck_ipc_proto::MotorCommand{motor_id,p:-0.5,v:1.25,tau:-2.5,kp:12.34,kd:0.567}).collect();
+        let p=encode_motor_commands(&commands,0xabcd,123456).unwrap();
+        assert_eq!(get_u16(&p[0..2]),0xabcd);assert_eq!(get_u32(&p[4..8]),123456);
+        for (slot,id) in STM32_MOTOR_IDS.iter().enumerate(){let b=8+slot*20;
+            if *id==0{assert!(p[b..b+20].iter().all(|x|*x==0));continue}
+            assert_eq!(get_i32(&p[b..b+4]),-500);assert_eq!(get_i32(&p[b+4..b+8]),1250);assert_eq!(get_i32(&p[b+8..b+12]),-2500);
+            assert_eq!(get_u16(&p[b+12..b+14]),1234);assert_eq!(get_u16(&p[b+14..b+16]),567);assert_eq!(get_u16(&p[b+16..b+18]),1);
+        }
+        assert!(encode_motor_commands(&commands[..1],1,0).is_err());
+    }
+}
+
+#[cfg(test)]
+mod policy_pd_tests {
+    use super::*;
+    #[test]
+    fn policy_pd_encodes_fractional_values_and_does_not_leak() {
+        let mut targets = JointTargets::new([0.0; crate::model::NUM_JOINTS]);
+        targets.pd = Some([60.25, 1.234]);
+        let payload = encode_targets(&targets, 20_000, 1, 0).unwrap();
+        for (slot, id) in STM32_MOTOR_IDS.iter().enumerate() {
+            let b = COMMAND_PREFIX_LEN + slot * MOTOR_COMMAND_LEN;
+            if *id == 0 { assert!(payload[b..b+MOTOR_COMMAND_LEN].iter().all(|v| *v==0)); }
+            else { assert_eq!(get_u16(&payload[b+12..b+14]), 6025); assert_eq!(get_u16(&payload[b+14..b+16]), 1234); }
+        }
+        targets.pd = None;
+        let payload = encode_targets(&targets, 16_000, 2, 0).unwrap();
+        let slot = STM32_MOTOR_IDS.iter().position(|id| *id != 0).unwrap();
+        let b = COMMAND_PREFIX_LEN + slot * MOTOR_COMMAND_LEN;
+        assert_eq!(get_u16(&payload[b+12..b+14]), 16_000);
+        assert_eq!(get_u16(&payload[b+14..b+16]), 4_000);
+        for pd in [[f64::NAN,4.0],[60.0,f64::INFINITY],[501.0,4.0],[60.0,5.01]] {
+            targets.pd=Some(pd); assert!(encode_targets(&targets,20_000,3,0).is_err());
+        }
     }
 }

@@ -19,6 +19,8 @@
 //! than hanging the caller.
 
 mod calibration;
+mod experiment;
+mod experiment_tasks;
 mod models;
 mod chorale;
 mod control;
@@ -26,6 +28,7 @@ mod intents;
 mod params;
 mod soc;
 mod sound;
+mod volume;
 mod theremin;
 
 use std::path::PathBuf;
@@ -339,6 +342,7 @@ impl PolicyNames {
 }
 
 struct RobotState {
+    experiment: experiment::Experiment,
     calibration: calibration::Calibration,
     models: Arc<models::Models>,
     /// Published by the sole bus owner after reading firmware and motor feedback.
@@ -423,6 +427,7 @@ struct RobotState {
     /// accepting it into silence. Read once at startup, like the policies: the postinstall
     /// renders the bank and restarts robotd, so a bank cannot appear under a running one.
     has_voice: bool,
+    volume: volume::Volume,
     /// Whether a theremin can be picked up: the params allow one, and the depth stream is
     /// actually delivering frames. Published by the loop rather than read once at startup,
     /// because unlike a voice bank the sensor comes and goes — `tofd` restarts, the ToF
@@ -460,6 +465,7 @@ struct RobotState {
 impl RobotState {
     fn new(params: &Params, force_unhealthy: bool, force_busy: bool) -> Self {
         Self {
+            experiment: experiment::Experiment::new(params.control.hz),
             calibration: calibration::Calibration::default(),
             models: Arc::new(models::Models::default()),
             motor_control_error: ArcSwapOption::empty(),
@@ -487,6 +493,7 @@ impl RobotState {
             chorale_tx: tokio::sync::broadcast::Sender::new(8),
             policy_error: ArcSwapOption::empty(),
             policies: ArcSwap::from_pointee(PolicyNames::of(&params.policy.resolved())),
+            volume: volume::Volume::new(params.audio.enabled, &params.audio.device),
             has_voice: params.audio.enabled && has_any_wav(&params.audio.bank),
             theremin_ready: AtomicBool::new(false),
             chorale_accepted: params.chorale.accept,
@@ -669,6 +676,9 @@ impl RobotState {
     }
 
     fn safe_to_restart(&self) -> proto::SafeToRestartResult {
+        if self.experiment.active() {
+            return proto::SafeToRestartResult { safe: false, reason: Some("motor experiment owns control or is stopping".into()) };
+        }
         if self.force_busy {
             return proto::SafeToRestartResult {
                 safe: false,
@@ -1218,7 +1228,11 @@ fn build_controller(
                     limp_fall,
                     "policy loaded"
                 );
-                Some(Controller::new(policy, tuning, skills))
+                {
+                    let mut controller = Controller::new(policy, tuning, skills);
+                    state.models.restore_controls(&mut controller);
+                    Some(controller)
+                }
             }
             Err(e) => {
                 tracing::error!(error = %e, "policy unavailable; holding the pose");
@@ -1277,6 +1291,7 @@ async fn control_loop<T: RobotIo>(
         return ControlLoopExit::Shutdown;
     };
 
+    state.experiment.stop("motor bus disconnected");
     state.calibration.disconnected();
 
     // Was the robot powered on already sitting? A seated duck has hips and knees folded
@@ -1508,6 +1523,7 @@ async fn control_loop<T: RobotIo>(
                         consecutive = n,
                         "STM32 USB link lost; entering safe state and reconnecting"
                     );
+                    state.experiment.stop("motor bus disconnected");
                     state.calibration.disconnected();
                     let _ = safety.set_torque(false);
                     return ControlLoopExit::BusLost;
@@ -1547,12 +1563,13 @@ async fn control_loop<T: RobotIo>(
         }
         state.fallen.store(safety.fallen(), Ordering::Relaxed);
 
+        if state.experiment.active() { intents.set_enabled(false); }
         state.models.tick(
-            bringup == Bringup::Limp && !intents.snapshot().enabled
+            !state.experiment.active() && bringup == Bringup::Limp && !intents.snapshot().enabled
                 && fresh.as_ref().is_some_and(duck_control::bus::configured_motors_disabled),
             controller.as_mut());
         state.calibration.tick(&mut safety, fresh.as_ref(),
-            bringup == Bringup::Limp && !intents.snapshot().enabled);
+            !state.experiment.active() && bringup == Bringup::Limp && !intents.snapshot().enabled);
         let home = state.calibration.config().home;
         let calibration_error = state.calibration.enable_error();
         if let Some(error) = &calibration_error {
@@ -1569,6 +1586,7 @@ async fn control_loop<T: RobotIo>(
         // still-set `enabled` flag wins — `request_relax` clears that flag, and reading the request
         // first means the order cannot invert.
         let power_request = intents.take_power_request();
+        let power_request = if state.experiment.active() && power_request == Some(intents::PowerRequest::Init) { None } else { power_request };
         let power_request = if power_request == Some(intents::PowerRequest::Init)
             && let Some(error) = &calibration_error {
             state.power_error.store(Some(Arc::new(error.clone())));
@@ -2141,6 +2159,7 @@ async fn control_loop<T: RobotIo>(
             1.0
         };
 
+        let mut policy_pd = None;
         let (mut targets, gain, moving, policy_label) = match (driving, sensors.as_ref()) {
             // The limp-fall sequence, before anything else — `driving` is false throughout,
             // so without this it would fall through to the hold branch and the robot would
@@ -2177,13 +2196,14 @@ async fn control_loop<T: RobotIo>(
             (true, Some(sensors)) => {
                 let controller = controller.as_mut().expect("driving implies a controller");
                 match controller.step(sensors, &command, snapshot.pose.active, dt, scale_mult) {
-                    Ok(step) => (
-                        step.targets,
+                    Ok(step) => {
+                        policy_pd = step.pd;
+                        (step.targets,
                         step.gain,
                         // A scripted move is motion whatever the twist says; so is walking.
                         step.busy || command.twist_magnitude() > 0.0,
                         step.label,
-                    ),
+                    )},
                     Err(e) => {
                         tracing::warn!(error = %e, "inference failed; holding");
                         (hold, policy_cfg.gain, false, "held")
@@ -2385,10 +2405,13 @@ async fn control_loop<T: RobotIo>(
                 duck_control::model::mouth_target(snapshot.mouth);
         }
 
-        match safety.apply(targets, hold, gain) {
+        let experiment_owned = state.experiment.tick(&mut safety, fresh.as_ref(), &state.calibration.config(),
+            bringup == Bringup::Limp && !intents.snapshot().enabled,
+            state.ticks.load(Ordering::Relaxed), state.started.elapsed().as_micros() as u64);
+        if !experiment_owned { match safety.apply_with_pd(targets, hold, gain, policy_pd) {
             Ok(applied) => limits.extend(applied.limits),
             Err(e) => tracing::warn!(error = %e, "bus write failed"),
-        }
+        }}
 
         // Only assemble a frame when somebody is subscribed. On a robot nobody usually is,
         // and this would otherwise be a per-tick allocation on the thread that should not
@@ -2396,6 +2419,22 @@ async fn control_loop<T: RobotIo>(
         if state.state_tx.receiver_count() > 0
             && let Some(sensors) = sensors.as_ref()
         {
+            let control_state = if experiment_owned {
+                "experiment"
+            } else if powered_off {
+                "powered_off"
+            } else if matches!(bringup, Bringup::Homing { .. }) {
+                if init_homing { "initializing" } else { "preparing_policy" }
+            } else if bringup == Bringup::Limp {
+                "relaxed"
+            } else if driving {
+                "policy_on"
+            } else if snapshot.enabled {
+                "waiting_policy"
+            } else {
+                "policy_off"
+            };
+            let sound_state = voice.as_mut().and_then(sound::Sound::current);
             let _ = state.state_tx.send(proto::RobotState {
                 t: state.started.elapsed().as_secs_f64(),
                 movement: proto::MoveState {
@@ -2405,6 +2444,8 @@ async fn control_loop<T: RobotIo>(
                 },
                 head: command.head,
                 policy: policy_label.to_owned(),
+                control_state: control_state.to_owned(),
+                sound_state,
                 control_source: intents.control_source(),
                 gamepad_connected: intents.gamepad_available(),
                 bluetooth_connected: intents.bluetooth_available(),
@@ -2827,6 +2868,41 @@ async fn handle(
             }
         };
 
+        if let Ok(proto::Call::RobotExperiment(proto::ExperimentParams::Task { request: params })) = request.as_call() {
+            let Some(id) = request.id.clone() else { continue };
+            if let proto::ExperimentTaskParams::Download { id: task_id } = params {
+                let state = Arc::clone(&state);
+                let opened = tokio::task::spawn_blocking(move || state.experiment.store()?.download(&task_id)).await;
+                match opened {
+                    Ok(Ok((file, meta))) => {
+                        write_line(&mut write_half, &proto::Response::ok(Some(id), &serde_json::json!({"id":meta.id,"bytes":meta.result_bytes,"sha256":meta.result_sha256}))).await?;
+                        let mut file = tokio::fs::File::from_std(file);
+                        let mut buffer = [0u8; 16384];
+                        loop {
+                            let n = tokio::io::AsyncReadExt::read(&mut file, &mut buffer).await?;
+                            if n == 0 { break; }
+                            tokio::time::timeout(Duration::from_secs(10), tokio::io::AsyncWriteExt::write_all(&mut write_half, &buffer[..n])).await
+                                .map_err(|_|std::io::Error::new(std::io::ErrorKind::TimedOut,"slow task download"))??;
+                        }
+                        return Ok(());
+                    }
+                    result => {
+                        let error = match result { Ok(Err(e))=>e, Err(e)=>e.to_string(), _=>unreachable!() };
+                        write_line(&mut write_half, &proto::Response::err(Some(id), proto::Error::new(proto::code::INVALID_PARAMS,error))).await?;
+                    }
+                }
+            } else {
+                let state = Arc::clone(&state);
+                let intents = Arc::clone(&intents);
+                let reply = tokio::task::spawn_blocking(move || state.experiment.task_request(&params, &state.calibration.config(), intents.snapshot().enabled)).await;
+                let response = match reply {
+                    Ok(Ok(value))=>proto::Response::ok(Some(id),&value),
+                    result=>{let e=match result {Ok(Err(e))=>e,Err(e)=>e.to_string(),_=>unreachable!()};proto::Response::err(Some(id),proto::Error::new(proto::code::INVALID_PARAMS,e))}
+                };
+                write_line(&mut write_half,&response).await?;
+            }
+            continue;
+        }
         let call = request.as_call();
 
         // Notifications get no reply, per the spec. Continuous intents arrive this way —
@@ -2856,6 +2932,14 @@ async fn handle(
             last_sent = None;
         }
 
+        if let Ok(proto::Call::RobotVolume(params)) = &call {
+            let response = match state.volume.request(params.percent).await {
+                Ok(value) => proto::Response::ok(Some(id), &value),
+                Err(error) => proto::Response::err(Some(id), error),
+            };
+            write_line(&mut write_half, &response).await?;
+            continue;
+        }
         let response = match call {
             Ok(call) => dispatch(&state, &intents, id, &call),
             Err(e) => proto::Response::err(Some(id), e),
@@ -2872,6 +2956,7 @@ async fn handle(
 /// client that sends `robot.move` with an `id` is not silently ignored — the spec permits
 /// either, and refusing one because of a framing choice would be a surprise.
 fn apply_intent(state: &RobotState, intents: &Intents, call: &proto::Call) -> bool {
+    if state.experiment.active() { return false; }
     match call {
         proto::Call::RobotMove(p) => {
             intents.apply_move(p);
@@ -2939,7 +3024,23 @@ fn dispatch(
     id: proto::Id,
     call: &proto::Call,
 ) -> proto::Response {
+    let stopping = matches!(call, proto::Call::RobotStop | proto::Call::RobotRelax | proto::Call::RobotShutdown)
+        || matches!(call, proto::Call::RobotEnable(p) if !p.on && !p.toggle);
+    if stopping && state.experiment.active() { state.experiment.stop("operator stop"); intents.request_relax(); }
+    if state.experiment.active() && !stopping && !matches!(call,
+        proto::Call::Hello(_) | proto::Call::RobotHealth | proto::Call::RobotSubscribe(_) | proto::Call::RobotExperiment(_)
+        | proto::Call::RobotSafeToRestart | proto::Call::RobotModelApi | proto::Call::RobotRemoteSessionActive
+        | proto::Call::RobotCalibration(proto::CalibrationParams::Get {}) | proto::Call::RobotModels(proto::ModelParams::List {})) {
+        return proto::Response::err(Some(id), proto::Error::new(proto::code::INVALID_REQUEST, "motor experiment owns control; release it first"));
+    }
     match call {
+        proto::Call::RobotExperiment(params) => {
+            match state.experiment.request(params, &state.calibration.config(), intents.snapshot().enabled) {
+                Ok(value) => proto::Response::ok(Some(id), &value),
+                Err(error) => proto::Response::err(Some(id), proto::Error::new(proto::code::INVALID_PARAMS, error)),
+            }
+        }
+
         proto::Call::RobotMove(_)
         | proto::Call::RobotHead(_)
         | proto::Call::RobotPose(_)
@@ -3348,6 +3449,30 @@ async fn shutdown() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn experiment_rejects_normal_motion_and_updates_but_operator_stop_is_available() {
+        let s = state();
+        let intents = Intents::new();
+        let mut safety = duck_control::safety::Safety::new(duck_control::io::FakeIo::new(), duck_control::safety::SafetyConfig::default());
+        let mut sensors = duck_control::io::Sensors::default();
+        for (&id, joint) in duck_control::bus::STM32_MOTOR_IDS.iter().zip(duck_control::bus::STM32_TO_CONTROL_JOINT) {
+            if id != 0 { sensors.motor_flags[joint] = 3; }
+        }
+        s.experiment.tick(&mut safety, Some(&sensors), &s.calibration.config(), true, 1, 20_000);
+        let _task_files = s.experiment.claim_for_test(&s.calibration.config());
+        assert!(!s.safe_to_restart().safe);
+        for call in [proto::Call::RobotInit, proto::Call::RobotEnable(proto::EnableParams { on: true, toggle: false }),
+                     proto::Call::RobotCalibration(proto::CalibrationParams::MarkZero { motor_id: 2 })] {
+            assert!(dispatch(&s, &intents, proto::Id::Number(2), &call).error.is_some());
+        }
+        assert!(intents.take_power_request().is_none());
+        let reply = dispatch(&s, &intents, proto::Id::Number(3), &proto::Call::RobotStop);
+        assert!(reply.error.is_none());
+        assert_eq!(intents.take_power_request(), Some(intents::PowerRequest::Relax));
+        s.experiment.tick(&mut safety, Some(&sensors), &s.calibration.config(), true, 2, 40_000);
+        assert!(s.safe_to_restart().safe);
+    }
 
     /// The limp-fall pose ramp: starts where the robot landed, ends at the standing pose,
     /// and reports itself finished rather than pinning at the end — the state machine reads
@@ -5097,6 +5222,86 @@ mod tests {
         assert!(!configured_motors_at_home(&sensors, &DEFAULT_POSITION));
         sensors.motor_flags[0] = 15;
         assert!(!configured_motors_at_home(&sensors, &DEFAULT_POSITION));
+    }
+
+    #[tokio::test]
+    async fn recovered_feedback_fault_requires_a_new_explicit_init() {
+        struct RecoveringIo {
+            inner: FakeIo,
+            fault: Arc<AtomicBool>,
+            enables: Arc<AtomicU64>,
+        }
+        impl RobotIo for RecoveringIo {
+            fn set_position_limits(&mut self, limits: &[duck_control::io::MotorPositionLimit]) -> duck_control::io::Result<()> {
+                self.inner.set_position_limits(limits)
+            }
+            fn read(&mut self) -> duck_control::io::Result<duck_control::Sensors> {
+                if self.fault.load(Ordering::Relaxed) { self.inner.torque = Some(false); }
+                let mut sensors = self.inner.read()?;
+                for (slot, joint) in duck_control::bus::STM32_TO_CONTROL_JOINT.iter().enumerate() {
+                    if duck_control::bus::STM32_MOTOR_IDS[slot] != 0 {
+                        sensors.motor_flags[*joint] = if self.inner.torque == Some(true) { 7 } else { 3 };
+                    }
+                }
+                Ok(sensors)
+            }
+            fn write(&mut self, targets: &duck_control::JointTargets) -> duck_control::io::Result<()> { self.inner.write(targets) }
+            fn set_gain(&mut self, kp: u16) -> duck_control::io::Result<()> { self.inner.set_gain(kp) }
+            fn slow_sensors(&mut self) -> duck_control::io::Result<duck_control::SlowSensors> { self.inner.slow_sensors() }
+            fn motor_control_error(&self) -> Option<&'static str> {
+                self.fault.load(Ordering::Relaxed).then_some("STM32 电机反馈超时，控制已停止")
+            }
+            fn motor_torque_enabled(&self) -> Option<bool> { Some(self.inner.torque == Some(true)) }
+            fn set_torque(&mut self, on: bool) -> duck_control::io::Result<()> {
+                if on { self.enables.fetch_add(1, Ordering::Relaxed); }
+                self.inner.set_torque(on)
+            }
+        }
+        let mut params = Params::default();
+        params.policy.enabled = false;
+        let state = Arc::new(RobotState::new(&params, false, false));
+        let intents = Arc::new(Intents::new());
+        let fault = Arc::new(AtomicBool::new(false));
+        let enables = Arc::new(AtomicU64::new(0));
+        let mut frames = state.state_tx.subscribe();
+        let mut io = RecoveringIo { inner: FakeIo::at(DEFAULT_POSITION), fault: fault.clone(), enables: enables.clone() };
+        let loop_state = state.clone();
+        let loop_intents = intents.clone();
+        intents.request_init();
+        let task = tokio::spawn(async move {
+            control_loop_probe_with(&mut io, loop_state, loop_intents, params, Duration::from_millis(2)).await;
+        });
+        let result = tokio::time::timeout(Duration::from_secs(3), async {
+            while enables.load(Ordering::Relaxed) != 1 { frames.recv().await.unwrap(); }
+            fault.store(true, Ordering::Relaxed);
+            loop {
+                let frame = frames.recv().await.unwrap();
+                if frame.motor_control_error.is_some() { break; }
+            }
+            let refused: proto::IntentResult = dispatch(&state, &intents, proto::Id::Number(1), &proto::Call::RobotInit)
+                .result_as().unwrap();
+            assert!(!refused.accepted);
+            fault.store(false, Ordering::Relaxed);
+            loop {
+                let frame = frames.recv().await.unwrap();
+                if frame.motor_control_error.is_none() {
+                    assert!(frame.motor_flags.iter().all(|flags| flags & 4 == 0));
+                    assert!(!frame.home_position_reached);
+                    break;
+                }
+            }
+            tokio::time::sleep(Duration::from_millis(100)).await;
+            assert_eq!(enables.load(Ordering::Relaxed), 1, "recovery must not retry the previous init");
+            assert!(!intents.enabled());
+            let accepted: proto::IntentResult = dispatch(&state, &intents, proto::Id::Number(2), &proto::Call::RobotInit)
+                .result_as().unwrap();
+            assert!(accepted.accepted, "a recovered fault must not block a fresh operator request");
+            while enables.load(Ordering::Relaxed) != 2 { frames.recv().await.unwrap(); }
+        }).await;
+        state.shutdown.store(true, Ordering::Relaxed);
+        task.await.unwrap();
+        result.expect("fault/recovery/init sequence did not complete");
+        assert_eq!(enables.load(Ordering::Relaxed), 2);
     }
 
     #[tokio::test]

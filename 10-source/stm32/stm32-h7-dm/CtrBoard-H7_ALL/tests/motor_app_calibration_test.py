@@ -42,17 +42,23 @@ unsigned char g_positionLimitsReady, g_motorAppEnabled, g_motorAppMode=MOTOR_APP
 unsigned char g_motorAppAdminOp, g_motorAppRegisterBusy, g_motorAppRequestedCount;
 unsigned char g_motorAppSuccessCount, g_motorAppFault, g_motorAppFailedMotorID;
 unsigned char g_motorAppFailedRouteIndex, g_motorAppFailedPhase, g_motorAppPhase, g_motorAppRouteIndex;
+unsigned char g_motorAppLastFaultMotorID, g_motorAppLastFaultRouteIndex;
+unsigned char g_motorAppFeedbackRecovering, g_motorAppPendingSpiCommandValid, g_motorAppCanPort1Cursor;
+uint32_t g_motorAppFeedbackRecoverySinceMs;
 unsigned long g_motorAppRequestedMask, g_motorAppSucceededMask, g_motorAppFaultFlags;
 unsigned g_motorAppProtectionStartTick, g_motorAppLastHostCommandTickMs;
 unsigned tx_failure, command_clears;
 imu_snapshot_t snapshot;
 struct Motor_t {
  float position=0, speed=0;
- unsigned state=0, online=1, mos=30, rotor=30, disabled=0, run=0;
+ unsigned state=0, online=1, mos=30, rotor=30, disabled=0, run=0, clears=0;
+ uint32_t last_rx=now_ms;
  float GetPosition(){return position;} float GetSpeed(){return speed;}
- unsigned GetState(){return state;} unsigned IsOnline(unsigned){return online;}
+ unsigned GetState(){return state;}
+ unsigned IsOnline(unsigned timeout){return online && uint32_t(now_ms-last_rx)<=timeout;}
  unsigned GetMosTemp(){return mos;} unsigned GetRotorTemp(){return rotor;}
  void SetRunFlag(unsigned f){run=f;} void SendDisableFrame(){disabled++;}
+ void ClearCommand(){clears++;}
 } motors[14];
 unsigned HAL_GetTick(){return now_ms;} unsigned xTaskGetTickCount(){return now_ms;}
 unsigned MotorApp_GetDefaultCount(){return 14;}
@@ -78,11 +84,15 @@ code = ''.join(function(signature) for signature in [
     'static unsigned char MotorApp_CalibrationAllowed(void)',
     'unsigned char MotorApp_SetPositionLimits(const dmusb_position_limit_t *limits, unsigned char count)',
     'static unsigned char MotorApp_ImuHealthy(void)',
+    'static void MotorApp_PrepareFallbackCommands(void)',
     'static void MotorApp_DisableAllRoutes(void)',
     'static void MotorApp_EnterFault(unsigned char RouteIndex, unsigned long FaultFlag)',
     'static unsigned char MotorApp_IsHardwareFaultState(unsigned char State)',
     'static void MotorApp_CheckRuntimeProtection(void)',
     'static void MotorApp_CheckHostWatchdog(void)',
+    'static void MotorApp_CheckFeedbackRecovery(void)',
+    'unsigned char MotorApp_GetLastFaultMotorID(void)',
+    'unsigned char MotorApp_GetLastFaultRouteIndex(void)',
 ])
 # Multiline signature, but extract using the exact prefix in the source.
 start = source.index('static unsigned char MotorApp_ShapeMitCommand(')
@@ -93,11 +103,37 @@ void reset() {
  g_motorAppEnabled=g_motorAppFault=g_motorAppAdminOp=g_motorAppRegisterBusy=0;
  g_motorAppMode=MOTOR_APP_MODE_ADMIN;g_motorAppFaultFlags=0;g_positionLimitsReady=0;
  g_motorAppProtectionStartTick=now_ms;
+ g_motorAppFeedbackRecovering=0;g_motorAppPendingSpiCommandValid=0;
+ g_motorAppLastFaultMotorID=0;g_motorAppLastFaultRouteIndex=0xff;
  for(unsigned i=0;i<14;i++){motors[i]=Motor_t{};g_positionMin[i]=-3;g_positionMax[i]=3;}
  snapshot={};snapshot.flags=IMU_FLAG_SENSOR_OK|IMU_FLAG_CALIBRATED;
  snapshot.sample_tick_ms=now_ms;snapshot.quaternion[0]=1;snapshot.projected_gravity[2]=-1;
 }
 void all_disabled(){for(unsigned i=0;i<14;i++)assert(motors[i].disabled==(MotorApp_IsActiveMitRoute(i)?1u:0u));}
+void timeout_fault(){
+ reset();g_motorAppEnabled=1;g_motorAppMode=MOTOR_APP_MODE_CONTROL_MIT;
+ for(auto&m:motors){m.state=1;m.run=1;}
+ motors[5].online=0;MotorApp_CheckRuntimeProtection();
+ assert(g_motorAppFaultFlags==MOTOR_APP_FAULT_FEEDBACK_STALE && !g_motorAppEnabled);
+ assert(MotorApp_GetLastFaultMotorID()==1 && MotorApp_GetLastFaultRouteIndex()==5);
+ // Simulate actual disable acknowledgements, not just the gateway's request.
+ for(auto&m:motors){m.state=0;m.online=1;}
+ g_motorAppPendingSpiCommandValid=1;
+ MotorApp_CheckFeedbackRecovery();
+}
+void recover_ticks(unsigned duration){
+ for(unsigned i=0;i<duration;i++){
+  now_ms++;snapshot.sample_tick_ms=now_ms;
+  for(auto&m:motors)if(m.online)m.last_rx=now_ms;
+  MotorApp_CheckFeedbackRecovery();
+ }
+}
+void recovered_but_disabled(){
+ assert(!g_motorAppFault && !g_motorAppEnabled && !g_motorAppPendingSpiCommandValid);
+ assert(g_motorAppMode==MOTOR_APP_MODE_ADMIN && g_motorAppAdminOp==MOTOR_APP_ADMIN_NONE);
+ for(auto&m:motors)assert(!m.run && !m.state);
+ assert(MotorApp_GetLastFaultMotorID()==1 && MotorApp_GetLastFaultRouteIndex()==5);
+}
 int main(){
  assert(MotorApp_IsHardwareFaultState(13));
  reset();
@@ -145,7 +181,43 @@ int main(){
  reset();g_motorAppEnabled=1;g_motorAppLastHostCommandTickMs=now_ms-100;
  MotorApp_CheckHostWatchdog();assert(g_motorAppEnabled);now_ms++;
  MotorApp_CheckHostWatchdog();assert(!g_motorAppEnabled && (g_motorAppFaultFlags & MOTOR_APP_FAULT_HOST_COMMAND_STALE));all_disabled();
- puts("production calibration and protection: disabled guard, atomic bounds, 5->4 clipping, gain/speed/torque caps, motor loss and IMU invalid/stale/NaN all-disable passed");
+ // Recovery clears only the current timeout, after a full healthy second.
+ timeout_fault();recover_ticks(999);assert(g_motorAppFault);
+ recover_ticks(1);recovered_but_disabled();assert(!g_motorAppFaultFlags);
+ const unsigned clears=motors[5].clears;recover_ticks(2000);assert(motors[5].clears==clears);
+ // A second fault starts a new window; recovery is not sticky across episodes.
+ timeout_fault();recover_ticks(500);motors[9].online=0;recover_ticks(2000);assert(g_motorAppFault);
+ motors[9].online=1;recover_ticks(1000);assert(g_motorAppFault);
+ recover_ticks(1);recovered_but_disabled();
+ // Every configured motor must acknowledge disabled and remain healthy.
+ for(unsigned route=0;route<14;route++)if(MotorApp_IsActiveMitRoute(route)){
+  for(unsigned problem=0;problem<5;problem++){
+   timeout_fault();recover_ticks(500);
+   switch(problem){case 0:motors[route].online=0;break;case 1:motors[route].state=1;break;
+    case 2:motors[route].state=8;break;case 3:motors[route].mos=75;break;case 4:motors[route].rotor=80;break;}
+   recover_ticks(2000);assert(g_motorAppFault);
+   motors[route]=Motor_t{};recover_ticks(1001);recovered_but_disabled();
+  }
+ }
+ // IMU, management activity and non-recoverable faults reset/prevent recovery.
+ timeout_fault();recover_ticks(500);snapshot.flags=0;recover_ticks(2000);assert(g_motorAppFault);
+ snapshot.flags=IMU_FLAG_SENSOR_OK|IMU_FLAG_CALIBRATED;recover_ticks(1001);recovered_but_disabled();
+ timeout_fault();recover_ticks(500);g_motorAppAdminOp=MOTOR_APP_ADMIN_CLEAR_ERROR;
+ recover_ticks(2000);assert(g_motorAppFault);g_motorAppAdminOp=MOTOR_APP_ADMIN_NONE;
+ recover_ticks(1001);recovered_but_disabled();
+ timeout_fault();g_motorAppRegisterBusy=1;recover_ticks(2000);assert(g_motorAppFault);
+ g_motorAppRegisterBusy=0;recover_ticks(1001);recovered_but_disabled();
+ for(unsigned long bit=1;bit<=0x200;bit<<=1){
+  if(bit==MOTOR_APP_FAULT_FEEDBACK_STALE || bit==MOTOR_APP_FAULT_HOST_COMMAND_STALE)continue;
+  timeout_fault();g_motorAppFaultFlags|=bit;recover_ticks(2000);
+  assert(g_motorAppFault && (g_motorAppFaultFlags&bit) && (g_motorAppFaultFlags&MOTOR_APP_FAULT_FEEDBACK_STALE));
+ }
+ timeout_fault();g_motorAppFaultFlags|=MOTOR_APP_FAULT_HOST_COMMAND_STALE;
+ recover_ticks(1000);recovered_but_disabled();assert(g_motorAppFaultFlags==MOTOR_APP_FAULT_HOST_COMMAND_STALE);
+ // Unsigned elapsed time works at boot tick zero and across the 32-bit wrap.
+ now_ms=0;timeout_fault();recover_ticks(1000);recovered_but_disabled();
+ now_ms=UINT32_MAX-500;timeout_fault();recover_ticks(1000);recovered_but_disabled();
+ puts("production calibration/protection/recovery passed: 1s stability, all-motor disable acknowledgements, intermittent loss, mixed faults, IMU/admin guards, no enable, retained diagnostics, tick wrap");
 }
 '''
 with tempfile.TemporaryDirectory() as temp:

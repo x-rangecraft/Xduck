@@ -12,6 +12,8 @@ use crate::model::NUM_JOINTS;
 /// One atomic sample of the robot.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Sensors {
+    pub gateway_tick_ms: u32,
+    pub ack_command_seq: u16,
     /// Joint angles in radians, indexed as [`crate::model::JOINT_NAMES`].
     pub positions: [f64; NUM_JOINTS],
     /// Joint velocities, rad/s.
@@ -36,6 +38,8 @@ pub struct Sensors {
 impl Default for Sensors {
     fn default() -> Self {
         Self {
+            gateway_tick_ms: 0,
+            ack_command_seq: 0,
             positions: [0.0; NUM_JOINTS],
             velocities: [0.0; NUM_JOINTS],
             currents_ma: [0.0; NUM_JOINTS],
@@ -53,11 +57,13 @@ impl Default for Sensors {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct JointTargets {
     pub positions: [f64; NUM_JOINTS],
+    /// Per-frame policy PD override; None uses the ordinary gain and damping.
+    pub pd: Option<[f64; 2]>,
 }
 
 impl JointTargets {
     pub fn new(positions: [f64; NUM_JOINTS]) -> Self {
-        Self { positions }
+        Self { positions, pd: None }
     }
 }
 
@@ -154,6 +160,10 @@ pub trait RobotIo {
     /// update must leave a standing robot standing: torque comes on when someone enables the policy,
     /// never because a process began.
     fn set_torque(&mut self, on: bool) -> Result<()>;
+
+    fn write_motor_commands(&mut self, _commands: &[duck_ipc_proto::MotorCommand]) -> Result<u16> {
+        Err(IoError::Bus("backend does not support MIT experiments".into()))
+    }
 
     fn set_position_limits(&mut self, _limits: &[MotorPositionLimit]) -> Result<()> {
         Err(IoError::Bus("此后端不支持 STM32 限位标定".into()))

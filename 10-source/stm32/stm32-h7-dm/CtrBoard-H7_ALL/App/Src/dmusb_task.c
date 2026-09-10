@@ -286,7 +286,8 @@ static void publish_state(void)
   out.stm32_tick_ms = source.stm32_tick_ms;
   out.fault_flags = source.fault_flags;
   out.mode = DMUSB_MODE_MIT;
-  out.reserved = DMUSB_CAP_SPARSE_COMMAND | DMUSB_CAP_ENABLE_TARGETS | DMUSB_CAP_CALIBRATION;
+  out.reserved = DMUSB_CAP_SPARSE_COMMAND | DMUSB_CAP_ENABLE_TARGETS |
+                 DMUSB_CAP_CALIBRATION | DMUSB_CAP_FAULT_DIAGNOSTICS;
   if (MotorApp_PositionLimitsReady() != 0U) out.reserved |= DMUSB_STATE_LIMITS_READY;
   out.motor_count = source.motor_count;
   (void)IMU_GetSnapshot(&imu);
@@ -298,6 +299,8 @@ static void publish_state(void)
   memcpy(out.imu.quaternion, imu.quaternion, sizeof(out.imu.quaternion));
   out.imu.sample_sequence = imu.sample_sequence;
   out.imu.flags = imu.flags;
+  out.imu.reserved[0] = MotorApp_GetLastFaultMotorID();
+  out.imu.reserved[1] = MotorApp_GetLastFaultRouteIndex();
   for (index = 0U; index < source.motor_count; index++) {
     out.motors[index].p_mrad = source.motors[index].p_mrad;
     out.motors[index].v_mrad_s = source.motors[index].v_mrad_s;

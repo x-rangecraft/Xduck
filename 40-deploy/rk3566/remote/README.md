@@ -13,7 +13,7 @@
 - 编译使用 `/home/xduck1/xrange/60-tools/build-rk3566-microduck.sh`。
 - 编译验证不等于部署；未经确认不得修改 `/opt/robot` 或启动服务。
 - 部署使用 `/home/xduck1/xrange/60-tools/deploy-rk3566-microduck.sh`；它会强制先执行固定 release 构建，不能打包旧缓存。开发私钥仅存放于 `40-deploy/rk3566/secrets/`，不得外传。
-- 摄像头为 BL-1080P-S10（UVC `05a3:9230`）：udev 将采集接口固定为 `/dev/video-xrange-camera`，`mediad` 使用 `camera_backend = "uvc-mjpeg"`、`quality = "1080p30"`，通过 `mppjpegdec` 硬解和 `mpph264enc` 硬编输出 WebRTC。`gstreamer1.0-nice` 是浏览器 ICE 连接必需依赖。音频设备未连接，保持 `audio.enabled = false`。
+- 摄像头为 BL-1080P-S10（UVC `05a3:9230`）：udev 将采集接口固定为 `/dev/video-xrange-camera`，`mediad` 使用 `camera_backend = "uvc-mjpeg"`、`quality = "1080p30"`，通过 `mppjpegdec` 硬解和 `mpph264enc` 硬编输出 WebRTC。`gstreamer1.0-nice` 是浏览器 ICE 连接必需依赖。板载 RK809 的 SPK 已于 2026-09-09 现场验证出声，使用 `audio.enabled = true`、`audio.device = "xduck_speaker"`（ALSA softvol 转发到 RK809；网页通过 `robot.volume` 调节 `Xduck` 控件，避免厂商 DAC 控件写入归零） 和已有音效库；麦克风抚摸识别保持默认关闭。
 - 设备对外名称固定为 `xduck1`，由 configd 持久保存，WebRTC 控制台与蓝牙广播都从该身份读取。
 - 本机当前没有连接 ToF；`tofd` 随发布包保留，但保持 disabled/inactive，接入并验收传感器后再启用。
 - K11C 厂商内核没有 `xpad` 和 `joydev`；底层 `xpad-usbd.service` 将飞智 Dune Fox USB 接收器 `045e:028e` 转成标准 `/dev/input/event*`，`padd` 只消费 evdev。该服务必须先于 `padd` 启动，且接收器拔插后自动重连。

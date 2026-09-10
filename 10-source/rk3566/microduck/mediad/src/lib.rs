@@ -23,6 +23,14 @@ pub mod route;
 pub mod session;
 pub mod upstream;
 pub mod web;
+mod experiment_tasks_http;
+mod control_http;
+mod journal_http;
+
+#[cfg(any(target_os = "linux", test))]
+mod log_throttle;
+#[cfg(any(target_os = "linux", test))]
+mod video_start;
 
 /// The GStreamer pipeline and the datachannel. Linux only — see the crate manifest for why the
 /// gate is by target rather than by feature.

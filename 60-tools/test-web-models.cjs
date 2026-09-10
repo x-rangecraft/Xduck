@@ -25,6 +25,7 @@ const context=vm.createContext({$:element,Date:class extends Date{static now(){r
     return status;}});
 vm.runInContext(html.slice(start,end),context);
 element('model-file').files=[{name:'model.pt',size:3,slice(){return{async arrayBuffer(){return Uint8Array.from([0,255,3]).buffer;}};}}];
+element('model-kp').value='60';element('model-kd').value='4';element('model-scale').value='1';
 element('model-activation').value='elu';element('model-epsilon').value='0.01';
 (async()=>{
   await vm.runInContext('refreshModels()',context);
@@ -38,12 +39,18 @@ element('model-activation').value='elu';element('model-epsilon').value='0.01';
   assert.deepEqual(sent.filter(p=>['begin','chunk','finish'].includes(p.action)).map(p=>p.action),['begin','chunk','finish']);
   assert.equal(sent.find(p=>p.action==='chunk').hex,'00ff03');
   assert.equal(sent.find(p=>p.action==='begin').normalizer_epsilon,0.01);
+  assert.equal(JSON.stringify(sent.find(p=>p.action==='begin').control),JSON.stringify({kp:60,kd:4,action_scale:1}));
+  assert(element('model-kp').disabled);
   assert(element('model-import').disabled,'pending commit prevents a second import');
   status.phase='done';await vm.runInContext('refreshModels()',context);
   await element('model-history').querySelectorAll('button')[0].onclick();
   assert.equal(sent.at(-1).action,'rollback');
   status.phase='uploading';await vm.runInContext('refreshModels()',context);
   assert.equal(element('model-import').disabled,false,'an abandoned upload must be replaceable after reconnect');
+  element('model-kp').value='501';
+  const before=sent.length;await element('model-import').onclick();assert.equal(sent.length,before);
+  element('model-kp').value='';await element('model-import').onclick();assert.equal(sent.length,before);
+  element('model-kp').value='60';
   failAction='chunk';await element('model-import').onclick();
   assert(element('model-feedback').textContent.includes('模拟失败'));
   status.editable=false;await vm.runInContext('refreshModels()',context);

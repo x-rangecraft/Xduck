@@ -284,13 +284,13 @@ around what a person came to do:
 
 | | |
 |---|---|
-| **header** | robot name, release, API version — from `hello` and `system.info`, sent automatically when the channel opens, not clicked |
-| **video** | plus link quality from `getStats()`: bitrate, fps, loss, RTT. Today a stream that degrades is a picture that looks worse and a log that says nothing |
+| **header** | robot name, release, API version — from `hello` and `system.info`, sent automatically when the control transport opens, not clicked |
+| **video** | off for every new page by default. The same-origin `/api/control` gateway carries JSON-RPC without creating a WebRTC consumer; `robot.subscribe` is a sequential 10 Hz long poll. “打开视频” replaces that transport with a WebRTC session and `recvonly` video; “关闭视频” ends the peer and returns to HTTP control. This boundary is required because this `webrtcsink` build waits for a video keyframe before opening its bundled data channel when an answer marks video `inactive`. Link quality comes from `getStats()`: bitrate, fps, loss, RTT. |
 | **drive** | keys and an on-screen stick → `robot.move` at a fixed rate; drag on the video → `robot.look` |
-| **posture** | `robot.enable`, `init`, `relax`, `stop`, `shutdown` — confirm on the last two |
-| **do / sound** | the `Do` and `Sound` enums as menus |
+| **posture** | `robot.enable`, `init`, `relax`, `stop`, `shutdown`, plus the daemon-reported current lifecycle (`initializing`, policy on/off, relaxed, experiment or power-off) |
+| **do / sound** | the `Do` and `Sound` enums as menus, with live action and actual PCM playback state rather than only the last accepted request |
 | **telemetry** | `robot.subscribe` at 10 Hz into a live panel: mode, health, requested velocity, odometry-derived measured forward/lateral/yaw velocity, IMU gravity projection, real BLE/gamepad link state (never inferred from the selected mode), the 50 Hz control-loop actual/target rate plus ticks/missed count, and all 14 STM32 motor slots in one non-scrolling table (status, velocity, position, measured torque and rotor temperature) |
-| **camera hotplug** | camera capture runs in a restartable GStreamer pipeline feeding `intervideosink`; the WebRTC/signalling/datachannel pipeline reads `intervideosrc`, which emits black frames when capture disappears. The page polls `media.video` at 2 Hz and overlays “摄像头已断开”, while control remains connected. Replug rebuilds capture and restores live frames without renegotiating the peer connection. |
+| **camera hotplug** | camera capture runs in a restartable GStreamer pipeline feeding `intervideosink`; the WebRTC pipeline reads `intervideosrc`, which emits black frames when capture disappears. While video is open the page polls `media.video` at 2 Hz and overlays “摄像头已断开”; same-origin HTTP control remains available when the video peer is closed. Replug rebuilds capture and restores live frames without restarting `mediad`. |
 | **console** | the raw JSON box, the log, and the two refusal buttons — collapsed, because they prove the route table rather than drive the robot |
 
 The motor telemetry uses a compact fixed-layout table inside one bordered panel. It has no minimum

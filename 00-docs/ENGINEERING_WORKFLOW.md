@@ -43,6 +43,8 @@
 | Android 构建/测试日志 | `50-logs/{build,test}/android/` |
 | 策略模型管理/转换源码 | `10-source/rk3566/microduck/robotd/src/models.rs`、`model_import.py`；IPC 由 `duck-ipc-proto` 定义，Web 面板由 `mediad` 提供 |
 | 模型导入回归工具与日志 | `60-tools/test-model-import.py`、`test-web-models.cjs`；`50-logs/test/model-*` |
+| 电机实验接口 | `robotd/src/experiment.rs` 为控制与数据所有者；`mediad/src/experiment_tasks_http.rs` 提供 HTTP 适配；文档和 PC 示例位于 `mediad/webclient/`，实时接口采集 CSV 保存在调用者电脑；`robotd/src/experiment_tasks.rs` 管理预上传任务、固定缓冲执行和 `/var/lib/robotd/experiments/` 持久数据，`mediad/src/experiment_tasks_http.rs` 只流式转发文件。任务结果由电脑下载校验后显式删除；同目录 `joint_sine_sweep.py` 为正弦扫描与失能通信诊断工具 |
+| 本体日志下载接口 | `mediad/src/journal_http.rs` 按请求流式读取 Journal，不在设备保存导出副本 |
 | RK3566 Microduck Rust workspace | `10-source/rk3566/microduck/` |
 | STM32↔RK3566 DMUSB v4 协议事实源 | `10-source/rk3566/STM32_DMUSB_V4_PROTOCOL.md` |
 | STM32 H7 固件 | `10-source/stm32/stm32-h7-dm/` |
@@ -67,7 +69,7 @@
 | 部署日志 | `/home/xduck1/xrange/50-logs/deploy/rk3566/microduck/` |
 | 板端构建工具 | `/home/xduck1/xrange/60-tools/` |
 
-部署后的策略覆盖文件、两条 ONNX 历史和原子清单由 `robotd` 单独写入 `/var/lib/robotd/policies/`（`StateDirectory=robotd`）。不得覆盖发布包中的原始 ONNX。模型导入转换器运行环境固定在 `/var/lib/robotd/model-python/`，由已授权部署时运行 `scripts/setup-model-import.sh` 安装；它是部署运行依赖，不属于工程编译缓存。`ROBOT_MODEL_PYTHON` 可显式指定其他受管理的 Python。模型替换与回滚只能由控制循环在放松且最新 STM32 反馈确认全部配置电机失能时执行。
+部署后的策略覆盖文件、两条 ONNX 历史和原子清单由 `robotd` 单独写入 `/var/lib/robotd/policies/`（`StateDirectory=robotd`）。不得覆盖发布包中的原始 ONNX。模型导入转换器运行环境固定在 `/var/lib/robotd/model-python/`，由已授权部署时运行 `scripts/setup-model-import.sh` 安装；它是部署运行依赖，不属于工程编译缓存。`ROBOT_MODEL_PYTHON` 可显式指定其他受管理的 Python。模型替换与回滚只能由控制循环在放松且最新 STM32 反馈确认全部配置电机失能时执行。 每个导入版本在同一清单中绑定 Kp、Kd 与动作缩放，切换/回滚一并恢复；`duck-control` 在每帧目标中承载策略 PD 参数，未绑定的旧版本继续使用原程序参数。
 
 ## 3. RK3566 固定身份与 SSH 配置
 
@@ -168,11 +170,13 @@
 
 部署脚本仍会重复校验 hostname、machine-id、架构、系统版本和管理标记，并且必须先调用固定构建脚本；禁止直接打包 `20-build` 中上一次留下的二进制。发布包先用板级开发密钥签名并通过 updater 健康门禁，校验通过后才写入 `/opt/robot` 和 `/etc/robot`。开发密钥固定放在远端 `40-deploy/rk3566/secrets/`，目录权限 `0700`、私钥权限 `0600`；该目录在源码仓库之外，严禁同步回本地、提交 Git 或复制到客户设备。开发板的 `/etc/robot/updater.toml` 明确启用 `allow_dev_keys`，但在正式 release 仓库配置完成前禁用定时检查和自动安装。
 
-这台 K11C 的摄像头固定为 BL-1080P-S10（USB UVC，`05a3:9230`）。本地事实源 `40-deploy/rk3566/remote/99-xrange-camera.rules` 只匹配 UVC 的 `index=0` 视频采集接口，并创建稳定节点 `/dev/video-xrange-camera`；`index=1` 元数据接口不得交给 `mediad`。配置固定为 `camera = true`、`camera_backend = "uvc-mjpeg"`、`camera_device = "/dev/video-xrange-camera"`、`quality = "1080p30"`、`rotation = 0`。摄像头在 USB 上输出 MJPEG，由独立、可重启的采集管线通过 `intervideosink` 送入常驻 WebRTC 管线；摄像头拔掉后 `intervideosrc` 输出黑帧，信令和控制 DataChannel 必须保持，页面显示“摄像头已断开”，重插后采集管线自动恢复且不得重启 `mediad`。正常视频仍由 `mppjpegdec` 硬件解码，再由 `mpph264enc` 以 constrained-baseline、1 秒 GOP 编码给 WebRTC；空闲时不创建不需要的原始帧分支。`gstreamer1.0-nice`（`nicesrc`/`nicesink`）和 `intervideosrc`/`intervideosink` 是部署硬依赖，检查缺失时必须失败。禁止改成 720p60 软件 JPEG 解码来换取名义分辨率。物理端口是 USB 3.0 不代表设备会以 SuperSpeed 枚举：该摄像头自身是 USB 2.0 High-Speed（480 Mbit/s），这是正常能力而非降级。音频设备未连接，`audio.enabled = false` 明确禁止 `robotd` 启动播放和麦克风工作线程。`robot-boot-check.timer` 只启用供下次开机使用，不得在已运行很久的系统上手工立即触发。
+这台 K11C 的摄像头固定为 BL-1080P-S10（USB UVC，`05a3:9230`）。本地事实源 `40-deploy/rk3566/remote/99-xrange-camera.rules` 只匹配 UVC 的 `index=0` 视频采集接口，并创建稳定节点 `/dev/video-xrange-camera`；`index=1` 元数据接口不得交给 `mediad`。配置固定为 `camera = true`、`camera_backend = "uvc-mjpeg"`、`camera_device = "/dev/video-xrange-camera"`、`quality = "1080p30"`、`rotation = 0`。摄像头在 USB 上输出 MJPEG，由独立、可重启的采集管线通过 `intervideosink` 送入常驻 WebRTC 管线；摄像头拔掉后 `intervideosrc` 输出黑帧，信令和控制 DataChannel 必须保持，页面显示“摄像头已断开”，重插后采集管线自动恢复且不得重启 `mediad`。正常视频仍由 `mppjpegdec` 硬件解码，再由 `mpph264enc` 以 constrained-baseline、1 秒 GOP 编码给 WebRTC；空闲时不创建不需要的原始帧分支。`gstreamer1.0-nice`（`nicesrc`/`nicesink`）和 `intervideosrc`/`intervideosink` 是部署硬依赖，检查缺失时必须失败。禁止改成 720p60 软件 JPEG 解码来换取名义分辨率。物理端口是 USB 3.0 不代表设备会以 SuperSpeed 枚举：该摄像头自身是 USB 2.0 High-Speed（480 Mbit/s），这是正常能力而非降级。2026-09-09 已现场确认板载 RK809 的 SPK 播放正常，固定为 `audio.enabled = true`、`audio.device = "xduck_speaker"`（ALSA softvol 转发到 RK809；网页通过 `robot.volume` 调节 `Xduck` 控件，避免厂商 DAC 控件写入归零），使用已有 `/var/lib/robot/sounds` 音效库；麦克风抚摸识别仍保持默认关闭。`robot-boot-check.timer` 只启用供下次开机使用，不得在已运行很久的系统上手工立即触发。
 
 这台样机当前也没有连接 ToF 传感器。`tofd` 二进制和 unit 必须随发布包保留，但 `tofd.service` 保持 disabled/inactive，不进行无意义的硬件轮询；以后接入传感器并确认 I²C 设备、权限和采样稳定后，再显式执行 `sudo systemctl enable --now tofd.service`。
 
 STM32 H7 通过 `[bus].port = "/dev/ttyACM0"` 同时提供电机状态和主 BMI088 IMU 数据；主 IMU 不再占用独立 USB。通信唯一事实源是上述 DMUSB v4 文档，禁止凭旧版帧布局修改实现。`[bus].imu_port` 只作为未来双 IMU 的预留接口保留，当前版本不得打开或依赖它。运行中 STM32 USB 连续读失败达到门限时，`robotd` 必须清空速度和使能、标记为安全降级状态、关闭失效串口并在同一进程内循环重新打开和校验；重插 USB 不得要求重启 `robotd`。重连成功后保持未使能，必须由操作者重新初始化/使能，禁止自动恢复此前运动。STM32 固件自身在 100 ms 收不到主机命令时关闭全部电机路由，Linux 侧安全状态不能替代这条板端保护。电机控制要求 DMUSB v4 能力位 `0x0007`（空槽、完整使能列表和安全标定），并先同步位置限位；状态位 `0x0008` 表示本次启动已装载限位，旧固件仍保持只读。标定与默认站姿由 robotd 持久保存到 `/var/lib/robotd/motor-calibration.json`（systemd `StateDirectory=robotd`），重连后重新同步 STM32 RAM 限位。STM32 的 `App/Src/dmusb_motor_bridge.c` 负责固定槽到实际电机命令的转换，RK3566 在使能前检查固件能力、配置映射和在线/故障反馈。STM32 构建继续保持 `H7DM_MOTOR_AUTO_ENABLE=0`，开放权限不会自动使能。
+
+电机反馈超时恢复与重新使能分离：STM32 在全体配置电机持续 1 秒反馈新鲜、实际失能且温度正常，IMU 健康、管理操作空闲、无其他锁存故障时，自动清除反馈超时位；仍保持失能并丢弃旧控制命令，必须由操作者重新初始化/使能。其他故障不由该路径清除。DMUSB 可选能力 `0x0010` 提供最近保护故障的电机 ID/槽位，`duck-control` 将故障发生与清除分别写入 robotd 的 Journal，当前故障清除不得删除历史。详细字段和恢复条件见协议 §7.4。
 
 `robotd.service` 的停止超时固定为 5 秒。USB CDC 驱动异常时阻塞读可能无法响应 SIGTERM；systemd 必须在 5 秒后结束旧进程，避免一次更新把 30 秒健康门控窗口全部耗在停止旧版本上。不得通过延长健康门控掩盖这个退出问题。
 
@@ -186,7 +190,7 @@ K11C 厂商内核启用了 uinput，但没有 `xpad`、`joydev` 或可加载的�
 
 | 类别 | 内容 | 唯一存储位置 | 保留方式 |
 |---|---|---|---|
-| 服务运行日志 | `robotd`、`mediad`、`configd`、`btd`、`padd`、`tofd`、`updaterd` 的 stdout/stderr | systemd Journal；由 `journalctl` 读取，底层通常位于 `/var/log/journal/` | 总上限 200 MB、单文件 20 MB、最多约 10 个轮转文件、最长 3 个月、压缩 |
+| 服务运行日志 | `robotd`、`mediad`、`configd`、`btd`、`padd`、`tofd`、`updaterd` 的 stdout/stderr | systemd Journal；由 `journalctl` 读取，底层通常位于 `/var/log/journal/` | 总上限 500 MB、单文件 20 MB、最多 100 个轮转文件、最长 3 个月、压缩 |
 | 升级持久日志 | 安装、拒绝、失败、回滚和每次升级的完整过程 | `/var/lib/robot/updater/update-log.jsonl` 与 `/var/lib/robot/updater/runs/*.jsonl` | update log 保留最近 200 条；完整 transcript 保留最近 20 次；逐条同步到持久存储 |
 | 工程日志 | 编译、硬件/功能测试、部署操作输出 | `/home/xduck1/xrange/50-logs/{build,test,deploy}/` | 按平台、模块和时间戳分层；不进入发布包和源码仓库 |
 

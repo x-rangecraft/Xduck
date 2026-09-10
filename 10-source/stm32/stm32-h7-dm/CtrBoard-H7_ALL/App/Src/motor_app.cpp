@@ -22,6 +22,7 @@
 #define MOTOR_APP_MAX_RETRIES       (5U)
 #define MOTOR_APP_DM_TIMEOUT_MS     (8000U)
 #define MOTOR_APP_FEEDBACK_TIMEOUT_MS (500U)
+#define MOTOR_APP_FEEDBACK_RECOVERY_MS (1000U)
 #define MOTOR_APP_HOST_COMMAND_TIMEOUT_MS (100U)
 #define MOTOR_APP_ADMIN_POLL_INTERVAL_MS (5U)
 #define MOTOR_APP_MOS_OVER_TEMP_C     (75U)
@@ -138,6 +139,11 @@ static unsigned char g_motorAppFailedMotorID = 0U;
 static unsigned char g_motorAppFailedRouteIndex = 0xFFU;
 static unsigned char g_motorAppFailedPhase = H7SPI_GATEWAY_PHASE_NONE;
 static unsigned long g_motorAppFaultFlags = MOTOR_APP_FAULT_NONE;
+/* Protection diagnostics survive admin/disable requests and automatic recovery. */
+static unsigned char g_motorAppLastFaultMotorID = 0U;
+static unsigned char g_motorAppLastFaultRouteIndex = 0xFFU;
+static unsigned char g_motorAppFeedbackRecovering = 0U;
+static uint32_t g_motorAppFeedbackRecoverySinceMs = 0U;
 static unsigned long g_motorAppRequestedMask = 0UL;
 static unsigned long g_motorAppSucceededMask = 0UL;
 static unsigned char g_motorAppRequestedCount = 0U;
@@ -367,6 +373,9 @@ static void MotorApp_ClearRuntimeState(void)
   g_motorAppFailedRouteIndex = 0xFFU;
   g_motorAppFailedPhase = H7SPI_GATEWAY_PHASE_NONE;
   g_motorAppFaultFlags = MOTOR_APP_FAULT_NONE;
+  g_motorAppLastFaultMotorID = 0U;
+  g_motorAppLastFaultRouteIndex = 0xFFU;
+  g_motorAppFeedbackRecovering = 0U;
   g_motorAppLastCommandSeq = 0U;
   g_motorAppLastHostCommandTickMs = 0U;
   g_motorAppStateSeq = 0U;
@@ -922,6 +931,9 @@ static void MotorApp_EnterFault(unsigned char RouteIndex, unsigned long FaultFla
     g_motorAppFailedPhase = H7SPI_GATEWAY_PHASE_MOTOR_OFF;
   }
   first_fault = (unsigned char)(g_motorAppFault == 0U);
+  g_motorAppLastFaultMotorID = motor_id;
+  g_motorAppLastFaultRouteIndex = RouteIndex;
+  g_motorAppFeedbackRecovering = 0U;
   g_motorAppFaultFlags |= FaultFlag;
   g_motorAppFault = 1U;
   g_motorAppEnabled = 0U;
@@ -978,6 +990,55 @@ static void MotorApp_CheckRuntimeProtection(void)
       return;
     }
   }
+}
+
+/* Clearing a recovered communication fault is not an enable operation. Require
+ * a full second of healthy, disabled feedback from every configured motor.
+ * Other faults stay latched; a host-watchdog stop can coexist and retains its
+ * existing explicit-enable recovery. Never replay a pre-fault command. */
+static void MotorApp_CheckFeedbackRecovery(void)
+{
+  unsigned char index;
+  uint32_t now_ms = HAL_GetTick();
+  const unsigned long recoverable = MOTOR_APP_FAULT_FEEDBACK_STALE |
+                                    MOTOR_APP_FAULT_HOST_COMMAND_STALE;
+
+  if (g_motorAppFault == 0U || g_motorAppEnabled != 0U ||
+      (g_motorAppFaultFlags & MOTOR_APP_FAULT_FEEDBACK_STALE) == 0U ||
+      (g_motorAppFaultFlags & ~recoverable) != 0U ||
+      g_motorAppMode != MOTOR_APP_MODE_ADMIN ||
+      g_motorAppAdminOp != MOTOR_APP_ADMIN_NONE || g_motorAppRegisterBusy != 0U ||
+      MotorApp_ImuHealthy() == 0U) {
+    g_motorAppFeedbackRecovering = 0U;
+    return;
+  }
+  for (index = 0U; index < MotorApp_GetDefaultCount(); index++) {
+    if (MotorApp_IsActiveMitRoute(index) == 0U) continue;
+    Motor_t *motor = MotorApp_GetRouteMotor(index);
+    if (motor->IsOnline(MOTOR_APP_FEEDBACK_TIMEOUT_MS) == 0U ||
+        motor->GetState() != 0U ||
+        motor->GetMosTemp() >= MOTOR_APP_MOS_OVER_TEMP_C ||
+        motor->GetRotorTemp() >= MOTOR_APP_ROTOR_OVER_TEMP_C) {
+      g_motorAppFeedbackRecovering = 0U;
+      return;
+    }
+  }
+  if (g_motorAppFeedbackRecovering == 0U) {
+    g_motorAppFeedbackRecoverySinceMs = now_ms;
+    g_motorAppFeedbackRecovering = 1U;
+    return;
+  }
+  if ((uint32_t)(now_ms - g_motorAppFeedbackRecoverySinceMs) < MOTOR_APP_FEEDBACK_RECOVERY_MS)
+    return;
+
+  MotorApp_PrepareFallbackCommands();
+  taskENTER_CRITICAL();
+  g_motorAppPendingSpiCommandValid = 0U;
+  taskEXIT_CRITICAL();
+  g_motorAppFaultFlags &= ~MOTOR_APP_FAULT_FEEDBACK_STALE;
+  g_motorAppFault = 0U;
+  g_motorAppFeedbackRecovering = 0U;
+  /* enabled stays 0 and mode stays ADMIN. Only an explicit enable may change them. */
 }
 
 void MotorApp_ConfigDefault(void)
@@ -1314,6 +1375,7 @@ void MotorApp_Tick(void)
 
   MotorApp_ProcessReadOnlyProbe();
   now_tick = xTaskGetTickCount();
+  MotorApp_CheckFeedbackRecovery();
 
   if (g_motorAppAdminOp == MOTOR_APP_ADMIN_ENABLE_ALL &&
       g_motorAppPhase == MOTOR_APP_PHASE_FAST_START) return;
@@ -1458,6 +1520,16 @@ unsigned char MotorApp_IsFault(void)
 unsigned char MotorApp_GetFailedMotorID(void)
 {
   return g_motorAppFailedMotorID;
+}
+
+unsigned char MotorApp_GetLastFaultMotorID(void)
+{
+  return g_motorAppLastFaultMotorID;
+}
+
+unsigned char MotorApp_GetLastFaultRouteIndex(void)
+{
+  return g_motorAppLastFaultRouteIndex;
 }
 
 unsigned long MotorApp_GetFaultFlags(void)

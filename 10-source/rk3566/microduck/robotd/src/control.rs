@@ -124,6 +124,7 @@ pub struct Step {
     pub label: &'static str,
     /// What the gain should be for this tick.
     pub gain: u16,
+    pub pd: Option<[f64; 2]>,
     /// A scripted move is mid-flight — the robot is moving regardless of the twist, so
     /// restarting the daemon now would put it on the floor.
     pub busy: bool,
@@ -144,6 +145,7 @@ enum Sit {
 
 pub struct Controller {
     policy: Policy,
+    model_controls: Vec<(Net, duck_ipc_proto::ModelControl)>,
     tuning: Tuning,
     skills: SkillTuning,
     /// Raw previous policy output, which the observation feeds back. Raw, not scaled: the
@@ -170,6 +172,7 @@ impl Controller {
     pub fn new(policy: Policy, tuning: Tuning, skills: SkillTuning) -> Self {
         Self {
             policy,
+            model_controls: Vec::new(),
             tuning,
             skills,
             last_action: [0.0; ACTION_LEN],
@@ -190,6 +193,15 @@ impl Controller {
     pub fn replace_network(&mut self, net: Net, prepared: duck_control::policy::PreparedNetwork) {
         self.policy.replace_network(net, prepared);
         self.reset();
+    }
+
+    pub fn set_model_control(&mut self, net: Net, control: Option<duck_ipc_proto::ModelControl>) {
+        self.model_controls.retain(|(n, _)| *n != net);
+        if let Some(control) = control { self.model_controls.push((net, control)); }
+    }
+
+    pub fn model_control(&self, net: Net) -> Option<duck_ipc_proto::ModelControl> {
+        self.model_controls.iter().find(|(n, _)| *n == net).map(|(_, c)| *c)
     }
 
     pub fn reset(&mut self) {
@@ -462,7 +474,11 @@ impl Controller {
             ),
             _ => (self.tuning.action_scale, self.tuning.gain),
         };
-        let scale = scale * scale_mult;
+        // Explicit imported values replace the legacy state multipliers and voltage scale.
+        let control = self.model_control(net);
+        let scale = control.map_or(scale * scale_mult, |c| c.action_scale);
+        let pd = control.map(|c| [c.kp, c.kd]);
+        let gain = control.map_or(gain, |c| c.kp.round() as u16);
 
         let offsets = Observation::scatter_action(&action);
         let mut targets = [0.0; NUM_JOINTS];
@@ -510,6 +526,7 @@ impl Controller {
             targets,
             label,
             gain,
+            pd,
             busy: self.busy(),
         })
     }
@@ -570,4 +587,39 @@ mod tests {
         assert_eq!(GROUND_PICK_END_PHASE, 0.7);
         assert_eq!(RISE_SECS, 1.0);
     }
+    #[test]
+    #[ignore = "requires ORT_DYLIB_PATH"]
+    fn imported_controls_follow_network_and_scale_targets() {
+        use duck_control::policy::{PolicyPaths, DEFAULT_STANDING_THRESHOLD};
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../policies");
+        let policy = Policy::load(&PolicyPaths {
+            walk: root.join("alpha_walking.onnx"),
+            stand: Some(root.join("alpha_stand.onnx")),
+            ..Default::default()
+        }, DEFAULT_STANDING_THRESHOLD).unwrap();
+        let mut controller = Controller::new(policy, Tuning::default(), SkillTuning::default());
+        let sensors = duck_control::io::Sensors::default();
+        let command = Command { twist: [0.2, 0.0, 0.0], ..Default::default() };
+        let baseline = controller.step(&sensors, &command, false, 0.02, 1.0).unwrap();
+        controller.reset();
+        let c = duck_ipc_proto::ModelControl { kp: 60.25, kd: 1.234, action_scale: 0.45 };
+        controller.set_model_control(Net::Walk, Some(c));
+        let imported = controller.step(&sensors, &command, false, 0.02, 1.7).unwrap();
+        assert_eq!(imported.pd, Some([60.25, 1.234]));
+        assert_eq!(imported.label, "walk");
+        assert!(baseline.targets.iter().zip(DEFAULT_POSITION).any(|(v, home)| (v-home).abs()>1e-6));
+        for i in 0..NUM_JOINTS {
+            assert!((imported.targets[i]-DEFAULT_POSITION[i] - 0.5*(baseline.targets[i]-DEFAULT_POSITION[i])).abs()<1e-6);
+        }
+        controller.reset();
+        let standing = controller.step(&sensors, &Default::default(), false, 0.02, 1.0).unwrap();
+        assert_eq!(standing.pd, None, "a walk override must not leak into stand");
+        controller.set_model_control(Net::Stand, Some(c));
+        controller.reset();
+        let standing = controller.step(&sensors, &Default::default(), false, 0.02, 1.0).unwrap();
+        assert_eq!(standing.pd, Some([60.25, 1.234]), "standing ratio must not multiply explicit gains");
+        controller.set_model_control(Net::Walk, None);
+        assert_eq!(controller.model_control(Net::Walk), None);
+    }
+
 }

@@ -154,7 +154,26 @@ sudo sed -i 's/^# rotation = 90$/rotation = 0/' /etc/robot/robotd.toml
 if ! sudo grep -q '^rotation[[:space:]]*=' /etc/robot/robotd.toml; then
     sudo sed -i '/^quality = "1080p30"$/a rotation = 0' /etc/robot/robotd.toml
 fi
-sudo sed -i '/^\[audio\]/,/^\[/ s/^# enabled = true$/enabled = false/' /etc/robot/robotd.toml
+# The vendor DAC mixer drops writes to zero. Keep its board gain and control all
+# robot sounds through ALSA softvol. This file is owned by this board deployment.
+sudo install -d -m 0755 /etc/alsa/conf.d
+sudo tee /etc/alsa/conf.d/99-xduck-speaker.conf >/dev/null <<'ALSA'
+pcm.xduck_speaker {
+    type softvol
+    slave.pcm "plughw:rockchiprk809"
+    control {
+        name "Xduck Playback Volume"
+        card "rockchiprk809"
+    }
+    min_dB -51.0
+    max_dB 0.0
+    resolution 256
+}
+ALSA
+# One silent open creates the mixer after boot; subsequent opens preserve its value.
+sudo aplay -q -D xduck_speaker -t raw -f S16_LE -r 48000 -c 2 -d 1 /dev/zero
+sudo amixer -M -c rockchiprk809 sget Xduck >/dev/null
+sudo sed -i '/^\[audio\]/,/^\[/ { s/^\(# \)\?enabled = .*/enabled = true/; s/^\(# \)\?device = .*/device = "xduck_speaker"/; }' /etc/robot/robotd.toml
 for release_key in "$SOURCE"/deploy/trusted_keys/release-*.pub; do
     sudo install -m 0644 "$release_key" "/etc/robot/trusted_keys/$(basename "$release_key")"
 done
