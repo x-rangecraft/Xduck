@@ -35,6 +35,10 @@ exec > >(tee -a "$LOG") 2>&1
     || { echo "error: wrong machine-id" >&2; exit 1; }
 [[ "$(cat "$ROOT/.xrange-managed")" == xrange-managed-v1 ]] \
     || { echo "error: invalid xrange management marker" >&2; exit 1; }
+command -v bwrap >/dev/null 2>&1 \
+    || { echo "error: bubblewrap is required for isolated two-file policy workers" >&2; exit 1; }
+command -v setpriv >/dev/null 2>&1 \
+    || { echo "error: util-linux setpriv is required for isolated two-file policy workers" >&2; exit 1; }
 if [[ -e /opt/robot/daemon/current ]]; then
     FIRST_INSTALL=false
 else
@@ -82,6 +86,7 @@ done
     --include "updater/systemd/updaterd.service=systemd/updaterd.service" \
     --include "updater/systemd/sysusers.d/robot.conf=systemd/sysusers.d/robot.conf" \
     --include "robotd/systemd/robotd.service=systemd/robotd.service" \
+    --include "robotd/systemd/sysusers.d/robot-policy.conf=systemd/sysusers.d/robot-policy.conf" \
     --include "hooks/postinstall=hooks/postinstall" \
     --include "duck-detect/models/duck_detect.rknn=models/duck_detect.rknn" \
     --include "duck-detect/models/duck_detect.onnx=models/duck_detect.onnx" \
@@ -113,6 +118,7 @@ done
     --include "policies/ball_kick_left.onnx=policies/ball_kick_left.onnx" \
     --include "policies/ball_kick_right.onnx=policies/ball_kick_right.onnx" \
     --include "policies/roller.onnx=policies/roller.onnx" \
+    --include "policies/two_file_policy_example.py=policies/two_file_policy_example.py" \
     --include "policies/roller_crouch.onnx=policies/roller_crouch.onnx" \
     --include "policies/roulade.onnx=policies/roulade.onnx" \
     --include "pet-detect/models/pet_detect.onnx=models/pet_detect.onnx"

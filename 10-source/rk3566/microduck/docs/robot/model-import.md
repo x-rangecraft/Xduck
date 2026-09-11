@@ -1,46 +1,104 @@
-# 策略模型导入与 ONNX 回滚
+# 两文件策略导入与整体回滚
 
-运行状态右侧的「策略模型 · 导入与回滚」面板从 robotd 读取当前模式的已配置策略：行走、站立、坐站、拾取、左右踢、翻滚（未配置的槽位不显示；轮式模式沿用它自己的文件）。
+网页「策略模型 · 导入与回滚」接收一套完整策略：
 
-1. 点击「放松」，等待面板确认全部配置电机失能。
-2. 选择要替换的策略和本地 `.pt` / `.pth` / `.onnx` 文件，最大 64 MiB。
-3. 填写本版本的 Kp、Kd、动作缩放（面板初始值 60、4、1 来自当前示例训练配置，并非自动从权重读取）。Kp 范围 0～500，Kd 范围 0～5，动作缩放范围 (0,5]；Kp/Kd 分别按 0.01/0.001 协议精度发送。每个值统一应用于该策略控制的配置关节。PPO 选择与训练相同的激活函数；如使用观测归一化，ε 也须与训练相同，标准 RSL-RL 默认 0.01。直接 ONNX 导入无需这些转换参数。
-4. 点击「校验 → 转 ONNX → 替换」。页面显示上传、转换、校验、替换各阶段与错误详情。成功后新策略已加载，需手动初始化/开启策略。
-5. 每个槽位保存最近两个旧 ONNX 及其控制参数，在历史条目点击「回滚」。回滚会重新做目标运行时检查，并将被替换的当前版本放回历史。
-
-## 支持范围
-
-- **UniLab RSL-RL PPO `.pt`**：支持本地 UniLab 当前使用的 `actor_state_dict` / `mlp.*`（RSL-RL 5），以及旧版 `model_state_dict` / `actor.*`。
-- **Isaac Sim / Isaac Lab 的 RSL-RL PPO `.pt`**：支持相同的新旧布局。标准确定性 MLP actor、固定动作标准差的 Gaussian policy；忽略训练专用 critic、优化器、探索方差。
-- 支持标准 RSL-RL `EmpiricalNormalization`（外置 `obs_norm_state_dict` 或 actor 内的 `obs_normalizer.*` / `actor_obs_normalizer.*`），将 mean/std 和页面指定 ε 一并导出。
-- 激活函数支持 ELU、ReLU、Tanh、SELU、LeakyReLU。权重本身不记录激活函数及 ε，因此页面参数必须与训练配置一致；默认值对应标准配置。
-- RNN/LSTM、HIM、HORA、额外编码器、未知归一化器、其他训练后端（例如 RL-Games、SKRL、MLX）不能靠猜测还原；页面明确拒绝并提示从原框架导出完整 ONNX。框架名称相同不代表任意网络都符合本机机器人接口。
-- ONNX 必须为单个自包含文件，只有一个 float32 输入 `obs`，形状 `[1,61]`（允许动态 batch），一个 float32 `[1,14]` 输出。需与本机观测语义、关节顺序、动作缩放和策略用途一致。张量/试推理检查无法证明实际运动稳定性。
-
-## 每策略控制参数
-
-`.pt` 与直接 ONNX 导入均必须显式提交 `control: {kp, kd, action_scale}`，不从网络权重猜测。它与模型版本一起原子写入清单；当前版本及历史显示对应值。重启、模式切换会恢复绑定值，回滚同时恢复模型与参数。旧清单缺少 `control` 时保持原有程序默认行为，回滚到旧版本也清除显式覆盖。清单中的非法参数会阻止加载。
-
-控制循环根据实际执行的网络选择参数：显式 Kp/Kd 不再乘站立/技能增益比例；显式动作缩放替代默认站立/技能缩放和电压缩放。默认姿态、动作关节映射和低通滤波仍按原有控制配置执行。参数随每帧目标下发，不能残留到其他策略、初始化、保持或跌倒处理流程。后三类非策略流程仍用原有程序参数。这三个输入不是完整的执行器配置导入，也不验证其与训练时执行器模型的一致性。
-
-## 校验与安全边界
-
-上传采用现有 WebRTC → Unix socket JSON-RPC，每块最多 8 KiB，检查任务 token、顺序偏移、声明大小。网页不能传服务端文件路径；文件名仅作显示用途。PPO 使用 `torch.load(weights_only=True)`，不执行 checkpoint 中任意自定义 Python 类。
-
-转换在工作线程启动的独立 Python 进程中进行，120 秒超时后终止。检查 actor 层连接、输入/输出维度、有限权重、ONNX graph，并在 9 组输入上比较 PyTorch/ONNX 输出（rtol=1e-4, atol=1e-5）。随后由 robotd 自己的 ONNX Runtime 再加载、验证并做三组有限值试推理，保证转换机器能导出不等于目标运行时能加载的问题也可见。直接 ONNX 走目标运行时校验，不要求安装 PyTorch。
-
-开始导入、提交上传、发起回滚时后端都会检查新鲜的放松反馈。准备成功后只排队请求，由唯一拥有电机总线的控制循环提交：必须仍是相同模式/槽位、Limp、策略未开启，且本周期新鲜 STM32 样本中所有已配置电机在线、无故障、未使能、反馈不超过 500 ms。仅停止、仅关闭策略、断开连接、没有新样本、转换期间初始化/使能都不能绕过该检查。条件改变时拒绝本次替换，须重新导入/回滚，不会以后自动补执行。替换本身不发使能或运动命令。
-
-ONNX 存放在 `/var/lib/robotd/policies/`，发布包内文件不修改。以槽位与原文件名为键持久化覆盖关系；首次替换复制原始 ONNX。先落盘候选/备份，再 fsync + rename 原子提交清单，最后交换已经预热的内存 session。失败前原清单/原 session 保持不变；重启或切换模式时读取持久覆盖。清单损坏时拒绝加载和修改并显示原因，不能静默回退。正常提交后删除退出两条历史范围的受管理文件。
-
-## 部署与验证
-
-该面板及转换脚本嵌入 Rust 二进制，更新 `robotd` / `mediad` 后生效。首次需要在**已授权的部署**中安装 Python 转换依赖：
-
-```sh
-sudo sh scripts/setup-model-import.sh
+```text
+policy.py     Policy 类：接口声明、状态初始化、前处理、后处理
+model.onnx    ONNX 网络
 ```
 
-默认建立 `/var/lib/robotd/model-python/`，robotd 自动识别其 Python；也可用 `ROBOT_MODEL_PYTHON` 指向已经部署的解释器。安装脚本不重启服务，不访问电机。需要 Python 3.11+、venv/pip 和足够磁盘空间；版本固定于 `scripts/model-import-requirements.txt`。缺失依赖时页面显示模块名称和转换失败原因，原策略保持不变。
+两个文件组成一个不可拆分的版本。前处理决定模型输入和 obs 维度，后处理解释具名模型输出并产生 14 个受控关节的 MIT 目标。robotd 继续唯一拥有电机总线和硬件保护。
 
-本地回归：`60-tools/test-model-import.py`（torch/onnx/onnxruntime/numpy，RSL-RL 用于对照其真实归一化实现）、`60-tools/test-web-models.cjs`。Rust `models::tests` 覆盖上传边界、清单原子性、两条历史、重启和安全拒绝；带 ONNX Runtime 的主机可设 `ORT_DYLIB_PATH` 后运行 `--include-ignored`，验证实际 ONNX session 提交/回滚，无电机访问。
+完整设计见 [两文件策略运行方案](../../../../../00-docs/POLICY_TWO_FILE_RUNTIME_PROPOSAL.md)。可运行接口示例见 [`policies/two_file_policy_example.py`](../../policies/two_file_policy_example.py)。
+
+## 导入和回滚
+
+1. 点击「放松」，等待页面确认所有配置电机有新鲜、在线、无故障的失能反馈。
+2. 选择 `policy.py`（不超过 1 MiB）和单文件自包含的 `model.onnx`（不超过 64 MiB）。
+3. 点击「上传两文件 → 校验预热 → 替换」。上传事务未收齐两个文件时不会产生版本。
+4. 后端在独立 Python 进程中导入 Policy、校验 ONNX 契约，以中性数据 reset 并执行三轮完整的前处理→推理→后处理预热。异常、超时、形状错误或缺失关节都会拒绝候选，当前版本不变。
+5. 准备成功后只排队等待控制循环提交。控制循环再次检查相同模式/槽位、Limp、策略未开启及本周期的新鲜 STM32 失能反馈，才整体切换两个文件。替换不使能电机。
+6. 历史保留最近两个完整版本。回滚重新加载、校验和预热对应文件；内存状态重新初始化，不恢复旧历史帧或滤波缓存。
+
+旧清单和旧 ONNX 历史仍可读取、运行和回滚。旧 `.pt/.pth` RPC 保留用于兼容已有客户端，但网页新入口只创建两文件版本。
+
+## `policy.py` API v1
+
+文件必须定义无参数构造的 `Policy` 类：
+
+```python
+class Policy:
+    def describe(self): ...
+    def reset(self, robot_info, first_frame): ...
+    def preprocess(self, frame, feedback): ...
+    def postprocess(self, outputs, frame): ...
+```
+
+`describe()` 必须返回可 JSON 序列化且稳定不变的字典：
+
+```python
+{
+    "api_version": 1,
+    "period_us": 20_000,
+    "required_sources": ["joints", "imu", "command"],
+    "inputs": {"obs": {"dtype": "float32", "shape": [1, 96]}},
+    "outputs": {"actions": {"dtype": "float32", "shape": [1, 28]}},
+    "controlled_joints": [...除 mouth 外的全部 14 个稳定关节名...],
+}
+```
+
+平台控制周期为 20 ms。`period_us` 第一版允许 20,000 至 1,000,000 微秒；较慢策略在周期之间保持最近一个经过平台校验的目标。小于 20 ms 的周期无法执行，会在导入时拒绝。
+
+输入和输出名称必须与 ONNX 完全一致。声明 shape 必须用具体正整数解析模型中的动态维度；运行中 shape 固定。平台不拍平、补零、裁剪或猜测语义。API v1 支持 float32、float64、int32、int64 和 bool 张量；不支持 ONNX sequence/map。
+
+`reset(robot_info, first_frame)` 初始化实例中的历史观测、滤波和循环模型状态。所有可变状态必须放在实例中，不得使用模块全局或类变量跨实例保留状态。
+
+`preprocess(frame, feedback)` 返回按 ONNX 输入名称组织的 NumPy 数组字典。也可以返回 `{"ready": False, "reason": "..."}` 表示本轮未就绪；正式运行将按策略错误保持，第一版不会无限等待后自动恢复驱动。
+
+frame 当前提供：帧序号、STM32 tick、实际 dt、稳定关节顺序、关节位置/速度、测得电机力矩、状态位、温度、反馈年龄、融合姿态、IMU gyro/gravity/quaternion 和当前有效 command。没有硬件来源的测量不会伪装成原始数据。
+
+feedback 首轮为 `None`，以后包含上一轮具名 ONNX 输出和后处理请求目标。电机实际响应始终从下一帧硬件反馈读取。
+
+`postprocess(outputs, frame)` 必须返回以关节名为键的字典或 `{"targets": ...}`，完整覆盖除 mouth 外的 14 个关节。每个目标必须恰好包含：
+
+```python
+{
+    "position": 0.0,  # rad
+    "velocity": 0.0,  # rad/s
+    "torque_ff": 0.0, # N·m
+    "kp": 60.0,
+    "kd": 4.0,
+}
+```
+
+obs、归一化、动作缩放、算法裁剪、滤波、单步限制和逐关节 Kp/Kd 均由 Policy 实现。网页不再提供会与后处理重复作用的统一 Kp/Kd/缩放输入。
+
+## 运行隔离和硬件保护
+
+robotd 使用固定的 `/var/lib/robotd/model-python/bin/python`（或显式 `ROBOT_POLICY_PYTHON`）启动独立、持久的策略进程。运行器使用 NumPy 和 CPU ONNX Runtime。用户代码没有电机总线对象；robotd 每轮只传数据并接收目标。
+
+策略进程由 Bubblewrap 创建独立 PID、IPC、UTS 和网络命名空间，主机根文件系统（含 ONNX Runtime 读取 CPU 拓扑所需的 `/sys`）只读，`/tmp`、`/run` 和 `/dev` 使用私有最小挂载。`setpriv` 在 Python 启动前切换到无硬件组的 `robot-policy` 用户、清空补充组、移除全部 capability 并禁止重新提权；robotd 同时限制地址空间、进程数、打开文件数、可写文件大小和 core dump。目标机缺少 `bwrap`/`setpriv` 或隔离创建失败时拒绝加载策略，不降级为直接执行。
+
+每次策略计算限制为 18 ms。普通策略异常使该帧失败并保持目标，显式放松、初始化后可重新创建 Policy 状态；超时、进程退出或协议损坏会终止工作进程，需回滚、重新导入或重启 robotd 才能重新加载。进程隔离让 Python 阻塞不会无限阻塞 robotd，但仍需在板端验证实际性能。
+
+后处理请求仍经过以下平台门禁：
+
+- 全部字段有限且关节集合完整；
+- 位置经过 robotd 执行器范围限制，并继续受已同步到 STM32 的标定限位保护；
+- 速度、前馈力矩、Kp、Kd 满足对应电机和 DMUSB v4 范围；
+- 版本、控制模式、使能、反馈新鲜度、通信故障及 STM32 独立 100 ms 主机命令超时保护保持有效；
+- 初始化、放松、跌倒处理和其他非策略流程不会继承策略 MIT 参数。
+
+## 存储与故障恢复
+
+策略版本存放在 `/var/lib/robotd/policies/`，发布包中的原始 ONNX 不修改。清单对每个槽位记录 model 路径、可选 policy 路径、契约和兼容旧版控制参数。
+
+候选文件先完整落盘并 fsync，再生成清单；清单使用临时文件、fsync 和 rename 提交。内存切换只由总线控制循环执行。失败前旧清单和旧实例保持不变；重启按活动引用重新创建 Policy 和 ONNX Session，保持失能并等待显式初始化/使能。
+
+清单损坏、文件缺失、运行环境不兼容或历史版本无法重新验证时拒绝加载，不静默选择另一个策略。
+
+## 依赖与验证
+
+已授权部署通过 `scripts/setup-model-import.sh` 管理 Python 环境。固定依赖已包含 Python 运行所需的 NumPy 和 ONNX Runtime；不在策略导入期间联网安装任意包。
+
+回归范围包括：两文件上传角色与分块、动态维度与多输入输出契约、reset 后状态隔离、完整 MIT 字段、非法目标拒绝、执行超时、清单原子性、重启/回滚和网页失能门禁。结构和试运行检查通过不等于策略能够稳定运动，实机验证仍须按受控实验流程进行。

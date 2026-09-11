@@ -327,21 +327,15 @@
     <p id="model-safety" class="hint" role="status">等待连接；只有放松且电机确认失能后才能替换。</p>
     <div class="row"><label>替换模型 <select id="model-slot" aria-label="替换模型"><option value="">连接后读取模型</option></select></label><button id="model-refresh">刷新</button></div>
     <p id="model-current" class="hint">连接后读取现有模型</p>
-    <div class="row"><label>本地模型 <input id="model-file" type="file" accept=".pt,.pth,.onnx"></label></div>
-    <div class="row">
-      <label>Kp <input id="model-kp" type="number" min="0" max="500" step="0.01" value="60" style="width:80px"></label>
-      <label>Kd <input id="model-kd" type="number" min="0" max="5" step="0.001" value="4" style="width:80px"></label>
-      <label>动作缩放 <input id="model-scale" type="number" min="0.001" max="5" step="0.001" value="1" style="width:80px"></label>
-    </div>
-    <p class="hint">三个参数随本次模型保存，对该策略控制的关节统一生效；切换/回滚一起恢复。请按训练配置填写，初始值为 60 / 4 / 1。</p>
-    <div class="row"><label>PPO 激活函数 <select id="model-activation"><option value="elu">ELU（UniLab 默认）</option><option value="relu">ReLU</option><option value="tanh">Tanh</option><option value="selu">SELU</option><option value="leaky_relu">LeakyReLU</option></select></label></div>
-    <div class="row"><label>观测归一化 ε <input id="model-epsilon" type="number" value="0.01" min="0.000000000001" max="1" step="any" style="width:90px"></label><span class="hint">RSL-RL 默认 0.01；无归一化时忽略</span></div>
-    <p class="hint">兼容 UniLab / Isaac Sim · Isaac Lab 的 RSL-RL PPO .pt/.pth，以及 ONNX（≤64 MiB）。激活函数须与训练配置一致。模型须采用本机 61 维观测、14 维动作及相同关节顺序/缩放；结构校验不能证明实际运动效果。</p>
-    <div class="row"><button id="model-import" disabled>校验 → 转 ONNX → 替换</button></div>
-    <p id="model-steps" class="hint" aria-label="导入步骤">① 上传 → ② ONNX 转换 → ③ 校验 → ④ 替换</p>
+    <div class="row"><label>策略代码 <input id="model-policy-file" type="file" accept=".py"></label></div>
+    <div class="row"><label>ONNX 模型 <input id="model-file" type="file" accept=".onnx"></label></div>
+    <p class="hint"><code>policy.py</code> 定义 Policy.describe/reset/preprocess/postprocess；obs 维度、历史帧、滤波、动作缩放和逐关节 MIT 参数均由策略定义。<code>model.onnx</code> 可使用与声明匹配的具名、多维或多输入输出张量。</p>
+    <p class="hint">平台仍校验运行时限、有限值、全部 14 个受控关节、机械限位、速度/力矩、Kp/Kd、反馈新鲜度和失能门禁。两个文件作为一个版本整体替换和回滚。</p>
+    <div class="row"><button id="model-import" disabled>上传两文件 → 校验预热 → 替换</button></div>
+    <p id="model-steps" class="hint" aria-label="导入步骤">① 两文件上传 → ② 接口校验 → ③ 完整链路预热 → ④ 替换</p>
     <progress id="model-progress" max="100" value="0" style="width:100%" aria-label="模型导入进度"></progress>
     <p id="model-feedback" class="hint" role="status" aria-live="polite" style="white-space:pre-wrap;overflow-wrap:anywhere">尚未导入模型</p>
-    <h2>ONNX 历史 · 最近两条</h2>
+    <h2>策略版本历史 · 最近两条</h2>
     <div id="model-history" class="hint">暂无历史记录</div>
   </section>
 
@@ -1988,8 +1982,8 @@ function modelLocked() { return modelBusy || ["converting","validating","pending
 function modelEditable() { return open() && modelStatus?.editable === true && Date.now()-modelStatusAt < 3000; }
 function modelControls() {
   const safe = modelEditable();
-  $("model-import").disabled = !safe || modelLocked() || !$("model-file").files.length || !$("model-slot").value;
-  for (const id of ["model-slot","model-file","model-activation","model-epsilon","model-kp","model-kd","model-scale"]) $(id).disabled = modelLocked();
+  $("model-import").disabled = !safe || modelLocked() || !$("model-file").files.length || !$("model-policy-file").files.length || !$("model-slot").value;
+  for (const id of ["model-slot","model-file","model-policy-file"]) $(id).disabled = modelLocked();
   for (const button of $("model-history").querySelectorAll("button")) button.disabled = !safe || modelLocked();
   $("model-safety").textContent = safe ? "已确认放松 · 全部配置电机已失能，可以替换/回滚" : "替换已锁定 · 请先放松并等待全部配置电机失能反馈";
 }
@@ -1998,17 +1992,17 @@ function modelControlText(control) {
 }
 function renderModelHistory() {
   const slot = modelStatus?.slots.find(s => s.id === $("model-slot").value);
-  $("model-current").textContent = slot ? `当前：${slot.active?.name || slot.file} · ${modelControlText(slot.active?.control)}` : "没有可替换的已配置策略";
+  $("model-current").textContent = slot ? `当前：${slot.active?.name || slot.file}${slot.active?.two_file ? " · 两文件策略" : ` · ${modelControlText(slot.active?.control)}`}` : "没有可替换的已配置策略";
   const historyKey = JSON.stringify(slot || null);
   if (historyKey === modelHistoryKey) { modelControls(); return; }
   modelHistoryKey = historyKey;
   $("model-history").replaceChildren();
-  if (!slot?.history.length) $("model-history").textContent = "暂无历史记录；首次替换后自动保存旧 ONNX。";
+  if (!slot?.history.length) $("model-history").textContent = "暂无历史记录；首次替换后自动保存旧完整版本。";
   for (const version of slot?.history || []) {
     const row = document.createElement("div"); row.className = "row";
     const label = document.createElement("span");
     const timestamp = Number(version.id.split("-")[0]);
-    label.textContent = `${version.name} · ${new Date(timestamp).toLocaleString()} · ${modelControlText(version.control)}`;
+    label.textContent = `${version.name} · ${new Date(timestamp).toLocaleString()} · ${version.two_file ? "两文件策略" : modelControlText(version.control)}`;
     const button = document.createElement("button"); button.textContent = "回滚";
     button.onclick = () => runModelRequest({action:"rollback",slot:slot.id,version:version.id});
     row.append(label,button); $("model-history").append(row);
@@ -2027,7 +2021,7 @@ function showModelStatus(status) {
   $("model-feedback").textContent = modelClientError ? `${modelClientError}\n机器人当前结果：${status.detail}` : status.detail;
   $("model-feedback").className = status.phase === "error" || modelClientError ? "hint bad" : "hint";
   const stage = {uploading:0,converting:1,validating:2,pending:3,done:4}[status.failed_phase || status.phase] ?? -1;
-  $("model-steps").textContent = ["上传","ONNX 转换","校验","替换"].map((label,i) => `${i<stage ? "✓" : i===stage ? (status.phase==="error" ? "✗" : "●") : "○"} ${label}`).join(" → ");
+  $("model-steps").textContent = ["两文件上传","接口校验","完整链路预热","替换"].map((label,i) => `${i<stage ? "✓" : i===stage ? (status.phase==="error" ? "✗" : "●") : "○"} ${label}`).join(" → ");
   $("model-steps").className = status.phase === "error" ? "hint bad" : status.phase === "done" ? "hint in" : "hint";
   if (!modelBusy) $("model-progress").value = MODEL_PHASES[status.phase] || 0;
   renderModelHistory();
@@ -2047,31 +2041,32 @@ async function runModelRequest(params) {
   finally { modelBusy=false; modelControls(); }
 }
 $("model-import").onclick = async () => {
-  const file = $("model-file").files[0];
-  if (!file || !modelEditable() || modelLocked()) return;
-  if (!/\.(pt|pth|onnx)$/i.test(file.name) || !file.size || file.size>64*1024*1024) { $("model-feedback").textContent="请选择不超过 64 MiB 的 .pt/.pth/.onnx 文件"; return; }
-  const values = ["model-kp","model-kd","model-scale"].map(id => $(id).value.trim());
-  const [kp,kd,action_scale] = values.map(Number);
-  if (values.some(v=>!v) || ![kp,kd,action_scale].every(Number.isFinite) || kp<0 || kp>500 || kd<0 || kd>5 || action_scale<=0 || action_scale>5) {
-    $("model-feedback").textContent="请填写有效参数：Kp 0～500，Kd 0～5，动作缩放大于 0 且不超过 5"; return;
-  }
+  const policy = $("model-policy-file").files[0], file = $("model-file").files[0];
+  if (!policy || !file || !modelEditable() || modelLocked()) return;
+  if (!/\.py$/i.test(policy.name) || !policy.size || policy.size>1024*1024) { $("model-feedback").textContent="请选择不超过 1 MiB 的 policy.py"; return; }
+  if (!/\.onnx$/i.test(file.name) || !file.size || file.size>64*1024*1024) { $("model-feedback").textContent="请选择不超过 64 MiB 的 model.onnx"; return; }
   modelClientError=""; modelBusy=true; modelControls();
   try {
-    const upload = await call("robot.models",{action:"begin",slot:$("model-slot").value,filename:file.name,size:file.size,activation:$("model-activation").value,normalizer_epsilon:Number($("model-epsilon").value),control:{kp,kd,action_scale}},true);
-    for(let offset=0;offset<file.size;offset+=8192) {
-      const data = new Uint8Array(await file.slice(offset,offset+8192).arrayBuffer());
-      const hex = Array.from(data,b=>b.toString(16).padStart(2,"0")).join("");
-      await call("robot.models",{action:"chunk",token:upload.token,offset,hex},true);
-      const percent=Math.round(100*(offset+data.length)/file.size);
-      $("model-progress").value=percent*0.3;
-      $("model-feedback").textContent=`正在上传 ${file.name} · ${percent}%`;
+    const upload = await call("robot.models",{action:"begin_bundle",slot:$("model-slot").value,policy_filename:policy.name,policy_size:policy.size,model_filename:file.name,model_size:file.size},true);
+    let sentBytes=0; const totalBytes=policy.size+file.size;
+    for (const [role,part] of [["policy",policy],["model",file]]) {
+      for(let offset=0;offset<part.size;offset+=8192) {
+        const data = new Uint8Array(await part.slice(offset,offset+8192).arrayBuffer());
+        const hex = Array.from(data,b=>b.toString(16).padStart(2,"0")).join("");
+        await call("robot.models",{action:"bundle_chunk",token:upload.token,file:role,offset,hex},true);
+        sentBytes += data.length;
+        const percent=Math.round(100*sentBytes/totalBytes);
+        $("model-progress").value=percent*0.3;
+        $("model-feedback").textContent=`正在上传 ${part.name} · 总进度 ${percent}%`;
+      }
     }
-    showModelStatus(await call("robot.models",{action:"finish",token:upload.token},true));
+    showModelStatus(await call("robot.models",{action:"finish_bundle",token:upload.token},true));
   } catch(error) { modelClientError=`导入请求未确认：${error.message}。请刷新核对结果；上传中断可重新导入。`; $("model-feedback").textContent=modelClientError; modelStatus=null; }
   finally { modelBusy=false; modelControls(); }
 };
 $("model-slot").onchange=()=>{modelHistoryKey="";renderModelHistory();};
 $("model-file").onchange=modelControls;
+$("model-policy-file").onchange=modelControls;
 $("model-refresh").onclick=()=>{modelClientError="";refreshModels();};
 setInterval(refreshModels,1000);
 setInterval(modelControls,250);

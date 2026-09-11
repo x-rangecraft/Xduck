@@ -125,6 +125,7 @@ pub struct Step {
     /// What the gain should be for this tick.
     pub gain: u16,
     pub pd: Option<[f64; 2]>,
+    pub mit: Option<[duck_control::MitTarget; NUM_JOINTS]>,
     /// A scripted move is mid-flight — the robot is moving regardless of the twist, so
     /// restarting the daemon now would put it on the floor.
     pub busy: bool,
@@ -146,6 +147,7 @@ enum Sit {
 pub struct Controller {
     policy: Policy,
     model_controls: Vec<(Net, duck_ipc_proto::ModelControl)>,
+    custom_policies: Vec<(Net, crate::custom_policy::CustomPolicy)>,
     tuning: Tuning,
     skills: SkillTuning,
     /// Raw previous policy output, which the observation feeds back. Raw, not scaled: the
@@ -173,6 +175,7 @@ impl Controller {
         Self {
             policy,
             model_controls: Vec::new(),
+            custom_policies: Vec::new(),
             tuning,
             skills,
             last_action: [0.0; ACTION_LEN],
@@ -191,7 +194,20 @@ impl Controller {
     /// not resume with a stale action in its observation and a filter anchored to wherever
     /// it was before.
     pub fn replace_network(&mut self, net: Net, prepared: duck_control::policy::PreparedNetwork) {
+        self.custom_policies.retain(|(candidate, _)| *candidate != net);
         self.policy.replace_network(net, prepared);
+        self.reset();
+    }
+
+    pub fn replace_custom_policy(
+        &mut self,
+        net: Net,
+        mut policy: crate::custom_policy::CustomPolicy,
+    ) {
+        policy.mark_reset();
+        self.custom_policies.retain(|(candidate, _)| *candidate != net);
+        self.custom_policies.push((net, policy));
+        self.set_model_control(net, None);
         self.reset();
     }
 
@@ -207,6 +223,7 @@ impl Controller {
     pub fn reset(&mut self) {
         self.last_action = [0.0; ACTION_LEN];
         self.previous = None;
+        for (_, policy) in &mut self.custom_policies { policy.mark_reset(); }
     }
 
     pub fn has_sitstand(&self) -> bool {
@@ -430,78 +447,72 @@ impl Controller {
             }
         };
 
-        let observation = Observation::build(
-            &sensors.imu,
-            &sensors.positions,
-            &sensors.velocities,
-            &DEFAULT_POSITION,
-            &self.last_action,
-            &effective,
-        );
-
-        let action = self.policy.infer(&observation, net)?;
-        self.last_action = action;
-
-        // Scale and gain follow the active state, recomputed every tick. "Standing tuning"
-        // applies whenever the *effective* command is inside the standing threshold and the
-        // standing network exists — which is how a kick window and the sitstand rise end up
-        // at standing gain in the prototype, so they do here too.
-        let standing_tuned = matches!(net, Net::Stand)
-            || (matches!(net, Net::KickLeft | Net::KickRight | Net::SitStand)
-                && self.policy.will_stand(effective.twist_magnitude()));
-        let (scale, gain) = match net {
-            Net::Roulade => (
-                self.skills.roulade_action_scale,
-                (self.tuning.gain as f64 * self.skills.roulade_gain_ratio).round() as u16,
-            ),
-            Net::GroundPick => (
-                self.skills.ground_pick_action_scale,
-                (self.tuning.gain as f64 * self.skills.ground_pick_gain_ratio).round() as u16,
-            ),
-            Net::SitStand => (
-                // The prototype's `start_sit_toggle` pins the scale at 1.0 for the whole
-                // sit/rise cycle.
-                1.0,
-                if standing_tuned {
-                    (self.tuning.gain as f64 * self.tuning.standing_gain_ratio).round() as u16
-                } else {
-                    self.tuning.gain
-                },
-            ),
-            _ if standing_tuned => (
-                self.tuning.standing_action_scale,
-                (self.tuning.gain as f64 * self.tuning.standing_gain_ratio).round() as u16,
-            ),
-            _ => (self.tuning.action_scale, self.tuning.gain),
-        };
-        // Explicit imported values replace the legacy state multipliers and voltage scale.
-        let control = self.model_control(net);
-        let scale = control.map_or(scale * scale_mult, |c| c.action_scale);
-        let pd = control.map(|c| [c.kp, c.kd]);
-        let gain = control.map_or(gain, |c| c.kp.round() as u16);
-
-        let offsets = Observation::scatter_action(&action);
-        let mut targets = [0.0; NUM_JOINTS];
-        for joint in 0..NUM_JOINTS {
-            targets[joint] = DEFAULT_POSITION[joint] + scale * offsets[joint];
-        }
-
-        if let Some(previous) = self.previous {
-            if let Some(alpha) = self.tuning.head_lowpass {
-                for joint in HEAD_JOINTS {
-                    targets[joint] = alpha * targets[joint] + (1.0 - alpha) * previous[joint];
-                }
+        let (targets, gain, pd, mit) = if let Some((_, custom)) =
+            self.custom_policies.iter_mut().find(|(candidate, _)| *candidate == net)
+        {
+            let output = custom.step(sensors, &effective, dt)
+                .map_err(PolicyError::Inference)?;
+            (output.positions, self.tuning.gain, None, Some(output.mit))
+        } else {
+            let observation = Observation::build(
+                &sensors.imu,
+                &sensors.positions,
+                &sensors.velocities,
+                &DEFAULT_POSITION,
+                &self.last_action,
+                &effective,
+            );
+            let action = self.policy.infer(&observation, net)?;
+            self.last_action = action;
+            let standing_tuned = matches!(net, Net::Stand)
+                || (matches!(net, Net::KickLeft | Net::KickRight | Net::SitStand)
+                    && self.policy.will_stand(effective.twist_magnitude()));
+            let (scale, gain) = match net {
+                Net::Roulade => (
+                    self.skills.roulade_action_scale,
+                    (self.tuning.gain as f64 * self.skills.roulade_gain_ratio).round() as u16,
+                ),
+                Net::GroundPick => (
+                    self.skills.ground_pick_action_scale,
+                    (self.tuning.gain as f64 * self.skills.ground_pick_gain_ratio).round() as u16,
+                ),
+                Net::SitStand => (
+                    1.0,
+                    if standing_tuned {
+                        (self.tuning.gain as f64 * self.tuning.standing_gain_ratio).round() as u16
+                    } else { self.tuning.gain },
+                ),
+                _ if standing_tuned => (
+                    self.tuning.standing_action_scale,
+                    (self.tuning.gain as f64 * self.tuning.standing_gain_ratio).round() as u16,
+                ),
+                _ => (self.tuning.action_scale, self.tuning.gain),
+            };
+            let control = self.model_control(net);
+            let scale = control.map_or(scale * scale_mult, |value| value.action_scale);
+            let pd = control.map(|value| [value.kp, value.kd]);
+            let gain = control.map_or(gain, |value| value.kp.round() as u16);
+            let offsets = Observation::scatter_action(&action);
+            let mut targets = [0.0; NUM_JOINTS];
+            for joint in 0..NUM_JOINTS {
+                targets[joint] = DEFAULT_POSITION[joint] + scale * offsets[joint];
             }
-            if let Some(alpha) = self.tuning.legs_lowpass {
-                for (joint, target) in targets.iter_mut().enumerate() {
-                    if HEAD_JOINTS.contains(&joint) || joint == duck_control::model::MOUTH_INDEX {
-                        continue;
+            if let Some(previous) = self.previous {
+                if let Some(alpha) = self.tuning.head_lowpass {
+                    for joint in HEAD_JOINTS {
+                        targets[joint] = alpha * targets[joint] + (1.0 - alpha) * previous[joint];
                     }
-                    *target = alpha * *target + (1.0 - alpha) * previous[joint];
+                }
+                if let Some(alpha) = self.tuning.legs_lowpass {
+                    for (joint, target) in targets.iter_mut().enumerate() {
+                        if HEAD_JOINTS.contains(&joint) || joint == duck_control::model::MOUTH_INDEX { continue; }
+                        *target = alpha * *target + (1.0 - alpha) * previous[joint];
+                    }
                 }
             }
-        }
-        self.previous = Some(targets);
+            self.previous = Some(targets);
+            (targets, gain, pd, None)
+        };
 
         // Advance the windows, after the tick that used them — the prototype advances its
         // phase after the motor write.
@@ -527,6 +538,7 @@ impl Controller {
             label,
             gain,
             pd,
+            mit,
             busy: self.busy(),
         })
     }

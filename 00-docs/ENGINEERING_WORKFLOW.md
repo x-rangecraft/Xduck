@@ -41,7 +41,7 @@
 | Android SDK/JDK/Gradle 与构建缓存 | `20-build/android/` |
 | Android APK 与校验清单 | `30-artifacts/android/` |
 | Android 构建/测试日志 | `50-logs/{build,test}/android/` |
-| 策略模型管理/转换源码 | `10-source/rk3566/microduck/robotd/src/models.rs`、`model_import.py`；IPC 由 `duck-ipc-proto` 定义，Web 面板由 `mediad` 提供 |
+| 策略模型管理/转换源码 | 两文件策略由 `robotd/src/models.rs`、`custom_policy.rs`、`custom_policy_worker.py` 管理；兼容权重转换保留 `model_import.py`；IPC 由 `duck-ipc-proto` 定义，Web 面板由 `mediad` 提供 |
 | 模型导入回归工具与日志 | `60-tools/test-model-import.py`、`test-web-models.cjs`；`50-logs/test/model-*` |
 | 电机实验接口 | `robotd/src/experiment.rs` 为控制与数据所有者；`mediad/src/experiment_tasks_http.rs` 提供 HTTP 适配；文档和 PC 示例位于 `mediad/webclient/`，实时接口采集 CSV 保存在调用者电脑；`robotd/src/experiment_tasks.rs` 管理预上传任务、固定缓冲执行和 `/var/lib/robotd/experiments/` 持久数据，`mediad/src/experiment_tasks_http.rs` 只流式转发文件。任务结果由电脑下载校验后显式删除；同目录 `joint_sine_sweep.py` 为正弦扫描与失能通信诊断工具 |
 | 本体日志下载接口 | `mediad/src/journal_http.rs` 按请求流式读取 Journal，不在设备保存导出副本 |
@@ -69,7 +69,7 @@
 | 部署日志 | `/home/xduck1/xrange/50-logs/deploy/rk3566/microduck/` |
 | 板端构建工具 | `/home/xduck1/xrange/60-tools/` |
 
-部署后的策略覆盖文件、两条 ONNX 历史和原子清单由 `robotd` 单独写入 `/var/lib/robotd/policies/`（`StateDirectory=robotd`）。不得覆盖发布包中的原始 ONNX。模型导入转换器运行环境固定在 `/var/lib/robotd/model-python/`，由已授权部署时运行 `scripts/setup-model-import.sh` 安装；它是部署运行依赖，不属于工程编译缓存。`ROBOT_MODEL_PYTHON` 可显式指定其他受管理的 Python。模型替换与回滚只能由控制循环在放松且最新 STM32 反馈确认全部配置电机失能时执行。 每个导入版本在同一清单中绑定 Kp、Kd 与动作缩放，切换/回滚一并恢复；`duck-control` 在每帧目标中承载策略 PD 参数，未绑定的旧版本继续使用原程序参数。
+部署后的策略覆盖文件、两条 ONNX 历史和原子清单由 `robotd` 单独写入 `/var/lib/robotd/policies/`（`StateDirectory=robotd`）。不得覆盖发布包中的原始 ONNX。模型导入转换器和两文件策略运行环境固定在 `/var/lib/robotd/model-python/`，由已授权部署时运行 `scripts/setup-model-import.sh` 安装；它是部署运行依赖，不属于工程编译缓存。`ROBOT_MODEL_PYTHON` 可显式指定其他受管理的 Python。两文件策略必须通过 `bubblewrap` 与 `setpriv` 以 `robot-policy` 用户在无网络、无硬件设备、只读主机文件系统和资源限制下运行；目标机缺少任一工具时部署和策略加载均须失败。模型替换与回滚只能由控制循环在放松且最新 STM32 反馈确认全部配置电机失能时执行。每个兼容旧版导入在同一清单中绑定 Kp、Kd 与动作缩放，切换/回滚一并恢复；两文件版本的逐关节 MIT 参数由 policy.py 每帧提供并经过平台硬边界校验。`duck-control` 在每帧目标中承载这些参数，未绑定的旧版本继续使用原程序参数。
 
 ## 3. RK3566 固定身份与 SSH 配置
 

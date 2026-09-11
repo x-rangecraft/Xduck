@@ -681,6 +681,9 @@ pub enum ModelParams {
     Begin { slot: String, filename: String, size: usize, activation: String, normalizer_epsilon: f64, control: ModelControl },
     Chunk { token: String, offset: usize, hex: String },
     Finish { token: String },
+    BeginBundle { slot: String, policy_filename: String, policy_size: usize, model_filename: String, model_size: usize },
+    BundleChunk { token: String, file: String, offset: usize, hex: String },
+    FinishBundle { token: String },
     Rollback { slot: String, version: String },
 }
 

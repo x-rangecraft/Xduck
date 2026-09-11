@@ -59,12 +59,23 @@ pub struct JointTargets {
     pub positions: [f64; NUM_JOINTS],
     /// Per-frame policy PD override; None uses the ordinary gain and damping.
     pub pd: Option<[f64; 2]>,
+    /// Full per-joint MIT targets from a two-file research policy.
+    pub mit: Option<[MitTarget; NUM_JOINTS]>,
 }
 
 impl JointTargets {
     pub fn new(positions: [f64; NUM_JOINTS]) -> Self {
-        Self { positions, pd: None }
+        Self { positions, pd: None, mit: None }
     }
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
+pub struct MitTarget {
+    pub position: f64,
+    pub velocity: f64,
+    pub torque_ff: f64,
+    pub kp: f64,
+    pub kd: f64,
 }
 
 #[derive(Debug, thiserror::Error)]

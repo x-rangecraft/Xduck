@@ -267,6 +267,19 @@ impl<T: RobotIo> Safety<T> {
         running_gain: u16,
         pd: Option<[f64; 2]>,
     ) -> Result<Applied, IoError> {
+        self.apply_with_control(targets, hold, running_gain, pd, None)
+    }
+
+    /// Apply a complete per-joint MIT request. Position limits stay in this platform
+    /// safety layer; velocity, torque and gains receive a second validation in the bus.
+    pub fn apply_with_control(
+        &mut self,
+        targets: [f64; NUM_JOINTS],
+        hold: [f64; NUM_JOINTS],
+        running_gain: u16,
+        pd: Option<[f64; 2]>,
+        mit: Option<[crate::io::MitTarget; NUM_JOINTS]>,
+    ) -> Result<Applied, IoError> {
         let mut applied = Applied::default();
 
         // Note what is *not* here: a fall gate. Being down does not stop the caller
@@ -297,6 +310,12 @@ impl<T: RobotIo> Safety<T> {
 
         let mut command = JointTargets::new(safe);
         command.pd = pd;
+        command.mit = mit.map(|mut values| {
+            for (target, position) in values.iter_mut().zip(safe) {
+                target.position = position;
+            }
+            values
+        });
         self.io.write(&command)?;
         Ok(applied)
     }

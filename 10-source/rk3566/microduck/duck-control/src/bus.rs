@@ -522,15 +522,38 @@ fn encode_targets(targets: &JointTargets, kp_centi: u16, command_seq: u16,
     put_u32(&mut p[4..8], tick_us);
     for (slot, &joint) in STM32_TO_CONTROL_JOINT.iter().enumerate() {
         if STM32_MOTOR_IDS[slot] == 0 { continue; }
-        let position = targets.positions[joint];
+        let (position, velocity, torque, joint_kp, joint_kd) = match targets.mit {
+            Some(mit) => {
+                let target = mit[joint];
+                let (vmax, tmax) = motor_command_bounds(STM32_MOTOR_IDS[slot])
+                    .ok_or_else(|| IoError::Bus("unknown motor ID".into()))?;
+                if [target.position, target.velocity, target.torque_ff, target.kp, target.kd]
+                    .iter().any(|value| !value.is_finite())
+                    || target.velocity.abs() > vmax
+                    || target.torque_ff.abs() > tmax
+                    || !(0.0..=500.0).contains(&target.kp)
+                    || !(0.0..=5.0).contains(&target.kd)
+                {
+                    return Err(IoError::Bus(format!(
+                        "拒绝发送关节 {} 的无效 MIT 目标", crate::model::JOINT_NAMES[joint]
+                    )));
+                }
+                (target.position, target.velocity, target.torque_ff,
+                 (target.kp * 100.0).round() as u16,
+                 (target.kd * 1000.0).round() as u16)
+            }
+            None => (targets.positions[joint], 0.0, 0.0, kp_centi, kd_milli),
+        };
         if !position.is_finite() {
             return Err(IoError::Bus("拒绝发送非有限的电机目标位置".into()));
         }
         let b = COMMAND_PREFIX_LEN + slot * MOTOR_COMMAND_LEN;
         let pos = (position * 1000.0).round().clamp(i32::MIN as f64, i32::MAX as f64) as i32;
         put_i32(&mut p[b..b + 4], pos);
-        put_u16(&mut p[b + 12..b + 14], kp_centi);
-        put_u16(&mut p[b + 14..b + 16], kd_milli);
+        put_i32(&mut p[b + 4..b + 8], (velocity * 1000.0).round() as i32);
+        put_i32(&mut p[b + 8..b + 12], (torque * 1000.0).round() as i32);
+        put_u16(&mut p[b + 12..b + 14], joint_kp);
+        put_u16(&mut p[b + 14..b + 16], joint_kd);
         put_u16(&mut p[b + 16..b + 18], 1);
     }
     Ok(p)
@@ -1142,5 +1165,35 @@ mod policy_pd_tests {
         for pd in [[f64::NAN,4.0],[60.0,f64::INFINITY],[501.0,4.0],[60.0,5.01]] {
             targets.pd=Some(pd); assert!(encode_targets(&targets,20_000,3,0).is_err());
         }
+    }
+
+    #[test]
+    fn two_file_policy_encodes_per_joint_mit_fields() {
+        let mut targets = JointTargets::new([0.0; crate::model::NUM_JOINTS]);
+        let mut mit = [crate::io::MitTarget::default(); crate::model::NUM_JOINTS];
+        for (joint, target) in mit.iter_mut().enumerate() {
+            *target = crate::io::MitTarget {
+                position: joint as f64 / 100.0,
+                velocity: 1.25,
+                torque_ff: -0.5,
+                kp: 12.34 + joint as f64,
+                kd: 0.567,
+            };
+            targets.positions[joint] = target.position;
+        }
+        targets.mit = Some(mit);
+        let payload = encode_targets(&targets, 20_000, 7, 99).unwrap();
+        for (slot, &joint) in STM32_TO_CONTROL_JOINT.iter().enumerate() {
+            if STM32_MOTOR_IDS[slot] == 0 { continue; }
+            let base = COMMAND_PREFIX_LEN + slot * MOTOR_COMMAND_LEN;
+            assert_eq!(get_i32(&payload[base..base + 4]), (joint as i32) * 10);
+            assert_eq!(get_i32(&payload[base + 4..base + 8]), 1250);
+            assert_eq!(get_i32(&payload[base + 8..base + 12]), -500);
+            assert_eq!(get_u16(&payload[base + 12..base + 14]), ((12.34 + joint as f64) * 100.0).round() as u16);
+            assert_eq!(get_u16(&payload[base + 14..base + 16]), 567);
+        }
+        mit[0].velocity = 100.0;
+        targets.mit = Some(mit);
+        assert!(encode_targets(&targets, 20_000, 8, 100).is_err());
     }
 }

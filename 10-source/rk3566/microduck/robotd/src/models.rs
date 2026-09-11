@@ -21,11 +21,24 @@ struct Version {
     path: PathBuf,
     #[serde(default)]
     control: Option<ModelControl>,
+    #[serde(default)]
+    policy_path: Option<PathBuf>,
+    #[serde(default)]
+    contract: Option<Value>,
 }
 #[derive(Clone, Default, Serialize, Deserialize)]
 struct Record {
     active: Option<Version>,
     history: Vec<Version>,
+}
+fn version_json(version: &Version) -> Value {
+    json!({
+        "id": version.id,
+        "name": version.name,
+        "control": version.control,
+        "two_file": version.policy_path.is_some(),
+        "contract": version.contract,
+    })
 }
 #[derive(Clone)]
 struct Slot {
@@ -44,15 +57,55 @@ struct Upload {
     control: ModelControl,
     path: PathBuf,
 }
+struct BundlePart {
+    name: String,
+    size: usize,
+    received: usize,
+    path: PathBuf,
+}
+struct BundleUpload {
+    token: String,
+    slot: Slot,
+    policy: BundlePart,
+    model: BundlePart,
+}
+enum UploadTask {
+    Legacy(Upload),
+    Bundle(BundleUpload),
+}
+impl UploadTask {
+    fn token(&self) -> &str {
+        match self { Self::Legacy(value) => &value.token, Self::Bundle(value) => &value.token }
+    }
+    fn received(&self) -> usize {
+        match self {
+            Self::Legacy(value) => value.received,
+            Self::Bundle(value) => value.policy.received + value.model.received,
+        }
+    }
+    fn remove_files(self) {
+        match self {
+            Self::Legacy(value) => { let _ = fs::remove_file(value.path); }
+            Self::Bundle(value) => {
+                let _ = fs::remove_file(value.policy.path);
+                let _ = fs::remove_file(value.model.path);
+            }
+        }
+    }
+}
+enum Prepared {
+    Legacy(PreparedNetwork),
+    Bundle(crate::custom_policy::CustomPolicy),
+}
 struct Pending {
     slot: Slot,
     version: Version,
-    network: PreparedNetwork,
+    prepared: Prepared,
 }
 struct Inner {
     records: BTreeMap<String, Record>,
     slots: BTreeMap<String, Slot>,
-    upload: Option<Upload>,
+    upload: Option<UploadTask>,
     pending: Option<Pending>,
     phase: String,
     failed_phase: Option<String>,
@@ -116,7 +169,9 @@ impl Models {
                     net,
                 },
             );
-            if let Some(v) = inner.records.get(&key).and_then(|r| r.active.as_ref()) {
+            if let Some(v) = inner.records.get(&key).and_then(|r| r.active.as_ref())
+                && v.policy_path.is_none()
+            {
                 *path = v.path.clone();
             }
         };
@@ -135,10 +190,29 @@ impl Models {
         }
     }
     pub fn restore_controls(&self, controller: &mut crate::control::Controller) {
-        let inner = self.inner.lock().unwrap();
-        for slot in inner.slots.values() {
-            let control = inner.records.get(&slot.key).and_then(|r| r.active.as_ref()).and_then(|v| v.control);
-            controller.set_model_control(slot.net, control);
+        let configured: Vec<_> = {
+            let inner = self.inner.lock().unwrap();
+            inner.slots.values().map(|slot| {
+                (slot.clone(), inner.records.get(&slot.key).and_then(|record| record.active.clone()))
+            }).collect()
+        };
+        for (slot, version) in configured {
+            match version {
+                Some(version) if version.policy_path.is_some() => {
+                    match crate::custom_policy::CustomPolicy::load(
+                        version.policy_path.as_ref().unwrap(), &version.path
+                    ) {
+                        Ok(policy) => controller.replace_custom_policy(slot.net, policy),
+                        Err(error) => {
+                            self.inner.lock().unwrap().load_error = Some(format!(
+                                "无法恢复两文件策略 {}：{error}", version.name
+                            ));
+                            return;
+                        }
+                    }
+                }
+                other => controller.set_model_control(slot.net, other.and_then(|value| value.control)),
+            }
         }
     }
     pub fn load_error(&self) -> Option<String> {
@@ -147,12 +221,12 @@ impl Models {
     fn status(inner: &Inner) -> Value {
         let slots: Vec<_> = inner.slots.iter().map(|(id, slot)| {
             let record = inner.records.get(&slot.key).cloned().unwrap_or_default();
-            json!({"id": id, "file": slot.path.file_name().unwrap_or_default().to_string_lossy(), "active": record.active.as_ref().map(|v| json!({"id":v.id,"name":v.name,"control":v.control})),
-                "history": record.history.iter().map(|v| json!({"id":v.id,"name":v.name,"control":v.control})).collect::<Vec<_>>()})
+            json!({"id": id, "file": slot.path.file_name().unwrap_or_default().to_string_lossy(), "active": record.active.as_ref().map(version_json),
+                "history": record.history.iter().map(version_json).collect::<Vec<_>>()})
         }).collect();
         json!({"slots":slots,"phase":inner.phase,"failed_phase":inner.failed_phase,"detail":inner.load_error.as_ref().unwrap_or(&inner.detail),
             "editable":inner.editable && inner.observed.elapsed() < Duration::from_millis(500) && inner.load_error.is_none(),
-            "token":inner.upload.as_ref().map(|u| &u.token),"received":inner.upload.as_ref().map(|u| u.received)})
+            "token":inner.upload.as_ref().map(UploadTask::token),"received":inner.upload.as_ref().map(UploadTask::received)})
     }
     pub fn request(self: &Arc<Self>, params: ModelParams) -> Result<Value, String> {
         let mut inner = self.inner.lock().unwrap();
@@ -162,7 +236,7 @@ impl Models {
         if let Some(error) = &inner.load_error {
             return Err(error.clone());
         }
-        if !matches!(params, ModelParams::Chunk { .. })
+        if !matches!(params, ModelParams::Chunk { .. } | ModelParams::BundleChunk { .. })
             && (!inner.editable || inner.observed.elapsed() >= Duration::from_millis(500))
         {
             return Err("操作已拒绝：请先放松，等待全部配置电机的新鲜失能反馈".into());
@@ -204,12 +278,12 @@ impl Models {
                 control.validate()?;
                 fs::create_dir_all(&self.root).map_err(|e| e.to_string())?;
                 if let Some(old) = inner.upload.take() {
-                    let _ = fs::remove_file(old.path);
+                    old.remove_files();
                 }
                 let token = unique();
                 let path = self.root.join(format!("upload-{token}.{extension}"));
                 fs::File::create(&path).map_err(|e| e.to_string())?;
-                inner.upload = Some(Upload {
+                inner.upload = Some(UploadTask::Legacy(Upload {
                     token,
                     slot,
                     name: filename,
@@ -219,7 +293,7 @@ impl Models {
                     normalizer_epsilon,
                     control,
                     path,
-                });
+                }));
                 inner.failed_phase = None;
                 inner.phase = "uploading".into();
                 inner.detail = "正在上传本地模型".into();
@@ -231,7 +305,10 @@ impl Models {
                 let u = inner
                     .upload
                     .as_mut()
-                    .filter(|u| u.token == token)
+                    .and_then(|upload| match upload {
+                        UploadTask::Legacy(upload) if upload.token == token => Some(upload),
+                        _ => None,
+                    })
                     .ok_or("上传凭证已失效")?;
                 let bytes = decode_chunk(&hex)?;
                 if offset != u.received || u.received + bytes.len() > u.size {
@@ -248,18 +325,86 @@ impl Models {
                 let u = inner
                     .upload
                     .as_ref()
-                    .filter(|u| u.token == token)
+                    .and_then(|upload| match upload {
+                        UploadTask::Legacy(upload) if upload.token == token => Some(upload),
+                        _ => None,
+                    })
                     .ok_or("上传凭证已失效")?;
                 if u.received != u.size
                     || fs::metadata(&u.path).map_err(|e| e.to_string())?.len() != u.size as u64
                 {
                     return Err("文件未上传完整".into());
                 }
-                let upload = inner.upload.take().unwrap();
+                let UploadTask::Legacy(upload) = inner.upload.take().unwrap() else { unreachable!() };
                 inner.phase = "converting".into();
                 inner.detail = "校验 PPO 权重并转换 ONNX（最长 120 秒）".into();
                 let this = self.clone();
                 std::thread::spawn(move || this.prepare(upload));
+            }
+            ModelParams::BeginBundle { slot, policy_filename, policy_size, model_filename, model_size } => {
+                if matches!(inner.phase.as_str(), "converting" | "validating" | "pending") {
+                    return Err("已有模型任务正在处理".into());
+                }
+                if Path::new(&policy_filename).extension().and_then(|value| value.to_str()) != Some("py")
+                    || Path::new(&model_filename).extension().and_then(|value| value.to_str()) != Some("onnx")
+                    || policy_size == 0 || policy_size > 1024 * 1024
+                    || model_size == 0 || model_size > MAX_SIZE
+                    || policy_filename.len() > 240 || model_filename.len() > 240
+                {
+                    return Err("策略文件须为 1 字节至 1 MiB 的 .py；模型须为 1 字节至 64 MiB 的 .onnx".into());
+                }
+                let slot = inner.slots.get(&slot).cloned().ok_or("未知模型槽位")?;
+                fs::create_dir_all(&self.root).map_err(|error| error.to_string())?;
+                if let Some(old) = inner.upload.take() { old.remove_files(); }
+                let token = unique();
+                let policy_path = self.root.join(format!("upload-{token}-policy.py"));
+                let model_path = self.root.join(format!("upload-{token}-model.onnx"));
+                fs::File::create(&policy_path).map_err(|error| error.to_string())?;
+                fs::File::create(&model_path).map_err(|error| error.to_string())?;
+                inner.upload = Some(UploadTask::Bundle(BundleUpload {
+                    token,
+                    slot,
+                    policy: BundlePart { name: policy_filename, size: policy_size, received: 0, path: policy_path },
+                    model: BundlePart { name: model_filename, size: model_size, received: 0, path: model_path },
+                }));
+                inner.failed_phase = None;
+                inner.phase = "uploading".into();
+                inner.detail = "正在上传 policy.py 与 model.onnx".into();
+            }
+            ModelParams::BundleChunk { token, file, offset, hex } => {
+                if inner.phase != "uploading" { return Err("没有正在上传的任务".into()); }
+                let upload = inner.upload.as_mut().and_then(|upload| match upload {
+                    UploadTask::Bundle(upload) if upload.token == token => Some(upload),
+                    _ => None,
+                }).ok_or("上传凭证已失效")?;
+                let part = match file.as_str() {
+                    "policy" => &mut upload.policy,
+                    "model" => &mut upload.model,
+                    _ => return Err("未知两文件上传角色".into()),
+                };
+                let bytes = decode_chunk(&hex)?;
+                if offset != part.received || part.received + bytes.len() > part.size {
+                    return Err("上传偏移或文件大小不匹配，请重新选择两个文件导入".into());
+                }
+                fs::OpenOptions::new().append(true).open(&part.path)
+                    .and_then(|mut output| output.write_all(&bytes)).map_err(|error| error.to_string())?;
+                part.received += bytes.len();
+            }
+            ModelParams::FinishBundle { token } => {
+                let upload = inner.upload.as_ref().and_then(|upload| match upload {
+                    UploadTask::Bundle(upload) if upload.token == token => Some(upload),
+                    _ => None,
+                }).ok_or("上传凭证已失效")?;
+                for part in [&upload.policy, &upload.model] {
+                    if part.received != part.size
+                        || fs::metadata(&part.path).map_err(|error| error.to_string())?.len() != part.size as u64
+                    { return Err("两个文件未上传完整".into()); }
+                }
+                let UploadTask::Bundle(upload) = inner.upload.take().unwrap() else { unreachable!() };
+                inner.phase = "validating".into();
+                inner.detail = "正在校验接口、动态张量、完整前处理→ONNX→后处理链路并预热".into();
+                let this = self.clone();
+                std::thread::spawn(move || this.prepare_bundle(upload));
             }
             ModelParams::Rollback { slot, version } => {
                 if matches!(
@@ -280,13 +425,14 @@ impl Models {
                 inner.detail = "正在重新校验历史 ONNX".into();
                 let this = self.clone();
                 std::thread::spawn(move || {
-                    let result = PreparedNetwork::load(&version.path)
-                        .map(|network| Pending {
-                            slot,
-                            version,
-                            network,
-                        })
-                        .map_err(|e| e.to_string());
+                    let result = if let Some(policy_path) = &version.policy_path {
+                        crate::custom_policy::CustomPolicy::load(policy_path, &version.path)
+                            .map(|policy| Pending { slot, version, prepared: Prepared::Bundle(policy) })
+                    } else {
+                        PreparedNetwork::load(&version.path)
+                            .map(|network| Pending { slot, version, prepared: Prepared::Legacy(network) })
+                            .map_err(|error| error.to_string())
+                    };
                     this.prepared(result);
                 });
             }
@@ -325,13 +471,48 @@ impl Models {
                     name: upload.name,
                     path: target.clone(),
                     control: Some(upload.control),
+                    policy_path: None,
+                    contract: None,
                 },
-                network,
+                prepared: Prepared::Legacy(network),
             })
         })();
         let _ = fs::remove_file(upload.path);
         if result.is_err() {
             let _ = fs::remove_file(target);
+        }
+        self.prepared(result);
+    }
+    fn prepare_bundle(&self, upload: BundleUpload) {
+        let model = self.root.join(format!("{}-model.onnx", upload.token));
+        let policy = self.root.join(format!("{}-policy.py", upload.token));
+        let result = (|| {
+            fs::rename(&upload.model.path, &model).map_err(|error| error.to_string())?;
+            fs::rename(&upload.policy.path, &policy).map_err(|error| error.to_string())?;
+            for path in [&model, &policy] {
+                fs::File::open(path).and_then(|file| file.sync_all())
+                    .map_err(|error| error.to_string())?;
+            }
+            let runtime = crate::custom_policy::CustomPolicy::load(&policy, &model)?;
+            let contract = runtime.contract().clone();
+            Ok(Pending {
+                slot: upload.slot,
+                version: Version {
+                    id: upload.token,
+                    name: format!("{} + {}", upload.policy.name, upload.model.name),
+                    path: model.clone(),
+                    control: None,
+                    policy_path: Some(policy.clone()),
+                    contract: Some(contract),
+                },
+                prepared: Prepared::Bundle(runtime),
+            })
+        })();
+        if result.is_err() {
+            let _ = fs::remove_file(model);
+            let _ = fs::remove_file(policy);
+            let _ = fs::remove_file(upload.model.path);
+            let _ = fs::remove_file(upload.policy.path);
         }
         self.prepared(result);
     }
@@ -370,20 +551,25 @@ impl Models {
             inner.failed_phase = Some("pending".into());
             inner.phase = "error".into();
             inner.detail = "替换已拒绝：需要当前模式不变、策略已加载、机器人已放松且全部配置电机有新鲜失能反馈。旧模型未改变；放松后重新导入或回滚。".into();
-            self.remove_if_unused(&inner, &pending.version.path);
+            self.remove_version_if_unused(&inner, &pending.version);
             return;
         }
         match self.commit(&inner.records, &pending.slot, &pending.version) {
             Ok(records) => {
                 let old = std::mem::replace(&mut inner.records, records);
                 let controller = controller.unwrap();
-                controller.replace_network(pending.slot.net, pending.network);
-                controller.set_model_control(pending.slot.net, pending.version.control);
+                match pending.prepared {
+                    Prepared::Legacy(network) => {
+                        controller.replace_network(pending.slot.net, network);
+                        controller.set_model_control(pending.slot.net, pending.version.control);
+                    }
+                    Prepared::Bundle(policy) => controller.replace_custom_policy(pending.slot.net, policy),
+                }
                 inner.phase = "done".into();
                 inner.detail = "替换成功并已即时加载；机器人保持放松，需手动初始化/开启策略。保留最近两条 ONNX 历史。".into();
                 for record in old.values() {
                     for version in record.history.iter().chain(record.active.iter()) {
-                        self.remove_if_unused(&inner, &version.path);
+                        self.remove_version_if_unused(&inner, version);
                     }
                 }
             }
@@ -391,7 +577,7 @@ impl Models {
                 inner.failed_phase = Some("pending".into());
                 inner.phase = "error".into();
                 inner.detail = format!("保存失败，旧模型未改变：{e}");
-                self.remove_if_unused(&inner, &pending.version.path);
+                self.remove_version_if_unused(&inner, &pending.version);
             }
         }
     }
@@ -401,11 +587,15 @@ impl Models {
                 r.active
                     .iter()
                     .chain(r.history.iter())
-                    .any(|v| v.path == path)
+                    .any(|v| v.path == path || v.policy_path.as_deref() == Some(path))
             })
         {
             let _ = fs::remove_file(path);
         }
+    }
+    fn remove_version_if_unused(&self, inner: &Inner, version: &Version) {
+        self.remove_if_unused(inner, &version.path);
+        if let Some(path) = &version.policy_path { self.remove_if_unused(inner, path); }
     }
     fn commit(
         &self,
@@ -434,6 +624,8 @@ impl Models {
                         .into_owned(),
                     path,
                     control: None,
+                    policy_path: None,
+                    contract: None,
                 }
             }
         };
@@ -558,6 +750,8 @@ mod tests {
             name: format!("{id}.pt"),
             path,
             control: None,
+            policy_path: None,
+            contract: None,
         }
     }
     #[test]
@@ -645,17 +839,10 @@ mod tests {
             })
             .unwrap();
         let token = result["token"].as_str().unwrap().to_owned();
-        assert!(
-            store
-                .inner
-                .lock()
-                .unwrap()
-                .upload
-                .as_ref()
-                .unwrap()
-                .path
-                .starts_with(&store.root)
-        );
+        let inner = store.inner.lock().unwrap();
+        let Some(UploadTask::Legacy(upload)) = inner.upload.as_ref() else { panic!() };
+        assert!(upload.path.starts_with(&store.root));
+        drop(inner);
         let chunk = |token: String, offset, hex: &str| ModelParams::Chunk {
             token,
             offset,
@@ -675,6 +862,30 @@ mod tests {
         assert!(store.request(chunk(token, 0, "00ff")).is_err());
         assert!(decode_chunk("éé").is_err());
         assert!(decode_chunk(&"00".repeat(8193)).is_err());
+    }
+    #[test]
+    fn bundle_upload_keeps_two_roles_in_one_transaction() {
+        let dir = tempfile::tempdir().unwrap();
+        let (store, _) = configured(dir.path());
+        let status = store.request(ModelParams::BeginBundle {
+            slot: "walk".into(),
+            policy_filename: "../../policy.py".into(),
+            policy_size: 2,
+            model_filename: "../../model.onnx".into(),
+            model_size: 3,
+        }).unwrap();
+        let token = status["token"].as_str().unwrap().to_owned();
+        let chunk = |file: &str, offset, hex: &str| ModelParams::BundleChunk {
+            token: token.clone(), file: file.into(), offset, hex: hex.into(),
+        };
+        assert!(store.request(chunk("policy", 0, "7079")).is_ok());
+        assert!(store.request(chunk("model", 0, "000102")).is_ok());
+        assert!(store.request(chunk("model", 0, "00")).is_err());
+        let inner = store.inner.lock().unwrap();
+        let Some(UploadTask::Bundle(upload)) = inner.upload.as_ref() else { panic!() };
+        assert!(upload.policy.path.starts_with(&store.root));
+        assert!(upload.model.path.starts_with(&store.root));
+        assert_ne!(upload.policy.path, upload.model.path);
     }
     #[test]
     fn status_requires_fresh_motor_proof_and_corrupt_manifest_fails_closed() {
@@ -735,7 +946,7 @@ mod tests {
             fs::copy(&bundled, &v.path).unwrap();
             store.prepared(Ok(Pending {
                 slot: slot.clone(),
-                network: PreparedNetwork::load(&v.path).unwrap(),
+                prepared: Prepared::Legacy(PreparedNetwork::load(&v.path).unwrap()),
                 version: v,
             }));
             store.tick(relaxed, None);
@@ -768,7 +979,7 @@ mod tests {
         fs::copy(&bundled, &candidate.path).unwrap();
         store.prepared(Ok(Pending {
             slot: slot.clone(),
-            network: PreparedNetwork::load(&candidate.path).unwrap(),
+            prepared: Prepared::Legacy(PreparedNetwork::load(&candidate.path).unwrap()),
             version: candidate.clone(),
         }));
         store.tick(false, Some(&mut controller));
@@ -781,7 +992,7 @@ mod tests {
         fs::copy(&bundled, &candidate.path).unwrap();
         store.prepared(Ok(Pending {
             slot: slot.clone(),
-            network: PreparedNetwork::load(&candidate.path).unwrap(),
+            prepared: Prepared::Legacy(PreparedNetwork::load(&candidate.path).unwrap()),
             version: candidate.clone(),
         }));
         store.tick(true, Some(&mut controller));

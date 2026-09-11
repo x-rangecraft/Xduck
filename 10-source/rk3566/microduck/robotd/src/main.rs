@@ -24,6 +24,7 @@ mod experiment_tasks;
 mod models;
 mod chorale;
 mod control;
+mod custom_policy;
 mod intents;
 mod params;
 mod soc;
@@ -2160,6 +2161,7 @@ async fn control_loop<T: RobotIo>(
         };
 
         let mut policy_pd = None;
+        let mut policy_mit = None;
         let (mut targets, gain, moving, policy_label) = match (driving, sensors.as_ref()) {
             // The limp-fall sequence, before anything else — `driving` is false throughout,
             // so without this it would fall through to the hold branch and the robot would
@@ -2198,6 +2200,7 @@ async fn control_loop<T: RobotIo>(
                 match controller.step(sensors, &command, snapshot.pose.active, dt, scale_mult) {
                     Ok(step) => {
                         policy_pd = step.pd;
+                        policy_mit = step.mit;
                         (step.targets,
                         step.gain,
                         // A scripted move is motion whatever the twist says; so is walking.
@@ -2408,7 +2411,7 @@ async fn control_loop<T: RobotIo>(
         let experiment_owned = state.experiment.tick(&mut safety, fresh.as_ref(), &state.calibration.config(),
             bringup == Bringup::Limp && !intents.snapshot().enabled,
             state.ticks.load(Ordering::Relaxed), state.started.elapsed().as_micros() as u64);
-        if !experiment_owned { match safety.apply_with_pd(targets, hold, gain, policy_pd) {
+        if !experiment_owned { match safety.apply_with_control(targets, hold, gain, policy_pd, policy_mit) {
             Ok(applied) => limits.extend(applied.limits),
             Err(e) => tracing::warn!(error = %e, "bus write failed"),
         }}
