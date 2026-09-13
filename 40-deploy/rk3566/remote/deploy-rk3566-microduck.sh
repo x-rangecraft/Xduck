@@ -118,7 +118,6 @@ done
     --include "policies/ball_kick_left.onnx=policies/ball_kick_left.onnx" \
     --include "policies/ball_kick_right.onnx=policies/ball_kick_right.onnx" \
     --include "policies/roller.onnx=policies/roller.onnx" \
-    --include "policies/two_file_policy_example.py=policies/two_file_policy_example.py" \
     --include "policies/roller_crouch.onnx=policies/roller_crouch.onnx" \
     --include "policies/roulade.onnx=policies/roulade.onnx" \
     --include "pet-detect/models/pet_detect.onnx=models/pet_detect.onnx"

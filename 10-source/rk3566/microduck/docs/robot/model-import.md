@@ -9,7 +9,7 @@ model.onnx    ONNX 网络
 
 两个文件组成一个不可拆分的版本。前处理决定模型输入和 obs 维度，后处理解释具名模型输出并产生 14 个受控关节的 MIT 目标。robotd 继续唯一拥有电机总线和硬件保护。
 
-完整设计见 [两文件策略运行方案](../../../../../00-docs/POLICY_TWO_FILE_RUNTIME_PROPOSAL.md)。可运行接口示例见 [`policies/two_file_policy_example.py`](../../policies/two_file_policy_example.py)。
+完整设计见 [两文件策略运行方案](../../../../../00-docs/POLICY_TWO_FILE_RUNTIME_PROPOSAL.md)。供研发同事直接复制、修改和本机校验的完整本地资料包位于 [`00-docs/XDUCK_POLICY_SDK/`](../../../../../00-docs/XDUCK_POLICY_SDK/README.md)，不进入板端发布包。
 
 ## 导入和回滚
 

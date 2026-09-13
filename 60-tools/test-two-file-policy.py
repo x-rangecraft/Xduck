@@ -9,9 +9,12 @@ import tempfile
 
 ROOT = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path(__file__).resolve().parents[1]
 MICRODUCK = ROOT / "10-source/rk3566/microduck"
+SDK = ROOT / "00-docs/XDUCK_POLICY_SDK"
 worker = MICRODUCK / "robotd/src/custom_policy_worker.py"
-policy = MICRODUCK / "policies/two_file_policy_example.py"
-model = MICRODUCK / "policies/alpha_walking.onnx"
+policy = SDK / "policy.py"
+model = SDK / "model.onnx"
+if worker.read_bytes() != (SDK / "_policy_worker.py").read_bytes():
+    raise AssertionError("SDK validator worker has drifted from robotd's production worker")
 
 joint_names = [
     "left_hip_yaw", "left_hip_roll", "left_hip_pitch", "left_knee", "left_ankle",
