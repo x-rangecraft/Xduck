@@ -8,15 +8,16 @@
 //! were measured against hardware rather than derived. Re-deriving them from a datasheet
 //! is exactly the kind of change that looks right and walks wrong.
 
-/// Left leg (5) · neck/head/mouth (5) · right leg (5).
+/// Canonical order: left leg (5), right leg (5), neck/head (4), mouth servo (1).
 pub const NUM_JOINTS: usize = 15;
 
-/// Legacy actuator IDs, retained for compatibility with configuration/UI code.
-/// DMUSB v4 maps its 14 route slots positionally to this order with the mouth skipped.
-pub const JOINT_IDS: [u8; NUM_JOINTS] = [
-    20, 21, 22, 23, 24, // left leg
-    30, 31, 32, 33, 34, // neck, head, mouth
-    10, 11, 12, 13, 14, // right leg
+/// Joint numbers in canonical array order. Numbers 1–14 are also the physical DM motor IDs;
+/// mouth is joint 15, driven by a separate servo path and has no DM motor ID.
+pub const JOINT_NUMBERS: [u8; NUM_JOINTS] = [
+    1, 2, 3, 4, 5,       // left leg
+    6, 7, 8, 9, 10,      // right leg
+    11, 12, 13, 14,      // neck and head
+    15,                   // mouth servo
 ];
 
 /// Joint names, from the protocol crate — the wire indexes `joints` and `targets`
@@ -26,10 +27,9 @@ pub use duck_ipc_proto::JOINT_NAMES;
 
 const _: () = assert!(JOINT_NAMES.len() == NUM_JOINTS);
 
-/// The mouth is absent from every alpha policy — they are all 61-D observation, 14-action,
-/// and the action vector skips this index. Named so that omission is deliberate rather
-/// than an off-by-one someone has to rediscover.
-pub const MOUTH_INDEX: usize = 9;
+/// Mouth is joint number 15 and array index 14. It is absent from the 14-output walking policy
+/// and from the STM32 DM motor gateway.
+pub const MOUTH_INDEX: usize = 14;
 
 /// Home pose. The trunk sits ~5 mm further forward than the v1.5 pose so the CoM is over
 /// the ankle axis; the old pose biased the robot backwards.
@@ -43,16 +43,16 @@ pub const DEFAULT_POSITION: [f64; NUM_JOINTS] = [
     -0.4579, // left_hip_pitch
     -0.0049, // left_knee
     0.4530,  // left_ankle
-    0.3491,  // neck_pitch
-    0.3491,  // head_pitch
-    0.0,     // head_yaw
-    0.0,     // head_roll
-    0.0,     // mouth
     0.0,     // right_hip_yaw
     0.0873,  // right_hip_roll
     0.4579,  // right_hip_pitch
     0.0049,  // right_knee
     -0.4530, // right_ankle
+    0.3491,  // neck_pitch
+    0.3491,  // head_pitch
+    0.0,     // head_yaw
+    0.0,     // head_roll
+    0.0,     // mouth
 ];
 
 /// Mouth travel, radians: closed and fully open. The alpha reuses the v1.6 range,
@@ -137,26 +137,19 @@ mod tests {
     /// ever diverge in length, every lookup silently reads the wrong joint.
     #[test]
     fn tables_agree_on_length() {
-        assert_eq!(JOINT_IDS.len(), NUM_JOINTS);
+        assert_eq!(JOINT_NUMBERS.len(), NUM_JOINTS);
         assert_eq!(JOINT_NAMES.len(), NUM_JOINTS);
         assert_eq!(DEFAULT_POSITION.len(), NUM_JOINTS);
     }
 
-    /// A duplicated Dynamixel ID makes a `sync_read` return blocks that cannot be matched
-    /// back to joints, and a `sync_write` command two joints at once. Both fail in ways
-    /// that look like a wiring fault.
+    /// Operator-facing joint numbers are the continuous set 1 through 15, independent of
+    /// the policy-array order.
     #[test]
-    fn ids_are_unique() {
-        let mut seen = JOINT_IDS;
+    fn joint_numbers_are_unique_and_contiguous() {
+        let mut seen = JOINT_NUMBERS;
         seen.sort_unstable();
-        seen.windows(2)
-            .for_each(|w| assert_ne!(w[0], w[1], "duplicate Dynamixel ID {}", w[0]));
-    }
-
-    /// The IMU board shares the bus with the servos, so its ID must not collide with one.
-    #[test]
-    fn imu_id_does_not_collide_with_a_joint() {
-        assert!(!JOINT_IDS.contains(&IMU_DXL_ID));
+        assert_eq!(seen, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+        assert_eq!(JOINT_NUMBERS[MOUTH_INDEX], 15);
     }
 
     /// `MOUTH_INDEX` is used to skip a slot when mapping 14 policy actions onto 15 joints.

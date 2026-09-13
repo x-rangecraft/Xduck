@@ -27,7 +27,7 @@ using TickType_t=unsigned;
 unsigned now_ms, g_motorAppPhase, g_motorAppEnabled,g_motorAppMode,g_motorAppLastHostCommandTickMs,g_motorAppSucceededMask,g_motorAppRequestedMask,g_motorAppSuccessCount,g_motorAppRequestedCount,g_motorAppProtectionStartTick,g_motorAppAdminOp,g_motorAppRouteCursor,g_motorAppRouteIndex,g_motorAppRetry;
 unsigned motor_enable_last_failure[4];
 unsigned fail_id, fault, txfail, delayed_id, stuck_id, stale_id, inject_tx, delays, delayed_scheduler;
-const unsigned ids[14]={2,0,0,0,0,1,0,0,0,13,14,15,0,0};
+const unsigned ids[14]={1,2,3,4,5,6,7,8,9,10,11,12,13,14};
 struct Motor_t {
  unsigned id, clear_at, enables, enabled, rx, run;
  void SetRunFlag(unsigned r){run=r;}
@@ -52,12 +52,12 @@ unsigned xTaskGetTickCount(){return now_ms;}
 void osDelay(unsigned ms){assert(g_motorAppPhase==MOTOR_APP_PHASE_FAST_START);now_ms+=(delayed_scheduler && ms==10 ? 101 : ms);delays++;}
 '''
 post=r'''
-void reset(){now_ms=10;delays=0;delayed_scheduler=0;txfail=fault=fail_id=0;g_motorAppSucceededMask=g_motorAppSuccessCount=g_motorAppEnabled=0;g_motorAppAdminOp=1;g_motorAppRequestedCount=5;g_motorAppRequestedMask=0xe21;delayed_id=stuck_id=stale_id=inject_tx=0;for(unsigned i=0;i<14;i++)motors[i]={ids[i],0,0,0,1,0};}
+void reset(){now_ms=10;delays=0;delayed_scheduler=0;txfail=fault=fail_id=0;g_motorAppSucceededMask=g_motorAppSuccessCount=g_motorAppEnabled=0;g_motorAppAdminOp=1;g_motorAppRequestedCount=14;g_motorAppRequestedMask=0x3fff;delayed_id=stuck_id=stale_id=inject_tx=0;for(unsigned i=0;i<14;i++)motors[i]={ids[i],0,0,0,1,0};}
 int main(){
- reset();assert(MotorApp_StartAllMitFast()==0);assert(g_motorAppSuccessCount==5);assert(now_ms==30);for(auto&m:motors)assert(m.id?m.enables==1:m.enables==0);
- reset();delayed_id=2;assert(MotorApp_StartAllMitFast()==0);assert(g_motorAppSuccessCount==5);assert(motors[0].enables==3);assert(motors[5].enables==1);assert(now_ms-g_motorAppLastHostCommandTickMs<100);
- reset();stuck_id=2;assert(MotorApp_StartAllMitFast()==8);assert(fault==1&&fail_id==2&&g_motorAppSuccessCount==4);for(auto&m:motors)assert(!m.run&&!m.enabled);assert(motors[0].enables==5);assert(motor_enable_last_failure[0]==2&&motor_enable_last_failure[1]==0);
- reset();stale_id=2;assert(MotorApp_StartAllMitFast()==8);assert(fault==1&&fail_id==2&&g_motorAppSuccessCount==4);
+ reset();assert(MotorApp_StartAllMitFast()==0);assert(g_motorAppSuccessCount==14);assert(now_ms==58);for(auto&m:motors)assert(m.id?m.enables==1:m.enables==0);
+ reset();delayed_id=2;assert(MotorApp_StartAllMitFast()==0);assert(g_motorAppSuccessCount==14);assert(motors[1].enables==3);assert(motors[5].enables==1);assert(now_ms-g_motorAppLastHostCommandTickMs<100);
+ reset();stuck_id=2;assert(MotorApp_StartAllMitFast()==8);assert(fault==1&&fail_id==2&&g_motorAppSuccessCount==13);for(auto&m:motors)assert(!m.run&&!m.enabled);assert(motors[1].enables==5);assert(motor_enable_last_failure[0]==2&&motor_enable_last_failure[1]==0);
+ reset();stale_id=2;assert(MotorApp_StartAllMitFast()==8);assert(fault==1&&fail_id==2&&g_motorAppSuccessCount==13);
  reset();inject_tx=2;assert(MotorApp_StartAllMitFast()==8);assert(fault==32&&fail_id==2);for(auto&m:motors)assert(!m.enabled);
  reset();delayed_scheduler=1;assert(MotorApp_StartAllMitFast()==8);assert(fault==128);for(auto&m:motors)assert(!m.enabled);
  puts("production enable handshake: immediate success, selective retry, stuck motor shutdown, stale feedback rejection, CAN failure shutdown, watchdog deadline passed");

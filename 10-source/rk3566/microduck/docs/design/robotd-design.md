@@ -17,7 +17,7 @@ not a hardware variant.
 
 One process, one USB CDC stream, one 50 Hz loop. The loop reads one state frame containing
 14 fixed motor-route slots and the primary IMU, then decides the internal fifteen-joint model
-(the mouth has no DMUSB-v4 slot). Everything else — clients, health, telemetry — hangs off
+(mouth is joint number 15 on a separate servo and has no DM motor ID). Everything else — clients, health, telemetry — hangs off
 that loop without ever being able to block it.
 
 ### 1.1 The bus, and who owns the port
@@ -351,7 +351,7 @@ pick, ball kick and sit. So there is exactly one layout:
                                                                     command = vel(3) + head(4) + body(6)
 ```
 
-Joints exclude the mouth throughout; actions map back into 15 motor slots with index 9 left at
+Joints exclude the mouth throughout; actions map directly to array indices 0–13, while mouth is joint 15 at index 14 and remains
 zero. The 51/54D legacy, 49D wheeled and 85D tracking layouts go away with the variants.
 
 The command block, which was the only part in doubt, is settled — read out of the prototype's

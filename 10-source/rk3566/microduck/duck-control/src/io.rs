@@ -24,7 +24,7 @@ pub struct Sensors {
     /// Measured motor torque in N·m from the DM feedback frame.
     pub motor_torques_nm: [f64; NUM_JOINTS],
     /// Raw DMUSB-v3 motor status flags, indexed as [`crate::model::JOINT_NAMES`].
-    /// Zero also represents the model-only mouth joint, which has no V3 motor slot.
+    /// Zero also represents mouth: joint number 15 uses a separate servo and has no DM motor ID.
     pub motor_flags: [u8; NUM_JOINTS],
     /// Rotor temperature in °C from the same atomic STM32 state frame.
     pub motor_temperatures_c: [f64; NUM_JOINTS],

@@ -48,11 +48,12 @@
 | RK3566 Microduck Rust workspace | `10-source/rk3566/microduck/` |
 | STM32↔RK3566 DMUSB v4 协议事实源 | `10-source/rk3566/STM32_DMUSB_V4_PROTOCOL.md` |
 | STM32 H7 固件 | `10-source/stm32/stm32-h7-dm/` |
-| DM-J4340 通信/辨识工具 | `10-source/tools/motor/dm-j4340-comm/` |
-| 电机手册、CAD、说明与方案 | `00-docs/hardware/motors/` |
+| GF43X40-10 / I2RT 通信与辨识工具 | `10-source/tools/motor/gf43x40-10-i2rt/` |
+| GF43X40-10 厂商参数与 I2RT 指令手册 | 仓库同级 `../Motor/电机参数.pdf`、`../Motor/I2RT_CAN通信协议与指令手册.docx` |
+| 电机建模与辨识方案 | `00-docs/hardware/motors/` |
 | STM32 CMake 输出 | `20-build/stm32/stm32-h7-dm/` |
-| Python 虚拟环境与缓存 | `20-build/tools/motor/dm-j4340-comm/` |
-| 电机采集数据与拟合结果 | `50-logs/test/motor/dm-j4340-comm/data/` |
+| Python 虚拟环境与缓存 | `20-build/tools/motor/gf43x40-10-i2rt/` |
+| 电机采集数据与拟合结果 | `50-logs/test/motor/gf43x40-10-i2rt/data/` |
 
 源码中的 `data` 和 `.venv` 允许使用相对符号链接指向上述固定位置，以兼容脚本默认参数；真实文件不得复制成多份。
 

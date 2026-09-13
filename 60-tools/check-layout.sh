@@ -35,7 +35,7 @@ test -f "$ROOT/10-source/rk3566/microduck/Cargo.toml" \
     || { echo "missing RK3566 Cargo workspace" >&2; failed=1; }
 git -C "$ROOT/10-source/rk3566/microduck" rev-parse --is-inside-work-tree >/dev/null 2>&1 \
     || { echo "missing project Git metadata" >&2; failed=1; }
-test -L "$ROOT/10-source/tools/motor/dm-j4340-comm/data" \
+test -L "$ROOT/10-source/tools/motor/gf43x40-10-i2rt/data" \
     || { echo "motor data must be a link into 50-logs/test" >&2; failed=1; }
 
 MANIFEST="$ROOT/40-deploy/rk3566/CONTROL_FILES.sha256"

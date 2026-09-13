@@ -524,7 +524,11 @@ mod tests {
             let (e, mut safety, trace, cfg) = setup();
             let _dir = e.claim_for_test(&cfg);
             let mut s = sample(false);
-            s.positions[STM32_TO_CONTROL_JOINT[0]] = 1.0;
+            let route = STM32_MOTOR_IDS
+                .iter()
+                .position(|&id| id == 2)
+                .expect("fixture motor ID 2 is configured");
+            s.positions[STM32_TO_CONTROL_JOINT[route]] = 1.0;
             e.tick(
                 &mut safety,
                 if missing { None } else { Some(&s) },

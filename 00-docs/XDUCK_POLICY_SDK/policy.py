@@ -8,14 +8,14 @@ import numpy as np
 
 JOINTS = [
     "left_hip_yaw", "left_hip_roll", "left_hip_pitch", "left_knee", "left_ankle",
-    "neck_pitch", "head_pitch", "head_yaw", "head_roll", "mouth",
     "right_hip_yaw", "right_hip_roll", "right_hip_pitch", "right_knee", "right_ankle",
+    "neck_pitch", "head_pitch", "head_yaw", "head_roll", "mouth",
 ]
 CONTROLLED = [name for name in JOINTS if name != "mouth"]
 HOME = np.asarray([
     0.0, -0.0873, -0.4579, -0.0049, 0.4530,
-    0.3491, 0.3491, 0.0, 0.0, 0.0,
     0.0, 0.0873, 0.4579, 0.0049, -0.4530,
+    0.3491, 0.3491, 0.0, 0.0, 0.0,
 ], dtype=np.float32)
 CONTROLLED_INDEX = [index for index, name in enumerate(JOINTS) if name != "mouth"]
 
@@ -62,7 +62,7 @@ class Policy:
         if self.previous_targets is not None:
             filtered = raw.copy()
             for slot, joint_index in enumerate(CONTROLLED_INDEX):
-                alpha = 0.5 if 5 <= joint_index < 9 else 0.7
+                alpha = 0.5 if 10 <= joint_index < 14 else 0.7
                 filtered[slot] = alpha * raw[slot] + (1.0 - alpha) * self.previous_targets[slot]
             raw = filtered
         self.last_action = action.copy()

@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
+# Explicit maintenance image: one populated route, incompatible with the
+# production robotd's required 14-slot stream. Never enable automatically.
+option(H7DM_BENCH_ID1_ONLY "Build an isolated CAN1 ID1 commissioning image" OFF)
 set(TARGET_NAME CtrBoard-H7_ALL)
 set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32H723VGTX_FLASH.ld)
 set(DM_OPENOCD_INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/openocd/dm-cmsis-dap-port-1-2.cfg)
@@ -121,8 +124,9 @@ target_include_directories(${TARGET_NAME}.elf PRIVATE
 target_compile_definitions(${TARGET_NAME}.elf PRIVATE
   USE_HAL_DRIVER
   STM32H723xx
-  DM_CAN_FD_MOTOR=0
+  DM_CAN_FD_MOTOR=1
   H7DM_MOTOR_AUTO_ENABLE=0
+  H7DM_BENCH_ID1_ONLY=$<BOOL:${H7DM_BENCH_ID1_ONLY}>
   DMUSB_BINARY_PROTOCOL=1
 )
 

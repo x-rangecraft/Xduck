@@ -293,14 +293,14 @@ mod tests {
         assert!((odo.yaw() - 0.3).abs() < 1e-9);
     }
 
-    /// The mouth is a face, not a leg: index 9 must not reach the FK.
+    /// The mouth is a face, not a leg: joint 15 must not reach the FK.
     #[test]
     fn the_mouth_moves_no_odometry() {
         let mut still = Odometry::alpha();
         let mut chatting = Odometry::alpha();
         let quiet = [0.0; JOINT_NAMES.len()];
         let mut open = quiet;
-        open[9] = 42.0;
+        open[14] = 42.0;
         for _ in 0..10 {
             still.update(&quiet, [1.0, 0.0, 0.0, 0.0]);
             chatting.update(&open, [1.0, 0.0, 0.0, 0.0]);

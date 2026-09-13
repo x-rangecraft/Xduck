@@ -216,8 +216,7 @@ impl Observation {
     /// Map a policy's 14 outputs onto the 15 joints, leaving the mouth untouched.
     ///
     /// The mouth is absent from every alpha policy, so its slot stays at whatever the
-    /// caller had. Getting this wrong shifts every joint after index 9 by one, which is
-    /// both catastrophic and completely silent.
+    /// caller had. Mouth is the final joint, so policy outputs map directly to joints 1–14.
     pub fn scatter_action(action: &[f32; ACTION_LEN]) -> [f64; NUM_JOINTS] {
         let mut out = [0.0f64; NUM_JOINTS];
         // The mirror of `policy_joints`, through the same `joint_of` mapping: that one
@@ -335,7 +334,7 @@ mod tests {
     }
 
     /// The mouth is absent from the policy on both sides. If the observation included it,
-    /// every joint after index 9 would shift by one — silently.
+    /// the policy would incorrectly gain a fifteenth actuator.
     #[test]
     fn the_mouth_is_excluded_from_the_observation() {
         let mut positions = DEFAULT_POSITION;
@@ -350,7 +349,7 @@ mod tests {
         }
     }
 
-    /// Scattering 14 actions back over 15 joints must skip the mouth, not shift past it.
+    /// Scattering 14 actions back over 15 joints leaves the final mouth entry untouched.
     #[test]
     fn scattering_an_action_skips_the_mouth() {
         let mut action = [0.0f32; ACTION_LEN];
@@ -361,12 +360,11 @@ mod tests {
         let scattered = Observation::scatter_action(&action);
 
         assert_eq!(scattered[MOUTH_INDEX], 0.0, "mouth must be left alone");
-        // Joints before the mouth line up one-to-one...
+        // The fourteen motor joints line up one-to-one in canonical ID order.
         assert_eq!(scattered[0], 1.0);
         assert_eq!(scattered[8], 9.0);
-        // ...and those after it are offset by exactly one policy slot.
-        assert_eq!(scattered[10], 10.0);
-        assert_eq!(scattered[NUM_JOINTS - 1], ACTION_LEN as f64);
+        assert_eq!(scattered[10], 11.0);
+        assert_eq!(scattered[NUM_JOINTS - 2], ACTION_LEN as f64);
     }
 
     /// Walking versus standing is chosen on command magnitude, so the magnitude has to be

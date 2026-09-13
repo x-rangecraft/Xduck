@@ -6,7 +6,9 @@ use std::time::{Duration, Instant};
 use duck_control::bus::{STM32_MOTOR_IDS, STM32_TO_CONTROL_JOINT, configured_motors_disabled};
 use duck_control::io::{MotorPositionLimit, RobotIo, Sensors};
 use duck_control::safety::Safety;
-use duck_control::{DEFAULT_POSITION, NUM_JOINTS};
+use duck_control::NUM_JOINTS;
+#[cfg(test)]
+use duck_control::DEFAULT_POSITION;
 use duck_ipc_proto::{CalibrationLimit, CalibrationParams};
 use serde::{Deserialize, Serialize};
 
@@ -33,7 +35,7 @@ impl Default for Config {
                     max_rad: 3.0,
                 })
                 .collect(),
-            home: DEFAULT_POSITION,
+            home: [0.0; NUM_JOINTS],
         }
     }
 }
@@ -116,7 +118,7 @@ impl Config {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Status {
-    /// Configured motor ID and control-joint index; unconfigured slots stay visible in the UI.
+    /// Configured motor ID and control-joint index in ascending physical motor-ID order.
     pub motors: Vec<(u8, usize)>,
     pub config: Config,
     pub request_id: u64,
@@ -397,7 +399,7 @@ mod tests {
         assert!(store.request(&request).is_err()); // cannot replace an in-flight change
         store.tick(&mut io, Some(&sensors), false); // enable won the race
         assert!(store.status().error.is_some());
-        assert_eq!(store.config().home, DEFAULT_POSITION);
+        assert_eq!(store.config().home, [0.0; NUM_JOINTS]);
         store.tick(&mut io, Some(&sensors), true);
         store.request(&request).unwrap();
         store.tick(&mut io, Some(&sensors), true);

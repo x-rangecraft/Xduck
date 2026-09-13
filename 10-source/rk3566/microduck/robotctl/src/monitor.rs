@@ -2158,13 +2158,13 @@ impl View {
     /// The frame's zones through the head FK, when both streams are up: which
     /// returns are floor, which are obstacles, and where each sits in the
     /// trunk frame. The joint indices are `JOINT_NAMES` order — neck_pitch,
-    /// head_pitch, head_yaw, head_roll at 5..9.
+    /// head_pitch, head_yaw, head_roll at 10..14.
     fn classified_tof(
         &self,
     ) -> Option<[kinematics::tof::Zone; kinematics::tof::ROWS * kinematics::tof::COLS]> {
         let tof = self.tof.as_ref()?;
         let state = self.latest.as_ref()?;
-        let head: Vec<f64> = (5..9)
+        let head: Vec<f64> = (10..14)
             .filter_map(|i| state.joints.get(i).copied())
             .collect();
         let head: [f64; 4] = head.try_into().ok()?;

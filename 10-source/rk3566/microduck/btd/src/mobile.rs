@@ -323,7 +323,8 @@ impl Mobile {
 }
 
 /// Compact fixed-order integers: radians/rad-s/Nm scaled by 1000, Celsius by 10.
-/// Null remains unknown. Skip mouth (index 9): DMUSB has exactly 14 motor slots.
+/// Null remains unknown. Skip mouth (array index 14, joint number 15): it uses a separate servo
+/// and DMUSB carries only DM motor IDs 1–14.
 pub fn compact(line: &str) -> Option<String> {
     let value: Value = serde_json::from_str(line).ok()?;
     if value["method"] != "robot.state" {

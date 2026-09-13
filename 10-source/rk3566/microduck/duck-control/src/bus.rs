@@ -1,8 +1,8 @@
 //! STM32 DM motor gateway over USB CDC.
 //!
 //! Uses the `0x4D47` v4 wire format. STM32 publishes 14 fixed motor-route slots plus a
-//! fused IMU observation at 50 Hz. The control model has one extra mouth joint, which is
-//! not present in this wire revision and is skipped by the mapping below.
+//! fused IMU observation at 50 Hz. Mouth is joint number 15 and uses a separate servo, so it
+//! has no DM motor ID and is skipped by the mapping below.
 
 use std::io::{Read, Write};
 use std::time::{Duration, Instant};
@@ -29,19 +29,18 @@ const ADMIN_TIMEOUT: Duration = Duration::from_millis(250);
 const IMU_SENSOR_OK: u8 = 1 << 0;
 const IMU_CALIBRATED: u8 = 1 << 1;
 const STM32_MOTOR_COUNT: usize = 14;
-/// DMUSB route order maps to the 14 policy joints; the model-only mouth is index 9.
+/// DM motor IDs 1–14 use the same order as control joints 1–14. Mouth is joint 15 and absent.
 pub const STM32_TO_CONTROL_JOINT: [usize; STM32_MOTOR_COUNT] = [
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14,
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
 ];
-/// Motors currently configured in the STM32 route table. Admin operations must name them
-/// explicitly because the remaining nine route slots are empty.
-const CONFIGURED_MOTOR_IDS: [u8; 5] = [0x02, 0x01, 0x0D, 0x0E, 0x0F];
+/// All fourteen GF43X40-10 motors participate in administration and safety checks.
+const CONFIGURED_MOTOR_IDS: [u8; STM32_MOTOR_COUNT] = STM32_MOTOR_IDS;
 /// Compatible STM32 firmware advertises sparse-command and enable-list support.
 /// Older v4 firmware remains read-only even though motor control is now permitted.
 const CONTROL_CAPABILITIES: u16 = 0x0003;
 const FAULT_DIAGNOSTICS_CAPABILITY: u16 = 0x0010;
 pub const STM32_MOTOR_IDS: [u8; STM32_MOTOR_COUNT] = [
-    0x02, 0, 0, 0, 0, 0x01, 0, 0, 0, 0x0D, 0x0E, 0x0F, 0, 0,
+    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
 ];
 
 #[derive(Debug)]
@@ -466,7 +465,7 @@ fn configured_motors_enabled(sensors: &Sensors) -> bool {
 
 /// Bounds are the deployed STM32 command guards, not the wider CAN encoding range.
 pub fn motor_command_bounds(id: u8) -> Option<(f64, f64)> {
-    match id { 1 | 2 => Some((15.708, 10.0)), 13..=15 => Some((10.0, 28.0)), _ => None }
+    match id { 1..=14 => Some((10.0, 23.5)), _ => None }
 }
 
 pub fn validate_motor_commands(commands: &[duck_ipc_proto::MotorCommand], limits: &[MotorPositionLimit]) -> Result<()> {
@@ -780,14 +779,24 @@ mod tests {
     use super::*;
 
     #[test]
+    fn physical_motor_ids_map_to_left_right_then_head() {
+        let names = STM32_TO_CONTROL_JOINT.map(|joint| JOINT_NAMES[joint]);
+        assert_eq!(names, [
+            "left_hip_yaw", "left_hip_roll", "left_hip_pitch", "left_knee", "left_ankle",
+            "right_hip_yaw", "right_hip_roll", "right_hip_pitch", "right_knee", "right_ankle",
+            "neck_pitch", "head_pitch", "head_yaw", "head_roll",
+        ]);
+    }
+
+    #[test]
     fn fault_diagnostics_are_optional_and_validate_the_motor_route() {
         let mut payload = test_state_payload(false);
-        payload[61] = 1;
-        payload[62] = 5;
+        payload[61] = 11;
+        payload[62] = 10;
         assert_eq!(parse_state(&payload).unwrap().fault_motor, None, "old firmware has reserved bytes");
         put_u16(&mut payload[14..16], 0x1f);
         assert_eq!(parse_state(&payload).unwrap().fault_motor,
-            Some(FaultMotor { id: 1, route: 5, joint: "neck_pitch" }));
+            Some(FaultMotor { id: 11, route: 10, joint: "neck_pitch" }));
         for (id, route) in [(1, 255), (2, 5), (0, 1), (1, 14)] {
             payload[61] = id;
             payload[62] = route;
@@ -828,8 +837,8 @@ mod tests {
         let mut io = DynamixelIo::from_port(Box::new(host));
         let mut payload = test_state_payload(false);
         put_u16(&mut payload[14..16], 0x1f);
-        payload[61] = 1;
-        payload[62] = 5;
+        payload[61] = 11;
+        payload[62] = 10;
         tracing::subscriber::with_default(capture.clone(), || {
             for (seq, fault) in [0, 2, 2, 2, 0, 0].into_iter().enumerate() {
                 put_u32(&mut payload[8..12], fault);
@@ -877,7 +886,7 @@ mod tests {
         sensors.motor_feedback_age_ms[5] = 501;
         assert!(motor_control_problem(3, 0, sample(&sensors)).is_some());
         sensors.motor_feedback_age_ms[5] = 0;
-        sensors.motor_flags[1] = 3; // Removed ID 3 must remain an empty slot.
+        sensors.motor_flags[1] = 0; // Every one of the fourteen slots must be configured.
         assert!(motor_control_problem(3, 0, sample(&sensors)).is_some());
     }
 
@@ -978,12 +987,12 @@ mod tests {
             motor_id: id, min_mrad: -3000, max_mrad: 4000,
         }).collect();
         let p = encode_position_limits(&limits).unwrap();
-        assert_eq!(p.len(), 64);
-        assert_eq!(p[2], 5);
-        assert_eq!(p[4], 2);
+        assert_eq!(p.len(), 172);
+        assert_eq!(p[2], 14);
+        assert_eq!(p[4], 1);
         assert_eq!(get_i32(&p[8..12]), -3000);
         assert_eq!(get_i32(&p[12..16]), 4000);
-        limits[1].motor_id = 2;
+        limits[1].motor_id = 1;
         assert!(encode_position_limits(&limits).is_err());
         assert!(encode_position_limits(&limits[..4]).is_err());
     }
@@ -1012,10 +1021,10 @@ mod tests {
                     firmware.write_all(&pack(MSG_ADMIN_RESULT, 2, 0, 0, &ack)).unwrap();
                     // First buffered sample is zero but predates the request: it is not proof.
                     put_u32(&mut state[4..8], 110);
-                    put_u32(&mut state[64 + 12..64 + 16], 90);
+                    put_u32(&mut state[64 + MOTOR_OBSERVATION_LEN + 12..64 + MOTOR_OBSERVATION_LEN + 16], 90);
                     firmware.write_all(&pack(MSG_STATE, 3, 0, 0, &state)).unwrap();
                     std::thread::sleep(Duration::from_millis(20));
-                    put_u32(&mut state[64 + 12..64 + 16], 110);
+                    put_u32(&mut state[64 + MOTOR_OBSERVATION_LEN + 12..64 + MOTOR_OBSERVATION_LEN + 16], 110);
                     firmware.write_all(&pack(MSG_STATE, 4, 0, 0, &state)).unwrap();
                 }
                 std::thread::sleep(Duration::from_millis(120));
@@ -1023,7 +1032,7 @@ mod tests {
             });
             assert_eq!(io.mark_motor_zero(2).is_ok(), !enabled);
             if !enabled {
-                assert_eq!(io.last_motor_state.as_ref().unwrap().0.motor_feedback_age_ms[0], 0);
+                assert_eq!(io.last_motor_state.as_ref().unwrap().0.motor_feedback_age_ms[1], 0);
             }
             peer.join().unwrap();
         }
@@ -1060,7 +1069,7 @@ mod tests {
             put_u32(&mut answer[8..12], 0x20);
             answer[21] = CONFIGURED_MOTOR_IDS.len() as u8;
             answer[22] = (CONFIGURED_MOTOR_IDS.len() - 1) as u8;
-            answer[23] = 15;
+            answer[23] = 14;
             firmware.write_all(&pack(MSG_ADMIN_RESULT, 1, 0, 0x20, &answer)).unwrap();
             let cleanup = read_test_frame(&mut firmware);
             assert_eq!(cleanup.payload[2], 2);
@@ -1069,7 +1078,7 @@ mod tests {
         });
         let error = io.set_torque(true).unwrap_err().to_string();
         assert!(error.contains("CAN 发送失败"), "{error}");
-        assert!(error.contains("0x00000020") && error.contains("电机 ID 15") && error.contains("4/5"), "{error}");
+        assert!(error.contains("0x00000020") && error.contains("电机 ID 14") && error.contains("13/14"), "{error}");
         peer.join().unwrap();
     }
     #[test]
@@ -1099,15 +1108,18 @@ mod tests {
             p[b + 17] = 30 + route as u8;
         }
         let parsed = parse_state(&p).unwrap();
-        assert_eq!(parsed.sensors.positions[8], 0.8);
-        assert_eq!(parsed.sensors.positions[9], 0.0);
-        assert_eq!(parsed.sensors.positions[10], 0.9);
-        assert_eq!(parsed.sensors.positions[14], 1.3);
-        assert_eq!(parsed.sensors.motor_torques_nm[14], 0.13);
-        assert_eq!(parsed.temps_c[9], 0.0);
-        assert_eq!(parsed.temps_c[14], 43.0);
+        for (route, &joint) in STM32_TO_CONTROL_JOINT.iter().enumerate() {
+            assert_eq!(parsed.sensors.positions[joint], route as f64 / 10.0);
+            assert_eq!(parsed.sensors.motor_torques_nm[joint], route as f64 / 100.0);
+            assert_eq!(parsed.temps_c[joint], 30.0 + route as f64);
+        }
+        assert_eq!(parsed.sensors.positions[crate::model::MOUTH_INDEX], 0.0);
+        assert_eq!(parsed.temps_c[crate::model::MOUTH_INDEX], 0.0);
         assert_eq!(parsed.sensors.motor_flags[0], 0x07);
+        assert_eq!(parsed.sensors.motor_flags[5], 0x07);
         assert_eq!(parsed.sensors.motor_feedback_age_ms[0], 25);
+        assert_eq!(parsed.sensors.motor_feedback_age_ms[5], 25);
+        assert_eq!(parsed.sensors.motor_flags[10], 0);
         assert_eq!(parsed.sensors.motor_flags[14], 0);
         assert_eq!(parsed.sensors.motor_feedback_age_ms[14], 0);
         assert_eq!(parsed.sensors.imu.gyro, [1.0, 2.0, 3.0]);

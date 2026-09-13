@@ -12,6 +12,9 @@
 #include <string.h>
 
 Motor_t Motor[MOTOR_NUM];
+/* Read-only SWD diagnostics; counters wrap naturally and never drive control. */
+volatile unsigned int motor_mit_tx_count[MOTOR_NUM];
+volatile unsigned int motor_feedback_rx_count[MOTOR_NUM];
 static void MotorCanCallBack(unsigned char Port, unsigned int ID, unsigned char *Data);
 static unsigned char g_motorTxFailure;
 
@@ -219,14 +222,9 @@ static unsigned char Motor_RegisterSendFrame(unsigned char Port,
     return BSP_CAN_TrySendStandardDataMessage(Port, MOTOR_REGISTER_FRAME_ID, TxData);
   }
 
-  switch (Retry % 3U) {
-    case 0U:
-      return BSP_CAN_TrySendStandardDataMessage(Port, MOTOR_REGISTER_FRAME_ID, TxData);
-    case 1U:
-      return BSP_CAN_TrySendStandardFdDataMessage(Port, MOTOR_REGISTER_FRAME_ID, TxData, 1U);
-    default:
-      return BSP_CAN_TrySendStandardFdDataMessage(Port, MOTOR_REGISTER_FRAME_ID, TxData, 0U);
-  }
+  (void)Retry;
+  const unsigned char length = TxData[2] == MOTOR_REGISTER_CMD_WRITE ? 8U : 4U;
+  return BSP_CAN_TrySendStandardFdFrame(Port, MOTOR_REGISTER_FRAME_ID, TxData, length, 1U);
 }
 
 static float Motor_LimitFloat(float Value, float Min, float Max)
@@ -325,18 +323,11 @@ static int Motor_FindCodeByFeedback(unsigned char Port, unsigned int MasterID, u
 
 static unsigned char Motor_NormalizeFeedbackState(unsigned char Code, unsigned int ID, unsigned char RawState, const unsigned char *Data)
 {
-#if defined(DM_CAN_FD_MOTOR) && (DM_CAN_FD_MOTOR != 0)
-  if (Code < MOTOR_NUM && Data != 0) {
-    unsigned short can_id = Motor[Code].GetCANID();
-    unsigned short master_id = Motor[Code].GetMasterID();
-
-    if (RawState == Motor_State_Disable &&
-        (unsigned short)(ID & 0x7FFU) == master_id &&
-        Data[0] == (unsigned char)(can_id & 0xFFU)) {
-      return Motor_State_Enable;
-    }
-  }
-#endif
+  /* I2RT states are identical for classic and FD frames. Never promote a
+   * disabled or undocumented state (including captured state 5) to enabled. */
+  (void)Code;
+  (void)ID;
+  (void)Data;
   return RawState;
 }
 
@@ -773,6 +764,8 @@ void Motor_CAN_Back(unsigned char Code, unsigned char Err, unsigned char *RxData
   unsigned short TorqueInt;
   TickType_t now_tick;
 
+  motor_feedback_rx_count[Code]++;
+
   PositionInt = ((unsigned short)RxData[1] << 8) | RxData[2];
   SpeedInt = ((unsigned short)RxData[3] << 4) | ((unsigned short)RxData[4] >> 4);
   TorqueInt = (((unsigned short)RxData[4] & 0x000FU) << 8) | RxData[5];
@@ -852,9 +845,7 @@ unsigned char Motor_CAN_Send(unsigned char Code)
   if (RunFlag == 0U) {
     return 0U;
   }
-  if (Motor_PortUsesFd(Port) != 0U && State >= Motor_State_OverVoltage) {
-    return 0U;
-  } else if (Motor_PortUsesFd(Port) == 0U && State != Motor_State_Enable) {
+  if (State != Motor_State_Enable) {
     return 0U;
   }
 
@@ -880,6 +871,7 @@ unsigned char Motor_CAN_Send(unsigned char Code)
     g_motorTxFailure = 1U;
     return 0U;
   }
+  motor_mit_tx_count[Code]++;
   return 1U;
 }
 

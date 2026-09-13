@@ -19,7 +19,7 @@ pub mod safety;
 pub use imu::ImuData;
 pub use io::{FakeIo, IoError, JointTargets, MitTarget, RobotIo, Sensors, SlowSensors};
 pub use model::{
-    BATTERY_EMPTY_V, BATTERY_FULL_V, DEFAULT_POSITION, JOINT_IDS, JOINT_NAMES, NUM_JOINTS,
+    BATTERY_EMPTY_V, BATTERY_FULL_V, DEFAULT_POSITION, JOINT_NAMES, JOINT_NUMBERS, NUM_JOINTS,
     battery_percent,
 };
 pub use obs::{ACTION_LEN, Command, OBS_LEN, Observation};

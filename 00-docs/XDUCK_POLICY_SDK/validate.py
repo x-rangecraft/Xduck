@@ -10,13 +10,13 @@ import sys
 HERE = Path(__file__).resolve().parent
 JOINT_NAMES = [
     "left_hip_yaw", "left_hip_roll", "left_hip_pitch", "left_knee", "left_ankle",
-    "neck_pitch", "head_pitch", "head_yaw", "head_roll", "mouth",
     "right_hip_yaw", "right_hip_roll", "right_hip_pitch", "right_knee", "right_ankle",
+    "neck_pitch", "head_pitch", "head_yaw", "head_roll", "mouth",
 ]
 HOME = [
     0.0, -0.0873, -0.4579, -0.0049, 0.4530,
-    0.3491, 0.3491, 0.0, 0.0, 0.0,
     0.0, 0.0873, 0.4579, 0.0049, -0.4530,
+    0.3491, 0.3491, 0.0, 0.0, 0.0,
 ]
 
 

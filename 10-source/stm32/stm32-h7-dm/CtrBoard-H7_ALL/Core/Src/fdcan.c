@@ -27,6 +27,7 @@
  * the installed motors: clear-error + enable + initial MIT command in TX,
  * plus one in-flight idle feedback poll. RX holds two feedback batches.
  * A single TX batch overflows during the synchronous enable operation.
+ * TX event FIFOs count actual completed transmissions (two words/event).
  * Offsets and element sizes are expressed in 32-bit words by the STM32 HAL.
  */
 #define FDCAN1_MOTOR_COUNT              5U
@@ -34,6 +35,8 @@
 #define FDCAN3_MOTOR_COUNT              4U
 #define FDCAN_RX_BATCH_COUNT            2U
 #define FDCAN_STD_FILTER_WORDS          1U
+#define FDCAN_TX_EVENT_ELEMENTS         16U
+#define FDCAN_TX_EVENT_WORDS            (2U * FDCAN_TX_EVENT_ELEMENTS)
 #define FDCAN_TX_STARTUP_BATCH_COUNT    3U
 #define FDCAN1_TX_FIFO_ELEMENTS         (FDCAN1_MOTOR_COUNT * FDCAN_TX_STARTUP_BATCH_COUNT + 1U)
 #define FDCAN2_TX_FIFO_ELEMENTS         (FDCAN2_MOTOR_COUNT * FDCAN_TX_STARTUP_BATCH_COUNT + 1U)
@@ -43,13 +46,13 @@
 #define FDCAN2_RX_FIFO0_ELEMENTS        (FDCAN2_MOTOR_COUNT * FDCAN_RX_BATCH_COUNT)
 #define FDCAN3_RX_FIFO0_ELEMENTS        (FDCAN3_MOTOR_COUNT * FDCAN_RX_BATCH_COUNT)
 
-#define FDCAN1_MESSAGE_RAM_WORDS        (FDCAN_STD_FILTER_WORDS + \
+#define FDCAN1_MESSAGE_RAM_WORDS        (FDCAN_STD_FILTER_WORDS + FDCAN_TX_EVENT_WORDS + \
                                          (FDCAN1_RX_FIFO0_ELEMENTS * FDCAN_DATA_BYTES_8) + \
                                          (FDCAN1_TX_FIFO_ELEMENTS * FDCAN_DATA_BYTES_8))
-#define FDCAN2_MESSAGE_RAM_WORDS        (FDCAN_STD_FILTER_WORDS + \
+#define FDCAN2_MESSAGE_RAM_WORDS        (FDCAN_STD_FILTER_WORDS + FDCAN_TX_EVENT_WORDS + \
                                          (FDCAN2_RX_FIFO0_ELEMENTS * FDCAN_DATA_BYTES_8) + \
                                          (FDCAN2_TX_FIFO_ELEMENTS * FDCAN_DATA_BYTES_8))
-#define FDCAN3_MESSAGE_RAM_WORDS        (FDCAN_STD_FILTER_WORDS + \
+#define FDCAN3_MESSAGE_RAM_WORDS        (FDCAN_STD_FILTER_WORDS + FDCAN_TX_EVENT_WORDS + \
                                          (FDCAN3_RX_FIFO0_ELEMENTS * FDCAN_DATA_BYTES_8) + \
                                          (FDCAN3_TX_FIFO_ELEMENTS * FDCAN_DATA_BYTES_8))
 
@@ -68,6 +71,16 @@ FDCAN_HandleTypeDef hfdcan1;
 FDCAN_HandleTypeDef hfdcan2;
 FDCAN_HandleTypeDef hfdcan3;
 
+/*
+ * PLL1Q = 120 MHz, CCU /1. All three GF43X40-10 buses use the same timing.
+ * Nominal: 120/(1*120)=1 Mbps, sample 75%, SJW 250 ns.
+ * Data:    120/(2*12)=5 Mbps, sample 83.33%, SJW 33.33 ns.
+ * The old 6/15/4/4 nominal profile (80%) produced sustained protocol errors
+ * on all three buses. Changing only nominal timing cleared the errors in
+ * the 2026-09-13 disabled 14-motor A/B test; see the hardware audit document.
+ * Match the DM FD example's nominal 75% point using our 120 MHz clock:
+ * do not copy its 80 MHz prescaler/segment numbers directly.
+ */
 /* FDCAN1 init function */
 void MX_FDCAN1_Init(void)
 {
@@ -87,13 +100,15 @@ void MX_FDCAN1_Init(void)
 #endif
   hfdcan1.Init.Mode = FDCAN_MODE_NORMAL;
   hfdcan1.Init.AutoRetransmission = ENABLE;
-  hfdcan1.Init.TransmitPause = DISABLE;
+  /* Two nominal-bit idle times after TX let lower-priority motor feedback
+   * arbitrate before another queued command. Required by this GF43 network. */
+  hfdcan1.Init.TransmitPause = ENABLE;
   hfdcan1.Init.ProtocolException = ENABLE;
 #if defined(DM_CAN_FD_MOTOR) && (DM_CAN_FD_MOTOR != 0)
-  hfdcan1.Init.NominalPrescaler = 6;
-  hfdcan1.Init.NominalSyncJumpWidth = 4;
-  hfdcan1.Init.NominalTimeSeg1 = 15;
-  hfdcan1.Init.NominalTimeSeg2 = 4;
+  hfdcan1.Init.NominalPrescaler = 1;
+  hfdcan1.Init.NominalSyncJumpWidth = 30;
+  hfdcan1.Init.NominalTimeSeg1 = 89;
+  hfdcan1.Init.NominalTimeSeg2 = 30;
 #else
   hfdcan1.Init.NominalPrescaler = 12;
   hfdcan1.Init.NominalSyncJumpWidth = 4;
@@ -101,9 +116,9 @@ void MX_FDCAN1_Init(void)
   hfdcan1.Init.NominalTimeSeg2 = 4;
 #endif
 #if defined(DM_CAN_FD_MOTOR) && (DM_CAN_FD_MOTOR != 0)
-  hfdcan1.Init.DataPrescaler = 3;
+  hfdcan1.Init.DataPrescaler = 2;
   hfdcan1.Init.DataSyncJumpWidth = 2;
-  hfdcan1.Init.DataTimeSeg1 = 7;
+  hfdcan1.Init.DataTimeSeg1 = 9;
   hfdcan1.Init.DataTimeSeg2 = 2;
 #else
   hfdcan1.Init.DataPrescaler = 1;
@@ -120,7 +135,7 @@ void MX_FDCAN1_Init(void)
   hfdcan1.Init.RxFifo1ElmtSize = FDCAN_DATA_BYTES_8;
   hfdcan1.Init.RxBuffersNbr = 0;
   hfdcan1.Init.RxBufferSize = FDCAN_DATA_BYTES_8;
-  hfdcan1.Init.TxEventsNbr = 0;
+  hfdcan1.Init.TxEventsNbr = FDCAN_TX_EVENT_ELEMENTS;
   hfdcan1.Init.TxBuffersNbr = 0;
   hfdcan1.Init.TxFifoQueueElmtsNbr = FDCAN1_TX_FIFO_ELEMENTS;
   hfdcan1.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;
@@ -153,13 +168,13 @@ void MX_FDCAN2_Init(void)
 #endif
   hfdcan2.Init.Mode = FDCAN_MODE_NORMAL;
   hfdcan2.Init.AutoRetransmission = ENABLE;
-  hfdcan2.Init.TransmitPause = DISABLE;
+  hfdcan2.Init.TransmitPause = ENABLE;
   hfdcan2.Init.ProtocolException = ENABLE;
 #if defined(DM_CAN_FD_MOTOR) && (DM_CAN_FD_MOTOR != 0)
-  hfdcan2.Init.NominalPrescaler = 6;
-  hfdcan2.Init.NominalSyncJumpWidth = 4;
-  hfdcan2.Init.NominalTimeSeg1 = 15;
-  hfdcan2.Init.NominalTimeSeg2 = 4;
+  hfdcan2.Init.NominalPrescaler = 1;
+  hfdcan2.Init.NominalSyncJumpWidth = 30;
+  hfdcan2.Init.NominalTimeSeg1 = 89;
+  hfdcan2.Init.NominalTimeSeg2 = 30;
 #else
   hfdcan2.Init.NominalPrescaler = 6;
   hfdcan2.Init.NominalSyncJumpWidth = 4;
@@ -167,9 +182,9 @@ void MX_FDCAN2_Init(void)
   hfdcan2.Init.NominalTimeSeg2 = 4;
 #endif
 #if defined(DM_CAN_FD_MOTOR) && (DM_CAN_FD_MOTOR != 0)
-  hfdcan2.Init.DataPrescaler = 3;
+  hfdcan2.Init.DataPrescaler = 2;
   hfdcan2.Init.DataSyncJumpWidth = 2;
-  hfdcan2.Init.DataTimeSeg1 = 7;
+  hfdcan2.Init.DataTimeSeg1 = 9;
   hfdcan2.Init.DataTimeSeg2 = 2;
 #else
   hfdcan2.Init.DataPrescaler = 1;
@@ -186,7 +201,7 @@ void MX_FDCAN2_Init(void)
   hfdcan2.Init.RxFifo1ElmtSize = FDCAN_DATA_BYTES_8;
   hfdcan2.Init.RxBuffersNbr = 0;
   hfdcan2.Init.RxBufferSize = FDCAN_DATA_BYTES_8;
-  hfdcan2.Init.TxEventsNbr = 0;
+  hfdcan2.Init.TxEventsNbr = FDCAN_TX_EVENT_ELEMENTS;
   hfdcan2.Init.TxBuffersNbr = 0;
   hfdcan2.Init.TxFifoQueueElmtsNbr = FDCAN2_TX_FIFO_ELEMENTS;
   hfdcan2.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;
@@ -219,16 +234,16 @@ void MX_FDCAN3_Init(void)
 #endif
   hfdcan3.Init.Mode = FDCAN_MODE_NORMAL;
   hfdcan3.Init.AutoRetransmission = ENABLE;
-  hfdcan3.Init.TransmitPause = DISABLE;
+  hfdcan3.Init.TransmitPause = ENABLE;
   hfdcan3.Init.ProtocolException = ENABLE;
 #if defined(DM_CAN_FD_MOTOR) && (DM_CAN_FD_MOTOR != 0)
-  hfdcan3.Init.NominalPrescaler = 6;
-  hfdcan3.Init.NominalSyncJumpWidth = 4;
-  hfdcan3.Init.NominalTimeSeg1 = 15;
-  hfdcan3.Init.NominalTimeSeg2 = 4;
-  hfdcan3.Init.DataPrescaler = 3;
+  hfdcan3.Init.NominalPrescaler = 1;
+  hfdcan3.Init.NominalSyncJumpWidth = 30;
+  hfdcan3.Init.NominalTimeSeg1 = 89;
+  hfdcan3.Init.NominalTimeSeg2 = 30;
+  hfdcan3.Init.DataPrescaler = 2;
   hfdcan3.Init.DataSyncJumpWidth = 2;
-  hfdcan3.Init.DataTimeSeg1 = 7;
+  hfdcan3.Init.DataTimeSeg1 = 9;
   hfdcan3.Init.DataTimeSeg2 = 2;
 #else
   hfdcan3.Init.NominalPrescaler = 6;
@@ -249,7 +264,7 @@ void MX_FDCAN3_Init(void)
   hfdcan3.Init.RxFifo1ElmtSize = FDCAN_DATA_BYTES_8;
   hfdcan3.Init.RxBuffersNbr = 0;
   hfdcan3.Init.RxBufferSize = FDCAN_DATA_BYTES_8;
-  hfdcan3.Init.TxEventsNbr = 0;
+  hfdcan3.Init.TxEventsNbr = FDCAN_TX_EVENT_ELEMENTS;
   hfdcan3.Init.TxBuffersNbr = 0;
   hfdcan3.Init.TxFifoQueueElmtsNbr = FDCAN3_TX_FIFO_ELEMENTS;
   hfdcan3.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;

@@ -8,8 +8,8 @@ import sys
 
 JOINT_NAMES = [
     "left_hip_yaw", "left_hip_roll", "left_hip_pitch", "left_knee", "left_ankle",
-    "neck_pitch", "head_pitch", "head_yaw", "head_roll", "mouth",
     "right_hip_yaw", "right_hip_roll", "right_hip_pitch", "right_knee", "right_ankle",
+    "neck_pitch", "head_pitch", "head_yaw", "head_roll", "mouth",
 ]
 CONTROLLED_JOINTS = [name for name in JOINT_NAMES if name != "mouth"]
 

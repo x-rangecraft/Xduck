@@ -851,9 +851,9 @@ mod tests {
         // the whole marker pipeline can be eyeballed without a robot.
         let mut markers = Vec::new();
         if std::env::var("DUCK_MARKERS").as_deref() == Ok("demo") {
-            joints[6] = 0.5;
+            joints[11] = 0.5;
             let rp = kinematics::tof::Reprojector::alpha();
-            let head = [joints[5], joints[6], joints[7], joints[8]];
+            let head = [joints[10], joints[11], joints[12], joints[13]];
             let ranges = [Some(0.35f64); kinematics::tof::ROWS * kinematics::tof::COLS];
             for zone in rp.project(&ranges, head, &kinematics::tof::Posture::default()) {
                 let (point, rgb) = match zone {

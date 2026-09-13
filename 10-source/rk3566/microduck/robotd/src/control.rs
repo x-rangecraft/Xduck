@@ -37,7 +37,7 @@ use duck_control::obs::{ACTION_LEN, Command, Observation};
 use duck_control::policy::{Net, Policy, PolicyError};
 
 /// Joint indices the head low-pass covers: neck_pitch, head_pitch, head_yaw, head_roll.
-const HEAD_JOINTS: std::ops::Range<usize> = 5..9;
+const HEAD_JOINTS: std::ops::Range<usize> = 10..14;
 
 /// The ground pick hands back at this fraction of its cycle — the prototype's cutoff.
 const GROUND_PICK_END_PHASE: f64 = 0.7;

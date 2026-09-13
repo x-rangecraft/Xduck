@@ -32,8 +32,8 @@ FORMAT_VERSION = 1
 # servo without an MJCF joint (the jaw is a fixed geom), so it never appears in a bake.
 JOINT_NAMES = [
     "left_hip_yaw", "left_hip_roll", "left_hip_pitch", "left_knee", "left_ankle",
-    "neck_pitch", "head_pitch", "head_yaw", "head_roll", "mouth",
     "right_hip_yaw", "right_hip_roll", "right_hip_pitch", "right_knee", "right_ankle",
+    "neck_pitch", "head_pitch", "head_yaw", "head_roll", "mouth",
 ]
 
 # Parts that exist in the CAD but are enclosed by shells: batteries, PCBs, brackets.

@@ -115,7 +115,7 @@ void timeout_fault(){
  for(auto&m:motors){m.state=1;m.run=1;}
  motors[5].online=0;MotorApp_CheckRuntimeProtection();
  assert(g_motorAppFaultFlags==MOTOR_APP_FAULT_FEEDBACK_STALE && !g_motorAppEnabled);
- assert(MotorApp_GetLastFaultMotorID()==1 && MotorApp_GetLastFaultRouteIndex()==5);
+ assert(MotorApp_GetLastFaultMotorID()==6 && MotorApp_GetLastFaultRouteIndex()==5);
  // Simulate actual disable acknowledgements, not just the gateway's request.
  for(auto&m:motors){m.state=0;m.online=1;}
  g_motorAppPendingSpiCommandValid=1;
@@ -132,28 +132,28 @@ void recovered_but_disabled(){
  assert(!g_motorAppFault && !g_motorAppEnabled && !g_motorAppPendingSpiCommandValid);
  assert(g_motorAppMode==MOTOR_APP_MODE_ADMIN && g_motorAppAdminOp==MOTOR_APP_ADMIN_NONE);
  for(auto&m:motors)assert(!m.run && !m.state);
- assert(MotorApp_GetLastFaultMotorID()==1 && MotorApp_GetLastFaultRouteIndex()==5);
+ assert(MotorApp_GetLastFaultMotorID()==6 && MotorApp_GetLastFaultRouteIndex()==5);
 }
 int main(){
  assert(MotorApp_IsHardwareFaultState(13));
  reset();
- dmusb_position_limit_t limits[5]{};
+ dmusb_position_limit_t limits[14]{};
  unsigned n=0;
  for(unsigned i=0;i<14;i++) if(MotorApp_IsActiveMitRoute(i)){
   limits[n].motor_id=kMotorAppDefaultConfig[i].can_id;
   limits[n].min_mrad=-4000;limits[n++].max_mrad=4000;
  }
- assert(MotorApp_SetPositionLimits(limits,5)==0 && g_positionLimitsReady);
- assert(g_motorAppSuccessCount==5 && g_motorAppSucceededMask==0xe21);
+ assert(MotorApp_SetPositionLimits(limits,14)==0 && g_positionLimitsReady);
+ assert(g_motorAppSuccessCount==14 && g_motorAppSucceededMask==0x3fff);
  // Real enabled feedback refuses calibration even if gateway thinks it is disabled.
  motors[5].state=1;assert(!MotorApp_CalibrationAllowed());
- assert(MotorApp_SetPositionLimits(limits,5)==H7SPI_RESULT_BUSY);
+ assert(MotorApp_SetPositionLimits(limits,14)==H7SPI_RESULT_BUSY);
  motors[5].state=0;motors[0].online=0;assert(!MotorApp_CalibrationAllowed());motors[0].online=1;
  g_motorAppEnabled=1;assert(!MotorApp_CalibrationAllowed());g_motorAppEnabled=0;
- limits[4].min_mrad=4000;assert(MotorApp_SetPositionLimits(limits,5)==H7SPI_RESULT_LIMIT_EXCEEDED);
+ limits[4].min_mrad=4000;assert(MotorApp_SetPositionLimits(limits,14)==H7SPI_RESULT_LIMIT_EXCEEDED);
  assert(g_positionMin[0]==-4 && g_positionMax[0]==4); // no partial application
  limits[4].min_mrad=-4000;limits[4].motor_id=2;
- assert(MotorApp_SetPositionLimits(limits,5)==H7SPI_RESULT_DUPLICATE_MOTOR_ID);
+ assert(MotorApp_SetPositionLimits(limits,14)==H7SPI_RESULT_DUPLICATE_MOTOR_ID);
  // The exact 5 -> 4 contract survives torque shaping, even outside the boundary.
  h7spi_motor_cmd_t cmd{};cmd.p_mrad=5000;cmd.kp_centi=65535;cmd.kd_milli=65535;
  cmd.v_mrad_s=100000;cmd.torque_mnm=100000;

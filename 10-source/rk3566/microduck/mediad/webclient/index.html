@@ -340,18 +340,17 @@
   </section>
 
   <section class="motor-panel">
-    <h2>STM32 电机状态（14 槽）</h2>
+    <h2>STM32 电机状态（14 个）</h2>
     <div class="motor-box"><table class="motor-table">
-      <thead><tr><th>槽位 / 电机</th><th>状态</th><th>速度<br>rad/s</th><th>位置<br>rad</th><th>力矩<br>N·m</th><th>温度<br>°C</th></tr></thead>
+      <thead><tr><th>电机 ID</th><th>状态</th><th>速度<br>rad/s</th><th>位置<br>rad</th><th>力矩<br>N·m</th><th>温度<br>°C</th></tr></thead>
       <tbody id="motor-rows"><tr><td colspan="6">等待 STM32 数据…</td></tr></tbody>
     </table></div>
-    <p class="hint">状态取自 STM32 DMUSB V4 flags；空槽显示“空槽”，不会把全零数据误判为在线电机。</p>
   </section>
 </main>
 
 <details id="calibration-details">
     <summary>电机标定与默认站姿</summary>
-    <p class="hint">预留全部 14 个电机位置；未配置槽位可提前填写默认站姿，接入并配置电机后再标零和设置限位。先放松，待全部已配置电机确认失能后手动摆位。零位将当前位置写入电机；限位和默认站姿以电机零位为基准，单位 rad。先标零位，再设置限位与站姿。</p>
+    <p class="hint">14 个电机按 ID 1–5 左腿、6–10 右腿、11–14 颈部和头部排列。嘴部是关节编号 15，由独立舵机驱动，不在此表中。先放松，待全部电机确认失能后手动摆位。零位将当前位置写入电机；限位和默认站姿以电机零位为基准，单位 rad。先标零位，再设置限位与站姿。</p>
     <div class="row"><button id="calibration-refresh">读取已保存设置</button></div>
     <div class="motor-box"><table class="motor-table">
       <thead><tr><th>电机</th><th>当前位置</th><th>下限</th><th>上限</th><th>默认站姿</th><th>电机零位</th></tr></thead>
@@ -362,7 +361,7 @@
       <button id="calibration-capture-home" data-calibration-edit disabled>用当前位置填写默认站姿</button>
       <button id="calibration-home" data-calibration-edit disabled>保存默认站姿</button>
     </div>
-    <p class="hint">保存设置不会使能或移动电机。点击“初始化”才会前往默认站姿。STM32 将超范围的位置给定裁剪到边界；例如上限 4 rad，给定 5 rad，则发送 4 rad。</p>
+    <p class="hint">保存设置不会使能或移动电机。点击“初始化”才会前往默认站姿。STM32 将超范围的位置给定裁剪到边界。</p>
     <p id="calibration-feedback" role="status" aria-live="polite">等待连接。标定操作仅在未使能时可用。</p>
 </details>
 
@@ -877,9 +876,9 @@ async function identify() {
 
 let healthTimer = null, statsTimer = null, cameraTimer = null;
 const MOTOR_JOINTS = [
-  [0, "左髋偏航"], [1, "左髋侧摆"], [2, "左髋俯仰"], [3, "左膝"], [4, "左踝"],
-  [5, "颈部俯仰"], [6, "头部俯仰"], [7, "头部偏航"], [8, "头部侧摆"],
-  [10, "右髋偏航"], [11, "右髋侧摆"], [12, "右髋俯仰"], [13, "右膝"], [14, "右踝"],
+  [1, 0, "左髋偏航"], [2, 1, "左髋侧摆"], [3, 2, "左髋俯仰"], [4, 3, "左膝"], [5, 4, "左踝"],
+  [6, 5, "右髋偏航"], [7, 6, "右髋侧摆"], [8, 7, "右髋俯仰"], [9, 8, "右膝"], [10, 9, "右踝"],
+  [11, 10, "颈部俯仰"], [12, 11, "头部俯仰"], [13, 12, "头部偏航"], [14, 13, "头部侧摆"],
 ];
 
 function startTelemetry() {
@@ -1009,7 +1008,7 @@ function observeOperatorEvent(state) {
 }
 
 function confirmOperatorEvent(state) {
-  const motors = MOTOR_JOINTS.map(([joint]) => (state.motor_flags || [])[joint] || 0)
+  const motors = MOTOR_JOINTS.map(([, joint]) => (state.motor_flags || [])[joint] || 0)
     .filter(flags => flags & 1);
   const enabled = motors.length > 0 && motors.every(flags => (flags & 6) === 6 && !(flags & 8));
   const relaxed = motors.length > 0 && motors.every(flags => (flags & 2) && !(flags & 4));
@@ -1117,14 +1116,14 @@ function renderMotors(state) {
   const temperatures = state.motor_temperatures_c || [];
   const number = (values, joint) => Number.isFinite(values[joint]) ? values[joint].toFixed(3) : "–";
 
-  $("motor-rows").innerHTML = MOTOR_JOINTS.map(([joint, name], slot) => {
+  $("motor-rows").innerHTML = MOTOR_JOINTS.map(([id, joint, name]) => {
     const flags = motorFlags[joint] || 0;
     const configured = (flags & 0x01) !== 0;
     const online = (flags & 0x02) !== 0;
     const enabled = (flags & 0x04) !== 0;
     const fault = (flags & 0x08) !== 0;
     const expired = (flags & 0x20) !== 0;
-    let status = "空槽", statusClass = "dim";
+    let status = "状态未知", statusClass = "dim";
     if (configured) {
       const parts = [online ? "在线" : "离线", enabled ? "已使能" : "未使能"];
       if (fault) parts.push("硬件故障");
@@ -1135,7 +1134,7 @@ function renderMotors(state) {
     const value = (values) => configured ? number(values, joint) : "–";
     const temp = configured && Number.isFinite(temperatures[joint])
       ? `${temperatures[joint].toFixed(0)} °C` : "–";
-    return `<tr><td>槽位 ${slot} · ${name}</td><td class="${statusClass}">${status}</td>`
+    return `<tr><td>ID ${id} · ${name}</td><td class="${statusClass}">${status}</td>`
       + `<td>${value(velocities)}</td><td>${value(positions)}</td>`
       + `<td>${value(torques)}</td><td>${temp.replace(" °C", "")}</td></tr>`;
   }).join("");
@@ -1504,10 +1503,10 @@ function renderCalibration(config) {
   calibrationSnapshot = JSON.stringify({config, motors: CALIBRATION_MOTORS});
   calibrationDirty = false;
   calibrationConflict = false;
-  $("calibration-rows").innerHTML = MOTOR_JOINTS.map(([joint, name], slot) => {
+  $("calibration-rows").innerHTML = MOTOR_JOINTS.map(([expectedId, joint, name]) => {
     const id = CALIBRATION_MOTORS.find(([, index]) => index === joint)?.[0];
     const limit = config.limits.find(value => value.motor_id === id);
-    if (!limit) return `<tr><td>${name}<br><span class="hint">槽位 ${slot + 1} · 未配置</span></td>
+    if (!limit) return `<tr><td>${name}<br><span class="hint">ID ${expectedId}</span></td>
       <td>—</td><td><input type="number" style="width:6.5rem" placeholder="接入后设置" aria-label="${name} 下限" disabled></td>
       <td><input type="number" style="width:6.5rem" placeholder="接入后设置" aria-label="${name} 上限" disabled></td>
       <td><input type="number" step="any" min="-12.5" max="12.5" style="width:6.5rem"
@@ -1516,7 +1515,7 @@ function renderCalibration(config) {
     const field = (kind, value, label) => `<input type="number" step="${kind === "home" ? "any" : "0.001"}" min="-12.5" max="12.5"
       style="width:6.5rem" id="cal-${kind}-${id}" value="${Number(value)}"
       aria-label="电机 ${id} ${label}" data-calibration-edit disabled>`;
-    return `<tr><td>${name}<br><span class="hint">槽位 ${slot + 1} · ID ${id}</span></td><td id="cal-current-${id}">—</td>
+    return `<tr><td>${name}<br><span class="hint">ID ${id}</span></td><td id="cal-current-${id}">—</td>
       <td>${field("min", limit.min_rad, "下限")}<br><button data-cal-capture="min" data-motor="${id}" data-calibration-edit disabled>记录下限</button></td>
       <td>${field("max", limit.max_rad, "上限")}<br><button data-cal-capture="max" data-motor="${id}" data-calibration-edit disabled>记录上限</button></td>
       <td>${field("home", config.home[joint], "默认站姿")}</td>
@@ -1603,7 +1602,7 @@ $("calibration-limits").onclick = () => {
 $("calibration-home").onclick = () => {
   try {
     const positions = [...calibrationConfig.home];
-    for (const [joint] of MOTOR_JOINTS) {
+    for (const [, joint] of MOTOR_JOINTS) {
       const id = CALIBRATION_MOTORS.find(([, index]) => index === joint)?.[0];
       positions[joint] = calibrationNumber(id === undefined ? `cal-home-slot-${joint}` : `cal-home-${id}`);
     }
@@ -1614,7 +1613,7 @@ $("calibration-capture-home").onclick = () => {
   if (!calibrationEditable()) return;
   calibrationDirty = true;
   for (const [id, joint] of CALIBRATION_MOTORS) $("cal-home-" + id).value = Number(postureState.state.joints[joint]).toFixed(3);
-  calibrationFeedback("已填写已配置电机的当前位置；预留槽位保留原值。点击“保存默认站姿”后生效。");
+  calibrationFeedback("已填写 14 个电机的当前位置。点击“保存默认站姿”后生效。");
 };
 $("calibration-rows").onclick = event => {
   if (!calibrationEditable()) return;
@@ -1715,7 +1714,7 @@ async function verifyPosture(method, result, started, serial, label) {
         showControlFeedback(`${label}失败：${state.motor_control_error}`, "bad");
         return;
       }
-      const motors = MOTOR_JOINTS.map(([joint]) => ({
+      const motors = MOTOR_JOINTS.map(([, joint]) => ({
         flags: (state.motor_flags || [])[joint] || 0,
         age: (state.motor_feedback_age_ms || [])[joint],
       })).filter(motor => motor.flags & 1);

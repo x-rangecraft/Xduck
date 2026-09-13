@@ -20,7 +20,11 @@ function element(id) {
   });
   return elements.get(id);
 }
-const ids = [[2,0],[1,5],[13,10],[14,11],[15,12]];
+const ids = [
+  [1,0],[2,1],[3,2],[4,3],[5,4],
+  [6,10],[7,11],[8,12],[9,13],[10,14],
+  [11,5],[12,6],[13,7],[14,8],
+];
 const config = {version:1, limits: ids.map(([motor_id]) => ({motor_id,min_rad:-3,max_rad:3})),home:Array(15).fill(0)};
 const sensors = {motor_flags:Array(15).fill(0), motor_feedback_age_ms:Array(15).fill(0), joints:Array(15).fill(0)};
 for (const [,joint] of ids) {sensors.motor_flags[joint]=3;sensors.joints[joint]=0.75;}
@@ -29,7 +33,7 @@ const sent = [];
 const logs = [], timers = [], listeners = {};
 let connected = true, readError = null;
 const context = vm.createContext({
-  $:element, MOTOR_JOINTS:[0,1,2,3,4,5,6,7,8,10,11,12,13,14].map(joint => [joint,'joint']),
+  $:element, MOTOR_JOINTS:ids.map(([id,joint]) => [id,joint,'joint']),
   postureState: {state:sensors,received:now}, performance:{now:()=>now}, open:()=>connected,
   reportConnectionIssue(...args){logs.push(args);},
   setInterval(callback,ms){timers.push({callback,ms});},setTimeout(callback){callback();},
@@ -44,10 +48,10 @@ const context = vm.createContext({
 vm.runInContext(html.slice(start,end),context);
 (async () => {
   await vm.runInContext('refreshCalibration(true)',context);
-  assert.equal((element('calibration-rows').innerHTML.match(/data-cal-zero=/g)||[]).length,5);
+  assert.equal((element('calibration-rows').innerHTML.match(/data-cal-zero=/g)||[]).length,14);
   assert.equal((element('calibration-rows').innerHTML.match(/step="any"/g)||[]).length,14,'home inputs must accept the four-decimal built-in stance');
   assert.equal((element('calibration-rows').innerHTML.match(/<tr>/g)||[]).length,14);
-  assert.equal((element('calibration-rows').innerHTML.match(/未配置/g)||[]).length,9);
+  assert.equal((element('calibration-rows').innerHTML.match(/槽位|未配置/g)||[]).length,0);
   assert(vm.runInContext('calibrationEditable()',context));
   sensors.motor_flags[5]=7;
   assert(!vm.runInContext('calibrationEditable()',context));
@@ -60,9 +64,9 @@ vm.runInContext(html.slice(start,end),context);
   now+=1001;
   assert(!vm.runInContext('calibrationEditable()',context));
   context.postureState.received=now;
-  element('cal-home-slot-1').value='0.25';
+  element('cal-home-2').value='0.25';
   element('calibration-capture-home').onclick();
-  assert.equal(element('cal-home-slot-1').value,'0.25','capture preserves reserved stance');
+  assert.equal(element('cal-home-2').value,'0.750','capture fills every configured motor');
   assert.equal(element('cal-home-13').value,'0.750');
   const before=sent.length;
   // Capture fills the form, without sending any command or zero operation.
@@ -72,7 +76,7 @@ vm.runInContext(html.slice(start,end),context);
   await vm.runInContext('submitCalibration({action:"mark_zero",motor_id:2})',context);
   assert(element('calibration-feedback').textContent.includes('已确认电机失能'));
   assert.equal(sent.filter(x=>x.params.action==='mark_zero').length,1);
-  element('cal-home-slot-1').value='0.25';
+  element('cal-home-2').value='0.25';
   element('calibration-home').onclick();
   await new Promise(resolve=>setImmediate(resolve));
   assert.equal(sent.find(x=>x.params.action==='set_home').params.positions[1],0.25);
@@ -81,11 +85,6 @@ vm.runInContext(html.slice(start,end),context);
   await vm.runInContext('submitCalibration({action:"mark_zero",motor_id:2})',context);
   assert.equal(element('calibration-feedback').textContent,'STM32 拒绝标定');
   assert.equal(sent.filter(x=>x.params.action==='mark_zero').length,2,'failed zero is not retried');
-  ids.push([3,1]); config.limits.push({motor_id:3,min_rad:-3,max_rad:3}); sensors.motor_flags[1]=3;
-  await vm.runInContext('refreshCalibration(false)',context);
-  assert.equal((element('calibration-rows').innerHTML.match(/data-cal-zero=/g)||[]).length,6,'new backend mapping activates reserved slot');
-  assert.equal((element('calibration-rows').innerHTML.match(/<tr>/g)||[]).length,14);
-  assert(vm.runInContext('calibrationEditable()',context));
   sensors.motor_flags[1]=0;
   assert(!vm.runInContext('calibrationEditable()',context),'configured but offline motor must still block writes');
   sensors.motor_flags[1]=3; fail=false;
@@ -109,15 +108,15 @@ vm.runInContext(html.slice(start,end),context);
   connected=true;
   config.home[0]=1.25;
   await poll();
-  assert.equal(element('cal-home-2').value,'1.25','external changes refresh clean form');
-  element('cal-home-2').value='2';
+  assert.equal(element('cal-home-1').value,'1.25','external changes refresh clean form');
+  element('cal-home-1').value='2';
   element('calibration-rows').oninput();
   config.home[0]=1.5;
   await poll();
-  assert.equal(element('cal-home-2').value,'2','external changes preserve draft');
+  assert.equal(element('cal-home-1').value,'2','external changes preserve draft');
   assert(!vm.runInContext('calibrationEditable()',context),'conflicting draft cannot overwrite remote settings');
   await element('calibration-refresh').onclick();
-  assert.equal(element('cal-home-2').value,'1.5');
+  assert.equal(element('cal-home-1').value,'1.5');
   assert(vm.runInContext('calibrationEditable()',context));
   readError=new Error('query timeout');
   await poll();

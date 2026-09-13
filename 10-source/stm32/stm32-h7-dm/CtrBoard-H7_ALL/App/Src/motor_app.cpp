@@ -27,26 +27,15 @@
 #define MOTOR_APP_ADMIN_POLL_INTERVAL_MS (5U)
 #define MOTOR_APP_MOS_OVER_TEMP_C     (75U)
 #define MOTOR_APP_ROTOR_OVER_TEMP_C   (80U)
-#define MOTOR_APP_REG_OT_VALUE        (0x02U)
-#define MOTOR_APP_REG_OC_VALUE        (0x03U)
-#define MOTOR_APP_REG_OV_VALUE        (0x1DU)
 #define MOTOR_APP_REG_CAN_BR          (0x23U)
-#define MOTOR_APP_CAN_BR_FD_BRS       (8U)
+#define MOTOR_APP_CAN_BR_FD_BRS       (3U) /* I2RT arbitration 1 Mbps; not a FD mode selector. */
 #define MOTOR_APP_STARTUP_ITEM_OT     (0U)
 #define MOTOR_APP_STARTUP_ITEM_OC     (1U)
 #define MOTOR_APP_STARTUP_ITEM_OV     (2U)
 #define MOTOR_APP_STARTUP_ITEM_CAN_BR (3U)
 #define MOTOR_APP_STARTUP_ITEM_TIMEOUT (4U)
-#define MOTOR_APP_PROTECT_OT_C       (100.0f)
-#define MOTOR_APP_PROTECT_OC_10422   (0.8f)
-#define MOTOR_APP_PROTECT_OV_10422   (65.0f)
-#define MOTOR_APP_PROTECT_OC_10010   (0.8f)
-#define MOTOR_APP_PROTECT_OV_10010   (52.0f)
 #define MOTOR_APP_POSITION_RAD       (3.0f)
-#define MOTOR_APP_SPEED_10422_RAD_S  (12.566f)
-#define MOTOR_APP_TORQUE_10422_NM    (400.0f)
-#define MOTOR_APP_SPEED_10010_RAD_S  (15.708f)
-#define MOTOR_APP_TORQUE_10010_NM    (150.0f)
+#define MOTOR_APP_TORQUE_GF43X40_10_NM (23.5f)
 
 typedef struct {
   unsigned char port;
@@ -61,9 +50,6 @@ typedef struct {
   float kp_max;
   float kd_min;
   float kd_max;
-  float protect_ot;
-  float protect_oc;
-  float protect_ov;
 } MotorApp_DefaultMotorConfig_t;
 
 typedef struct {
@@ -74,54 +60,54 @@ typedef struct {
   float torque;
 } MotorApp_ShapedCommand_t;
 
+/* GF43X40-10: route slot + 1 is the motor number; MST = CAN ID + 0x10. */
 static const MotorApp_DefaultMotorConfig_t kMotorAppDefaultConfig[] = {
-  /* Fixed USB route order: CAN2 x5, CAN3 x4, CAN1 x5. Port 0 is an empty slot. */
-  {2U, 0x02U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -MOTOR_APP_SPEED_10010_RAD_S, MOTOR_APP_SPEED_10010_RAD_S, -10.0f, 10.0f, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
-  {0U, 0x00U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -28.0f, 28.0f, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
-  {0U, 0x00U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -MOTOR_APP_SPEED_10010_RAD_S, MOTOR_APP_SPEED_10010_RAD_S, -MOTOR_APP_TORQUE_10010_NM, MOTOR_APP_TORQUE_10010_NM, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
-  {0U, 0x00U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -MOTOR_APP_SPEED_10010_RAD_S, MOTOR_APP_SPEED_10010_RAD_S, -MOTOR_APP_TORQUE_10010_NM, MOTOR_APP_TORQUE_10010_NM, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
-  {0U, 0x00U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -MOTOR_APP_SPEED_10010_RAD_S, MOTOR_APP_SPEED_10010_RAD_S, -MOTOR_APP_TORQUE_10010_NM, MOTOR_APP_TORQUE_10010_NM, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
-  {3U, 0x01U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -MOTOR_APP_SPEED_10010_RAD_S, MOTOR_APP_SPEED_10010_RAD_S, -10.0f, 10.0f, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
-  {0U, 0x00U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -MOTOR_APP_SPEED_10010_RAD_S, MOTOR_APP_SPEED_10010_RAD_S, -MOTOR_APP_TORQUE_10010_NM, MOTOR_APP_TORQUE_10010_NM, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
-  {0U, 0x00U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -MOTOR_APP_SPEED_10010_RAD_S, MOTOR_APP_SPEED_10010_RAD_S, -MOTOR_APP_TORQUE_10010_NM, MOTOR_APP_TORQUE_10010_NM, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
-  {0U, 0x00U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -MOTOR_APP_SPEED_10010_RAD_S, MOTOR_APP_SPEED_10010_RAD_S, -MOTOR_APP_TORQUE_10010_NM, MOTOR_APP_TORQUE_10010_NM, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
-  {1U, 0x0DU, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -28.0f, 28.0f, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10422, MOTOR_APP_PROTECT_OV_10422},
-  {1U, 0x0EU, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -28.0f, 28.0f, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10422, MOTOR_APP_PROTECT_OV_10422},
-  {1U, 0x0FU, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -28.0f, 28.0f, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10422, MOTOR_APP_PROTECT_OV_10422},
-  {0U, 0x00U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -MOTOR_APP_SPEED_10010_RAD_S, MOTOR_APP_SPEED_10010_RAD_S, -MOTOR_APP_TORQUE_10010_NM, MOTOR_APP_TORQUE_10010_NM, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
-  {0U, 0x00U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -MOTOR_APP_SPEED_10010_RAD_S, MOTOR_APP_SPEED_10010_RAD_S, -MOTOR_APP_TORQUE_10010_NM, MOTOR_APP_TORQUE_10010_NM, 0.00f, 500.00f, 0.00f, 5.00f, MOTOR_APP_PROTECT_OT_C, MOTOR_APP_PROTECT_OC_10010, MOTOR_APP_PROTECT_OV_10010},
+  {1U, 0x01U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+#if !H7DM_BENCH_ID1_ONLY
+  {1U, 0x02U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {1U, 0x03U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {1U, 0x04U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {1U, 0x05U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {2U, 0x06U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {2U, 0x07U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {2U, 0x08U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {2U, 0x09U, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {2U, 0x0AU, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {3U, 0x0BU, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {3U, 0x0CU, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {3U, 0x0DU, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+  {3U, 0x0EU, -MOTOR_APP_POSITION_RAD, MOTOR_APP_POSITION_RAD, -10.0f, 10.0f, -MOTOR_APP_TORQUE_GF43X40_10_NM, MOTOR_APP_TORQUE_GF43X40_10_NM, 0.0f, 500.0f, 0.0f, 5.0f},
+#endif
 };
 
-/* CAN wire scaling is independent of the joint's permitted command range.
- * Read back from PMAX/VMAX/TMAX (0x15/0x16/0x17) on all six motors, 2026-09-07.
- * Keep the existing +/-3 rad position guard in kMotorAppDefaultConfig. */
+/* Captured I2RT PMAX/VMAX/TMAX. The 28 Nm wire scale is independent of
+ * the 23.5 Nm physical output cap and the calibrated position limits. */
 typedef struct { float p_max; float v_max; float t_max; } MotorApp_WireRange_t;
 static const MotorApp_WireRange_t kMotorAppWireRange[] = {
-  {12.5f, 30.0f, 10.0f}, /* ID 2 */
-  {0.0f, 0.0f, 0.0f}, /* ID 3 disconnected: keep its slot empty. */
-  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},
-  {12.5f, 30.0f, 10.0f}, /* ID 1 */
-  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},
-  {12.5f, 10.0f, 28.0f}, /* ID 13 */
-  {12.5f, 10.0f, 28.0f}, /* ID 14 */
-  {12.5f, 10.0f, 28.0f}, /* ID 15 */
-  {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},
+  {12.5f, 10.0f, 28.0f},
+#if !H7DM_BENCH_ID1_ONLY
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+  {12.5f, 10.0f, 28.0f},
+#endif
 };
 static_assert(sizeof(kMotorAppWireRange) / sizeof(kMotorAppWireRange[0]) ==
               sizeof(kMotorAppDefaultConfig) / sizeof(kMotorAppDefaultConfig[0]),
               "Wire ranges must preserve every USB route slot");
 
-static const unsigned char kMotorAppCanPort1MitList[] = {
-  0x0DU, 0x0EU, 0x0FU,
-};
-
-static const unsigned char kMotorAppCanPort2MitList[] = {
-  0x02U,
-};
-
-static const unsigned char kMotorAppCanPort3MitList[] = {
-  0x01U,
-};
+static const unsigned char kMotorAppCanPort1MitList[] = {1U, 2U, 3U, 4U, 5U};
+static const unsigned char kMotorAppCanPort2MitList[] = {6U, 7U, 8U, 9U, 10U};
+static const unsigned char kMotorAppCanPort3MitList[] = {11U, 12U, 13U, 14U};
 
 static float g_positionMin[H7SPI_MAX_MOTORS];
 static float g_positionMax[H7SPI_MAX_MOTORS];
@@ -165,7 +151,6 @@ static unsigned char g_motorAppStartupRegistersConfigured = 0U;
 static unsigned char g_motorAppAdminPollIndex = 0U;
 static volatile unsigned char g_motorAppRegisterBusy = 0U;
 static unsigned char g_motorAppAdminRouteIndices[H7SPI_MAX_MOTORS];
-static unsigned char g_motorAppCanPort1Cursor = 0U;
 
 /* Optional debugger-triggered, read-only inspection. Request is a configured
  * motor ID; zero does nothing. High byte optionally selects a whitelisted
@@ -182,13 +167,6 @@ static void MotorApp_EnterFault(unsigned char RouteIndex, unsigned long FaultFla
 static void MotorApp_RecordAdminSuccess(unsigned char RouteIndex);
 static unsigned char MotorApp_GetDefaultCount(void);
 static unsigned char MotorApp_IsHardwareFaultState(unsigned char State);
-
-static unsigned int MotorApp_FloatToU32(float Value)
-{
-  unsigned int Raw = 0U;
-  memcpy(&Raw, &Value, sizeof(Raw));
-  return Raw;
-}
 
 static float MotorApp_AbsFloat(float Value)
 {
@@ -298,7 +276,6 @@ static void MotorApp_PrepareFallbackCommands(void)
   unsigned char index;
 
   MotorApp_ClearCommandTracking();
-  g_motorAppCanPort1Cursor = 0U;
   for (index = 0U; index < MotorApp_GetDefaultCount(); index++) {
     Motor_t *motor = MotorApp_GetRouteMotor(index);
     motor->ClearCommand();
@@ -315,12 +292,10 @@ static void MotorApp_SendActiveMitOnce(void)
   }
 
   Motor_ClearTxFailure();
-  /* FDCAN1 is 500 kbit/s and carries three motors. Sending all three commands
-   * plus all three replies every 1 ms exceeds the physical bus capacity and
-   * starves one feedback stream. Round-robin one motor per task tick gives
-   * every motor a 333 Hz command rate while keeping the worst-case classic-CAN
-   * load below the link rate. FDCAN2/3 each have one active motor. */
-  sent = Motor_SendPortBudgeted(1U, &g_motorAppCanPort1Cursor, 1U);
+  /* All ports use FD+BRS at 1/5 Mbps. Send each configured motor once per
+   * 1 ms task tick; each port carries at most five command/feedback pairs. */
+  sent = Motor_SendListOnce(kMotorAppCanPort1MitList,
+                           sizeof(kMotorAppCanPort1MitList) / sizeof(kMotorAppCanPort1MitList[0]));
   sent = (unsigned char)(sent + Motor_SendListOnce(kMotorAppCanPort2MitList,
                                                    (unsigned char)(sizeof(kMotorAppCanPort2MitList) /
                                                                    sizeof(kMotorAppCanPort2MitList[0]))));
@@ -513,7 +488,8 @@ static unsigned char MotorApp_ConfigureFdCanBr(const unsigned char *RouteIndices
       continue;
     }
 
-    if (motor->WriteRegister(MOTOR_APP_REG_CAN_BR, MOTOR_APP_CAN_BR_FD_BRS, 1U) == 0U) {
+    /* Do not change live bus timing or persist an undocumented FD enum. */
+    if (can_br != MOTOR_APP_CAN_BR_FD_BRS) {
       MotorApp_EnterFault(route_index, MOTOR_APP_FAULT_TIMEOUT_CONFIG);
       MotorApp_RecordStartupConfigFailure(route_index, MOTOR_APP_STARTUP_ITEM_CAN_BR);
       return H7SPI_RESULT_FAULT;
@@ -522,83 +498,6 @@ static unsigned char MotorApp_ConfigureFdCanBr(const unsigned char *RouteIndices
 
   return H7SPI_RESULT_OK;
 #endif
-}
-
-static unsigned char MotorApp_WriteRegisterIfNeeded(Motor_t *Motor,
-                                                    unsigned char RouteIndex,
-                                                    unsigned char Reg,
-                                                    unsigned int Value,
-                                                    unsigned char SaveAfterWrite)
-{
-  unsigned int current_value = 0U;
-
-  if (Motor->ReadRegister(Reg, &current_value) == 0U) {
-    MotorApp_EnterFault(RouteIndex, MOTOR_APP_FAULT_TIMEOUT_CONFIG);
-    g_motorAppFailedPhase = H7SPI_GATEWAY_PHASE_TIMEOUT_WRITE;
-    return H7SPI_RESULT_FAULT;
-  }
-  if (current_value == Value) {
-    return H7SPI_RESULT_OK;
-  }
-  if (Motor->WriteRegister(Reg, Value, SaveAfterWrite) == 0U) {
-    MotorApp_EnterFault(RouteIndex, MOTOR_APP_FAULT_TIMEOUT_CONFIG);
-    g_motorAppFailedPhase = H7SPI_GATEWAY_PHASE_TIMEOUT_WRITE;
-    return H7SPI_RESULT_FAULT;
-  }
-  return H7SPI_RESULT_OK;
-}
-
-static unsigned char MotorApp_ConfigureProtectionRegisters(const unsigned char *RouteIndices,
-                                                           unsigned char RouteCount)
-{
-  unsigned char index;
-
-  if (RouteIndices == 0) {
-    return H7SPI_RESULT_BAD_LENGTH;
-  }
-
-  for (index = 0U; index < RouteCount; index++) {
-    unsigned char route_index = RouteIndices[index];
-    const MotorApp_DefaultMotorConfig_t *config;
-    Motor_t *motor;
-    unsigned char result;
-
-    if (route_index >= MotorApp_GetDefaultCount()) {
-      return H7SPI_RESULT_BAD_MOTOR_COUNT;
-    }
-
-    config = &kMotorAppDefaultConfig[route_index];
-    motor = MotorApp_GetRouteMotor(route_index);
-    result = MotorApp_WriteRegisterIfNeeded(motor,
-                                            route_index,
-                                            MOTOR_APP_REG_OT_VALUE,
-                                            MotorApp_FloatToU32(config->protect_ot),
-                                            0U);
-    if (result != H7SPI_RESULT_OK) {
-      MotorApp_RecordStartupConfigFailure(route_index, MOTOR_APP_STARTUP_ITEM_OT);
-      return result;
-    }
-    result = MotorApp_WriteRegisterIfNeeded(motor,
-                                            route_index,
-                                            MOTOR_APP_REG_OC_VALUE,
-                                            MotorApp_FloatToU32(config->protect_oc),
-                                            0U);
-    if (result != H7SPI_RESULT_OK) {
-      MotorApp_RecordStartupConfigFailure(route_index, MOTOR_APP_STARTUP_ITEM_OC);
-      return result;
-    }
-    result = MotorApp_WriteRegisterIfNeeded(motor,
-                                            route_index,
-                                            MOTOR_APP_REG_OV_VALUE,
-                                            MotorApp_FloatToU32(config->protect_ov),
-                                            0U);
-    if (result != H7SPI_RESULT_OK) {
-      MotorApp_RecordStartupConfigFailure(route_index, MOTOR_APP_STARTUP_ITEM_OV);
-      return result;
-    }
-  }
-
-  return H7SPI_RESULT_OK;
 }
 
 static unsigned char MotorApp_ConfigureTimeouts(const unsigned char *RouteIndices,
@@ -655,6 +554,9 @@ static unsigned char MotorApp_StartAllMitFast(void)
       MotorApp_EnterFault(index, MOTOR_APP_FAULT_CAN_TX_DROP);
       return H7SPI_RESULT_FAULT;
     }
+    /* Pace management frames for the motor-side command consumer. A CAN ACK
+     * alone does not confirm that its application processed the command. */
+    osDelay(1U);
   }
   osDelay(5U);
   for (index = 0U; index < MotorApp_GetDefaultCount(); index++) {
@@ -664,6 +566,7 @@ static unsigned char MotorApp_StartAllMitFast(void)
       MotorApp_EnterFault(index, MOTOR_APP_FAULT_CAN_TX_DROP);
       return H7SPI_RESULT_FAULT;
     }
+    osDelay(1U);
   }
   /* Do not put the first MIT command directly behind the enable frame either. */
   osDelay(5U);
@@ -1095,11 +998,7 @@ unsigned char MotorApp_ConfigureStartupRegisters(void)
     g_motorAppRequestedMask |= (1UL << index);
   }
 
-  result = MotorApp_ConfigureProtectionRegisters(route_indices, g_motorAppRequestedCount);
-  if (result != H7SPI_RESULT_OK) {
-    g_motorAppRegisterBusy = 0U;
-    return result;
-  }
+  /* Preserve provisioned I2RT OT/OC/OV; OC is amperes, not a ratio. */
   result = MotorApp_ConfigureFdCanBr(route_indices, g_motorAppRequestedCount);
   if (result != H7SPI_RESULT_OK) {
     g_motorAppRegisterBusy = 0U;
@@ -1287,10 +1186,6 @@ unsigned char MotorApp_ApplySpiAdminOp(const h7spi_admin_op_frame_t *AdminOp)
       return H7SPI_RESULT_BUSY;
     }
     result = MotorApp_PrepareAdminTargets(AdminOp->motor_codes, AdminOp->motor_count, route_indices);
-    if (result != H7SPI_RESULT_OK) {
-      return result;
-    }
-    result = MotorApp_ConfigureProtectionRegisters(route_indices, g_motorAppRequestedCount);
     if (result != H7SPI_RESULT_OK) {
       return result;
     }

@@ -245,23 +245,23 @@ pub fn runtime_root() -> std::path::PathBuf {
 /// table, so the wire order and the order the servos are driven in are one list, not two
 /// that must be kept in step.
 ///
-/// Left leg (5) · neck/head/mouth (5) · right leg (5).
+/// Canonical joint order: left leg 1–5, right leg 6–10, neck/head 11–14, mouth servo 15.
 pub const JOINT_NAMES: [&str; 15] = [
     "left_hip_yaw",
     "left_hip_roll",
     "left_hip_pitch",
     "left_knee",
     "left_ankle",
-    "neck_pitch",
-    "head_pitch",
-    "head_yaw",
-    "head_roll",
-    "mouth",
     "right_hip_yaw",
     "right_hip_roll",
     "right_hip_pitch",
     "right_knee",
     "right_ankle",
+    "neck_pitch",
+    "head_pitch",
+    "head_yaw",
+    "head_roll",
+    "mouth",
 ];
 
 /// Method names, as they go on the wire. Namespaced so a new namespace cannot collide
@@ -2765,7 +2765,7 @@ pub struct RobotState {
     /// Measured motor torque in N·m, indexed as [`JOINT_NAMES`].
     #[serde(default)]
     pub motor_torques_nm: [f64; JOINT_NAMES.len()],
-    /// Raw DMUSB-v3 flags for each joint. The mouth entry is zero because V3 has 14 slots.
+    /// Raw DMUSB-v4 flags for each joint. Mouth is joint 15 but has no DM motor ID, so its entry is zero.
     #[serde(default)]
     pub motor_flags: [u8; JOINT_NAMES.len()],
     /// Per-joint rotor temperatures in °C; zero means the slot is absent.

@@ -73,7 +73,7 @@
 
 电机：flags u8、位置rad×1000 i16、速度rad/s×1000 i16、力矩Nm×1000 i16、温度°C×10 i16、反馈age毫秒u16。
 flags 复用现有 DMUSB 映射：bit0 configured、bit1 online、bit2 enabled、bit3 fault、bit5 expired。App 同时检查 age≤500 ms。
-顺序是 `JOINT_NAMES` 去掉 index 9 的 mouth：左髋yaw/roll/pitch、左膝、左踝、neck pitch、head pitch/yaw/roll、右髋yaw/roll/pitch、右膝、右踝。UI 行号是显示顺序，不是 CAN ID。
+`JOINT_NAMES`、物理电机 ID 与界面统一按编号排列：1–5 为左髋 yaw/roll/pitch、左膝、左踝，6–10 为右髋 yaw/roll/pitch、右膝、右踝，11–14 为 neck pitch、head pitch/yaw/roll。mouth 是关节编号 15，由独立舵机驱动，没有电机 ID，也不进入这组电机遥测。
 
 每个通知前放4字节片头：`[0xBE, frame_id低字节, frame_id高字节, fragment_index]`；每片最多16字节有效载荷。总计12片，最后一片12字节有效载荷（通知16字节）。从 index 0 重新组帧；缺片、乱序、长度错误、版本错误均不呈现。状态在服务端使用 latest-only watch 槽；发送队列拥塞时丢弃整帧，不能积压旧历史。
 
