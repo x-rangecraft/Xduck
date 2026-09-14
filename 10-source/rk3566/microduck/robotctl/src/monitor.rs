@@ -4200,6 +4200,7 @@ mod tests {
             head: [0.0; 4],
             policy: "stand".to_owned(),
             control_state: "policy_on".to_owned(),
+            control_owner: None,
             sound_state: None,
             control_source: proto::ControlSource::Gamepad,
             gamepad_connected: false,

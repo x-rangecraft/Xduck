@@ -19,8 +19,10 @@
 //! than hanging the caller.
 
 mod calibration;
+mod control_owner;
 mod experiment;
 mod experiment_tasks;
+mod policy_experiment;
 mod models;
 mod chorale;
 mod control;
@@ -436,7 +438,9 @@ impl PolicyNames {
 }
 
 struct RobotState {
+    control_owner: Arc<control_owner::ControlOwner>,
     experiment: experiment::Experiment,
+    policy_experiment: policy_experiment::PolicyExperiment,
     calibration: calibration::Calibration,
     models: Arc<models::Models>,
     /// Published by the sole bus owner after reading firmware and motor feedback.
@@ -558,10 +562,13 @@ struct RobotState {
 
 impl RobotState {
     fn new(params: &Params, force_unhealthy: bool, force_busy: bool) -> Self {
+        let control_owner = Arc::new(control_owner::ControlOwner::default());
         Self {
-            experiment: experiment::Experiment::new(params.control.hz),
+            experiment: experiment::Experiment::new(params.control.hz, Arc::clone(&control_owner)),
+            policy_experiment: policy_experiment::PolicyExperiment::new(Arc::clone(&control_owner)),
             calibration: calibration::Calibration::default(),
-            models: Arc::new(models::Models::default()),
+            models: Arc::new(models::Models::with_owner(Arc::clone(&control_owner))),
+            control_owner,
             motor_control_error: ArcSwapOption::empty(),
             power_error: ArcSwapOption::empty(),
             started: Instant::now(),
@@ -770,8 +777,8 @@ impl RobotState {
     }
 
     fn safe_to_restart(&self) -> proto::SafeToRestartResult {
-        if self.experiment.active() {
-            return proto::SafeToRestartResult { safe: false, reason: Some("motor experiment owns control or is stopping".into()) };
+        if let Some(owner) = self.control_owner.current() {
+            return proto::SafeToRestartResult { safe: false, reason: Some(format!("{} owns control", owner.as_str())) };
         }
         if self.force_busy {
             return proto::SafeToRestartResult {
@@ -1628,6 +1635,7 @@ async fn control_loop<T: RobotIo>(
                         "STM32 USB link lost; entering safe state and reconnecting"
                     );
                     state.experiment.stop("motor bus disconnected");
+                    state.policy_experiment.abort("motor bus disconnected");
                     state.calibration.disconnected();
                     let _ = safety.set_torque(false);
                     return ControlLoopExit::BusLost;
@@ -1684,7 +1692,25 @@ async fn control_loop<T: RobotIo>(
             state.motor_control_error.store(Some(Arc::new(error.clone())));
             intents.set_enabled(false);
         }
-        let snapshot = intents.snapshot();
+        let mut snapshot = intents.snapshot();
+        let at_home = fresh.as_ref().is_some_and(|sensors|
+            configured_motors_at_home(sensors, &state.calibration.config().home));
+        let policy_experiment_drive = state.policy_experiment.before_policy(
+            fresh.as_ref(),
+            fresh.is_some() && safety.motor_control_error().is_none()
+                && safety.position_limits_ready() != Some(false),
+            safety.imu_ready(),
+            bringup == Bringup::Ready,
+            at_home,
+            safety.fallen(),
+        );
+        if let Some(drive) = policy_experiment_drive {
+            snapshot.command = drive.command;
+            snapshot.twist_age = Duration::ZERO;
+            snapshot.enabled = true;
+        } else if state.policy_experiment.active() {
+            snapshot.enabled = false;
+        }
         let (gated, deadman) = safety.gate(snapshot.command, snapshot.twist_age);
         let mut limits: Vec<duck_control::safety::Limit> = deadman.into_iter().collect();
 
@@ -2233,7 +2259,11 @@ async fn control_loop<T: RobotIo>(
             if reset_on_resume(stopped_driving_at, tick_start)
                 && let Some(controller) = controller.as_mut()
             {
-                controller.reset();
+                if policy_experiment_drive.is_some() {
+                    controller.reset_for_policy_experiment();
+                } else {
+                    controller.reset();
+                }
             }
         }
         if was_driving && !driving {
@@ -2269,7 +2299,8 @@ async fn control_loop<T: RobotIo>(
 
         let mut policy_pd = None;
         let mut policy_mit = None;
-        let (mut targets, gain, moving, policy_label) = match (driving, sensors.as_ref()) {
+        let mut policy_experiment_step = None;
+        let (mut targets, mut gain, moving, policy_label) = match (driving, sensors.as_ref()) {
             // The limp-fall sequence, before anything else — `driving` is false throughout,
             // so without this it would fall through to the hold branch and the robot would
             // be commanded its pre-fall pose at walking gain, which is precisely the thing
@@ -2304,10 +2335,16 @@ async fn control_loop<T: RobotIo>(
             },
             (true, Some(sensors)) => {
                 let controller = controller.as_mut().expect("driving implies a controller");
-                match controller.step(sensors, &command, snapshot.pose.active, dt, scale_mult) {
+                let stepped = if let Some(experiment) = policy_experiment_drive {
+                    controller.step_selected(sensors, &command, snapshot.pose.active, dt, scale_mult, experiment.policy)
+                } else {
+                    controller.step(sensors, &command, snapshot.pose.active, dt, scale_mult)
+                };
+                match stepped {
                     Ok(step) => {
                         policy_pd = step.pd;
                         policy_mit = step.mit;
+                        if policy_experiment_drive.is_some() { policy_experiment_step = Some(step); }
                         (step.targets,
                         step.gain,
                         // A scripted move is motion whatever the twist says; so is walking.
@@ -2316,6 +2353,9 @@ async fn control_loop<T: RobotIo>(
                     )},
                     Err(e) => {
                         tracing::warn!(error = %e, "inference failed; holding");
+                        if policy_experiment_drive.is_some() {
+                            state.policy_experiment.inference_failed(&e.to_string());
+                        }
                         (hold, policy_cfg.gain, false, "held")
                     }
                 }
@@ -2332,6 +2372,14 @@ async fn control_loop<T: RobotIo>(
             ),
             _ => (hold, policy_cfg.gain, false, "held"),
         };
+        if policy_experiment_drive.is_some_and(|drive| drive.inference_only) {
+            // Inference-only still advances the policy's history from live sensor frames, but
+            // the policy's targets and per-joint MIT parameters never reach the bus.
+            targets = home;
+            gain = policy_cfg.gain;
+            policy_pd = None;
+            policy_mit = None;
+        }
         state.moving.store(moving, Ordering::Relaxed);
 
         // The theremin: a hand's distance in front of the beak, turned into a note and a
@@ -2519,10 +2567,31 @@ async fn control_loop<T: RobotIo>(
         let experiment_owned = state.experiment.tick(&mut safety, fresh.as_ref(), &state.calibration.config(),
             bringup == Bringup::Limp && !intents.snapshot().enabled,
             state.ticks.load(Ordering::Relaxed), state.started.elapsed().as_micros() as u64);
+        let mut applied_targets = targets;
+        let mut applied_ok = false;
         if !experiment_owned { match safety.apply_with_control(targets, hold, gain, policy_pd, policy_mit) {
-            Ok(applied) => limits.extend(applied.limits),
-            Err(e) => tracing::warn!(error = %e, "bus write failed"),
+            Ok(applied) => {
+                applied_targets = applied.targets;
+                limits.extend(applied.limits);
+                applied_ok = true;
+            }
+            Err(e) => {
+                tracing::warn!(error = %e, "bus write failed");
+                if policy_experiment_drive.is_some() {
+                    state.policy_experiment.inference_failed(&format!("bus write failed: {e}"));
+                }
+            }
         }}
+        if let (Some(drive), Some(step), Some(sensors)) =
+            (policy_experiment_drive, policy_experiment_step.as_ref(), fresh.as_ref())
+        {
+            state.policy_experiment.record(
+                drive.command, step, applied_targets,
+                applied_ok && !drive.inference_only, &limits, sensors,
+                state.ticks.load(Ordering::Relaxed),
+                state.started.elapsed().as_micros() as u64,
+            );
+        }
         let write_done = Instant::now();
 
         // Only assemble a frame when somebody is subscribed. On a robot nobody usually is,
@@ -2531,8 +2600,12 @@ async fn control_loop<T: RobotIo>(
         if state.state_tx.receiver_count() > 0
             && let Some(sensors) = sensors.as_ref()
         {
-            let control_state = if experiment_owned {
+            let control_state = if let Some(phase) = state.policy_experiment.phase() {
+                phase
+            } else if experiment_owned {
                 "experiment"
+            } else if state.control_owner.current() == Some(control_owner::Owner::PolicyImport) {
+                "policy_import"
             } else if powered_off {
                 "powered_off"
             } else if matches!(bringup, Bringup::Homing { .. }) {
@@ -2557,6 +2630,7 @@ async fn control_loop<T: RobotIo>(
                 head: command.head,
                 policy: policy_label.to_owned(),
                 control_state: control_state.to_owned(),
+                control_owner: state.control_owner.current().map(|owner| owner.as_str().to_owned()),
                 sound_state,
                 control_source: intents.control_source(),
                 gamepad_connected: intents.gamepad_available(),
@@ -3035,6 +3109,41 @@ async fn handle(
             }
             continue;
         }
+        if let Ok(proto::Call::RobotPolicyExperiment(params)) = request.as_call() {
+            let Some(id) = request.id.clone() else { continue };
+            if let proto::PolicyExperimentParams::Download { id: session_id } = params {
+                let state = Arc::clone(&state);
+                let opened = tokio::task::spawn_blocking(move || state.policy_experiment.download(&session_id)).await;
+                match opened {
+                    Ok(Ok((file, bytes, sha256))) => {
+                        write_line(&mut write_half, &proto::Response::ok(Some(id), &serde_json::json!({"bytes":bytes,"sha256":sha256}))).await?;
+                        let mut file = tokio::fs::File::from_std(file);
+                        let mut buffer = [0u8; 16384];
+                        loop {
+                            let n = tokio::io::AsyncReadExt::read(&mut file, &mut buffer).await?;
+                            if n == 0 { break; }
+                            tokio::time::timeout(Duration::from_secs(10), tokio::io::AsyncWriteExt::write_all(&mut write_half, &buffer[..n])).await
+                                .map_err(|_|std::io::Error::new(std::io::ErrorKind::TimedOut,"slow policy experiment download"))??;
+                        }
+                        return Ok(());
+                    }
+                    result => {
+                        let error=match result {Ok(Err(e))=>e,Err(e)=>e.to_string(),_=>unreachable!()};
+                        write_line(&mut write_half,&proto::Response::err(Some(id),proto::Error::new(proto::code::INVALID_PARAMS,error))).await?;
+                    }
+                }
+            } else {
+                let state=Arc::clone(&state);
+                let intents=Arc::clone(&intents);
+                let policies=state.policies.load_full();
+                let available=[policies.walk.is_some(),policies.stand.is_some()];
+                let identity=state.models.experiment_identity();
+                let reply=tokio::task::spawn_blocking(move || state.policy_experiment.request(&params,&intents,available,identity)).await;
+                let response=match reply {Ok(Ok(value))=>proto::Response::ok(Some(id),&value),result=>{let e=match result {Ok(Err(e))=>e,Err(e)=>e.to_string(),_=>unreachable!()};proto::Response::err(Some(id),proto::Error::new(proto::code::INVALID_PARAMS,e))}};
+                write_line(&mut write_half,&response).await?;
+            }
+            continue;
+        }
         let call = request.as_call();
 
         // Notifications get no reply, per the spec. Continuous intents arrive this way —
@@ -3088,7 +3197,7 @@ async fn handle(
 /// client that sends `robot.move` with an `id` is not silently ignored — the spec permits
 /// either, and refusing one because of a framing choice would be a surprise.
 fn apply_intent(state: &RobotState, intents: &Intents, call: &proto::Call) -> bool {
-    if state.experiment.active() { return false; }
+    if state.control_owner.current().is_some() { return false; }
     match call {
         proto::Call::RobotMove(p) => {
             intents.apply_move(p);
@@ -3156,18 +3265,44 @@ fn dispatch(
     id: proto::Id,
     call: &proto::Call,
 ) -> proto::Response {
-    let stopping = matches!(call, proto::Call::RobotStop | proto::Call::RobotRelax | proto::Call::RobotShutdown)
-        || matches!(call, proto::Call::RobotEnable(p) if !p.on && !p.toggle);
-    if stopping && state.experiment.active() { state.experiment.stop("operator stop"); intents.request_relax(); }
-    if state.experiment.active() && !stopping && !matches!(call,
-        proto::Call::Hello(_) | proto::Call::RobotHealth | proto::Call::RobotSubscribe(_) | proto::Call::RobotExperiment(_)
-        | proto::Call::RobotSafeToRestart | proto::Call::RobotModelApi | proto::Call::RobotRemoteSessionActive
-        | proto::Call::RobotCalibration(proto::CalibrationParams::Get {}) | proto::Call::RobotModels(proto::ModelParams::List {})) {
-        return proto::Response::err(Some(id), proto::Error::new(proto::code::INVALID_REQUEST, "motor experiment owns control; release it first"));
+    let emergency = matches!(call, proto::Call::RobotRelax | proto::Call::RobotShutdown);
+    if emergency {
+        if state.experiment.active() { state.experiment.stop("operator relax or shutdown"); }
+        if state.policy_experiment.active() { state.policy_experiment.abort("operator relax or shutdown"); }
+        intents.request_relax();
+    }
+    if let Some(owner) = state.control_owner.current() {
+        let read_only = matches!(call,
+            proto::Call::Hello(_) | proto::Call::RobotHealth | proto::Call::RobotSubscribe(_)
+            | proto::Call::RobotSafeToRestart | proto::Call::RobotModelApi
+            | proto::Call::RobotRemoteSessionActive
+            | proto::Call::RobotCalibration(proto::CalibrationParams::Get {})
+            | proto::Call::RobotModels(proto::ModelParams::List {})
+            | proto::Call::RobotExperiment(proto::ExperimentParams::Capabilities {})
+            | proto::Call::RobotPolicyExperiment(proto::PolicyExperimentParams::Capabilities {})
+            | proto::Call::RobotPolicyExperiment(proto::PolicyExperimentParams::List {})
+            | proto::Call::RobotPolicyExperiment(proto::PolicyExperimentParams::Status { .. })
+        );
+        let owner_continuation = owner == control_owner::Owner::PolicyImport
+            && matches!(call, proto::Call::RobotModels(_));
+        if !emergency && !read_only && !owner_continuation {
+            return proto::Response::err(Some(id), proto::Error::new(
+                proto::code::INVALID_REQUEST,
+                format!("机器人当前由 {} 占用；除放松和关机外的控制已锁定", owner.as_str()),
+            ));
+        }
     }
     match call {
         proto::Call::RobotExperiment(params) => {
             match state.experiment.request(params, &state.calibration.config(), intents.snapshot().enabled) {
+                Ok(value) => proto::Response::ok(Some(id), &value),
+                Err(error) => proto::Response::err(Some(id), proto::Error::new(proto::code::INVALID_PARAMS, error)),
+            }
+        }
+        proto::Call::RobotPolicyExperiment(params) => {
+            let policies=state.policies.load_full();
+            let available=[policies.walk.is_some(),policies.stand.is_some()];
+            match state.policy_experiment.request(params, intents, available, state.models.experiment_identity()) {
                 Ok(value) => proto::Response::ok(Some(id), &value),
                 Err(error) => proto::Response::err(Some(id), proto::Error::new(proto::code::INVALID_PARAMS, error)),
             }
@@ -3583,7 +3718,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn experiment_rejects_normal_motion_and_updates_but_operator_stop_is_available() {
+    fn exclusive_operation_allows_only_relax_and_shutdown_controls() {
         let s = state();
         let intents = Intents::new();
         let mut safety = duck_control::safety::Safety::new(duck_control::io::FakeIo::new(), duck_control::safety::SafetyConfig::default());
@@ -3600,6 +3735,8 @@ mod tests {
         }
         assert!(intents.take_power_request().is_none());
         let reply = dispatch(&s, &intents, proto::Id::Number(3), &proto::Call::RobotStop);
+        assert!(reply.error.is_some());
+        let reply = dispatch(&s, &intents, proto::Id::Number(4), &proto::Call::RobotRelax);
         assert!(reply.error.is_none());
         assert_eq!(intents.take_power_request(), Some(intents::PowerRequest::Relax));
         s.experiment.tick(&mut safety, Some(&sensors), &s.calibration.config(), true, 2, 40_000);

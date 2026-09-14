@@ -631,6 +631,7 @@ impl Server {
             | Call::RobotStop
             | Call::RobotEnable(_)
             | Call::RobotExperiment(_)
+            | Call::RobotPolicyExperiment(_)
             | Call::RobotCalibration(_)
             | Call::RobotModels(_)
             | Call::RobotInit

@@ -306,6 +306,7 @@
     <table>
       <tr><th>模式</th><td id="t-mode">–</td></tr>
       <tr><th>策略</th><td id="t-policy">–</td></tr>
+      <tr><th>当前控制所有</th><td id="t-control-owner">无控制</td></tr>
       <tr><th>当前控制模式</th><td id="t-control-source">手柄控制</td></tr>
       <tr><th>控制循环</th><td id="t-loop">–</td></tr>
       <tr><th>安全状态</th><td id="t-safety">–</td></tr>
@@ -378,6 +379,20 @@
   <p>任务运行不依赖无线连接，断网继续按既定时长执行；结束、停止或本地保护触发后全部失能。当前固件统一使能全部配置电机，未选中电机为零增益、零前馈。</p>
   <pre id="experiment-capabilities-result" hidden></pre>
 </details>
+<details id="policy-experiment-panel">
+  <summary>策略实验接口 · <span id="policy-experiment-ownership" class="dim">正在查询状态</span></summary>
+  <p>配置分段运动指令后，设备先初始化到默认站姿，再按 50 Hz 运行策略。可选择只推理记录（电机保持站姿）或将策略输出闭环应用到电机。</p>
+  <p>接口地址：<code id="policy-experiment-address"></code></p>
+  <div class="row">
+    <a href="/policy-experiment.md" target="_blank" rel="noopener">查看接口说明</a>
+    <a href="/policy_experiment.py" download>下载 Python 示例</a>
+    <a href="/policy-experiment-example.json" download>下载配置示例</a>
+    <button id="policy-experiment-capabilities">查询设备能力（只读）</button>
+  </div>
+  <p id="policy-experiment-status" role="status" aria-live="polite">正在查询策略实验状态。</p>
+  <p>策略导入、电机实验和策略实验共享独占控制权。实验期间网页只保留放松与关机；结束、停止或保护触发后先返回默认站姿，再释放控制权。</p>
+  <pre id="policy-experiment-capabilities-result" hidden></pre>
+</details>
 <details id="journal-panel">
   <summary>本体日志下载</summary>
   <p>将 RK3566 已保留的运行日志直接下载到当前电脑。</p>
@@ -387,7 +402,7 @@
     <label>格式 <select id="journal-format"><option value="text">文本</option><option value="jsonl">JSON Lines</option></select></label>
     <a id="journal-download" href="/api/logs" download>下载日志</a>
   </div>
-  <p>容量上限 500 MB；已轮转删除的日志无法恢复。电机实验数据保存在独立任务结果包中，下载校验后删除。</p>
+  <p>容量上限 500 MB；已轮转删除的日志无法恢复。电机与策略实验数据保存在各自独立结果中，下载校验后删除。</p>
 </details>
 <p id="connection-error" role="status" hidden></p>
 
@@ -789,7 +804,7 @@ function call(method, params = {}, quiet = false) {
 // frame, and its answer carries nothing a knob can show. The id is still registered, so the reply it
 // produces is recognised as this rather than logged as an answer to something nobody asked.
 function tell(method, params) {
-  if (!open()) return false;
+  if (!open() || operationLocked()) return false;
   if (httpControl) {
     call(method, params, true).catch(() => {});
     return true;
@@ -916,6 +931,8 @@ function stopTelemetry() {
   lastOperatorEventKey = null;
   pendingPostureEvent = null;
   pendingSkillEvent = null;
+  exclusiveControlOwner = null;
+  $("t-control-owner").textContent = "状态未知";
   $("control-live").textContent = "实时状态：连接已断开，状态未知";
   $("control-status").innerHTML = "<b>当前状态：</b>连接已断开，状态未知";
   $("action-status").innerHTML = "<b>动作状态：</b>当前无动作执行";
@@ -1046,6 +1063,12 @@ function renderOperatorStatus(state) {
     policy_off: "当前处于策略关闭",
     waiting_policy: "策略已请求开启，正在等待硬件和 IMU 就绪",
     experiment: "当前由电机实验占用",
+    policy_import: "当前由策略导入占用",
+    policy_experiment_initializing: "策略实验占用：正在初始化",
+    policy_experiment_ready: "策略实验占用：已就绪，等待开始",
+    policy_experiment_inference: "策略实验占用：只推理并记录，电机保持站姿",
+    policy_experiment_closed_loop: "策略实验占用：闭环执行并记录",
+    policy_experiment_stopping: "策略实验占用：正在返回站姿",
     powered_off: "当前正在关机或已关机",
   };
   const inferredControl = state.policy && state.policy !== "held"
@@ -1069,11 +1092,19 @@ function renderOperatorStatus(state) {
 
 function onState(state) {
   if (!state) return;
+  exclusiveControlOwner = state.control_owner || null;
+  const ownerLabels = {
+    motor_experiment: "电机实验",
+    policy_experiment: "策略实验",
+    policy_import: "模型导入",
+  };
+  $("t-control-owner").textContent = ownerLabels[exclusiveControlOwner] || "无控制";
   postureState = { state, received: performance.now() };
   renderControlState();
   observeOperatorEvent(state);
   confirmOperatorEvent(state);
   renderOperatorStatus(state);
+  updateOperationControls();
   $("t-policy").textContent = state.policy || "–";
   const loop = state.loop || {};
   $("t-loop").textContent = `实际 ${(loop.hz || 0).toFixed(2)} Hz · 目标 50.00 Hz · ${loop.ticks || 0} ticks · ${loop.missed || 0} missed`;
@@ -1459,7 +1490,7 @@ function aim(event) {
 // Its own timer rather than the twist's: a gaze and a velocity are separate intents, and one
 // stopping must not stop the other.
 setInterval(async () => {
-  if (!looking || !lookAt || !open()) return;
+  if (!looking || !lookAt || !open() || operationLocked()) return;
   const point = lookAt;
   try {
     const result = await call("robot.look", point, true);
@@ -1470,6 +1501,17 @@ setInterval(async () => {
 // ── posture, skills, sounds ────────────────────────────────────────────────────
 
 let postureState = null;
+let exclusiveControlOwner = null;
+function operationLocked() { return Boolean(exclusiveControlOwner); }
+function updateOperationControls() {
+  for (const button of document.querySelectorAll("button[data-call]")) {
+    if (!["robot.relax", "robot.shutdown"].includes(button.dataset.call)) {
+      button.disabled = operationLocked();
+    }
+  }
+  $("do").disabled = operationLocked();
+  $("play").disabled = operationLocked();
+}
 
 // Calibration stays behind the same robotd control lane as all motor operations.
 let CALIBRATION_MOTORS = [];
@@ -1482,7 +1524,7 @@ function calibrationFeedback(message, bad = false) {
 }
 function calibrationEditable() {
   const sample = postureState;
-  return open() && !calibrationBusy && !calibrationConflict && calibrationStatus?.editable === true
+  return open() && !operationLocked() && !calibrationBusy && !calibrationConflict && calibrationStatus?.editable === true
     && CALIBRATION_MOTORS.length > 0
     && sample && performance.now() - sample.received < 1000
     && CALIBRATION_MOTORS.every(([, joint]) =>
@@ -1769,7 +1811,7 @@ for (const button of document.querySelectorAll("button[data-call]")) {
       if (posture && serial === actionSerial) showControlFeedback(
         `${label}：${error.message || JSON.stringify(error)}`, "bad");
     } finally {
-      button.disabled = false;
+      button.disabled = operationLocked() && !["robot.relax", "robot.shutdown"].includes(method);
       button.removeAttribute("aria-busy");
       button.textContent = label;
     }
@@ -1814,6 +1856,7 @@ async function verifySkill(skill, label, started, serial) {
 }
 
 $("do").onclick = async () => {
+  if (operationLocked()) return;
   const button = $("do");
   const skill = $("skill").value;
   const label = $("skill").selectedOptions[0].textContent;
@@ -1829,7 +1872,7 @@ $("do").onclick = async () => {
   } catch (error) {
     if (serial === skillSerial) showSkillFeedback(`${label}失败：${error.message || error}`, "bad");
   } finally {
-    button.disabled = false;
+    button.disabled = operationLocked();
     button.textContent = "执行";
   }
 };
@@ -1879,6 +1922,7 @@ function showSoundFeedback(text, kind = "") {
   $("sound-feedback").className = kind;
 }
 $("play").addEventListener("pointerdown", async () => {
+  if (operationLocked()) return;
   const button = $("play");
   const tag = $("sound").value;
   const label = $("sound").selectedOptions[0].textContent;
@@ -1905,7 +1949,7 @@ $("play").addEventListener("pointerdown", async () => {
     if (serial === soundSerial) showSoundFeedback(`${label}失败：${error.message || error}`, "bad");
   } finally {
     if (tag !== "wheee") {
-      button.disabled = false;
+      button.disabled = operationLocked();
       button.textContent = "播放";
     }
   }
@@ -1964,6 +2008,64 @@ $("experiment-panel").addEventListener("toggle", () => {
 });
 refreshExperimentStatus();
 setInterval(refreshExperimentStatus, 2000);
+
+$("policy-experiment-address").textContent = `${location.origin}/api/policy-experiment/sessions`;
+let policyExperimentStatusBusy = false;
+const POLICY_EXPERIMENT_ACTIVE_STATES = new Set(["initializing","ready","running","returning_home","finalizing"]);
+const POLICY_EXPERIMENT_STATE_LABELS = {
+  configured:"已配置", initializing:"正在初始化", ready:"已就绪，等待开始", running:"正在运行",
+  returning_home:"正在返回默认站姿", finalizing:"正在写入结果", completed:"已完成", stopped:"已停止",
+  failed:"失败", interrupted:"因重启中断",
+};
+async function refreshPolicyExperimentStatus(showDetails = false) {
+  if (document.hidden && !showDetails) return;
+  if (policyExperimentStatusBusy) return;
+  policyExperimentStatusBusy = true;
+  const button = $("policy-experiment-capabilities"), status = $("policy-experiment-status");
+  button.disabled = true;
+  if (showDetails) status.textContent = "正在查询…";
+  try {
+    const [capabilityResponse, sessionsResponse] = await Promise.all([
+      fetch("/api/policy-experiment/capabilities", {cache:"no-store"}),
+      fetch("/api/policy-experiment/sessions", {cache:"no-store"}),
+    ]);
+    const capabilities = await capabilityResponse.json();
+    const listing = await sessionsResponse.json();
+    if (!capabilityResponse.ok || capabilities.error) throw new Error(capabilities.error?.message || capabilities.error || "能力查询失败");
+    if (!sessionsResponse.ok || listing.error) throw new Error(listing.error?.message || listing.error || "实验列表查询失败");
+    const owner = capabilities.control_owner || listing.control_owner || null;
+    const active = (listing.sessions || []).find(session => POLICY_EXPERIMENT_ACTIVE_STATES.has(session.state));
+    const ownership = $("policy-experiment-ownership");
+    ownership.textContent = owner === "policy_experiment" ? "当前已占用" : owner ? `由 ${owner} 占用` : "当前未占用";
+    ownership.className = owner ? "warn" : "in";
+    if (active) {
+      const reason = active.reason ? `；${active.reason}` : "";
+      status.textContent = `实验 ${active.id}：${POLICY_EXPERIMENT_STATE_LABELS[active.state] || active.state}${reason}`;
+    } else if (owner) {
+      status.textContent = `控制权当前由 ${owner} 占用，暂不能初始化策略实验。`;
+    } else {
+      const retained = (listing.sessions || []).length;
+      status.textContent = `当前未占用；已保留 ${retained} 次实验记录，可配置并初始化新实验。`;
+    }
+    if (showDetails) {
+      $("policy-experiment-capabilities-result").textContent = JSON.stringify({capabilities, sessions:listing.sessions || []}, null, 2);
+      $("policy-experiment-capabilities-result").hidden = false;
+    }
+  } catch (error) {
+    $("policy-experiment-ownership").textContent = "状态未知";
+    $("policy-experiment-ownership").className = "bad";
+    status.textContent = `查询失败：${error.message || error}`;
+  } finally {
+    policyExperimentStatusBusy = false;
+    button.disabled = false;
+  }
+}
+$("policy-experiment-capabilities").onclick = () => refreshPolicyExperimentStatus(true);
+$("policy-experiment-panel").addEventListener("toggle", () => {
+  if ($("policy-experiment-panel").open) refreshPolicyExperimentStatus();
+});
+refreshPolicyExperimentStatus();
+setInterval(refreshPolicyExperimentStatus, 2000);
 function updateJournalDownload() {
   const query = new URLSearchParams({unit: $("journal-unit").value, format: $("journal-format").value});
   if ($("journal-range").value !== "all") query.set("since", String(Math.floor(Date.now()/1000)-Number($("journal-range").value)));
@@ -1980,7 +2082,7 @@ let modelStatusAt = 0, modelSlotsKey = "", modelHistoryKey = "", modelClientErro
 function modelLocked() { return modelBusy || ["converting","validating","pending"].includes(modelStatus?.phase); }
 function modelEditable() { return open() && modelStatus?.editable === true && Date.now()-modelStatusAt < 3000; }
 function modelControls() {
-  const safe = modelEditable();
+  const safe = modelEditable() && (!operationLocked() || exclusiveControlOwner === "policy_import");
   $("model-import").disabled = !safe || modelLocked() || !$("model-file").files.length || !$("model-policy-file").files.length || !$("model-slot").value;
   for (const id of ["model-slot","model-file","model-policy-file"]) $(id).disabled = modelLocked();
   for (const button of $("model-history").querySelectorAll("button")) button.disabled = !safe || modelLocked();
@@ -2045,8 +2147,9 @@ $("model-import").onclick = async () => {
   if (!/\.py$/i.test(policy.name) || !policy.size || policy.size>1024*1024) { $("model-feedback").textContent="请选择不超过 1 MiB 的 policy.py"; return; }
   if (!/\.onnx$/i.test(file.name) || !file.size || file.size>64*1024*1024) { $("model-feedback").textContent="请选择不超过 64 MiB 的 model.onnx"; return; }
   modelClientError=""; modelBusy=true; modelControls();
+  let upload = null;
   try {
-    const upload = await call("robot.models",{action:"begin_bundle",slot:$("model-slot").value,policy_filename:policy.name,policy_size:policy.size,model_filename:file.name,model_size:file.size},true);
+    upload = await call("robot.models",{action:"begin_bundle",slot:$("model-slot").value,policy_filename:policy.name,policy_size:policy.size,model_filename:file.name,model_size:file.size},true);
     let sentBytes=0; const totalBytes=policy.size+file.size;
     for (const [role,part] of [["policy",policy],["model",file]]) {
       for(let offset=0;offset<part.size;offset+=8192) {
@@ -2060,7 +2163,10 @@ $("model-import").onclick = async () => {
       }
     }
     showModelStatus(await call("robot.models",{action:"finish_bundle",token:upload.token},true));
-  } catch(error) { modelClientError=`导入请求未确认：${error.message}。请刷新核对结果；上传中断可重新导入。`; $("model-feedback").textContent=modelClientError; modelStatus=null; }
+  } catch(error) {
+    if (upload?.token) { try { await call("robot.models",{action:"cancel",token:upload.token},true); } catch { /* refresh resolves an unknown finish/cancel result */ } }
+    modelClientError=`导入请求未确认：${error.message}。请刷新核对结果；上传中断可重新导入。`; $("model-feedback").textContent=modelClientError; modelStatus=null;
+  }
   finally { modelBusy=false; modelControls(); }
 };
 $("model-slot").onchange=()=>{modelHistoryKey="";renderModelHistory();};

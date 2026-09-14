@@ -44,6 +44,7 @@
 | 策略模型管理/转换源码 | 两文件策略由 `robotd/src/models.rs`、`custom_policy.rs` 与 `custom_policy_worker.py` 管理；仅供研发分发、不上传板端的自包含资料包位于 `00-docs/XDUCK_POLICY_SDK/`；兼容权重转换保留 `model_import.py`；IPC 由 `duck-ipc-proto` 定义，Web 面板由 `mediad` 提供 |
 | 模型导入回归工具与日志 | `60-tools/test-model-import.py`、`test-web-models.cjs`；`50-logs/test/model-*` |
 | 电机实验接口 | `robotd/src/experiment.rs` 为控制与数据所有者；`mediad/src/experiment_tasks_http.rs` 提供 HTTP 适配；文档和 PC 示例统一位于 `mediad/webclient/motor-experiment/`；`robotd/src/experiment_tasks.rs` 管理预上传任务、固定缓冲执行和 `/var/lib/robotd/experiments/` 持久数据，`mediad/src/experiment_tasks_http.rs` 只流式转发文件。任务结果由电脑下载校验后显式删除；同目录 `joint_sine_sweep.py` 为离线正弦扫描任务生成示例 |
+| 策略实验接口 | `robotd/src/policy_experiment.rs` 管理初始化、只推理/闭环执行、固定缓冲记录和 `/var/lib/robotd/policy-experiments/` 结果；`mediad/src/policy_experiment_http.rs` 提供 HTTP 适配，文档和 PC 示例位于 `mediad/webclient/policy-experiment/`。`robotd/src/control_owner.rs` 是策略导入、电机实验和策略实验的唯一互斥仲裁器；占用期间只开放状态读取、所属操作管理、放松和关机 |
 | 本体日志下载接口 | `mediad/src/journal_http.rs` 按请求流式读取 Journal，不在设备保存导出副本 |
 | RK3566 Microduck Rust workspace | `10-source/rk3566/microduck/` |
 | STM32↔RK3566 DMUSB v4 协议事实源 | `10-source/rk3566/STM32_DMUSB_V4_PROTOCOL.md` |

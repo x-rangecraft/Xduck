@@ -171,7 +171,10 @@ pub const JSONRPC_VERSION: &str = "2.0";
 /// # v18 — speaker volume
 /// `robot.volume` reads or sets the onboard speaker mixer percentage. It runs on the
 /// operation lane so mixer access does not block movement intents.
-pub const API_VERSION: u32 = 18;
+/// # v19 — controlled policy experiments
+/// `robot.policyExperiment` adds live inference-only and closed-loop experiment sessions;
+/// `robot.state.control_owner` reports the exclusive policy/motor operation lease.
+pub const API_VERSION: u32 = 19;
 
 /// The longest an update may legitimately go quiet, in seconds — the pre-install hook's ceiling.
 ///
@@ -345,6 +348,7 @@ pub mod method {
     pub const ROBOT_INIT: &str = "robot.init";
     pub const ROBOT_MODELS: &str = "robot.models";
     pub const ROBOT_EXPERIMENT: &str = "robot.experiment";
+    pub const ROBOT_POLICY_EXPERIMENT: &str = "robot.policyExperiment";
     pub const ROBOT_CALIBRATION: &str = "robot.calibration";
 
     /// Cut power to the joints. **The robot will collapse** if nothing is holding it.
@@ -640,6 +644,66 @@ pub enum ExperimentTaskParams {
     Delete { id: String, sha256: String },
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PolicyExperimentMode {
+    InferenceOnly,
+    ClosedLoop,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PolicyExperimentPolicy {
+    /// Preserve the normal stand/walk selection based on command magnitude.
+    Auto,
+    Walk,
+    Stand,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PolicyExperimentSegment {
+    pub duration_ms: u64,
+    #[serde(default)]
+    pub twist: [f64; 3],
+    #[serde(default)]
+    pub head: [f64; 4],
+    /// z, roll and pitch.
+    #[serde(default)]
+    pub body: [f64; 3],
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PolicyExperimentConfig {
+    pub mode: PolicyExperimentMode,
+    pub policy: PolicyExperimentPolicy,
+    pub segments: Vec<PolicyExperimentSegment>,
+    pub max_temperature_c: f64,
+    #[serde(default = "default_true")]
+    pub stop_on_fall: bool,
+}
+
+fn default_true() -> bool { true }
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
+pub enum PolicyExperimentParams {
+    Capabilities {},
+    List {},
+    Configure { config: PolicyExperimentConfig },
+    Status { id: String },
+    Initialize { id: String },
+    Start { id: String },
+    Stop {
+        id: String,
+        #[serde(default)]
+        run_token: Option<String>,
+    },
+    Download { id: String },
+    Delete { id: String, sha256: String },
+}
+
 /// Calibration changes are executed by robotd's bus-owning loop while disabled.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
@@ -684,6 +748,8 @@ pub enum ModelParams {
     BeginBundle { slot: String, policy_filename: String, policy_size: usize, model_filename: String, model_size: usize },
     BundleChunk { token: String, file: String, offset: usize, hex: String },
     FinishBundle { token: String },
+    /// Abandon an incomplete upload and release the exclusive policy-import lease.
+    Cancel { token: String },
     Rollback { slot: String, version: String },
 }
 
@@ -729,6 +795,7 @@ pub enum Call {
     /// Power the joints and ramp to the home pose. No policy needed.
     RobotInit,
     RobotExperiment(ExperimentParams),
+    RobotPolicyExperiment(PolicyExperimentParams),
     RobotCalibration(CalibrationParams),
     RobotModels(ModelParams),
     /// Cut power to the joints. The robot collapses if nothing holds it.
@@ -875,6 +942,7 @@ impl Call {
             Call::RobotEnable(_) => method::ROBOT_ENABLE,
             Call::RobotInit => method::ROBOT_INIT,
             Call::RobotExperiment(_) => method::ROBOT_EXPERIMENT,
+            Call::RobotPolicyExperiment(_) => method::ROBOT_POLICY_EXPERIMENT,
             Call::RobotCalibration(_) => method::ROBOT_CALIBRATION,
             Call::RobotModels(_) => method::ROBOT_MODELS,
             Call::RobotRelax => method::ROBOT_RELAX,
@@ -986,7 +1054,8 @@ impl Call {
             Call::Subscribe => (Updater, Stream),
 
             // ── robotd ──────────────────────────────────────────────────────
-            Call::RobotExperiment(ExperimentParams::Task { request: ExperimentTaskParams::Download { .. } }) => (Robot, Stream),
+            Call::RobotExperiment(ExperimentParams::Task { request: ExperimentTaskParams::Download { .. } })
+            | Call::RobotPolicyExperiment(PolicyExperimentParams::Download { .. }) => (Robot, Stream),
             Call::RobotSafeToRestart
             | Call::RobotHealth
             | Call::RobotModelApi
@@ -1000,6 +1069,7 @@ impl Call {
             | Call::RobotStop
             | Call::RobotEnable(_)
             | Call::RobotExperiment(_)
+            | Call::RobotPolicyExperiment(_)
             | Call::RobotCalibration(_)
             | Call::RobotModels(_)
             | Call::RobotInit
@@ -1095,6 +1165,7 @@ impl Call {
             Call::RobotLook(p) => encode(p),
             Call::RobotEnable(p) => encode(p),
             Call::RobotExperiment(p) => encode(p),
+            Call::RobotPolicyExperiment(p) => encode(p),
             Call::RobotCalibration(p) => encode(p),
             Call::RobotModels(p) => encode(p),
             Call::RobotDo(p) => encode(p),
@@ -1174,6 +1245,7 @@ impl Call {
             method::ROBOT_ENABLE => Call::RobotEnable(decode(params)?),
             method::ROBOT_INIT => Call::RobotInit,
             method::ROBOT_EXPERIMENT => Call::RobotExperiment(decode(params)?),
+            method::ROBOT_POLICY_EXPERIMENT => Call::RobotPolicyExperiment(decode(params)?),
             method::ROBOT_CALIBRATION => Call::RobotCalibration(decode(params)?),
             method::ROBOT_MODELS => Call::RobotModels(decode(params)?),
             method::ROBOT_RELAX => Call::RobotRelax,
@@ -1310,6 +1382,7 @@ pub mod test_support {
                 toggle: false,
             }),
             Call::RobotExperiment(ExperimentParams::Capabilities {}),
+            Call::RobotPolicyExperiment(PolicyExperimentParams::Capabilities {}),
             Call::RobotCalibration(CalibrationParams::Get {}),
             Call::RobotModels(ModelParams::List {}),
             Call::RobotInit,
@@ -2741,6 +2814,9 @@ pub struct RobotState {
     /// an initialized robot deliberately holding with the policy switched off.
     #[serde(default)]
     pub control_state: String,
+    /// Exclusive long-running operation currently owning policy/motor control.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub control_owner: Option<String>,
     /// What currently owns the robot's single PCM device. Absent after playback has ended.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sound_state: Option<String>,
@@ -4107,10 +4183,33 @@ mod tests {
     }
 
     #[test]
+    fn policy_experiment_configuration_and_lifecycle_round_trip() {
+        let config = PolicyExperimentConfig {
+            mode: PolicyExperimentMode::InferenceOnly,
+            policy: PolicyExperimentPolicy::Walk,
+            segments: vec![PolicyExperimentSegment {
+                duration_ms: 40,
+                twist: [0.1, 0.0, 0.0],
+                head: [0.0; 4],
+                body: [0.0; 3],
+            }],
+            max_temperature_c: 60.0,
+            stop_on_fall: true,
+        };
+        let call = Call::RobotPolicyExperiment(PolicyExperimentParams::Configure { config });
+        let wire = serde_json::to_value(Request::call(Id::Number(1), &call)).unwrap();
+        let back: Request = serde_json::from_value(wire).unwrap();
+        assert_eq!(back.as_call().unwrap(), call);
+        assert_eq!(call.destination(), Some((Service::Robot, Lane::Prompt)));
+        let download = Call::RobotPolicyExperiment(PolicyExperimentParams::Download { id: "a".repeat(32) });
+        assert_eq!(download.destination(), Some((Service::Robot, Lane::Stream)));
+    }
+
+    #[test]
     fn every_call_covers_every_variant() {
         assert_eq!(
             every_call().len(),
-            50,
+            51,
             "a Call variant was added or removed — update every_call() and this count"
         );
     }
@@ -4698,6 +4797,7 @@ mod tests {
             head: [0.0; 4],
             policy: "stand".into(),
             control_state: "policy_on".into(),
+            control_owner: None,
             sound_state: None,
             control_source: ControlSource::Gamepad,
             gamepad_connected: false,
@@ -4770,6 +4870,7 @@ mod tests {
             head: [0.0; 4],
             policy: "walk".into(),
             control_state: "policy_on".into(),
+            control_owner: None,
             sound_state: None,
             control_source: ControlSource::Gamepad,
             gamepad_connected: true,

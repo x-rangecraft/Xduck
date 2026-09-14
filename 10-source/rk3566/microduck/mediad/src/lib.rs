@@ -24,6 +24,7 @@ pub mod session;
 pub mod upstream;
 pub mod web;
 mod experiment_tasks_http;
+mod policy_experiment_http;
 mod control_http;
 mod journal_http;
 

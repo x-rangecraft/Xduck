@@ -2,6 +2,7 @@
 //! participates in task timing; disconnects never restart or extend a task.
 use crate::{
     calibration::Config,
+    control_owner::{ControlOwner, Owner},
     experiment_tasks::{self, Run, Store},
 };
 use duck_control::{
@@ -35,6 +36,7 @@ pub struct Experiment {
     inner: Mutex<Inner>,
     pub hz: u32,
     store: OnceLock<Result<Arc<Store>, String>>,
+    owner: Arc<ControlOwner>,
 }
 impl Default for Experiment {
     fn default() -> Self {
@@ -54,13 +56,15 @@ impl Default for Experiment {
             }),
             hz: 50,
             store: OnceLock::new(),
+            owner: Arc::new(ControlOwner::default()),
         }
     }
 }
 impl Experiment {
-    pub fn new(hz: u32) -> Self {
+    pub fn new(hz: u32, owner: Arc<ControlOwner>) -> Self {
         Self {
             hz,
+            owner,
             ..Self::default()
         }
     }
@@ -95,10 +99,12 @@ impl Experiment {
         if !matches!(p, ExperimentParams::Capabilities {}) {
             return Err("task operation requires async IPC handler".into());
         }
+        let control_owner = self.owner.current().map(Owner::as_str);
         let g = self.inner.lock().unwrap();
         let current=g.latest.as_ref().filter(|(_,t)|t.elapsed()<Duration::from_millis(100)).map(|(s,_)|STM32_MOTOR_IDS.iter().zip(STM32_TO_CONTROL_JOINT).filter(|(id,_)|**id!=0).map(|(&id,j)|json!({"motor_id":id,"p":s.positions[j],"v":s.velocities[j],"flags":s.motor_flags[j],"temperature_c":s.motor_temperatures_c[j]})).collect::<Vec<_>>());
         Ok(
             json!({"version":3,"mode":"uploaded_tasks","period_ms":20,"task_id":g.task_id,"active":g.owned,"running":g.running,"stopping":g.stopping,"last_error":g.error,
+            "control_owner":control_owner,
             "ready":!normal_enabled&&!g.owned&&g.ready_at.is_some_and(|t|t.elapsed()<Duration::from_millis(100)),
             "disconnect_policy":"continue","enable_scope":"all_configured","unselected":"zero_gains_velocity_and_feedforward","current_motors":current,
             "motors":cfg.limits.iter().map(|l|{let (v,t)=motor_command_bounds(l.motor_id).unwrap();json!({"motor_id":l.motor_id,"p_min":(l.min_rad*1000.0).ceil()/1000.0,"p_max":(l.max_rad*1000.0).floor()/1000.0,"v_max":v,"tau_max":t,"kp_min":0,"kp_max":500,"kd_min":0,"kd_max":5})}).collect::<Vec<_>>()}),
@@ -106,7 +112,9 @@ impl Experiment {
     }
     /// Called only on a blocking IPC worker, never on the control thread.
     fn runtime_status(&self, mut value: Value) -> Value {
+        let control_owner = self.owner.current().map(Owner::as_str);
         let g = self.inner.lock().unwrap();
+        value["control_owner"] = json!(control_owner);
         if g.owned && value.get("id").and_then(Value::as_str) == g.task_id.as_deref() {
             value["state"] = json!(if g.stopping {
                 "stopping"
@@ -167,6 +175,7 @@ impl Experiment {
                 // Generate before claiming the controller: even a broken entropy source must leave
                 // the robot unowned rather than wedged in a task with no usable stop token.
                 let run_token = experiment_tasks::random_id()?;
+                self.owner.acquire(Owner::MotorExperiment)?;
                 {
                     let mut g = self.inner.lock().unwrap();
                     if g.owned
@@ -175,6 +184,7 @@ impl Experiment {
                             .ready_at
                             .is_some_and(|t| t.elapsed() < Duration::from_millis(100))
                     {
+                        self.owner.release(Owner::MotorExperiment);
                         return Err("busy or not relaxed with fresh disabled feedback".into());
                     }
                     g.owned = true;
@@ -194,6 +204,7 @@ impl Experiment {
                         g.task_id = None;
                         g.run_token = None;
                         g.stopping = false;
+                        self.owner.release(Owner::MotorExperiment);
                         return Err(e);
                     }
                 };
@@ -278,6 +289,7 @@ impl Experiment {
                 g.task_id = None;
                 g.run_token = None;
                 g.stopping = false;
+                self.owner.release(Owner::MotorExperiment);
                 return true;
             }
             if let Err(e) = disabled {
@@ -347,7 +359,7 @@ impl Experiment {
         if self.inner.lock().unwrap().stopping {
             return Ok(());
         }
-        let Some((row, advance)) = run.next(cfg)? else {
+        let Some((row, advance)) = run.next(cfg, safety.state_frames_pace_control())? else {
             self.halt("completed", "task duration completed");
             return Ok(());
         };
@@ -449,7 +461,7 @@ mod tests {
         s
     }
     fn setup() -> (Experiment, Safety<Io>, Arc<Mutex<Trace>>, Config) {
-        let e = Experiment::new(50);
+        let e = Experiment::new(50, Arc::new(ControlOwner::default()));
         let trace = Arc::new(Mutex::new(Trace::default()));
         let mut safety = Safety::new(Io(trace.clone(), FakeIo::new()), SafetyConfig::default());
         let cfg = Config::default();

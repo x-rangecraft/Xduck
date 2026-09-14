@@ -1,6 +1,7 @@
 //! Policy files have one owner: robotd. Workers prepare; only the bus loop commits.
 use duck_control::policy::{Net, PolicyPaths, PreparedNetwork};
 use duck_ipc_proto::{ModelParams, ModelControl};
+use crate::control_owner::{ControlOwner, Owner};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::{
@@ -117,14 +118,19 @@ struct Inner {
 pub struct Models {
     root: PathBuf,
     inner: Mutex<Inner>,
+    owner: Arc<ControlOwner>,
 }
 impl Default for Models {
     fn default() -> Self {
-        Self::at(PathBuf::from(ROOT))
+        Self::at(PathBuf::from(ROOT), Arc::new(ControlOwner::default()))
     }
 }
 impl Models {
-    fn at(root: PathBuf) -> Self {
+    pub fn with_owner(owner: Arc<ControlOwner>) -> Self {
+        Self::at(PathBuf::from(ROOT), owner)
+    }
+
+    fn at(root: PathBuf, owner: Arc<ControlOwner>) -> Self {
         let (records, load_error) = match fs::read(root.join("manifest.json")) {
             Ok(data) => match serde_json::from_slice::<BTreeMap<String, Record>>(&data) {
                 Ok(records) => {
@@ -139,6 +145,7 @@ impl Models {
         };
         Self {
             root,
+            owner,
             inner: Mutex::new(Inner {
                 records,
                 slots: BTreeMap::new(),
@@ -218,20 +225,32 @@ impl Models {
     pub fn load_error(&self) -> Option<String> {
         self.inner.lock().unwrap().load_error.clone()
     }
-    fn status(inner: &Inner) -> Value {
+    pub fn experiment_identity(&self) -> Value {
+        let inner = self.inner.lock().unwrap();
+        Value::Object(inner.slots.iter().filter(|(id, _)| matches!(id.as_str(), "walk" | "stand"))
+            .map(|(id, slot)| {
+                let active = inner.records.get(&slot.key).and_then(|record| record.active.as_ref());
+                (id.clone(), json!({
+                    "configured_file": slot.path.file_name().unwrap_or_default().to_string_lossy(),
+                    "active": active.map(version_json),
+                }))
+            }).collect())
+    }
+    fn status(&self, inner: &Inner) -> Value {
         let slots: Vec<_> = inner.slots.iter().map(|(id, slot)| {
             let record = inner.records.get(&slot.key).cloned().unwrap_or_default();
             json!({"id": id, "file": slot.path.file_name().unwrap_or_default().to_string_lossy(), "active": record.active.as_ref().map(version_json),
                 "history": record.history.iter().map(version_json).collect::<Vec<_>>()})
         }).collect();
         json!({"slots":slots,"phase":inner.phase,"failed_phase":inner.failed_phase,"detail":inner.load_error.as_ref().unwrap_or(&inner.detail),
+            "control_owner":self.owner.current().map(Owner::as_str),
             "editable":inner.editable && inner.observed.elapsed() < Duration::from_millis(500) && inner.load_error.is_none(),
             "token":inner.upload.as_ref().map(UploadTask::token),"received":inner.upload.as_ref().map(UploadTask::received)})
     }
     pub fn request(self: &Arc<Self>, params: ModelParams) -> Result<Value, String> {
         let mut inner = self.inner.lock().unwrap();
         if matches!(params, ModelParams::List {}) {
-            return Ok(Self::status(&inner));
+            return Ok(self.status(&inner));
         }
         if let Some(error) = &inner.load_error {
             return Err(error.clone());
@@ -241,6 +260,8 @@ impl Models {
         {
             return Err("操作已拒绝：请先放松，等待全部配置电机的新鲜失能反馈".into());
         }
+        let newly_acquired = self.owner.acquire(Owner::PolicyImport)?;
+        let result = (|| {
         match params {
             ModelParams::Begin {
                 slot,
@@ -406,6 +427,18 @@ impl Models {
                 let this = self.clone();
                 std::thread::spawn(move || this.prepare_bundle(upload));
             }
+            ModelParams::Cancel { token } => {
+                if inner.phase != "uploading" { return Err("只能取消尚未完成的上传".into()); }
+                if inner.upload.as_ref().map(UploadTask::token) != Some(token.as_str()) {
+                    return Err("上传凭证已失效".into());
+                }
+                let upload = inner.upload.take().unwrap();
+                upload.remove_files();
+                inner.phase = "idle".into();
+                inner.failed_phase = None;
+                inner.detail = "策略导入已取消；机器人保持放松。".into();
+                self.owner.release(Owner::PolicyImport);
+            }
             ModelParams::Rollback { slot, version } => {
                 if matches!(
                     inner.phase.as_str(),
@@ -438,7 +471,12 @@ impl Models {
             }
             ModelParams::List {} => unreachable!(),
         }
-        Ok(Self::status(&inner))
+        Ok(self.status(&inner))
+        })();
+        if result.is_err() && newly_acquired {
+            self.owner.release(Owner::PolicyImport);
+        }
+        result
     }
     fn prepare(&self, upload: Upload) {
         let target = self.root.join(format!("{}.onnx", upload.token));
@@ -528,6 +566,7 @@ impl Models {
                 inner.failed_phase = Some(inner.phase.clone());
                 inner.phase = "error".into();
                 inner.detail = format!("校验失败，旧模型未改变：{error}");
+                self.owner.release(Owner::PolicyImport);
             }
         }
     }
@@ -552,6 +591,7 @@ impl Models {
             inner.phase = "error".into();
             inner.detail = "替换已拒绝：需要当前模式不变、策略已加载、机器人已放松且全部配置电机有新鲜失能反馈。旧模型未改变；放松后重新导入或回滚。".into();
             self.remove_version_if_unused(&inner, &pending.version);
+            self.owner.release(Owner::PolicyImport);
             return;
         }
         match self.commit(&inner.records, &pending.slot, &pending.version) {
@@ -572,12 +612,14 @@ impl Models {
                         self.remove_version_if_unused(&inner, version);
                     }
                 }
+                self.owner.release(Owner::PolicyImport);
             }
             Err(e) => {
                 inner.failed_phase = Some("pending".into());
                 inner.phase = "error".into();
                 inner.detail = format!("保存失败，旧模型未改变：{e}");
                 self.remove_version_if_unused(&inner, &pending.version);
+                self.owner.release(Owner::PolicyImport);
             }
         }
     }
@@ -726,7 +768,10 @@ mod tests {
     fn configured(root: &Path) -> (Arc<Models>, Slot) {
         let original = root.join("original.onnx");
         fs::write(&original, b"original").unwrap();
-        let store = Arc::new(Models::at(root.join("store")));
+        let store = Arc::new(Models::at(
+            root.join("store"),
+            Arc::new(ControlOwner::default()),
+        ));
         let slot = Slot {
             key: "walk--original.onnx".into(),
             path: original,
@@ -783,7 +828,7 @@ mod tests {
                 .collect::<Vec<_>>(),
             vec!["c", "b"]
         );
-        let reloaded = Models::at(store.root.clone());
+        let reloaded = Models::at(store.root.clone(), Arc::new(ControlOwner::default()));
         let mut paths = PolicyPaths {
             walk: slot.path,
             ..Default::default()
@@ -820,7 +865,7 @@ mod tests {
             assert!(store.inner.lock().unwrap().upload.is_none());
         }
         fs::write(store.root.join("manifest.json"), r#"{"walk--original.onnx":{"active":{"id":"a","name":"a","path":"a.onnx","control":{"kp":999,"kd":4,"action_scale":1}},"history":[]}}"#).unwrap();
-        assert!(Models::at(store.root.clone()).load_error().is_some());
+        assert!(Models::at(store.root.clone(), Arc::new(ControlOwner::default())).load_error().is_some());
         let legacy: Version = serde_json::from_str(r#"{"id":"a","name":"a","path":"a.onnx"}"#).unwrap();
         assert_eq!(legacy.control, None);
     }
@@ -920,7 +965,7 @@ mod tests {
         );
         assert!(store.inner.lock().unwrap().upload.is_none());
         fs::write(store.root.join("manifest.json"), "broken").unwrap();
-        let broken = Arc::new(Models::at(store.root.clone()));
+        let broken = Arc::new(Models::at(store.root.clone(), Arc::new(ControlOwner::default())));
         assert!(broken.load_error().is_some());
         assert!(
             broken
@@ -1001,7 +1046,7 @@ mod tests {
             "done"
         );
         assert_eq!(controller.model_control(Net::Walk), candidate.control);
-        let reloaded = Models::at(store.root.clone());
+        let reloaded = Models::at(store.root.clone(), Arc::new(ControlOwner::default()));
         let mut paths = PolicyPaths { walk: slot.path.clone(), ..Default::default() };
         reloaded.resolve(&mut paths);
         controller.set_model_control(Net::Walk, None);

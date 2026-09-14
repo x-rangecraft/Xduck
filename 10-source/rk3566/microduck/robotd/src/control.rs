@@ -129,6 +129,12 @@ pub struct Step {
     /// A scripted move is mid-flight — the robot is moving regardless of the twist, so
     /// restarting the daemon now would put it on the floor.
     pub busy: bool,
+    /// Standard 61-value observation and raw 14-value network output. Two-file policies own
+    /// their preprocessing contract, so their complete sensor frame is logged by robotd while
+    /// these two standard-policy fields remain absent.
+    pub observation: Option<[f32; duck_control::obs::OBS_LEN]>,
+    pub raw_action: Option<[f32; ACTION_LEN]>,
+    pub effective_command: Command,
 }
 
 /// Where the robot is in the sit↔stand cycle.
@@ -224,6 +230,17 @@ impl Controller {
         self.last_action = [0.0; ACTION_LEN];
         self.previous = None;
         for (_, policy) in &mut self.custom_policies { policy.mark_reset(); }
+    }
+
+    /// Start a policy experiment from a plain locomotion state. A previously interrupted skill
+    /// must not silently choose another network than the experiment requested.
+    pub fn reset_for_policy_experiment(&mut self) {
+        self.ground_pick = None;
+        self.kick = None;
+        self.roulade = None;
+        self.roulade_chain = 0.0;
+        self.sit = Sit::Up;
+        self.reset();
     }
 
     pub fn has_sitstand(&self) -> bool {
@@ -372,6 +389,20 @@ impl Controller {
         dt: f64,
         scale_mult: f64,
     ) -> Result<Step, PolicyError> {
+        self.step_selected(sensors, command, body_active, dt, scale_mult, None)
+    }
+
+    /// Run a normal tick while optionally pinning the locomotion network. Policy experiments
+    /// use this to test the walking or standing slot explicitly; ordinary control passes None.
+    pub fn step_selected(
+        &mut self,
+        sensors: &duck_control::Sensors,
+        command: &Command,
+        body_active: bool,
+        dt: f64,
+        scale_mult: f64,
+        selected: Option<Net>,
+    ) -> Result<Step, PolicyError> {
         // Expire windows first, so a tick after the deadline runs the next thing rather
         // than one more frame of a finished move — the prototype checks its timers at the
         // same point relative to inference.
@@ -436,23 +467,27 @@ impl Controller {
                     if body_active {
                         c.twist = [0.0; 3];
                     }
-                    let standing = self.policy.will_stand(c.twist_magnitude())
-                        || (body_active && self.policy.has_standing());
-                    if standing {
-                        (Net::Stand, c, "stand")
-                    } else {
-                        (Net::Walk, c, "walk")
+                    match selected {
+                        Some(Net::Walk) => (Net::Walk, c, "walk"),
+                        Some(Net::Stand) => (Net::Stand, c, "stand"),
+                        Some(_) => unreachable!("policy experiment only selects locomotion nets"),
+                        None => {
+                            let standing = self.policy.will_stand(c.twist_magnitude())
+                                || (body_active && self.policy.has_standing());
+                            if standing { (Net::Stand, c, "stand") }
+                            else { (Net::Walk, c, "walk") }
+                        }
                     }
                 }
             }
         };
 
-        let (targets, gain, pd, mit) = if let Some((_, custom)) =
+        let (targets, gain, pd, mit, observation, raw_action) = if let Some((_, custom)) =
             self.custom_policies.iter_mut().find(|(candidate, _)| *candidate == net)
         {
             let output = custom.step(sensors, &effective, dt)
                 .map_err(PolicyError::Inference)?;
-            (output.positions, self.tuning.gain, None, Some(output.mit))
+            (output.positions, self.tuning.gain, None, Some(output.mit), None, None)
         } else {
             let observation = Observation::build(
                 &sensors.imu,
@@ -511,7 +546,7 @@ impl Controller {
                 }
             }
             self.previous = Some(targets);
-            (targets, gain, pd, None)
+            (targets, gain, pd, None, Some(*observation.as_slice().first_chunk().unwrap()), Some(action))
         };
 
         // Advance the windows, after the tick that used them — the prototype advances its
@@ -540,6 +575,9 @@ impl Controller {
             pd,
             mit,
             busy: self.busy(),
+            observation,
+            raw_action,
+            effective_command: effective,
         })
     }
 }

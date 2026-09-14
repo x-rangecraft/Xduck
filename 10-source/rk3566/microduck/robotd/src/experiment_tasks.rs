@@ -639,7 +639,7 @@ impl Run {
         }
         Ok(())
     }
-    pub fn next(&mut self, cfg: &Config) -> Result<Option<(Row, bool)>> {
+    pub fn next(&mut self, cfg: &Config, frame_paced: bool) -> Result<Option<(Row, bool)>> {
         if let Some(e) = self.shared.failure.lock().unwrap().clone() {
             return Err(e);
         }
@@ -651,13 +651,17 @@ impl Run {
         {
             return Err("local control interval exceeded 40 ms".into());
         }
-        if self
+        // A framed hardware bus has already waited for the next 20 ms state frame. Comparing
+        // that arrival against a second host clock makes a frame that is microseconds early
+        // replay the previous command and leaves the task one whole frame behind. Timer-paced
+        // backends still need these host schedule guards.
+        if !frame_paced && self
             .started
             .is_some_and(|t| now.duration_since(t) > Duration::from_millis(self.index * 20 + 40))
         {
             return Err("local task schedule exceeded 40 ms lateness".into());
         }
-        if self
+        if !frame_paced && self
             .started
             .is_some_and(|t| t.elapsed() < Duration::from_millis(self.index * 20))
         {
@@ -808,7 +812,7 @@ mod tests {
         let id = fixture(&store, &cfg, 1000, 0.0);
         let mut run = store.prepare(&id, &cfg, 50).unwrap();
         assert_eq!(run.index, 0);
-        assert!(run.next(&cfg).unwrap().is_some());
+        assert!(run.next(&cfg, false).unwrap().is_some());
         // Replace the writer with a deliberately stalled receiver.
         let (tx, _rx) = mpsc::sync_channel(1);
         run.records = Some(tx);
@@ -821,12 +825,29 @@ mod tests {
         let (_dir, store, cfg) = setup();
         let id = fixture(&store, &cfg, 3, 0.0);
         let mut run = store.prepare(&id, &cfg, 50).unwrap();
-        assert!(run.next(&cfg).unwrap().unwrap().1);
+        assert!(run.next(&cfg, false).unwrap().unwrap().1);
         run.record(json!({}), true).unwrap();
-        assert!(!run.next(&cfg).unwrap().unwrap().1);
+        assert!(!run.next(&cfg, false).unwrap().unwrap().1);
         run.last_tick = Some(Instant::now() - Duration::from_millis(50));
-        assert!(run.next(&cfg).unwrap_err().contains("40 ms"));
+        assert!(run.next(&cfg, false).unwrap_err().contains("40 ms"));
         run.finish("failed", "test late tick", true);
+    }
+    #[test]
+    fn frame_paced_execution_advances_when_the_host_clock_is_slightly_early() {
+        let (_dir, store, cfg) = setup();
+        let id = fixture(&store, &cfg, 3, 0.0);
+        let mut run = store.prepare(&id, &cfg, 50).unwrap();
+        assert_eq!(run.next(&cfg, true).unwrap().unwrap().0.at_ms, 0);
+        run.record(json!({}), true).unwrap();
+        run.started = Some(Instant::now() - Duration::from_micros(19_900));
+        let (row, advance) = run.next(&cfg, true).unwrap().unwrap();
+        assert!(advance);
+        assert_eq!(row.at_ms, 20, "a fresh hardware frame must not replay frame 0");
+        run.record(json!({}), true).unwrap();
+        run.started = Some(Instant::now() - Duration::from_millis(101));
+        assert_eq!(run.next(&cfg, true).unwrap().unwrap().0.at_ms, 40,
+            "host clock drift must not reject a continuous hardware frame stream");
+        run.finish("completed", "test complete", true);
     }
     #[test]
     fn restart_marks_interrupted_and_never_resumes() {

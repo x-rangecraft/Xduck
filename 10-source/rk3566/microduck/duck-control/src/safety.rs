@@ -89,6 +89,8 @@ pub enum Limit {
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Applied {
     pub limits: Vec<Limit>,
+    /// Exact position vector passed to the bus after safety handling.
+    pub targets: [f64; NUM_JOINTS],
 }
 
 impl Applied {
@@ -297,6 +299,7 @@ impl<T: RobotIo> Safety<T> {
         // move, because the robot would lurch to a limit rather than hold still.
         if targets.iter().any(|v| !v.is_finite()) {
             applied.limits.push(Limit::NotFinite);
+            applied.targets = hold;
             self.io.write(&JointTargets::new(hold))?;
             return Ok(applied);
         }
@@ -313,6 +316,7 @@ impl<T: RobotIo> Safety<T> {
         }
 
         let mut command = JointTargets::new(safe);
+        applied.targets = safe;
         command.pd = pd;
         command.mit = mit.map(|mut values| {
             for (target, position) in values.iter_mut().zip(safe) {
