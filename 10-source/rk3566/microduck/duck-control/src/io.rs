@@ -153,6 +153,14 @@ pub trait RobotIo {
     fn read(&mut self) -> Result<Sensors>;
     fn write(&mut self, targets: &JointTargets) -> Result<()>;
 
+    /// Whether each successful [`Self::read`] is paced by a new hardware state frame.
+    ///
+    /// A framed gateway is already the control clock. Running an independent host timer in
+    /// front of it makes the two nominally equal rates drift through one another, eventually
+    /// spending a whole period waiting for the next frame. Immediate/simulated backends keep
+    /// the default and are paced by robotd's timer instead.
+    fn state_frames_pace_control(&self) -> bool { false }
+
     /// Set the position P gain on every joint.
     ///
     /// Here rather than in the bus layer alone because it is what makes "go limp" mean

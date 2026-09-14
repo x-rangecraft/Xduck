@@ -73,6 +73,99 @@ const MAX_LINE: usize = 64 * 1024;
 /// journal size cap it is what *evicts* the logs support needs.
 const LOOP_SUMMARY_INTERVAL: Duration = Duration::from_secs(300);
 
+/// Fixed, allocation-free timing histograms for the control thread. A quarter millisecond is
+/// fine enough to separate USB cadence from scheduler and compute time; the last bucket retains
+/// anything at or above 64 ms so a timeout remains visible through `max_ms`.
+const TIMING_BUCKET_US: u64 = 250;
+const TIMING_BUCKETS: usize = 257;
+
+#[derive(Clone)]
+struct TimingHistogram {
+    buckets: [u64; TIMING_BUCKETS],
+    count: u64,
+    max_us: u64,
+}
+
+impl Default for TimingHistogram {
+    fn default() -> Self {
+        Self {
+            buckets: [0; TIMING_BUCKETS],
+            count: 0,
+            max_us: 0,
+        }
+    }
+}
+
+impl TimingHistogram {
+    fn record(&mut self, duration: Duration) {
+        let us = duration.as_micros().min(u128::from(u64::MAX)) as u64;
+        let bucket = (us / TIMING_BUCKET_US).min((TIMING_BUCKETS - 1) as u64) as usize;
+        self.buckets[bucket] += 1;
+        self.count += 1;
+        self.max_us = self.max_us.max(us);
+    }
+
+    fn percentile_ms(&self, numerator: u64, denominator: u64) -> f64 {
+        if self.count == 0 {
+            return 0.0;
+        }
+        let wanted = self.count.saturating_mul(numerator).div_ceil(denominator);
+        let mut seen = 0;
+        for (index, count) in self.buckets.iter().enumerate() {
+            seen += count;
+            if seen >= wanted {
+                if index == TIMING_BUCKETS - 1 {
+                    return self.max_us as f64 / 1000.0;
+                }
+                return ((index as u64 + 1) * TIMING_BUCKET_US) as f64 / 1000.0;
+            }
+        }
+        self.max_us as f64 / 1000.0
+    }
+
+    fn summary(&self) -> String {
+        format!(
+            "{:.2}/{:.2}/{:.2}/{:.2}",
+            self.percentile_ms(50, 100),
+            self.percentile_ms(95, 100),
+            self.percentile_ms(99, 100),
+            self.max_us as f64 / 1000.0
+        )
+    }
+}
+
+#[derive(Default)]
+struct LoopTimings {
+    wake: TimingHistogram,
+    read: TimingHistogram,
+    compute: TimingHistogram,
+    write: TimingHistogram,
+    publish: TimingHistogram,
+    cycle: TimingHistogram,
+    work: TimingHistogram,
+}
+
+impl LoopTimings {
+    fn record(
+        &mut self,
+        wake: Duration,
+        read: Duration,
+        compute: Duration,
+        write: Duration,
+        publish: Duration,
+        cycle: Duration,
+        work: Duration,
+    ) {
+        self.wake.record(wake);
+        self.read.record(read);
+        self.compute.record(compute);
+        self.write.record(write);
+        self.publish.record(publish);
+        self.cycle.record(cycle);
+        self.work.record(work);
+    }
+}
+
 /// How fast the beak follows the vowel being sung, as a time constant.
 ///
 /// A vowel is a step — `ah` opens the mouth to 0.90 and `mm` to 0.02 — and a servo asked to jump
@@ -1339,10 +1432,16 @@ async fn control_loop<T: RobotIo>(
     // `Skip` keeps the original schedule and drops missed ticks, which is what a control
     // loop wants: no backlog, no drift.
     ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+    // The STM32 publishes one atomic sensor frame per control period, so that frame is the
+    // physical robot's clock. A second 50 Hz host timer slowly walks through its phase: the
+    // blocking read grows from zero to a full 20 ms every ~20 minutes on the deployed clocks.
+    // Immediate test/simulation backends still need the host timer.
+    let frame_paced = safety.state_frames_pace_control();
 
     let mut window_start = Instant::now();
     let mut window_ticks = 0u64;
     let mut last_summary = Instant::now();
+    let mut loop_timings = LoopTimings::default();
     let mut was_driving = false;
     let mut bringup = Bringup::Limp;
     // Tracks only the linear home ramp requested by `robot.init`. Once it completes, the
@@ -1487,7 +1586,11 @@ async fn control_loop<T: RobotIo>(
     }
 
     while !state.shutdown.load(Ordering::Relaxed) {
-        ticker.tick().await;
+        let wake_late = if frame_paced {
+            Duration::ZERO
+        } else {
+            ticker.tick().await.elapsed()
+        };
         let tick_start = Instant::now();
 
         let fresh = match safety.read() {
@@ -1532,6 +1635,10 @@ async fn control_loop<T: RobotIo>(
                 None
             }
         };
+        let read_done = Instant::now();
+        // Waiting for a frame is the frame-paced backend's sleep, not control work. Its deadline
+        // starts when the sample arrives; timer-paced backends retain the original definition.
+        let deadline_start = if frame_paced { read_done } else { tick_start };
 
         if fresh.is_some() {
             state.motor_control_error.store(safety.motor_control_error()
@@ -2408,6 +2515,7 @@ async fn control_loop<T: RobotIo>(
                 duck_control::model::mouth_target(snapshot.mouth);
         }
 
+        let write_start = Instant::now();
         let experiment_owned = state.experiment.tick(&mut safety, fresh.as_ref(), &state.calibration.config(),
             bringup == Bringup::Limp && !intents.snapshot().enabled,
             state.ticks.load(Ordering::Relaxed), state.started.elapsed().as_micros() as u64);
@@ -2415,6 +2523,7 @@ async fn control_loop<T: RobotIo>(
             Ok(applied) => limits.extend(applied.limits),
             Err(e) => tracing::warn!(error = %e, "bus write failed"),
         }}
+        let write_done = Instant::now();
 
         // Only assemble a frame when somebody is subscribed. On a robot nobody usually is,
         // and this would otherwise be a per-tick allocation on the thread that should not
@@ -2492,13 +2601,23 @@ async fn control_loop<T: RobotIo>(
                 chorale: chorale_state.clone(),
             });
         }
+        let publish_done = Instant::now();
+        loop_timings.record(
+            wake_late,
+            read_done.duration_since(tick_start),
+            write_start.duration_since(read_done),
+            write_done.duration_since(write_start),
+            publish_done.duration_since(write_done),
+            publish_done.duration_since(tick_start),
+            publish_done.duration_since(deadline_start),
+        );
 
         let ticks = state.ticks.fetch_add(1, Ordering::Relaxed) + 1;
         state.last_tick_us.store(
             state.started.elapsed().as_micros() as u64,
             Ordering::Relaxed,
         );
-        if tick_start.elapsed() > period {
+        if deadline_start.elapsed() > period {
             state.missed.fetch_add(1, Ordering::Relaxed);
         }
 
@@ -2531,8 +2650,18 @@ async fn control_loop<T: RobotIo>(
                         "{:.0}",
                         f64::from_bits(state.cpu_temp_c.load(Ordering::Relaxed))
                     ),
+                    timing_samples = loop_timings.cycle.count,
+                    timing_ms = "p50/p95/p99/max",
+                    wake_ms = loop_timings.wake.summary(),
+                    read_ms = loop_timings.read.summary(),
+                    compute_ms = loop_timings.compute.summary(),
+                    write_ms = loop_timings.write.summary(),
+                    publish_ms = loop_timings.publish.summary(),
+                    cycle_ms = loop_timings.cycle.summary(),
+                    work_ms = loop_timings.work.summary(),
                     "control loop"
                 );
+                loop_timings = LoopTimings::default();
                 last_summary = Instant::now();
             }
         }

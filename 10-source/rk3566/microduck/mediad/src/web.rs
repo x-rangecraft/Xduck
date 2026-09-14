@@ -99,8 +99,8 @@ fn router(page: String) -> Router {
         .route("/api/motor-experiment/tasks/{id}/result", get(crate::experiment_tasks_http::download))
         .route("/api/motor-experiment/tasks/{id}/acknowledge", post(crate::experiment_tasks_http::acknowledge))
         .route("/api/logs", get(crate::journal_http::download))
-        .route("/motor-experiment.md", get(|| async { ([("content-type","text/plain; charset=utf-8")], include_str!("../webclient/motor-experiment.md")) }))
-        .route("/motor_experiment.py", get(|| async { ([("content-type","text/x-python; charset=utf-8"),("content-disposition","attachment; filename=motor_experiment.py")], include_str!("../webclient/motor_experiment.py")) }))
+        .route("/motor-experiment.md", get(|| async { ([("content-type","text/plain; charset=utf-8")], include_str!("../webclient/motor-experiment/motor-experiment.md")) }))
+        .route("/motor_experiment.py", get(|| async { ([("content-type","text/x-python; charset=utf-8"),("content-disposition","attachment; filename=motor_experiment.py")], include_str!("../webclient/motor-experiment/motor_experiment.py")) }))
         .layer(axum::extract::DefaultBodyLimit::max(16 * 1024))
 }
 

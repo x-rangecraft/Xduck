@@ -297,7 +297,7 @@ impl Experiment {
         time_us: u64,
         entered: Instant,
     ) -> Result<(), String> {
-        let starting = run.started.is_none();
+        let starting = !run.armed;
         let selected: &[MotorCommand] = if starting { &run.first.motors } else { &[] };
         for (&id, j) in STM32_MOTOR_IDS.iter().zip(STM32_TO_CONTROL_JOINT) {
             if id == 0 {
@@ -337,6 +337,12 @@ impl Experiment {
             run.check_config(cfg)?;
             safety.set_torque(true).map_err(|e| e.to_string())?;
             self.inner.lock().unwrap().running = true;
+            // Enabling is a synchronous admin transaction and ends at an arbitrary point inside
+            // robotd's already-running 50 Hz period. Starting the task clock here permanently
+            // offsets every later 20 ms row from the control ticks. Arm now, then establish time
+            // zero and send frame 0 on the next ordinary tick.
+            run.armed = true;
+            return Ok(());
         }
         if self.inner.lock().unwrap().stopping {
             return Ok(());
@@ -508,6 +514,8 @@ mod tests {
         let (e, mut safety, trace, cfg) = setup();
         let _dir = e.claim_for_test(&cfg);
         e.tick(&mut safety, Some(&sample(false)), &cfg, true, 1, 20_000);
+        assert_eq!(trace.lock().unwrap().enabled, vec![true]);
+        assert_eq!(trace.lock().unwrap().commands, 0);
         for i in 2..=5 {
             std::thread::sleep(Duration::from_millis(20));
             e.tick(&mut safety, Some(&sample(true)), &cfg, true, i, i * 20_000);

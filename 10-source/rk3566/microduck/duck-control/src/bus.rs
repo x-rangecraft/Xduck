@@ -72,7 +72,6 @@ pub struct DynamixelIo {
     command_seq: u16,
     kp_centi: u16,
     started: Instant,
-    last_state: Option<Sensors>,
     stale_imu: StaleImuTracker,
     imu_sensor_ok: bool,
     imu_ready: bool,
@@ -97,7 +96,7 @@ impl DynamixelIo {
 
     fn from_port(port: Box<dyn serialport::SerialPort>) -> Self {
         Self { port, rx: Vec::with_capacity(2048), frame_seq: 0,
-            command_seq: 0, kp_centi: 20_000, started: Instant::now(), last_state: None,
+            command_seq: 0, kp_centi: 20_000, started: Instant::now(),
             stale_imu: StaleImuTracker::default(), imu_sensor_ok: false, imu_ready: false,
             control_capabilities: 0, gateway_faults: 0, last_motor_state: None,
             last_temps_c: [0.0; NUM_JOINTS] }
@@ -154,7 +153,6 @@ impl DynamixelIo {
                 let sensors = self.parse_and_observe_state(&frame.payload)?;
                 feedback_enabled = self.motor_control_error().is_none()
                     && configured_motors_enabled(&sensors);
-                self.last_state = Some(sensors);
             } else if frame.msg_type == MSG_ADMIN_RESULT && frame.payload.len() >= 28
                 && get_u16(&frame.payload[0..2]) == request_seq && frame.payload[2] == op {
                 if frame.payload[3] != 0 {
@@ -203,8 +201,7 @@ impl DynamixelIo {
 
     fn calibration_request(&mut self, msg: u8, op: u8, mut payload: Vec<u8>,
                            expected_count: usize, zero_id: Option<u8>) -> Result<()> {
-        // Drain the cached sample by obtaining a new state before checking enable flags.
-        self.last_state = None;
+        // Obtain a new state before checking enable flags.
         self.read_state()?;
         self.calibration_ready()?;
         let seq = self.next_seq();
@@ -279,7 +276,6 @@ impl DynamixelIo {
     }
 
     fn read_state(&mut self) -> Result<Sensors> {
-        if let Some(state) = self.last_state.take() { return Ok(state); }
         loop {
             let frame = self.read_frame()?;
             if frame.msg_type == MSG_STATE { return self.parse_and_observe_state(&frame.payload); }
@@ -326,6 +322,7 @@ impl RobotIo for DynamixelIo {
     fn read(&mut self) -> Result<Sensors> {
         self.read_state()
     }
+    fn state_frames_pace_control(&self) -> bool { true }
     fn write_motor_commands(&mut self, commands: &[duck_ipc_proto::MotorCommand]) -> Result<u16> {
         if let Some(reason) = self.motor_control_error() {
             return Err(IoError::Bus(reason.into()));
@@ -967,16 +964,27 @@ mod tests {
                 let request = read_test_frame(&mut firmware);
                 assert_eq!(request.payload[2], 1);
                 respond_to_test_admin(&mut firmware, &request);
-                firmware.write_all(&pack(MSG_STATE, 2, 0, 0, &test_state_payload(confirm))).unwrap();
+                let mut state = test_state_payload(confirm);
+                put_i32(&mut state[STATE_PREFIX_LEN..STATE_PREFIX_LEN + 4], 111);
+                firmware.write_all(&pack(MSG_STATE, 2, 0, 0, &state)).unwrap();
                 if !confirm {
                     let cleanup = read_test_frame(&mut firmware);
                     assert_eq!(cleanup.payload[2], 2, "failed enable must request disable");
                     respond_to_test_admin(&mut firmware, &cleanup);
+                } else {
+                    // The enable-confirmation state belongs to the synchronous admin
+                    // exchange. A subsequent control read must wait for the next frame.
+                    std::thread::sleep(Duration::from_millis(20));
+                    put_i32(&mut state[STATE_PREFIX_LEN..STATE_PREFIX_LEN + 4], 222);
+                    firmware.write_all(&pack(MSG_STATE, 3, 0, 0, &state)).unwrap();
                 }
                 // Keep the PTY alive until the reader has consumed the response.
                 std::thread::sleep(Duration::from_millis(100));
             });
             assert_eq!(io.set_torque(true).is_ok(), confirm);
+            if confirm {
+                assert!((io.read_state().unwrap().positions[0] - 0.222).abs() < 1e-9);
+            }
             peer.join().unwrap();
         }
     }

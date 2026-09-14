@@ -475,6 +475,7 @@ impl Store {
             rows: rx,
             records: Some(records),
             index: 0,
+            armed: false,
             started: None,
             last_tick: None,
             cfg_signature: serde_json::to_string(&cfg.limits).map_err(err)?,
@@ -608,6 +609,9 @@ pub struct Run {
     rows: Receiver<Row>,
     records: Option<SyncSender<Value>>,
     pub index: u64,
+    /// The enable handshake completed on an earlier control tick. The task clock deliberately
+    /// starts on the following tick so its 20 ms schedule has the same phase as robotd's loop.
+    pub armed: bool,
     pub started: Option<Instant>,
     last_tick: Option<Instant>,
     cfg_signature: String,

@@ -123,6 +123,10 @@ impl<T: RobotIo> Safety<T> {
         self.io.read()
     }
 
+    pub fn state_frames_pace_control(&self) -> bool {
+        self.io.state_frames_pace_control()
+    }
+
     /// Bus reads that are not part of the tick, passed through rather than exposing the IO.
     ///
     /// Safety owns the only `RobotIo` handle — that is what makes "nothing commands a motor

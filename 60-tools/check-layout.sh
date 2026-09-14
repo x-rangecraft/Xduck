@@ -38,6 +38,12 @@ git -C "$ROOT/10-source/rk3566/microduck" rev-parse --is-inside-work-tree >/dev/
 test -L "$ROOT/10-source/tools/motor/gf43x40-10-i2rt/data" \
     || { echo "motor data must be a link into 50-logs/test" >&2; failed=1; }
 
+# Motor experiment documentation and PC examples form one portable folder.
+for file in README.md motor-experiment.md motor_experiment.py joint-sine-sweep-README.md joint_sine_sweep.py; do
+    test -f "$ROOT/10-source/rk3566/microduck/mediad/webclient/motor-experiment/$file" \
+        || { echo "missing motor experiment resource: $file" >&2; failed=1; }
+done
+
 MANIFEST="$ROOT/40-deploy/rk3566/CONTROL_FILES.sha256"
 if [ ! -f "$MANIFEST" ]; then
     echo "missing RK3566 control-file manifest" >&2

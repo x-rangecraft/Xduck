@@ -7,7 +7,7 @@ import sys
 import tempfile
 import unittest
 ROOT=Path(__file__).resolve().parents[1]
-WEB=ROOT/'10-source/rk3566/microduck/mediad/webclient'
+WEB=ROOT/'10-source/rk3566/microduck/mediad/webclient/motor-experiment'
 class Tests(unittest.TestCase):
     def test_offline_generation_contains_every_frame_and_motor(self):
         with tempfile.TemporaryDirectory() as d:

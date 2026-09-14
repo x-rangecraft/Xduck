@@ -9,7 +9,7 @@ import threading
 import unittest
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 ROOT=Path(__file__).resolve().parents[1]
-sys.path.insert(0,str(ROOT/'10-source/rk3566/microduck/mediad/webclient'))
+sys.path.insert(0,str(ROOT/'10-source/rk3566/microduck/mediad/webclient/motor-experiment'))
 from motor_experiment import Client, write_task
 TASK='a'*32
 DATA=b'finalized task archive bytes'
