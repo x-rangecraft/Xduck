@@ -6,15 +6,17 @@
 use crate::{
     control::Step,
     control_owner::{ControlOwner, Owner},
+    custom_policy::PolicyContext,
     experiment_tasks::random_id,
     intents::Intents,
 };
 use duck_control::{Command, Sensors, model::NUM_JOINTS, obs::BodyPose, policy::Net, safety::Limit};
 use duck_ipc_proto::{
+    PolicyExperimentAction as Action,
     PolicyExperimentConfig as Config, PolicyExperimentMode as Mode,
     PolicyExperimentParams as Params, PolicyExperimentPolicy as Policy,
 };
-use serde::{Serialize, Serializer};
+use serde::Serialize;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::{
@@ -60,6 +62,7 @@ struct Active {
     reason: String,
     recorder: Option<Recorder>,
     phase_at: Instant,
+    action_segment: Option<usize>,
 }
 
 struct Inner {
@@ -78,7 +81,31 @@ pub struct PolicyExperiment {
 pub struct Drive {
     pub command: Command,
     pub policy: Option<Net>,
+    pub action: Option<Action>,
     pub inference_only: bool,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct Availability {
+    pub walk: bool,
+    pub stand: bool,
+    pub sitstand: bool,
+    pub ground_pick: bool,
+    pub kick_left: bool,
+    pub kick_right: bool,
+    pub roulade: bool,
+}
+
+impl Availability {
+    fn action(self, action: Action) -> bool {
+        match action {
+            Action::SitToggle => self.sitstand,
+            Action::GroundPick => self.ground_pick,
+            Action::KickLeft => self.kick_left,
+            Action::KickRight => self.kick_right,
+            Action::Roulade => self.roulade,
+        }
+    }
 }
 
 #[derive(Serialize)]
@@ -91,11 +118,9 @@ struct RecordFrame {
     gateway_tick_ms: u32,
     ack_command_seq: u16,
     requested_command: WireCommand,
-    effective_command: WireCommand,
+    base_command: WireCommand,
+    policy_context: PolicyContext,
     policy_label: String,
-    #[serde(serialize_with = "serialize_observation")]
-    observation: Option<[f32; duck_control::obs::OBS_LEN]>,
-    raw_action: Option<[f32; duck_control::obs::ACTION_LEN]>,
     policy_targets: [f64; NUM_JOINTS],
     applied_targets: [f64; NUM_JOINTS],
     applied: bool,
@@ -126,19 +151,6 @@ impl From<Command> for WireCommand {
             head: value.head,
             body: [value.body.z, value.body.roll, value.body.pitch],
         }
-    }
-}
-
-fn serialize_observation<S>(
-    value: &Option<[f32; duck_control::obs::OBS_LEN]>,
-    serializer: S,
-) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    match value {
-        Some(values) => serializer.serialize_some(values.as_slice()),
-        None => serializer.serialize_none(),
     }
 }
 
@@ -190,7 +202,7 @@ impl PolicyExperiment {
         &self,
         params: &Params,
         intents: &Intents,
-        available: [bool; 2],
+        available: Availability,
         policy_identity: Value,
     ) -> Result<Value, String> {
         match params {
@@ -207,10 +219,17 @@ impl PolicyExperiment {
                         "imu_gravity": sensors.imu.gravity,
                     }));
                 Ok(json!({
-                    "version": 1,
+                    "version": 2,
                     "period_ms": 20,
                     "modes": ["inference_only", "closed_loop"],
-                    "policies": {"auto":available[0],"walk":available[0],"stand":available[1]},
+                    "policies": {"auto":available.walk,"walk":available.walk,"stand":available.stand},
+                    "actions": {
+                        "sit_toggle": available.sitstand,
+                        "ground_pick": available.ground_pick,
+                        "kick_left": available.kick_left,
+                        "kick_right": available.kick_right,
+                        "roulade": available.roulade,
+                    },
                     "policy_identity": policy_identity,
                     "max_segments": MAX_SEGMENTS,
                     "max_duration_ms": MAX_DURATION_MS,
@@ -247,10 +266,13 @@ impl PolicyExperiment {
         }
     }
 
-    fn configure(&self, config: Config, available: [bool; 2], policy_identity: Value) -> Result<Value, String> {
+    fn configure(&self, config: Config, available: Availability, policy_identity: Value) -> Result<Value, String> {
         validate(&config)?;
-        let supported = match config.policy { Policy::Auto|Policy::Walk=>available[0], Policy::Stand=>available[1] };
+        let supported = match config.policy { Policy::Auto|Policy::Walk=>available.walk, Policy::Stand=>available.stand };
         if !supported { return Err("所选策略槽位当前没有可运行的策略".into()); }
+        if let Some(action) = config.segments.iter().find_map(|segment| segment.action.filter(|action| !available.action(*action))) {
+            return Err(format!("动作 {action:?} 当前没有可运行的策略"));
+        }
         let mut inner = self.inner.lock().unwrap();
         if inner.sessions.len() >= MAX_SESSIONS {
             return Err("最多保留 8 次策略实验；请先下载并确认删除旧结果".into());
@@ -288,6 +310,7 @@ impl PolicyExperiment {
                 id: id.into(), config, phase: Phase::Initializing, started: None,
                 run_token: None, outcome: "stopped".into(), reason: "stopped".into(), recorder: None,
                 phase_at: Instant::now(),
+                action_segment: None,
             });
             Ok(())
         })();
@@ -314,6 +337,7 @@ impl PolicyExperiment {
         active.phase_at = Instant::now();
         active.run_token = Some(token.clone());
         active.recorder = Some(recorder);
+        active.action_segment = None;
         inner.sessions.get_mut(id).unwrap().state = "running".into();
         Ok(json!({"id":id,"state":"running","run_token":token}))
     }
@@ -376,10 +400,17 @@ impl PolicyExperiment {
                         active.phase=Phase::ReturningHome; active.phase_at=Instant::now(); active.outcome="failed".into(); active.reason="motor temperature limit".into();
                     } else {
                         let elapsed = active.started.unwrap().elapsed().as_millis() as u64;
-                        if let Some(command) = command_at(&active.config, elapsed) {
+                        if let Some((segment_index, command, scheduled_action)) = command_at(&active.config, elapsed) {
+                            let action = if active.action_segment == Some(segment_index) {
+                                None
+                            } else {
+                                active.action_segment = Some(segment_index);
+                                scheduled_action
+                            };
                             result = Some(Drive {
                                 command,
                                 policy: match active.config.policy { Policy::Auto=>None, Policy::Walk=>Some(Net::Walk), Policy::Stand=>Some(Net::Stand) },
+                                action,
                                 inference_only: active.config.mode == Mode::InferenceOnly,
                             });
                         } else {
@@ -403,12 +434,20 @@ impl PolicyExperiment {
     }
 
     pub fn inference_failed(&self, reason: &str) {
+        self.fail_running(&format!("policy inference failed: {reason}"));
+    }
+
+    pub fn action_failed(&self, action: Action, reason: &str) {
+        self.fail_running(&format!("policy action {action:?} was refused: {reason}"));
+    }
+
+    fn fail_running(&self, reason: &str) {
         let mut inner = self.inner.lock().unwrap();
         if let Some(active) = inner.active.as_mut() {
             active.phase = Phase::ReturningHome;
             active.phase_at = Instant::now();
             active.outcome = "failed".into();
-            active.reason = format!("policy inference failed: {reason}");
+            active.reason = reason.into();
             let id = active.id.clone();
             inner.sessions.get_mut(&id).unwrap().state = "returning_home".into();
         }
@@ -436,8 +475,9 @@ impl PolicyExperiment {
             let frame = RecordFrame {
                 r#type:"frame", frame_index, elapsed_ms, tick, sample_monotonic_us:time_us,
                 gateway_tick_ms:sensors.gateway_tick_ms, ack_command_seq:sensors.ack_command_seq,
-                requested_command:requested.into(), effective_command:step.effective_command.into(),
-                policy_label:step.label.into(), observation:step.observation, raw_action:step.raw_action,
+                requested_command:requested.into(), base_command:step.base_command.into(),
+                policy_context:step.policy_context,
+                policy_label:step.label.into(),
                 policy_targets:step.targets, applied_targets, applied,
                 limits:limits.iter().map(|v| format!("{v:?}").to_lowercase()).collect(),
                 positions:sensors.positions, velocities:sensors.velocities,
@@ -574,14 +614,14 @@ fn validate(config: &Config) -> Result<(), String> {
     Ok(())
 }
 
-fn command_at(config: &Config, mut elapsed_ms: u64) -> Option<Command> {
-    for segment in &config.segments {
+fn command_at(config: &Config, mut elapsed_ms: u64) -> Option<(usize, Command, Option<Action>)> {
+    for (index, segment) in config.segments.iter().enumerate() {
         if elapsed_ms < segment.duration_ms {
-            return Some(Command {
+            return Some((index, Command {
                 twist:segment.twist,
                 head:segment.head,
                 body:BodyPose { z:segment.body[0], roll:segment.body[1], pitch:segment.body[2] },
-            });
+            }, segment.action));
         }
         elapsed_ms -= segment.duration_ms;
     }
@@ -643,20 +683,48 @@ fn load_sessions(root: &PathBuf) -> BTreeMap<String, Session> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn available() -> Availability {
+        Availability { walk:true, stand:true, sitstand:true, ground_pick:true,
+            kick_left:true, kick_right:true, roulade:true }
+    }
     fn config(mode: Mode) -> Config {
-        Config { mode, policy:Policy::Auto, segments:vec![duck_ipc_proto::PolicyExperimentSegment { duration_ms:40, twist:[0.1,0.0,0.0], head:[0.0;4], body:[0.0;3] }], max_temperature_c:60.0, stop_on_fall:true }
+        Config { mode, policy:Policy::Auto, segments:vec![duck_ipc_proto::PolicyExperimentSegment { duration_ms:40, action:None, twist:[0.1,0.0,0.0], head:[0.0;4], body:[0.0;3] }], max_temperature_c:60.0, stop_on_fall:true }
     }
     #[test]
     fn schedule_has_a_hard_end() {
-        assert_eq!(command_at(&config(Mode::ClosedLoop), 0).unwrap().twist[0], 0.1);
+        assert_eq!(command_at(&config(Mode::ClosedLoop), 0).unwrap().1.twist[0], 0.1);
         assert!(command_at(&config(Mode::ClosedLoop), 40).is_none());
+    }
+    #[test]
+    fn a_segment_action_is_emitted_only_on_its_first_control_frame() {
+        let root=tempfile::tempdir().unwrap();
+        let experiment=PolicyExperiment::at(root.path().into(),Arc::new(ControlOwner::default()));
+        let mut configured=config(Mode::InferenceOnly);
+        configured.segments[0].action=Some(Action::KickLeft);
+        let id=experiment.configure(configured,available(),json!({})).unwrap()["id"].as_str().unwrap().to_owned();
+        experiment.initialize(&id,&json!({})).unwrap();
+        experiment.before_policy(Some(&Sensors::default()),true,true,true,true,false);
+        experiment.start(&id).unwrap();
+        assert_eq!(experiment.before_policy(Some(&Sensors::default()),true,true,true,true,false).unwrap().action,Some(Action::KickLeft));
+        assert_eq!(experiment.before_policy(Some(&Sensors::default()),true,true,true,true,false).unwrap().action,None);
+        experiment.abort("test complete");
+    }
+    #[test]
+    fn configuration_rejects_an_unavailable_scheduled_action() {
+        let root=tempfile::tempdir().unwrap();
+        let experiment=PolicyExperiment::at(root.path().into(),Arc::new(ControlOwner::default()));
+        let mut configured=config(Mode::ClosedLoop);
+        configured.segments[0].action=Some(Action::Roulade);
+        let mut capabilities=available();
+        capabilities.roulade=false;
+        assert!(experiment.configure(configured,capabilities,json!({})).unwrap_err().contains("Roulade"));
     }
     #[test]
     fn initialization_claims_the_shared_owner() {
         let root=tempfile::tempdir().unwrap();
         let owner=Arc::new(ControlOwner::default());
         let experiment=PolicyExperiment::at(root.path().into(), owner.clone());
-        let id=experiment.configure(config(Mode::InferenceOnly),[true,true],json!({})).unwrap()["id"].as_str().unwrap().to_owned();
+        let id=experiment.configure(config(Mode::InferenceOnly),available(),json!({})).unwrap()["id"].as_str().unwrap().to_owned();
         experiment.initialize(&id,&json!({})).unwrap();
         assert_eq!(owner.current(),Some(Owner::PolicyExperiment));
         assert!(owner.acquire(Owner::MotorExperiment).is_err());
@@ -668,7 +736,7 @@ mod tests {
         let root=tempfile::tempdir().unwrap();
         let owner=Arc::new(ControlOwner::default());
         let experiment=PolicyExperiment::at(root.path().into(), owner.clone());
-        let id=experiment.configure(config(Mode::ClosedLoop),[true,true],json!({})).unwrap()["id"].as_str().unwrap().to_owned();
+        let id=experiment.configure(config(Mode::ClosedLoop),available(),json!({})).unwrap()["id"].as_str().unwrap().to_owned();
         experiment.initialize(&id,&json!({})).unwrap();
         experiment.before_policy(Some(&Sensors::default()),true,true,true,true,false);
         assert_eq!(experiment.status(&id).unwrap()["state"],"ready");
@@ -691,7 +759,7 @@ mod tests {
         let root=tempfile::tempdir().unwrap();
         let owner=Arc::new(ControlOwner::default());
         let experiment=PolicyExperiment::at(root.path().into(), owner.clone());
-        let id=experiment.configure(config(Mode::InferenceOnly),[true,true],json!({"walk":"v1"})).unwrap()["id"].as_str().unwrap().to_owned();
+        let id=experiment.configure(config(Mode::InferenceOnly),available(),json!({"walk":"v1"})).unwrap()["id"].as_str().unwrap().to_owned();
         assert!(experiment.initialize(&id,&json!({"walk":"v2"})).unwrap_err().contains("模型已在配置后变更"));
         assert_eq!(owner.current(),None);
         assert_eq!(experiment.status(&id).unwrap()["state"],"configured");

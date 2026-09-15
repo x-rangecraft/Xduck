@@ -4198,6 +4198,8 @@ mod tests {
                 limited_by: vec![],
             },
             head: [0.0; 4],
+            head_requested: [0.0; 4],
+            head_mode: false,
             policy: "stand".to_owned(),
             control_state: "policy_on".to_owned(),
             control_owner: None,

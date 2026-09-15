@@ -1,4 +1,4 @@
-"""Built-in API-v2 consumer for the paired Walk and Stand models."""
+"""Built-in API-v2 consumer for the Ground Pick model."""
 import numpy as np
 
 
@@ -20,22 +20,17 @@ KD = 4.0
 
 
 def build_command_obs(frame):
-    command = frame["command"]
     context = frame["policy_context"]
-    if context["action"] not in ("walk", "stand"):
-        raise ValueError("locomotion consumer requires walk or stand action")
-    twist = [0.0, 0.0, 0.0] if context["body_active"] else command["twist"]
-    return np.asarray([
-        *twist, *command["head"], 0.0, 0.0,
-        *command["body"], 0.0,
-    ], dtype=np.float32)
+    if context["action"] != "ground_pick" or context["phase"] is None:
+        raise ValueError("ground-pick consumer requires a ground_pick action and phase")
+    angle = 2.0 * np.pi * float(context["phase"])
+    return np.asarray([np.cos(angle), np.sin(angle), 0.0, *([0.0] * 10)], dtype=np.float32)
 
 
 class Policy:
     def describe(self):
         return {
-            "api_version": 2,
-            "period_us": 20_000,
+            "api_version": 2, "period_us": 20_000,
             "required_sources": ["joints", "imu", "command", "policy_context"],
             "inputs": {"obs": {"dtype": "float32", "shape": [1, 61]}},
             "outputs": {"actions": {"dtype": "float32", "shape": [1, 14]}},
@@ -44,7 +39,7 @@ class Policy:
 
     def reset(self, robot_info, first_frame):
         if robot_info["joint_names"] != JOINTS:
-            raise ValueError("joint order does not match the locomotion policy")
+            raise ValueError("joint order does not match the ground-pick policy")
         self.last_action = np.zeros(14, dtype=np.float32)
         self.previous_targets = None
 
@@ -54,9 +49,7 @@ class Policy:
         obs = np.concatenate([
             np.asarray(frame["imu"]["gyro"], dtype=np.float32),
             np.asarray(frame["imu"]["gravity"], dtype=np.float32),
-            positions - HOME[CONTROLLED_INDEX],
-            velocities,
-            self.last_action,
+            positions - HOME[CONTROLLED_INDEX], velocities, self.last_action,
             build_command_obs(frame),
         ])
         return {"obs": obs.reshape(1, 61)}
@@ -68,20 +61,12 @@ class Policy:
             filtered = raw.copy()
             for slot, joint_index in enumerate(CONTROLLED_INDEX):
                 alpha = 0.5 if 10 <= joint_index < 14 else 0.7
-                filtered[slot] = (
-                    alpha * raw[slot]
-                    + (1.0 - alpha) * self.previous_targets[slot]
-                )
+                filtered[slot] = alpha * raw[slot] + (1.0 - alpha) * self.previous_targets[slot]
             raw = filtered
         self.last_action = action.copy()
         self.previous_targets = raw.copy()
         return {
-            name: {
-                "position": float(raw[slot]),
-                "velocity": 0.0,
-                "torque_ff": 0.0,
-                "kp": KP,
-                "kd": KD,
-            }
+            name: {"position": float(raw[slot]), "velocity": 0.0, "torque_ff": 0.0,
+                   "kp": KP, "kd": KD}
             for slot, name in enumerate(CONTROLLED)
         }

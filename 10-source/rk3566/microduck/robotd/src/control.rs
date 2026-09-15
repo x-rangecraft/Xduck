@@ -8,36 +8,19 @@
 //!
 //! ```text
 //! skill windows ← advance / expire (roulade window, kick timer, ground-pick phase, sit↔stand rise)
-//! command      ← the caller's smoothed command, re-encoded for the active skill
-//! net          ← roulade > kick > ground pick > sit/rise > stand-by-magnitude > walk
-//! action       ← ONNX
-//! targets      ← home pose + action_scale × action
-//! filters      ← optional first-order low-pass on head and legs
+//! command       ← the caller's platform-gated, smoothed base command, left unchanged here
+//! net/context   ← roulade > kick > ground pick > sit/rise > stand-by-magnitude > walk
+//! targets       ← selected two-file policy (`policy.py` → ONNX → `policy.py`)
 //! ```
 //!
-//! The priority chain and every numeric default come from `microduck_runtime`'s
-//! `control_step`, which this replaces. Two of its subtleties are worth naming because they
-//! are easy to "fix" by accident:
-//!
-//!  - **A kick window runs at standing tuning.** The kick's observation carries an all-zero
-//!    command, and in the prototype the standing transition fires on exactly that — so a
-//!    kick runs at `standing_action_scale` and the softened standing gain. Kept, because
-//!    the kicks were tuned against it.
-//!  - **The sitstand *rise* also runs at the standing gain** (its command is all-zero),
-//!    while the *sit* does not (its posture flag makes the twist magnitude 1). Same
-//!    mechanism, same reason.
-//!
-//! One deliberate divergence: the prototype tracks the standing action scale by
-//! saving/restoring `action_scale` on transitions, which can leave a stale value behind
-//! after a sit→stand cycle until the next walk. Here scale and gain are recomputed from
-//! the active state every tick — same values on every path that matters, no leftovers.
+//! This scheduler owns only selection and lifecycle.  It supplies an action name, optional
+//! ground-pick phase and body-pose-mode state; each versioned policy.py is the sole owner of
+//! command-observation encoding, action scaling, filtering and MIT gains.
 
-use duck_control::model::{DEFAULT_POSITION, NUM_JOINTS};
-use duck_control::obs::{ACTION_LEN, Command, Observation};
-use duck_control::policy::{Net, Policy, PolicyError};
-
-/// Joint indices the head low-pass covers: neck_pitch, head_pitch, head_yaw, head_roll.
-const HEAD_JOINTS: std::ops::Range<usize> = 10..14;
+use duck_control::model::NUM_JOINTS;
+use duck_control::obs::Command;
+use duck_control::policy::{Net, PolicyError, PolicyPaths};
+use crate::custom_policy::PolicyContext;
 
 /// The ground pick hands back at this fraction of its cycle — the prototype's cutoff.
 const GROUND_PICK_END_PHASE: f64 = 0.7;
@@ -129,12 +112,10 @@ pub struct Step {
     /// A scripted move is mid-flight — the robot is moving regardless of the twist, so
     /// restarting the daemon now would put it on the floor.
     pub busy: bool,
-    /// Standard 61-value observation and raw 14-value network output. Two-file policies own
-    /// their preprocessing contract, so their complete sensor frame is logged by robotd while
-    /// these two standard-policy fields remain absent.
-    pub observation: Option<[f32; duck_control::obs::OBS_LEN]>,
-    pub raw_action: Option<[f32; ACTION_LEN]>,
-    pub effective_command: Command,
+    /// Platform-gated command before any model-specific observation encoding.
+    pub base_command: Command,
+    /// Scheduler metadata consumed by policy.py when constructing its model inputs.
+    pub policy_context: PolicyContext,
 }
 
 /// Where the robot is in the sit↔stand cycle.
@@ -150,19 +131,47 @@ enum Sit {
     },
 }
 
+/// Entry is committed only after a successful policy frame. Labels distinguish sit/rise,
+/// while pending starts cover a new episode that reuses the same slot (including roll chains).
+#[derive(Default)]
+struct PolicyEntry {
+    active: Option<(Net, &'static str)>,
+    pending: Vec<Net>,
+}
+
+impl PolicyEntry {
+    fn restart(&mut self, net: Net) {
+        if !self.pending.contains(&net) {
+            self.pending.push(net);
+        }
+    }
+
+    fn needs_reset(&self, net: Net, label: &'static str) -> bool {
+        !matches!(net, Net::Walk | Net::Stand)
+            && (self.active != Some((net, label)) || self.pending.contains(&net))
+    }
+
+    fn entered(&mut self, net: Net, label: &'static str) {
+        self.active = Some((net, label));
+        self.pending.retain(|candidate| *candidate != net);
+    }
+}
+
 pub struct Controller {
-    policy: Policy,
-    model_controls: Vec<(Net, duck_ipc_proto::ModelControl)>,
     custom_policies: Vec<(Net, crate::custom_policy::CustomPolicy)>,
+    /// One consumer instance owns feedback/filter history; only its ONNX session switches.
+    locomotion: Option<crate::custom_policy::CustomPolicy>,
+    entry: PolicyEntry,
+    has_standing: bool,
+    has_sitstand: bool,
+    has_ground_pick: bool,
+    has_kick_left: bool,
+    has_kick_right: bool,
+    has_roulade: bool,
+    standing_threshold: f64,
+    standing_disabled: bool,
     tuning: Tuning,
     skills: SkillTuning,
-    /// Raw previous policy output, which the observation feeds back. Raw, not scaled: the
-    /// policy was trained observing its own output, not the actuator command derived from
-    /// it. Shared across every network, as the prototype shares it.
-    last_action: [f32; ACTION_LEN],
-    /// Previous filtered targets, kept only for the low-pass. `None` until the first tick,
-    /// so the filter starts from reality rather than dragging up from zero.
-    previous: Option<[f64; NUM_JOINTS]>,
     /// Ground-pick phase, 0..[`GROUND_PICK_END_PHASE`]. `None` when inactive.
     ground_pick: Option<f64>,
     /// An active kick window: which leg, and seconds remaining.
@@ -177,32 +186,27 @@ pub struct Controller {
 }
 
 impl Controller {
-    pub fn new(policy: Policy, tuning: Tuning, skills: SkillTuning) -> Self {
+    pub fn new(paths: &PolicyPaths, standing_threshold: f64, tuning: Tuning, skills: SkillTuning) -> Self {
         Self {
-            policy,
-            model_controls: Vec::new(),
             custom_policies: Vec::new(),
+            locomotion: None,
+            entry: PolicyEntry::default(),
+            has_standing: paths.stand.is_some(),
+            has_sitstand: paths.sitstand.is_some(),
+            has_ground_pick: paths.ground_pick.is_some(),
+            has_kick_left: paths.kick_left.is_some(),
+            has_kick_right: paths.kick_right.is_some(),
+            has_roulade: paths.roulade.is_some(),
+            standing_threshold,
+            standing_disabled: false,
             tuning,
             skills,
-            last_action: [0.0; ACTION_LEN],
-            previous: None,
             ground_pick: None,
             kick: None,
             roulade: None,
             roulade_chain: 0.0,
             sit: Sit::Up,
         }
-    }
-
-    /// Reset the feedback state.
-    ///
-    /// Called when the policy is re-enabled, so a robot that sat disabled for a minute does
-    /// not resume with a stale action in its observation and a filter anchored to wherever
-    /// it was before.
-    pub fn replace_network(&mut self, net: Net, prepared: duck_control::policy::PreparedNetwork) {
-        self.custom_policies.retain(|(candidate, _)| *candidate != net);
-        self.policy.replace_network(net, prepared);
-        self.reset();
     }
 
     pub fn replace_custom_policy(
@@ -213,23 +217,27 @@ impl Controller {
         policy.mark_reset();
         self.custom_policies.retain(|(candidate, _)| *candidate != net);
         self.custom_policies.push((net, policy));
-        self.set_model_control(net, None);
         self.reset();
     }
 
-    pub fn set_model_control(&mut self, net: Net, control: Option<duck_ipc_proto::ModelControl>) {
-        self.model_controls.retain(|(n, _)| *n != net);
-        if let Some(control) = control { self.model_controls.push((net, control)); }
-    }
-
-    pub fn model_control(&self, net: Net) -> Option<duck_ipc_proto::ModelControl> {
-        self.model_controls.iter().find(|(n, _)| *n == net).map(|(_, c)| *c)
+    pub fn replace_locomotion_policy(&mut self, policy: crate::custom_policy::CustomPolicy) {
+        self.custom_policies.retain(|(net, _)| !matches!(net, Net::Walk | Net::Stand));
+        self.locomotion = Some(policy);
+        self.reset();
     }
 
     pub fn reset(&mut self) {
-        self.last_action = [0.0; ACTION_LEN];
-        self.previous = None;
+        self.entry = PolicyEntry::default();
+        if let Some(policy) = &mut self.locomotion { policy.mark_reset(); }
         for (_, policy) in &mut self.custom_policies { policy.mark_reset(); }
+    }
+
+    pub fn set_standing_disabled(&mut self, disabled: bool) {
+        self.standing_disabled = disabled;
+    }
+
+    fn will_stand(&self, twist_magnitude: f64) -> bool {
+        self.has_standing && !self.standing_disabled && twist_magnitude <= self.standing_threshold
     }
 
     /// Start a policy experiment from a plain locomotion state. A previously interrupted skill
@@ -244,7 +252,7 @@ impl Controller {
     }
 
     pub fn has_sitstand(&self) -> bool {
-        self.policy.has_sitstand()
+        self.has_sitstand
     }
 
     pub fn is_sitting(&self) -> bool {
@@ -274,25 +282,27 @@ impl Controller {
     /// network existing and the move not already running — a pick can even preempt a kick's
     /// tail, and that stays as it was.
     pub fn start_ground_pick(&mut self) -> Result<(), &'static str> {
-        if !self.policy.has_ground_pick() {
+        if !self.has_ground_pick {
             return Err("no ground-pick policy loaded");
         }
         if self.ground_pick.is_some() {
             return Err("ground pick already running");
         }
         self.ground_pick = Some(0.0);
+        self.entry.restart(Net::GroundPick);
         Ok(())
     }
 
     /// Start a kick window. Blocked while any scripted move runs, as the prototype blocks it.
     pub fn start_kick(&mut self, left: bool) -> Result<(), &'static str> {
-        if !self.policy.has_kick(left) {
+        if !(if left { self.has_kick_left } else { self.has_kick_right }) {
             return Err("no kick policy loaded for that leg");
         }
         if self.kick.is_some() || self.ground_pick.is_some() || self.roulade.is_some() {
             return Err("a scripted move is already running");
         }
         self.kick = Some((left, self.skills.kick_duration));
+        self.entry.restart(if left { Net::KickLeft } else { Net::KickRight });
         Ok(())
     }
 
@@ -307,13 +317,14 @@ impl Controller {
             self.roulade_chain = ROULADE_CHAIN_WINDOW;
             return Ok(false);
         }
-        if !self.policy.has_roulade() {
+        if !self.has_roulade {
             return Err("no roulade policy loaded");
         }
         if self.ground_pick.is_some() {
             return Err("a ground pick is running");
         }
         self.roulade = Some(self.skills.roulade_duration);
+        self.entry.restart(Net::Roulade);
         self.roulade_chain = 0.0;
         Ok(true)
     }
@@ -323,13 +334,15 @@ impl Controller {
     pub fn sit_toggle(&mut self) -> Result<&'static str, &'static str> {
         match self.sit {
             Sit::Up => {
-                if !self.policy.has_sitstand() {
+                if !self.has_sitstand {
                     return Err("no sitstand policy loaded");
                 }
                 self.sit = Sit::Sitting;
+                self.entry.restart(Net::SitStand);
                 Ok("sit")
             }
             Sit::Sitting => {
+                self.entry.restart(Net::SitStand);
                 self.sit = Sit::Rising {
                     remaining: RISE_SECS,
                 };
@@ -343,12 +356,14 @@ impl Controller {
     /// seconds, then cut torque and power off); this just puts the sitstand network in
     /// charge with the posture flag at 1.
     pub fn begin_shutdown_sit(&mut self) {
+        self.entry.restart(Net::SitStand);
         self.sit = Sit::Sitting;
     }
 
     /// Seated boot: the robot powered on already sitting, so rise via the sitstand network
     /// instead of dragging the legs through a linear ramp to the standing pose.
     pub fn begin_boot_rise(&mut self) {
+        self.entry.restart(Net::SitStand);
         self.sit = Sit::Rising {
             remaining: RISE_SECS,
         };
@@ -380,16 +395,17 @@ impl Controller {
     /// the standing network drives (by magnitude where it is selectable, forced where it is
     /// reserved), exactly as the prototype's B-button mode behaves.
     ///
-    /// `scale_mult` multiplies the action scale — voltage adaptation, 1.0 when off.
+    /// `scale_mult` remains in the controller API for voltage telemetry compatibility. In the
+    /// unified two-file path, action scaling belongs to `policy.py`.
     pub fn step(
         &mut self,
         sensors: &duck_control::Sensors,
         command: &Command,
         body_active: bool,
         dt: f64,
-        scale_mult: f64,
+        _scale_mult: f64,
     ) -> Result<Step, PolicyError> {
-        self.step_selected(sensors, command, body_active, dt, scale_mult, None)
+        self.step_selected(sensors, command, body_active, dt, _scale_mult, None)
     }
 
     /// Run a normal tick while optionally pinning the locomotion network. Policy experiments
@@ -400,7 +416,7 @@ impl Controller {
         command: &Command,
         body_active: bool,
         dt: f64,
-        scale_mult: f64,
+        _scale_mult: f64,
         selected: Option<Net>,
     ) -> Result<Step, PolicyError> {
         // Expire windows first, so a tick after the deadline runs the next thing rather
@@ -418,6 +434,7 @@ impl Controller {
             && remaining <= 0.0
         {
             self.roulade = if self.roulade_chain > 0.0 {
+                self.entry.restart(Net::Roulade);
                 Some(self.skills.roulade_duration)
             } else {
                 None
@@ -429,125 +446,61 @@ impl Controller {
             self.sit = Sit::Up;
         }
 
-        // Re-encode the command for the active skill and pick the network. The priority
-        // chain is the prototype's: roulade > kick > ground pick > sit/rise > stand > walk.
-        let (net, effective, label) = if self.roulade.is_some() {
-            // Trained with every command slot at zero; it rolls as soon as it is switched
-            // in, so being selected IS the trigger.
-            (Net::Roulade, Command::default(), "roulade")
+        // Pick the network and expose scheduler state without encoding a model observation.
+        // The selected policy.py is the sole owner of how base command + context become tensors.
+        // Priority remains the prototype's: roulade > kick > ground pick > sit/rise > stand > walk.
+        let (net, label, context) = if self.roulade.is_some() {
+            (Net::Roulade, "roulade", PolicyContext::new("roulade", None, false))
         } else if let Some((left, _)) = self.kick {
-            // The kick networks are trained with every command slot at zero — head and
-            // body included, whatever the client is holding.
             let net = if left { Net::KickLeft } else { Net::KickRight };
             let label = if left { "kick_left" } else { "kick_right" };
-            (net, Command::default(), label)
+            (net, label, PolicyContext::new(label, None, false))
         } else if let Some(phase) = self.ground_pick {
-            // The twist slots carry the phase encoding; head and body are zero-padded,
-            // mirroring the training env's `zero_command_padding`.
-            let angle = std::f64::consts::TAU * phase;
-            let c = Command {
-                twist: [angle.cos(), angle.sin(), 0.0],
-                ..Command::default()
-            };
-            (Net::GroundPick, c, "ground_pick")
+            (Net::GroundPick, "ground_pick",
+                PolicyContext::new("ground_pick", Some(phase), false))
         } else {
-            let mut c = *command;
             match self.sit {
-                // The posture flag rides the twist vx slot: 1 = sit, 0 = stand. Head and
-                // body slots stay live — the prototype keeps them in the buffer too.
-                Sit::Sitting => {
-                    c.twist = [1.0, 0.0, 0.0];
-                    (Net::SitStand, c, "sit")
-                }
-                Sit::Rising { .. } => {
-                    c.twist = [0.0; 3];
-                    (Net::SitStand, c, "rise")
-                }
+                Sit::Sitting => (Net::SitStand, "sit",
+                    PolicyContext::new("sit", None, false)),
+                Sit::Rising { .. } => (Net::SitStand, "rise",
+                    PolicyContext::new("rise", None, false)),
                 Sit::Up => {
-                    if body_active {
-                        c.twist = [0.0; 3];
-                    }
-                    match selected {
-                        Some(Net::Walk) => (Net::Walk, c, "walk"),
-                        Some(Net::Stand) => (Net::Stand, c, "stand"),
+                    let (net, label) = match selected {
+                        Some(Net::Walk) => (Net::Walk, "walk"),
+                        Some(Net::Stand) => (Net::Stand, "stand"),
                         Some(_) => unreachable!("policy experiment only selects locomotion nets"),
                         None => {
-                            let standing = self.policy.will_stand(c.twist_magnitude())
-                                || (body_active && self.policy.has_standing());
-                            if standing { (Net::Stand, c, "stand") }
-                            else { (Net::Walk, c, "walk") }
+                            let standing = self.will_stand(command.twist_magnitude())
+                                || (body_active && self.has_standing);
+                            if standing { (Net::Stand, "stand") }
+                            else { (Net::Walk, "walk") }
                         }
-                    }
+                    };
+                    (net, label, PolicyContext::new(label, None, body_active))
                 }
             }
         };
 
-        let (targets, gain, pd, mit, observation, raw_action) = if let Some((_, custom)) =
-            self.custom_policies.iter_mut().find(|(candidate, _)| *candidate == net)
-        {
-            let output = custom.step(sensors, &effective, dt)
-                .map_err(PolicyError::Inference)?;
-            (output.positions, self.tuning.gain, None, Some(output.mit), None, None)
+        let output = if matches!(net, Net::Walk | Net::Stand) && self.has_standing {
+            let model = if net == Net::Walk { "walk" } else { "stand" };
+            self.locomotion.as_mut()
+                .ok_or_else(|| PolicyError::Inference("走/站缺少共享消费运行器".into()))?
+                .step_model(sensors, command, context, dt, model).map_err(PolicyError::Inference)?
         } else {
-            let observation = Observation::build(
-                &sensors.imu,
-                &sensors.positions,
-                &sensors.velocities,
-                &DEFAULT_POSITION,
-                &self.last_action,
-                &effective,
-            );
-            let action = self.policy.infer(&observation, net)?;
-            self.last_action = action;
-            let standing_tuned = matches!(net, Net::Stand)
-                || (matches!(net, Net::KickLeft | Net::KickRight | Net::SitStand)
-                    && self.policy.will_stand(effective.twist_magnitude()));
-            let (scale, gain) = match net {
-                Net::Roulade => (
-                    self.skills.roulade_action_scale,
-                    (self.tuning.gain as f64 * self.skills.roulade_gain_ratio).round() as u16,
-                ),
-                Net::GroundPick => (
-                    self.skills.ground_pick_action_scale,
-                    (self.tuning.gain as f64 * self.skills.ground_pick_gain_ratio).round() as u16,
-                ),
-                Net::SitStand => (
-                    1.0,
-                    if standing_tuned {
-                        (self.tuning.gain as f64 * self.tuning.standing_gain_ratio).round() as u16
-                    } else { self.tuning.gain },
-                ),
-                _ if standing_tuned => (
-                    self.tuning.standing_action_scale,
-                    (self.tuning.gain as f64 * self.tuning.standing_gain_ratio).round() as u16,
-                ),
-                _ => (self.tuning.action_scale, self.tuning.gain),
-            };
-            let control = self.model_control(net);
-            let scale = control.map_or(scale * scale_mult, |value| value.action_scale);
-            let pd = control.map(|value| [value.kp, value.kd]);
-            let gain = control.map_or(gain, |value| value.kp.round() as u16);
-            let offsets = Observation::scatter_action(&action);
-            let mut targets = [0.0; NUM_JOINTS];
-            for joint in 0..NUM_JOINTS {
-                targets[joint] = DEFAULT_POSITION[joint] + scale * offsets[joint];
-            }
-            if let Some(previous) = self.previous {
-                if let Some(alpha) = self.tuning.head_lowpass {
-                    for joint in HEAD_JOINTS {
-                        targets[joint] = alpha * targets[joint] + (1.0 - alpha) * previous[joint];
-                    }
-                }
-                if let Some(alpha) = self.tuning.legs_lowpass {
-                    for (joint, target) in targets.iter_mut().enumerate() {
-                        if HEAD_JOINTS.contains(&joint) || joint == duck_control::model::MOUTH_INDEX { continue; }
-                        *target = alpha * *target + (1.0 - alpha) * previous[joint];
-                    }
-                }
-            }
-            self.previous = Some(targets);
-            (targets, gain, pd, None, Some(*observation.as_slice().first_chunk().unwrap()), Some(action))
+        let custom = self.custom_policies.iter_mut()
+            .find(|(candidate, _)| *candidate == net)
+            .map(|(_, policy)| policy)
+            .ok_or_else(|| PolicyError::Inference(format!("策略槽位 {net:?} 缺少双文件运行器")))?;
+        // mark_reset is consumed inside step before cached-output/rate-limit handling,
+        // so the first frame can never reuse targets from the previous episode.
+        if self.entry.needs_reset(net, label) {
+            custom.mark_reset();
+        }
+        custom.step(sensors, command, context, dt).map_err(PolicyError::Inference)?
         };
+        self.entry.entered(net, label);
+        let (targets, gain, pd, mit) =
+            (output.positions, self.tuning.gain, None, Some(output.mit));
 
         // Advance the windows, after the tick that used them — the prototype advances its
         // phase after the motor write.
@@ -575,9 +528,8 @@ impl Controller {
             pd,
             mit,
             busy: self.busy(),
-            observation,
-            raw_action,
-            effective_command: effective,
+            base_command: *command,
+            policy_context: context,
         })
     }
 }
@@ -585,6 +537,142 @@ impl Controller {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn locomotion_preserves_state_but_every_skill_resets_on_reentry() {
+        let mut entry = PolicyEntry::default();
+        for (net, label) in [(Net::Walk, "walk"), (Net::Stand, "stand"),
+            (Net::SitStand, "sit"), (Net::GroundPick, "ground_pick"),
+            (Net::KickLeft, "kick_left"), (Net::KickRight, "kick_right"),
+            (Net::Roulade, "roulade")]
+        {
+            let skill = !matches!(net, Net::Walk | Net::Stand);
+            assert_eq!(entry.needs_reset(net, label), skill);
+            // A failed first frame does not commit entry: retry must reset again.
+            assert_eq!(entry.needs_reset(net, label), skill);
+            entry.entered(net, label);
+            assert!(!entry.needs_reset(net, label));
+            entry.entered(Net::Walk, "walk");
+            assert_eq!(entry.needs_reset(net, label), skill);
+            entry.entered(net, label);
+        }
+        assert!(!entry.needs_reset(Net::Walk, "walk"));
+        assert!(!entry.needs_reset(Net::Stand, "stand"));
+    }
+
+    #[test]
+    fn sit_to_rise_and_same_slot_new_episodes_reset_once() {
+        let mut entry = PolicyEntry::default();
+        entry.entered(Net::SitStand, "sit");
+        assert!(entry.needs_reset(Net::SitStand, "rise"));
+        entry.entered(Net::SitStand, "rise");
+        assert!(!entry.needs_reset(Net::SitStand, "rise"));
+        for net in [Net::KickLeft, Net::KickRight, Net::GroundPick, Net::Roulade] {
+            entry.entered(net, "skill");
+            entry.restart(net);
+            assert!(entry.needs_reset(net, "skill"));
+            entry.entered(net, "skill");
+            assert!(!entry.needs_reset(net, "skill"));
+        }
+    }
+
+    fn skill_controller() -> Controller {
+        let paths = PolicyPaths {
+            stand: Some("stand".into()), sitstand: Some("sitstand".into()),
+            ground_pick: Some("pick".into()), kick_left: Some("left".into()),
+            kick_right: Some("right".into()), roulade: Some("roll".into()),
+            ..Default::default()
+        };
+        Controller::new(&paths, 0.05, Tuning::default(), SkillTuning::default())
+    }
+
+    #[test]
+    #[ignore = "requires root, bubblewrap and managed Python on the build board; no motor IO"]
+    fn locomotion_dispatch_matches_one_continuous_consumer() {
+        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let policy_path = root.join("src/default_locomotion_policy.py");
+        let walk = root.join("../policies/alpha_walking.onnx");
+        let stand = root.join("../policies/alpha_stand.onnx");
+        let paths = PolicyPaths { walk: walk.clone(), stand: Some(stand.clone()), ..Default::default() };
+        let mut controller = Controller::new(&paths, 0.05, Tuning::default(), SkillTuning::default());
+        controller.replace_locomotion_policy(crate::custom_policy::CustomPolicy::load_pair(
+            &policy_path, &walk, &stand).unwrap());
+        let mut reference = crate::custom_policy::CustomPolicy::load_pair(&policy_path, &walk, &stand).unwrap();
+        let sensors = duck_control::Sensors::default();
+        for index in 0..40 {
+            let walking = index % 3 != 0;
+            let command = Command { twist: if walking { [0.3, 0.0, 0.0] } else { [0.0; 3] },
+                ..Command::default() };
+            let model = if walking { "walk" } else { "stand" };
+            let context = PolicyContext::new(model, None, false);
+            let expected = reference.step_model(&sensors, &command, context, 0.02, model).unwrap();
+            let actual = controller.step(&sensors, &command, false, 0.02, 1.0).unwrap();
+            assert_eq!(actual.label, model);
+            assert_eq!(actual.targets, expected.positions, "feedback/filter diverged at switch {index}");
+        }
+        controller.reset();
+        reference.mark_reset();
+        assert_eq!(controller.step(&sensors, &Command::default(), false, 0.02, 1.0).unwrap().targets,
+            reference.step_model(&sensors, &Command::default(),
+                PolicyContext::new("stand", None, false), 0.02, "stand").unwrap().positions);
+    }
+
+    #[test]
+    fn chained_roll_queues_entry_before_dispatch_and_failure_keeps_it_pending() {
+        let mut c = skill_controller();
+        c.entry.entered(Net::Roulade, "roulade");
+        c.roulade = Some(0.0);
+        c.roulade_chain = ROULADE_CHAIN_WINDOW;
+        // No worker (and no IO handle): fail at dispatch after advancing the scheduler.
+        assert!(c.step(&duck_control::Sensors::default(), &Command::default(),
+            false, 0.02, 1.0).is_err());
+        assert_eq!(c.roulade, Some(c.skills.roulade_duration));
+        assert!(c.entry.needs_reset(Net::Roulade, "roulade"));
+        assert!(c.step(&duck_control::Sensors::default(), &Command::default(),
+            false, 0.02, 1.0).is_err());
+        assert!(c.entry.needs_reset(Net::Roulade, "roulade"));
+    }
+
+    #[test]
+    fn accepted_starts_queue_reset_but_held_or_rejected_requests_do_not() {
+        let mut c = skill_controller();
+        c.start_ground_pick().unwrap();
+        assert!(c.entry.pending.contains(&Net::GroundPick));
+        c.entry.entered(Net::GroundPick, "ground_pick");
+        assert!(c.start_ground_pick().is_err());
+        assert!(c.entry.pending.is_empty());
+        c.ground_pick = None;
+        for left in [true, false] {
+            let net = if left { Net::KickLeft } else { Net::KickRight };
+            c.start_kick(left).unwrap();
+            assert!(c.entry.pending.contains(&net));
+            c.entry.entered(net, "kick");
+            assert!(c.start_kick(left).is_err());
+            assert!(c.entry.pending.is_empty());
+            c.kick = None;
+        }
+        assert!(c.request_roulade().unwrap());
+        assert!(c.entry.pending.contains(&Net::Roulade));
+        c.entry.entered(Net::Roulade, "roulade");
+        assert!(!c.request_roulade().unwrap());
+        assert!(c.entry.pending.is_empty());
+        c.sit_toggle().unwrap();
+        assert!(c.entry.pending.contains(&Net::SitStand));
+        // A queued lower-priority skill is not consumed by another slot's execution.
+        c.entry.entered(Net::Roulade, "roulade");
+        assert!(c.entry.pending.contains(&Net::SitStand));
+        c.entry.entered(Net::SitStand, "sit");
+        c.sit_toggle().unwrap();
+        assert!(c.entry.needs_reset(Net::SitStand, "rise"));
+        c.entry.entered(Net::SitStand, "rise");
+        assert!(c.sit_toggle().is_err());
+        assert!(c.entry.pending.is_empty());
+        c.begin_shutdown_sit();
+        assert!(c.entry.pending.contains(&Net::SitStand));
+        c.entry.entered(Net::SitStand, "sit");
+        c.begin_boot_rise();
+        assert!(c.entry.pending.contains(&Net::SitStand));
+    }
 
     /// The prototype's **current alpha configuration** — its built-in defaults, which the
     /// installer deliberately passes no flags to override. The filters are ON at the values
@@ -637,39 +725,4 @@ mod tests {
         assert_eq!(GROUND_PICK_END_PHASE, 0.7);
         assert_eq!(RISE_SECS, 1.0);
     }
-    #[test]
-    #[ignore = "requires ORT_DYLIB_PATH"]
-    fn imported_controls_follow_network_and_scale_targets() {
-        use duck_control::policy::{PolicyPaths, DEFAULT_STANDING_THRESHOLD};
-        let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../policies");
-        let policy = Policy::load(&PolicyPaths {
-            walk: root.join("alpha_walking.onnx"),
-            stand: Some(root.join("alpha_stand.onnx")),
-            ..Default::default()
-        }, DEFAULT_STANDING_THRESHOLD).unwrap();
-        let mut controller = Controller::new(policy, Tuning::default(), SkillTuning::default());
-        let sensors = duck_control::io::Sensors::default();
-        let command = Command { twist: [0.2, 0.0, 0.0], ..Default::default() };
-        let baseline = controller.step(&sensors, &command, false, 0.02, 1.0).unwrap();
-        controller.reset();
-        let c = duck_ipc_proto::ModelControl { kp: 60.25, kd: 1.234, action_scale: 0.45 };
-        controller.set_model_control(Net::Walk, Some(c));
-        let imported = controller.step(&sensors, &command, false, 0.02, 1.7).unwrap();
-        assert_eq!(imported.pd, Some([60.25, 1.234]));
-        assert_eq!(imported.label, "walk");
-        assert!(baseline.targets.iter().zip(DEFAULT_POSITION).any(|(v, home)| (v-home).abs()>1e-6));
-        for i in 0..NUM_JOINTS {
-            assert!((imported.targets[i]-DEFAULT_POSITION[i] - 0.5*(baseline.targets[i]-DEFAULT_POSITION[i])).abs()<1e-6);
-        }
-        controller.reset();
-        let standing = controller.step(&sensors, &Default::default(), false, 0.02, 1.0).unwrap();
-        assert_eq!(standing.pd, None, "a walk override must not leak into stand");
-        controller.set_model_control(Net::Stand, Some(c));
-        controller.reset();
-        let standing = controller.step(&sensors, &Default::default(), false, 0.02, 1.0).unwrap();
-        assert_eq!(standing.pd, Some([60.25, 1.234]), "standing ratio must not multiply explicit gains");
-        controller.set_model_control(Net::Walk, None);
-        assert_eq!(controller.model_control(Net::Walk), None);
-    }
-
 }

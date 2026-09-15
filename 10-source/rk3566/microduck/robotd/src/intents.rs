@@ -164,6 +164,8 @@ pub struct Intents {
     sources: ArcSwap<ControlSources>,
     // Serializes only IPC writers; the real-time loop reads the ArcSwap without a lock.
     source_writer: std::sync::Mutex<()>,
+    /// The modal Y-button state reported by `padd`.
+    gamepad_head_mode: AtomicBool,
     head: ArcSwap<Stamped<[f64; 4]>>,
     /// Standing body pose. Unstamped: `active: false` is its own "nobody is posing".
     pose: ArcSwap<PoseIntent>,
@@ -258,6 +260,7 @@ impl Intents {
             }),
             sources: ArcSwap::from_pointee(ControlSources::default()),
             source_writer: std::sync::Mutex::new(()),
+            gamepad_head_mode: AtomicBool::new(false),
             head: ArcSwap::from_pointee(Stamped {
                 value: [0.0; 4],
                 at_us: 0,
@@ -304,7 +307,12 @@ impl Intents {
         let source = params.source.unwrap_or(before);
         if let Some(available) = params.source_available {
             match source {
-                ControlSource::Gamepad => sources.gamepad = available,
+                ControlSource::Gamepad => {
+                    sources.gamepad = available;
+                    if !available {
+                        self.gamepad_head_mode.store(false, Ordering::Relaxed);
+                    }
+                }
                 ControlSource::Bluetooth => {
                     sources.bluetooth = available;
                     if !available {
@@ -313,6 +321,11 @@ impl Intents {
                 }
                 _ => {}
             }
+        }
+        if source == ControlSource::Gamepad
+            && let Some(head_mode) = params.head_mode
+        {
+            self.gamepad_head_mode.store(head_mode, Ordering::Relaxed);
         }
         if params.select_source {
             match source {
@@ -365,6 +378,10 @@ impl Intents {
 
     pub fn gamepad_available(&self) -> bool {
         self.sources.load().gamepad
+    }
+
+    pub fn gamepad_head_mode(&self) -> bool {
+        self.gamepad_available() && self.gamepad_head_mode.load(Ordering::Relaxed)
     }
 
     pub fn bluetooth_available(&self) -> bool {
@@ -931,6 +948,39 @@ mod tests {
             snap.twist_age >= Duration::from_millis(5),
             "a head write must not refresh the twist's deadman clock"
         );
+    }
+
+    #[test]
+    fn gamepad_head_mode_is_explicit_and_disconnect_clears_it() {
+        use duck_ipc_proto::{ControlSource, MoveParams};
+
+        let intents = Intents::new();
+        intents.apply_move(&MoveParams {
+            source: Some(ControlSource::Gamepad),
+            source_available: Some(true),
+            ..MoveParams::default()
+        });
+        intents.apply_move(&MoveParams {
+            source: Some(ControlSource::Gamepad),
+            head_mode: Some(true),
+            ..MoveParams::default()
+        });
+        assert!(intents.gamepad_head_mode());
+
+        // A non-gamepad client cannot spoof the pad's modal state.
+        intents.apply_move(&MoveParams {
+            source: Some(ControlSource::Drag),
+            head_mode: Some(false),
+            ..MoveParams::default()
+        });
+        assert!(intents.gamepad_head_mode());
+
+        intents.apply_move(&MoveParams {
+            source: Some(ControlSource::Gamepad),
+            source_available: Some(false),
+            ..MoveParams::default()
+        });
+        assert!(!intents.gamepad_head_mode());
     }
 
     /// The age is what the deadman reads, so a fresh write has to visibly reset it.

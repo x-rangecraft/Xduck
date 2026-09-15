@@ -43,6 +43,11 @@ def neutral_frame(sequence):
             "head": [0.0] * 4,
             "body": [0.0] * 3,
         },
+        "policy_context": {
+            "action": "walk",
+            "phase": None,
+            "body_active": False,
+        },
     }
 
 

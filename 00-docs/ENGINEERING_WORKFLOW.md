@@ -41,7 +41,7 @@
 | Android SDK/JDK/Gradle 与构建缓存 | `20-build/android/` |
 | Android APK 与校验清单 | `30-artifacts/android/` |
 | Android 构建/测试日志 | `50-logs/{build,test}/android/` |
-| 策略模型管理/转换源码 | 两文件策略由 `robotd/src/models.rs`、`custom_policy.rs` 与 `custom_policy_worker.py` 管理；仅供研发分发、不上传板端的自包含资料包位于 `00-docs/XDUCK_POLICY_SDK/`；兼容权重转换保留 `model_import.py`；IPC 由 `duck-ipc-proto` 定义，Web 面板由 `mediad` 提供 |
+| 策略模型管理/转换源码 | 唯一的两文件策略路径由 `robotd/src/models.rs`、`custom_policy.rs`、`custom_policy_worker.py` 与 `default_*_policy.py` 槽位默认消费者管理；网页上传 `.pt/.pth/.onnx` 模型并可选上传策略代码，缺省时按目标槽位写入对应默认消费者；旧单文件清单会在启动时原子迁移并绑定默认策略，不再保留单文件导入或运行分支；仅供研发分发、不上传板端的自包含资料包位于 `00-docs/XDUCK_POLICY_SDK/`；兼容权重转换保留 `model_import.py`；IPC 由 `duck-ipc-proto` 定义，Web 面板由 `mediad` 提供 |
 | 模型导入回归工具与日志 | `60-tools/test-model-import.py`、`test-web-models.cjs`；`50-logs/test/model-*` |
 | 电机实验接口 | `robotd/src/experiment.rs` 为控制与数据所有者；`mediad/src/experiment_tasks_http.rs` 提供 HTTP 适配；文档和 PC 示例统一位于 `mediad/webclient/motor-experiment/`；`robotd/src/experiment_tasks.rs` 管理预上传任务、固定缓冲执行和 `/var/lib/robotd/experiments/` 持久数据，`mediad/src/experiment_tasks_http.rs` 只流式转发文件。任务结果由电脑下载校验后显式删除；同目录 `joint_sine_sweep.py` 为离线正弦扫描任务生成示例 |
 | 策略实验接口 | `robotd/src/policy_experiment.rs` 管理初始化、只推理/闭环执行、固定缓冲记录和 `/var/lib/robotd/policy-experiments/` 结果；`mediad/src/policy_experiment_http.rs` 提供 HTTP 适配，文档和 PC 示例位于 `mediad/webclient/policy-experiment/`。`robotd/src/control_owner.rs` 是策略导入、电机实验和策略实验的唯一互斥仲裁器；占用期间只开放状态读取、所属操作管理、放松和关机 |
@@ -71,7 +71,9 @@
 | 部署日志 | `/home/xduck1/xrange/50-logs/deploy/rk3566/microduck/` |
 | 板端构建工具 | `/home/xduck1/xrange/60-tools/` |
 
-部署后的策略覆盖文件、两条 ONNX 历史和原子清单由 `robotd` 单独写入 `/var/lib/robotd/policies/`（`StateDirectory=robotd`）。不得覆盖发布包中的原始 ONNX。模型导入转换器和两文件策略运行环境固定在 `/var/lib/robotd/model-python/`，由已授权部署时运行 `scripts/setup-model-import.sh` 安装；它是部署运行依赖，不属于工程编译缓存。`ROBOT_MODEL_PYTHON` 可显式指定其他受管理的 Python。两文件策略必须通过 `bubblewrap` 与 `setpriv` 以 `robot-policy` 用户在无网络、无硬件设备、只读主机文件系统和资源限制下运行；目标机缺少任一工具时部署和策略加载均须失败。模型替换与回滚只能由控制循环在放松且最新 STM32 反馈确认全部配置电机失能时执行。每个兼容旧版导入在同一清单中绑定 Kp、Kd 与动作缩放，切换/回滚一并恢复；两文件版本的逐关节 MIT 参数由 policy.py 每帧提供并经过平台硬边界校验。`duck-control` 在每帧目标中承载这些参数，未绑定的旧版本继续使用原程序参数。
+部署后的策略覆盖文件、两条 ONNX 历史和原子清单由 `robotd` 单独写入 `/var/lib/robotd/policies/`（`StateDirectory=robotd`）。不得覆盖发布包中的原始 ONNX。所有配置内置 ONNX、已有单文件版本和新导入模型都必须持久化为 `<id>-model.onnx` + `<id>-policy.py` 并只通过两文件运行器消费；旧清单在启动时复制为上述命名、按槽位绑定内置默认消费者并原子更新清单，清单落盘后删除不再引用的旧 `<id>.onnx`。已有清单中由 robotd 标记为“默认”的平台消费文件按槽位原子升级到当前 API v2 默认代码；用户上传文件不自动改写。网页只提供双文件事务，接受 `.pt/.pth/.onnx` 模型；前两者仍在 RK3566 转换，策略代码可选，省略时按目标槽位使用并持久化对应 `default_*_policy.py`，网页成功发起一次导入后必须清空自定义策略选择，使下一次恢复默认。模型导入转换器和两文件策略运行环境固定在 `/var/lib/robotd/model-python/`，由已授权部署时运行 `scripts/setup-model-import.sh` 安装；它是部署运行依赖，不属于工程编译缓存。`ROBOT_MODEL_PYTHON` 可显式指定其他受管理的 Python。两文件策略必须通过 `bubblewrap` 与 `setpriv` 以 `robot-policy` 用户在无网络、无硬件设备、只读主机文件系统和资源限制下运行；目标机缺少任一工具时部署和策略加载均须失败。策略接口只接受 API v2：robotd 传递平台门禁与平滑后的基础命令，以及 `policy_context={action,phase,body_active}`；模型 Obs 编码只由版本化 `policy.py` 决定。模型替换与回滚只能由控制循环在放松且最新 STM32 反馈确认全部配置电机失能时执行。逐关节 MIT 参数由 `policy.py` 每帧提供并经过平台硬边界校验，`duck-control` 在每帧目标中承载这些参数。
+
+Walk/Stand 同时存在时为共享消费组：一个隔离 Python 进程预加载两个 ONNX，共用一份 `policy.py`、一个 Policy 实例及其反馈/滤波状态，每周期仅推理选中的模型。上传或回滚任一侧，另一侧 ONNX 保持不变但同步消费文件；联合校验和交替预热通过后，两侧记录用同一次清单提交原子更新。版本可引用已存在的不可变 ONNX 和共享 `<id>-policy.py`，不要求所引用文件 ID 与版本 ID 相同；按所有活动/历史记录的引用判断清理，禁止删除仍被另一侧引用的文件。旧消费文件只有内容相同时才合并，内容不同时拒绝共享加载。其他技能保持独立运行器与 reset-on-enter。该规则是上节逐模型文件描述在走/站组上的补充。
 
 ## 3. RK3566 固定身份与 SSH 配置
 

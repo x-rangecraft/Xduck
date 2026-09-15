@@ -1,4 +1,4 @@
-use duck_control::{Command, MitTarget, Sensors, JOINT_NAMES, NUM_JOINTS};
+use duck_control::{Command, MitTarget, Sensors, JOINT_NAMES, NUM_JOINTS, policy::Net};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::{
@@ -35,6 +35,7 @@ struct Frame<'a> {
     attitude_rpy: &'a [f64; 3],
     imu: Imu<'a>,
     command: PolicyCommand<'a>,
+    policy_context: PolicyContext,
 }
 
 #[derive(Serialize)]
@@ -49,6 +50,36 @@ struct PolicyCommand<'a> {
     twist: &'a [f64; 3],
     head: &'a [f64; 4],
     body: [f64; 3],
+}
+
+/// Scheduler state supplied to policy.py without imposing any model-observation layout.
+///
+/// `command` remains the platform-gated base intent.  The consumer combines it with this
+/// context if its model needs an action-specific encoding (for example ground-pick phase or
+/// the sit/rise flag).  It is deliberately metadata, not a prebuilt command observation.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+pub struct PolicyContext {
+    pub action: &'static str,
+    pub phase: Option<f64>,
+    pub body_active: bool,
+}
+
+impl PolicyContext {
+    pub const fn new(action: &'static str, phase: Option<f64>, body_active: bool) -> Self {
+        Self { action, phase, body_active }
+    }
+
+    fn warmup(net: Net) -> Self {
+        match net {
+            Net::Walk => Self::new("walk", None, false),
+            Net::Stand => Self::new("stand", None, false),
+            Net::SitStand => Self::new("sit", None, false),
+            Net::GroundPick => Self::new("ground_pick", Some(0.0), false),
+            Net::KickLeft => Self::new("kick_left", None, false),
+            Net::KickRight => Self::new("kick_right", None, false),
+            Net::Roulade => Self::new("roulade", None, false),
+        }
+    }
 }
 
 #[derive(Deserialize)]
@@ -91,7 +122,15 @@ pub struct CustomPolicy {
 }
 
 impl CustomPolicy {
-    pub fn load(policy: &Path, model: &Path) -> Result<Self, String> {
+    pub fn load(policy: &Path, model: &Path, net: Net) -> Result<Self, String> {
+        Self::load_models(policy, &[(net, model)])
+    }
+
+    pub fn load_pair(policy: &Path, walk: &Path, stand: &Path) -> Result<Self, String> {
+        Self::load_models(policy, &[(Net::Walk, walk), (Net::Stand, stand)])
+    }
+
+    fn load_models(policy: &Path, models: &[(Net, &Path)]) -> Result<Self, String> {
         let (worker_uid, worker_gid) = policy_identity()?;
         let python = std::env::var_os("ROBOT_POLICY_PYTHON")
             .or_else(|| std::env::var_os("ROBOT_MODEL_PYTHON"))
@@ -149,12 +188,18 @@ impl CustomPolicy {
             .arg(python)
             .args(["-I", "-u", "-c", include_str!("custom_policy_worker.py")])
             .arg(policy)
-            .arg(model)
+            .args(models.iter().map(|(_, path)| path))
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit())
             .env_clear()
             .env("PYTHONDONTWRITEBYTECODE", "1")
+            // Each skill (or shared walk/stand group) owns a worker. Keep libraries single-threaded so
+            // their aggregate thread count stays inside the shared robot-policy RLIMIT_NPROC.
+            .env("OPENBLAS_NUM_THREADS", "1")
+            .env("OMP_NUM_THREADS", "1")
+            .env("MKL_NUM_THREADS", "1")
+            .env("NUMEXPR_NUM_THREADS", "1")
             .current_dir("/");
         unsafe {
             child.pre_exec(|| {
@@ -198,23 +243,38 @@ impl CustomPolicy {
         policy.period_s = policy.contract.get("period_us").and_then(Value::as_u64)
             .ok_or("策略契约缺少 period_us")? as f64 / 1_000_000.0;
         let sensors = Sensors::default();
-        policy.reset(&sensors)?;
+        let first_context = PolicyContext::warmup(models[0].0);
+        policy.reset(&sensors, first_context)?;
         let warmup_dt = policy.period_s;
+        let slots: Vec<_> = if models.len() == 2 {
+            vec![("walk", PolicyContext::warmup(Net::Walk)),
+                 ("stand", PolicyContext::warmup(Net::Stand))]
+        } else if models[0].0 == Net::SitStand {
+            vec![("default", PolicyContext::new("sit", None, false)),
+                 ("default", PolicyContext::new("rise", None, false))]
+        } else if models[0].0 == Net::GroundPick {
+            vec![("default", PolicyContext::new("ground_pick", Some(0.0), false)),
+                 ("default", PolicyContext::new("ground_pick", Some(0.25), false))]
+        } else {
+            vec![("default", first_context)]
+        };
         for _ in 0..3 {
-            policy.step(&sensors, &Command::default(), warmup_dt)?;
+            for (slot, context) in &slots {
+                policy.step_model(&sensors, &Command::default(), *context, warmup_dt, slot)?;
+            }
         }
-        policy.reset(&sensors)?;
+        policy.reset(&sensors, first_context)?;
         Ok(policy)
     }
 
     pub fn contract(&self) -> &Value { &self.contract }
 
-    pub fn reset(&mut self, sensors: &Sensors) -> Result<(), String> {
+    fn reset(&mut self, sensors: &Sensors, context: PolicyContext) -> Result<(), String> {
         self.sequence = 0;
         self.elapsed_s = 0.0;
         self.last_output = None;
         let command = Command::default();
-        let frame = self.frame(sensors, &command, 0.02);
+        let frame = self.frame(sensors, &command, context, 0.02);
         self.transact(json!({"action":"reset", "frame":frame}), RESET_TIMEOUT)?;
         self.needs_reset = false;
         Ok(())
@@ -222,10 +282,14 @@ impl CustomPolicy {
 
     pub fn mark_reset(&mut self) { self.needs_reset = true; }
 
-    pub fn step(&mut self, sensors: &Sensors, command: &Command, dt: f64) -> Result<CustomOutput, String> {
+    pub fn step(&mut self, sensors: &Sensors, command: &Command, context: PolicyContext, dt: f64) -> Result<CustomOutput, String> {
+        self.step_model(sensors, command, context, dt, "default")
+    }
+
+    pub fn step_model(&mut self, sensors: &Sensors, command: &Command, context: PolicyContext, dt: f64, model: &str) -> Result<CustomOutput, String> {
         if self.needs_reset {
             self.sequence = 0;
-            let frame = self.frame(sensors, command, dt);
+            let frame = self.frame(sensors, command, context, dt);
             self.transact(json!({"action":"reset", "frame":frame}), STEP_TIMEOUT)?;
             self.needs_reset = false;
             self.elapsed_s = 0.0;
@@ -239,8 +303,8 @@ impl CustomPolicy {
         }
         self.elapsed_s = (self.elapsed_s - self.period_s).max(0.0);
         self.sequence = self.sequence.wrapping_add(1);
-        let frame = self.frame(sensors, command, dt);
-        let reply = self.transact(json!({"action":"step", "frame":frame}), STEP_TIMEOUT)?;
+        let frame = self.frame(sensors, command, context, dt);
+        let reply = self.transact(json!({"action":"step", "model":model, "frame":frame}), STEP_TIMEOUT)?;
         if !reply.ready {
             return Err(reply.reason.unwrap_or_else(|| "策略尚未就绪".into()));
         }
@@ -267,7 +331,7 @@ impl CustomPolicy {
         Ok(output)
     }
 
-    fn frame<'a>(&self, sensors: &'a Sensors, command: &'a Command, dt: f64) -> Frame<'a> {
+    fn frame<'a>(&self, sensors: &'a Sensors, command: &'a Command, context: PolicyContext, dt: f64) -> Frame<'a> {
         Frame {
             sequence: self.sequence,
             gateway_tick_ms: sensors.gateway_tick_ms,
@@ -286,6 +350,7 @@ impl CustomPolicy {
                 head: &command.head,
                 body: [command.body.z, command.body.roll, command.body.pitch],
             },
+            policy_context: context,
         }
     }
 

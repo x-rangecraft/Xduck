@@ -25,8 +25,10 @@ struct Inner {
     task_id: Option<String>,
     run_token: Option<String>,
     stopping: bool,
-    ready_at: Option<Instant>,
+    ready_at: Option<(Instant, NormalState)>,
     disable_attempt: Option<Instant>,
+    stop_at: Option<Instant>,
+    disable_on_stop: bool,
     error: Option<String>,
     outcome: String,
     running: bool,
@@ -37,6 +39,13 @@ pub struct Experiment {
     pub hz: u32,
     store: OnceLock<Result<Arc<Store>, String>>,
     owner: Arc<ControlOwner>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NormalState {
+    Relaxed,
+    Initialized,
+    Unavailable,
 }
 impl Default for Experiment {
     fn default() -> Self {
@@ -49,6 +58,8 @@ impl Default for Experiment {
                 stopping: false,
                 ready_at: None,
                 disable_attempt: None,
+                stop_at: None,
+                disable_on_stop: false,
                 error: None,
                 outcome: "stopped".into(),
                 running: false,
@@ -76,16 +87,33 @@ impl Experiment {
     pub fn active(&self) -> bool {
         self.inner.lock().unwrap().owned
     }
-    pub fn stop(&self, reason: &str) {
-        self.halt("stopped", reason)
+    pub fn returning_home(&self) -> bool {
+        let g = self.inner.lock().unwrap();
+        g.owned && g.stopping && !g.disable_on_stop
     }
-    fn halt(&self, state: &str, reason: &str) {
+    pub fn stop(&self, reason: &str) {
+        self.halt("stopped", reason, false)
+    }
+    pub fn abort(&self, reason: &str) {
+        self.halt("stopped", reason, true)
+    }
+    fn halt(&self, state: &str, reason: &str, disable: bool) {
         let mut g = self.inner.lock().unwrap();
-        if !g.owned || g.stopping {
+        if !g.owned {
+            return;
+        }
+        if g.stopping {
+            if disable {
+                g.disable_on_stop = true;
+                g.outcome = state.into();
+                g.error = Some(reason.into());
+            }
             return;
         }
         g.stopping = true;
         g.disable_attempt = None;
+        g.stop_at = Some(Instant::now());
+        g.disable_on_stop = disable;
         g.ready_at = None;
         g.error = Some(reason.into());
         g.outcome = state.into();
@@ -94,7 +122,7 @@ impl Experiment {
         &self,
         p: &ExperimentParams,
         cfg: &Config,
-        normal_enabled: bool,
+        _normal_enabled: bool,
     ) -> Result<Value, String> {
         if !matches!(p, ExperimentParams::Capabilities {}) {
             return Err("task operation requires async IPC handler".into());
@@ -103,9 +131,11 @@ impl Experiment {
         let g = self.inner.lock().unwrap();
         let current=g.latest.as_ref().filter(|(_,t)|t.elapsed()<Duration::from_millis(100)).map(|(s,_)|STM32_MOTOR_IDS.iter().zip(STM32_TO_CONTROL_JOINT).filter(|(id,_)|**id!=0).map(|(&id,j)|json!({"motor_id":id,"p":s.positions[j],"v":s.velocities[j],"flags":s.motor_flags[j],"temperature_c":s.motor_temperatures_c[j]})).collect::<Vec<_>>());
         Ok(
-            json!({"version":3,"mode":"uploaded_tasks","period_ms":20,"task_id":g.task_id,"active":g.owned,"running":g.running,"stopping":g.stopping,"last_error":g.error,
+            json!({"version":4,"mode":"uploaded_tasks","period_ms":20,"task_id":g.task_id,"active":g.owned,"running":g.running,"stopping":g.stopping,"last_error":g.error,
             "control_owner":control_owner,
-            "ready":!normal_enabled&&!g.owned&&g.ready_at.is_some_and(|t|t.elapsed()<Duration::from_millis(100)),
+            "ready":!g.owned&&g.ready_at.is_some_and(|(t,_)|t.elapsed()<Duration::from_millis(100)),
+            "start_states":["relaxed","initialized"],
+            "end_behavior":"return_to_initialized_home","fault_behavior":"disable_all",
             "disconnect_policy":"continue","enable_scope":"all_configured","unselected":"zero_gains_velocity_and_feedforward","current_motors":current,
             "motors":cfg.limits.iter().map(|l|{let (v,t)=motor_command_bounds(l.motor_id).unwrap();json!({"motor_id":l.motor_id,"p_min":(l.min_rad*1000.0).ceil()/1000.0,"p_max":(l.max_rad*1000.0).floor()/1000.0,"v_max":v,"tau_max":t,"kp_min":0,"kp_max":500,"kd_min":0,"kd_max":5})}).collect::<Vec<_>>()}),
         )
@@ -133,7 +163,7 @@ impl Experiment {
         &self,
         p: &Task,
         cfg: &Config,
-        normal_enabled: bool,
+        _normal_enabled: bool,
     ) -> Result<Value, String> {
         let store = self.store()?;
         match p {
@@ -176,17 +206,17 @@ impl Experiment {
                 // the robot unowned rather than wedged in a task with no usable stop token.
                 let run_token = experiment_tasks::random_id()?;
                 self.owner.acquire(Owner::MotorExperiment)?;
-                {
+                let already_enabled = {
                     let mut g = self.inner.lock().unwrap();
                     if g.owned
-                        || normal_enabled
                         || !g
                             .ready_at
-                            .is_some_and(|t| t.elapsed() < Duration::from_millis(100))
+                            .is_some_and(|(t,_)| t.elapsed() < Duration::from_millis(100))
                     {
                         self.owner.release(Owner::MotorExperiment);
-                        return Err("busy or not relaxed with fresh disabled feedback".into());
+                        return Err("busy or no fresh healthy relaxed/initialized feedback".into());
                     }
+                    let already_enabled = g.ready_at.is_some_and(|(_, state)| state == NormalState::Initialized);
                     g.owned = true;
                     g.task_id = Some(id.clone());
                     g.run_token = Some(run_token.clone());
@@ -195,7 +225,10 @@ impl Experiment {
                     g.error = None;
                     g.ready_at = None;
                     g.disable_attempt = None;
-                }
+                    g.stop_at = None;
+                    g.disable_on_stop = false;
+                    already_enabled
+                };
                 let run = match store.prepare(id, cfg, self.hz) {
                     Ok(r) => r,
                     Err(e) => {
@@ -210,7 +243,7 @@ impl Experiment {
                 };
                 let mut g = self.inner.lock().unwrap();
                 g.task = Some(run);
-                Ok(json!({"id":id,"state":"preparing","enabled":false,"run_token":run_token}))
+                Ok(json!({"id":id,"state":"preparing","enabled":already_enabled,"run_token":run_token}))
             }
         }
     }
@@ -219,7 +252,7 @@ impl Experiment {
         safety: &mut Safety<T>,
         fresh: Option<&Sensors>,
         cfg: &Config,
-        normal_idle: bool,
+        normal_state: NormalState,
         tick: u64,
         time_us: u64,
     ) -> bool {
@@ -232,12 +265,12 @@ impl Experiment {
             let mut g = self.inner.lock().unwrap();
             g.latest = fresh.map(|s| (*s, Instant::now()));
             if !g.owned {
-                g.ready_at =
-                    if normal_idle && healthy && fresh.is_some_and(configured_motors_disabled) {
-                        Some(Instant::now())
-                    } else {
-                        None
-                    };
+                let ready = healthy && match normal_state {
+                    NormalState::Relaxed => fresh.is_some_and(configured_motors_disabled),
+                    NormalState::Initialized => safety.motor_torque_enabled() == Some(true),
+                    NormalState::Unavailable => false,
+                };
+                g.ready_at = ready.then(|| (Instant::now(), normal_state));
                 return false;
             }
             g.ready_at = None;
@@ -246,11 +279,8 @@ impl Experiment {
             };
             run
         };
-        if !healthy || !normal_idle {
-            self.halt(
-                "failed",
-                "feedback/IMU fault or normal controller not relaxed",
-            )
+        if !healthy {
+            self.halt("failed", "feedback, IMU or motor control fault", true)
         }
         if !self.inner.lock().unwrap().stopping {
             if let Err(e) = self.execute(
@@ -262,10 +292,38 @@ impl Experiment {
                 time_us,
                 entered,
             ) {
-                self.halt("failed", &e)
+                self.halt("failed", &e, true)
             }
         }
         if self.inner.lock().unwrap().stopping {
+            let (disable_on_stop, timed_out) = {
+                let g = self.inner.lock().unwrap();
+                (g.disable_on_stop, g.stop_at.is_some_and(|at| at.elapsed() >= Duration::from_secs(10)))
+            };
+            if run.armed && !disable_on_stop && !timed_out {
+                if at_home(fresh.unwrap(), &cfg.home) {
+                    let mut g = self.inner.lock().unwrap();
+                    g.running = false;
+                    run.finish(&g.outcome, g.error.as_deref().unwrap_or("stopped"), false, true);
+                    g.owned = false;
+                    g.task_id = None;
+                    g.run_token = None;
+                    g.stopping = false;
+                    g.stop_at = None;
+                    self.owner.release(Owner::MotorExperiment);
+                } else {
+                    self.inner.lock().unwrap().task = Some(run);
+                }
+                // The ordinary initialized hold writes the saved home pose while the lease
+                // remains held. It is the same target and gain path as robot.init.
+                return false;
+            }
+            if timed_out && !disable_on_stop {
+                let mut g = self.inner.lock().unwrap();
+                g.disable_on_stop = true;
+                g.outcome = "failed".into();
+                g.error = Some("return to initialized home pose timed out; motors disabled".into());
+            }
             let due = {
                 let mut g = self.inner.lock().unwrap();
                 let due = g
@@ -284,11 +342,12 @@ impl Experiment {
             let mut g = self.inner.lock().unwrap();
             g.running = false;
             if disabled.is_ok() && fresh.is_some_and(configured_motors_disabled) {
-                run.finish(&g.outcome, g.error.as_deref().unwrap_or("stopped"), true);
+                run.finish(&g.outcome, g.error.as_deref().unwrap_or("stopped"), true, false);
                 g.owned = false;
                 g.task_id = None;
                 g.run_token = None;
                 g.stopping = false;
+                g.stop_at = None;
                 self.owner.release(Owner::MotorExperiment);
                 return true;
             }
@@ -342,12 +401,13 @@ impl Experiment {
             }
         }
         if starting {
-            if !configured_motors_disabled(sensors) {
-                return Err("start requires all motors disabled".into());
-            }
             // Validate the saved calibration signature before enabling, not only before writes.
             run.check_config(cfg)?;
-            safety.set_torque(true).map_err(|e| e.to_string())?;
+            if configured_motors_disabled(sensors) {
+                safety.set_torque(true).map_err(|e| e.to_string())?;
+            } else if safety.motor_torque_enabled() != Some(true) {
+                return Err("start requires consistently enabled or disabled motor feedback".into());
+            }
             self.inner.lock().unwrap().running = true;
             // Enabling is a synchronous admin transaction and ends at an arbitrary point inside
             // robotd's already-running 50 Hz period. Starting the task clock here permanently
@@ -360,7 +420,7 @@ impl Experiment {
             return Ok(());
         }
         let Some((row, advance)) = run.next(cfg, safety.state_frames_pace_control())? else {
-            self.halt("completed", "task duration completed");
+            self.halt("completed", "task duration completed", false);
             return Ok(());
         };
         for command in &row.motors {
@@ -404,6 +464,20 @@ impl Experiment {
     }
 }
 
+fn at_home(sensors: &Sensors, home: &[f64; duck_control::model::NUM_JOINTS]) -> bool {
+    let mut count = 0;
+    for (joint, &flags) in sensors.motor_flags.iter().enumerate() {
+        if flags & 1 == 0 { continue; }
+        count += 1;
+        if flags & 0x0f != 0x07 || sensors.motor_feedback_age_ms[joint] > 500
+            || !sensors.positions[joint].is_finite()
+            || (sensors.positions[joint] - home[joint]).abs() > 0.1 {
+            return false;
+        }
+    }
+    count > 0
+}
+
 #[cfg(test)]
 impl Experiment {
     pub(crate) fn claim_for_test(&self, cfg: &Config) -> tempfile::TempDir {
@@ -413,7 +487,7 @@ impl Experiment {
         let id = experiment_tasks::fixture(&store, cfg, 3, 0.0);
         // The fake has no background 50 Hz loop during filesystem fixture setup.
         assert!(self.inner.lock().unwrap().ready_at.is_some());
-        self.inner.lock().unwrap().ready_at = Some(Instant::now());
+        self.inner.lock().unwrap().ready_at = Some((Instant::now(), NormalState::Relaxed));
         self.task_request(&Task::Start { id }, cfg, false).unwrap();
         dir
     }
@@ -441,7 +515,7 @@ mod tests {
         }
         fn set_torque(&mut self, on: bool) -> Result<(), IoError> {
             self.0.lock().unwrap().enabled.push(on);
-            Ok(())
+            self.1.set_torque(on)
         }
         fn write_motor_commands(&mut self, _: &[MotorCommand]) -> Result<u16, IoError> {
             self.0.lock().unwrap().commands += 1;
@@ -449,6 +523,9 @@ mod tests {
         }
         fn slow_sensors(&mut self) -> Result<SlowSensors, IoError> {
             self.1.slow_sensors()
+        }
+        fn motor_torque_enabled(&self) -> Option<bool> {
+            self.0.lock().unwrap().enabled.last().copied()
         }
     }
     fn sample(enabled: bool) -> Sensors {
@@ -465,7 +542,7 @@ mod tests {
         let trace = Arc::new(Mutex::new(Trace::default()));
         let mut safety = Safety::new(Io(trace.clone(), FakeIo::new()), SafetyConfig::default());
         let cfg = Config::default();
-        e.tick(&mut safety, Some(&sample(false)), &cfg, true, 0, 0);
+        e.tick(&mut safety, Some(&sample(false)), &cfg, NormalState::Relaxed, 0, 0);
         (e, safety, trace, cfg)
     }
     #[test]
@@ -478,10 +555,39 @@ mod tests {
             e.task_request(&Task::Status { id }, &cfg, false).unwrap()["state"],
             "stopping"
         );
-        e.tick(&mut safety, Some(&sample(false)), &cfg, true, 1, 20_000);
+        e.tick(&mut safety, Some(&sample(false)), &cfg, NormalState::Relaxed, 1, 20_000);
         assert!(!e.active());
         assert_eq!(trace.lock().unwrap().enabled, vec![false]);
         assert_eq!(trace.lock().unwrap().commands, 0);
+    }
+    #[test]
+    fn initialized_robot_is_ready_and_start_does_not_reenable() {
+        let (e, mut safety, trace, cfg) = setup();
+        safety.set_torque(true).unwrap();
+        e.tick(
+            &mut safety,
+            Some(&sample(true)),
+            &cfg,
+            NormalState::Initialized,
+            1,
+            20_000,
+        );
+        assert_eq!(
+            e.request(&ExperimentParams::Capabilities {}, &cfg, true)
+                .unwrap()["ready"],
+            true
+        );
+        let _dir = e.claim_for_test(&cfg);
+        e.tick(
+            &mut safety,
+            Some(&sample(true)),
+            &cfg,
+            NormalState::Initialized,
+            2,
+            40_000,
+        );
+        assert_eq!(trace.lock().unwrap().enabled, vec![true]);
+        assert!(e.inner.lock().unwrap().running);
     }
     #[test]
     fn active_run_rejects_duplicate_start_and_foreign_stop() {
@@ -522,20 +628,28 @@ mod tests {
         assert_eq!(stopped["state"], "stopping");
     }
     #[test]
-    fn independent_task_finishes_without_network_and_waits_for_disable_feedback() {
+    fn independent_task_finishes_without_network_and_returns_initialized() {
         let (e, mut safety, trace, cfg) = setup();
         let _dir = e.claim_for_test(&cfg);
-        e.tick(&mut safety, Some(&sample(false)), &cfg, true, 1, 20_000);
+        e.tick(&mut safety, Some(&sample(false)), &cfg, NormalState::Relaxed, 1, 20_000);
         assert_eq!(trace.lock().unwrap().enabled, vec![true]);
         assert_eq!(trace.lock().unwrap().commands, 0);
-        for i in 2..=5 {
+        for i in 2..=4 {
             std::thread::sleep(Duration::from_millis(20));
-            e.tick(&mut safety, Some(&sample(true)), &cfg, true, i, i * 20_000);
+            e.tick(&mut safety, Some(&sample(true)), &cfg, NormalState::Relaxed, i, i * 20_000);
         }
+        let mut away = sample(true);
+        away.positions = cfg.home;
+        away.positions[0] += 0.2;
+        std::thread::sleep(Duration::from_millis(20));
+        assert!(!e.tick(&mut safety, Some(&away), &cfg, NormalState::Initialized, 5, 100_000));
         assert!(e.active());
-        assert_eq!(trace.lock().unwrap().enabled, vec![true, false]);
-        e.tick(&mut safety, Some(&sample(false)), &cfg, true, 6, 120_000);
+        assert!(e.returning_home());
+        let mut homed = sample(true);
+        homed.positions = cfg.home;
+        assert!(!e.tick(&mut safety, Some(&homed), &cfg, NormalState::Initialized, 6, 120_000));
         assert!(!e.active());
+        assert_eq!(trace.lock().unwrap().enabled, vec![true]);
         assert_eq!(trace.lock().unwrap().commands, 3);
     }
     #[test]
@@ -553,7 +667,7 @@ mod tests {
                 &mut safety,
                 if missing { None } else { Some(&s) },
                 &cfg,
-                true,
+                NormalState::Relaxed,
                 1,
                 20_000,
             );

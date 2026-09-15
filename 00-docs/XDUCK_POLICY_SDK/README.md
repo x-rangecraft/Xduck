@@ -1,10 +1,10 @@
 # Xduck 两文件策略研发包
 
-这个目录是一套只保存在研发电脑、可以直接复制给同事的最小完整示例；它不随机器人发布包部署。需要通过网页上传到 Xduck 的只有：
+这个目录是一套只保存在研发电脑、可以直接复制给同事的最小完整示例；它不随机器人发布包部署。网页必须选择模型文件，策略代码可以留空：
 
 ```text
-policy.py    前处理、状态、后处理和逐关节 MIT 参数
-model.onnx   ONNX 网络
+policy.py    可选；前处理、状态、后处理和逐关节 MIT 参数
+model        `.pt/.pth` PPO checkpoint，或已有 `.onnx`
 ```
 
 其余文件用于本机验证：
@@ -33,7 +33,11 @@ python3 -m venv .venv
 .venv/bin/python validate.py policy.py model.onnx
 ```
 
-验证通过后，在 Xduck 网页的「策略模型 · 导入与回滚」中选择同一个目录里的 `policy.py` 与 `model.onnx`。机器人必须先放松，并由新鲜电机反馈确认所有电机实际失能。替换成功后仍保持失能，需要操作者重新初始化和使能。
+验证通过后，在 Xduck 网页的「策略模型 · 导入与回滚」中选择模型和这份 `policy.py`。如果不选择策略代码，robotd 会根据目标槽位写入对应的内置默认消费文件；本目录示例与 Walk/Stand 默认消费文件一致。Ground Pick、左右 Kick、Roulade 和 SitStand 各有独立默认消费文件，彼此不共享命令 Obs 语义。自定义选择在导入请求成功后自动清空，下一次重新使用对应槽位的默认策略。`.pt/.pth` 在 RK3566 上转换，已有 `.onnx` 直接校验。所有模型都以双文件版本运行，不再存在单文件导入或推理分支。机器人必须先放松，并由新鲜电机反馈确认所有电机实际失能。替换成功后仍保持失能，需要操作者重新初始化和使能。
+
+运行接口只支持 `api_version=2`，不兼容 v1。v1 消费文件会在加载和电机使能之前被明确拒绝。
+
+默认策略不做观测归一化。robotd 从带 RSL-RL normalizer 的 checkpoint 转换时，均值和标准差变换会嵌入生成的 ONNX；自行提供的 ONNX 也应包含训练所需的归一化，或者改用自定义策略显式实现。
 
 ## 2. Policy 类
 
@@ -55,9 +59,9 @@ class Policy:
 
 ```python
 return {
-    "api_version": 1,
+    "api_version": 2,
     "period_us": 20_000,
-    "required_sources": ["joints", "imu", "command"],
+    "required_sources": ["joints", "imu", "command", "policy_context"],
     "inputs": {
         "obs": {"dtype": "float32", "shape": [1, 61]},
     },
@@ -77,6 +81,10 @@ return {
 ### reset(robot_info, first_frame)
 
 每次导入预热结束、版本切换、模式切换或控制器复位时都会建立新的 `Policy` 实例并调用 `reset()`。`robot_info` 提供稳定关节名；`first_frame` 与正式帧结构相同。这里应初始化状态，不要重新加载模型或安装依赖。
+
+普通调度中，Walk、Stand 共用一个 `Policy` 实例和一个 `feedback`，两个 ONNX 常驻、每轮只选一个推理；切换不 reset，`self.last_action`、滤波和其他实例状态自然连续。上传或回滚任一侧会同步另一侧的消费文件（包含未选文件时的默认代码），但另一侧 ONNX 不变；两个模型须满足同一契约并交替预热通过后才原子更新。两侧各保留两条历史。不同代码的旧走/站组合不会被静默合并。相同代码不能验证训练时的单位、归一化与动作语义，作者仍需确认一致；自定义循环网络的 hidden state 也属于共享实例状态，不会由平台按模型切换自动清零。
+
+其他策略在每次进入的实际首帧前 reset，同一动作连续运行不重复 reset。坐下→起身、再次触发同一动作、连翻的下一圈和被打断后的重新进入都算新一轮。从其他技能返回走/站时不继承该技能状态。显式控制器复位仍重置全部策略。
 
 ### preprocess(frame, feedback)
 
@@ -131,11 +139,16 @@ return {
 | `imu.gyro` | 角速度，rad/s |
 | `imu.gravity` | 机体坐标重力方向 |
 | `imu.quat` | 姿态四元数 `[w,x,y,z]` |
-| `command.twist` | `[vx, vy, yaw_rate]` |
-| `command.head` | 4 维头部意图 |
-| `command.body` | `[z, roll, pitch]` |
+| `command.twist` | 平台限幅、deadman、平滑后的基础 `[vx, vy, yaw_rate]`；未按技能改写 |
+| `command.head` | 未按技能改写的 4 维头部意图 |
+| `command.body` | 未按技能改写的 `[z, roll, pitch]` |
+| `policy_context.action` | `walk/stand/ground_pick/kick_left/kick_right/roulade/sit/rise` |
+| `policy_context.phase` | Ground Pick 的归一化周期相位；其他动作固定为 `None` |
+| `policy_context.body_active` | 是否处于身体姿态控制模式 |
 
 完整数值结构可直接查看 `validate.py` 的 `neutral_frame()`。
+
+`policy_context` 是调度状态，不是 ONNX 输入，也不是预编码的 command Obs。消费文件自行选择是否读取这些字段，并自行决定怎样构造模型张量。默认消费者保持旧模型的编码：Walk/Stand 使用基础速度、头部和身体目标；Ground Pick 使用 `[cos(2πφ), sin(2πφ), 0]` 并清零其余命令；Kick/Roulade/Rise 全零；Sit 仅 `vx=1`。
 
 ## 4. 平台仍会拒绝的目标
 

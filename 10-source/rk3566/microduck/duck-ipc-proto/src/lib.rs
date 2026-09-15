@@ -174,7 +174,13 @@ pub const JSONRPC_VERSION: &str = "2.0";
 /// # v19 — controlled policy experiments
 /// `robot.policyExperiment` adds live inference-only and closed-loop experiment sessions;
 /// `robot.state.control_owner` reports the exclusive policy/motor operation lease.
-pub const API_VERSION: u32 = 19;
+/// # v20 — gamepad head-mode telemetry
+/// `robot.move.head_mode` lets `padd` report its Y-button mode explicitly, and
+/// `robot.state` adds that mode plus the four raw requested head-joint positions.
+/// # v21 — normal skills in controlled policy experiments
+/// Policy experiment segments can trigger the normal controller's sit/stand, ground-pick,
+/// kick and roulade state machines.
+pub const API_VERSION: u32 = 21;
 
 /// The longest an update may legitimately go quiet, in seconds — the pre-install hook's ceiling.
 ///
@@ -660,10 +666,23 @@ pub enum PolicyExperimentPolicy {
     Stand,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PolicyExperimentAction {
+    SitToggle,
+    GroundPick,
+    KickLeft,
+    KickRight,
+    Roulade,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PolicyExperimentSegment {
     pub duration_ms: u64,
+    /// Optional one-shot input to the normal skill scheduler at this segment's first frame.
+    #[serde(default)]
+    pub action: Option<PolicyExperimentAction>,
     #[serde(default)]
     pub twist: [f64; 3],
     #[serde(default)]
@@ -714,38 +733,23 @@ pub enum CalibrationParams {
     MarkZero { motor_id: u8 },
 }
 
-/// Control values bound to one imported policy version, shared by its controlled joints.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct ModelControl {
-    pub kp: f64,
-    pub kd: f64,
-    pub action_scale: f64,
-}
-impl ModelControl {
-    pub fn validate(&self) -> Result<(), &'static str> {
-        if !self.kp.is_finite() || !(0.0..=500.0).contains(&self.kp) {
-            return Err("Kp 必须是 0 至 500 的有限数值");
-        }
-        if !self.kd.is_finite() || !(0.0..=5.0).contains(&self.kd) {
-            return Err("Kd 必须是 0 至 5 的有限数值");
-        }
-        if !self.action_scale.is_finite() || self.action_scale <= 0.0 || self.action_scale > 5.0 {
-            return Err("动作缩放必须大于 0 且不超过 5");
-        }
-        Ok(())
-    }
-}
-
-/// Chunked policy imports. Paths are always resolved by robotd, never supplied by a peer.
+/// Chunked two-file policy imports. Paths are always resolved by robotd, never supplied by a peer.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ModelParams {
     List {},
-    Begin { slot: String, filename: String, size: usize, activation: String, normalizer_epsilon: f64, control: ModelControl },
-    Chunk { token: String, offset: usize, hex: String },
-    Finish { token: String },
-    BeginBundle { slot: String, policy_filename: String, policy_size: usize, model_filename: String, model_size: usize },
+    BeginBundle {
+        slot: String,
+        /// Omit both policy fields to bind robotd's built-in default policy.
+        policy_filename: Option<String>,
+        policy_size: Option<usize>,
+        model_filename: String,
+        model_size: usize,
+        /// Used only when a .pt/.pth model must be converted on the robot.
+        activation: Option<String>,
+        /// Used only when the checkpoint contains an observation normalizer.
+        normalizer_epsilon: Option<f64>,
+    },
     BundleChunk { token: String, file: String, offset: usize, hex: String },
     FinishBundle { token: String },
     /// Abandon an incomplete upload and release the exclusive policy-import lease.
@@ -1726,6 +1730,9 @@ pub struct MoveParams {
     pub release_source: bool,
     /// Availability transition for a hardware source.
     pub source_available: Option<bool>,
+    /// The gamepad's Y-button mode. Only meaningful with `source = gamepad`; other
+    /// control sources leave it absent.
+    pub head_mode: Option<bool>,
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -2806,7 +2813,14 @@ pub struct RobotState {
     pub t: f64,
     #[serde(rename = "move")]
     pub movement: MoveState,
+    /// Head command after safety gating and input smoothing.
     pub head: [f64; 4],
+    /// Raw requested `[neck_pitch, head_pitch, head_yaw, head_roll]`, radians.
+    #[serde(default)]
+    pub head_requested: [f64; 4],
+    /// Whether the connected gamepad is currently in its Y-button head mode.
+    #[serde(default)]
+    pub head_mode: bool,
     /// Which policy drove this tick: `walk`, `stand`, or `held` when none did.
     pub policy: String,
     /// Operator-facing control lifecycle, such as `relaxed`, `initializing`, `policy_on` or
@@ -4189,6 +4203,7 @@ mod tests {
             policy: PolicyExperimentPolicy::Walk,
             segments: vec![PolicyExperimentSegment {
                 duration_ms: 40,
+                action: Some(PolicyExperimentAction::KickLeft),
                 twist: [0.1, 0.0, 0.0],
                 head: [0.0; 4],
                 body: [0.0; 3],
@@ -4356,6 +4371,55 @@ mod tests {
             let mut value = call.params();
             value.as_object_mut().unwrap().insert("unknown".into(), Value::Bool(true));
             assert!(Call::parse(call.method(), Some(&value)).is_err());
+        }
+    }
+
+    #[test]
+    fn model_import_has_only_the_two_file_route_with_custom_or_default_policy() {
+        let custom: ModelParams = serde_json::from_value(serde_json::json!({
+            "action": "begin_bundle",
+            "slot": "walk",
+            "policy_filename": "policy.py",
+            "policy_size": 123,
+            "model_filename": "model.onnx",
+            "model_size": 456
+        }))
+        .unwrap();
+        assert!(matches!(
+            custom,
+            ModelParams::BeginBundle {
+                policy_filename: Some(_),
+                policy_size: Some(123),
+                activation: None,
+                normalizer_epsilon: None,
+                ..
+            }
+        ));
+
+        let built_in: ModelParams = serde_json::from_value(serde_json::json!({
+            "action": "begin_bundle",
+            "slot": "walk",
+            "model_filename": "model.pt",
+            "model_size": 789,
+            "activation": "elu",
+            "normalizer_epsilon": 0.01
+        }))
+        .unwrap();
+        assert!(matches!(
+            built_in,
+            ModelParams::BeginBundle {
+                policy_filename: None,
+                policy_size: None,
+                activation: Some(_),
+                normalizer_epsilon: Some(value),
+                ..
+            } if value == 0.01
+        ));
+
+        for action in ["begin", "chunk", "finish"] {
+            assert!(serde_json::from_value::<ModelParams>(serde_json::json!({
+                "action": action
+            })).is_err());
         }
     }
 
@@ -4795,6 +4859,8 @@ mod tests {
                 limited_by: Vec::new(),
             },
             head: [0.0; 4],
+            head_requested: [0.0; 4],
+            head_mode: false,
             policy: "stand".into(),
             control_state: "policy_on".into(),
             control_owner: None,
@@ -4868,6 +4934,8 @@ mod tests {
                 limited_by: vec!["deadman".into()],
             },
             head: [0.0; 4],
+            head_requested: [0.0; 4],
+            head_mode: true,
             policy: "walk".into(),
             control_state: "policy_on".into(),
             control_owner: None,
@@ -4906,6 +4974,8 @@ mod tests {
         assert!(line.contains(r#""method":"robot.state""#), "{line}");
         assert!(line.contains(r#""move":"#), "{line}");
         assert!(line.contains(r#""loop":"#), "{line}");
+        assert!(line.contains(r#""head_requested":[0.0,0.0,0.0,0.0]"#), "{line}");
+        assert!(line.contains(r#""head_mode":true"#), "{line}");
         assert!(!line.contains("movement"), "{line}");
         assert!(!line.contains("control_loop"), "{line}");
 

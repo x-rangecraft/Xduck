@@ -1,4 +1,4 @@
-"""Isolated JSON-lines worker for a user supplied policy.py and model.onnx."""
+"""Isolated policy worker; a locomotion pair shares one instance across two ONNX sessions."""
 import contextlib
 import importlib.util
 import json
@@ -50,8 +50,8 @@ def tensor_type(type_name):
 
 
 def validate_contract(contract, session):
-    if not isinstance(contract, dict) or contract.get("api_version") != 1:
-        raise ValueError("describe() 必须返回 api_version=1 的字典")
+    if not isinstance(contract, dict) or contract.get("api_version") != 2:
+        raise ValueError("describe() 必须返回 api_version=2；v1 不再受支持")
     if not isinstance(contract.get("period_us"), int) or not 20_000 <= contract["period_us"] <= 1_000_000:
         raise ValueError("period_us 必须是 20000 至 1000000 的整数；平台控制周期为 20 ms")
     controlled = contract.get("controlled_joints")
@@ -79,7 +79,37 @@ def validate_contract(contract, session):
     return contract
 
 
+def validate_frame(frame):
+    if not isinstance(frame, dict):
+        raise ValueError("frame 必须是字典")
+    command = frame.get("command")
+    if not isinstance(command, dict) or set(command) != {"twist", "head", "body"}:
+        raise ValueError("frame.command 必须恰好包含 twist/head/body 基础命令")
+    for name, width in (("twist", 3), ("head", 4), ("body", 3)):
+        values = command[name]
+        if not isinstance(values, list) or len(values) != width:
+            raise ValueError(f"frame.command.{name} 必须是 {width} 维列表")
+        if any(not isinstance(value, (int, float)) or isinstance(value, bool)
+               or not math.isfinite(value) for value in values):
+            raise ValueError(f"frame.command.{name} 必须只包含有限数值")
+    context = frame.get("policy_context")
+    if not isinstance(context, dict) or set(context) != {"action", "phase", "body_active"}:
+        raise ValueError("frame.policy_context 必须恰好包含 action/phase/body_active")
+    actions = {"walk", "stand", "ground_pick", "kick_left", "kick_right", "roulade", "sit", "rise"}
+    if context["action"] not in actions:
+        raise ValueError("frame.policy_context.action 未知")
+    if not isinstance(context["body_active"], bool):
+        raise ValueError("frame.policy_context.body_active 必须是布尔值")
+    phase = context["phase"]
+    if context["action"] == "ground_pick":
+        if not isinstance(phase, (int, float)) or isinstance(phase, bool) or not math.isfinite(phase):
+            raise ValueError("ground_pick 必须提供有限 phase")
+    elif phase is not None:
+        raise ValueError("只有 ground_pick 可以提供 phase")
+
+
 def make_instance(cls, expected_contract, frame):
+    validate_frame(frame)
     with contextlib.redirect_stdout(sys.stderr):
         instance = cls()
         contract = instance.describe()
@@ -108,6 +138,8 @@ def as_json(value):
 
 def run_step(instance, contract, session, frame, feedback):
     import numpy as np
+
+    validate_frame(frame)
 
     with contextlib.redirect_stdout(sys.stderr):
         inputs = instance.preprocess(frame, feedback)
@@ -160,11 +192,26 @@ def main():
     import onnxruntime as ort
 
     policy_cls = load_policy(sys.argv[1])
-    session = ort.InferenceSession(sys.argv[2], providers=["CPUExecutionProvider"])
+    options = ort.SessionOptions()
+    options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+    options.intra_op_num_threads = 1
+    options.inter_op_num_threads = 1
+    models = sys.argv[2:]
+    if len(models) not in (1, 2):
+        raise ValueError("worker requires one model or the walk/stand pair")
+    slots = ["default"] if len(models) == 1 else ["walk", "stand"]
+    sessions = {
+        slot: ort.InferenceSession(path, sess_options=options, providers=["CPUExecutionProvider"])
+        for slot, path in zip(slots, models)
+    }
     with contextlib.redirect_stdout(sys.stderr):
         probe = policy_cls()
         contract = probe.describe()
-    contract = validate_contract(contract, session)
+    for slot, session in sessions.items():
+        try:
+            validate_contract(contract, session)
+        except Exception as error:
+            raise ValueError(f"{slot} model is incompatible with the shared policy: {error}") from error
     json.dumps(contract, allow_nan=False)
     emit({"ok": True, "ready": True, "contract": contract})
 
@@ -181,6 +228,12 @@ def main():
             elif action == "step":
                 if instance is None:
                     raise ValueError("策略尚未 reset")
+                slot = request.get("model", "default")
+                if slot not in sessions:
+                    raise ValueError("未知策略模型槽位")
+                if slot in ("walk", "stand") and request["frame"]["policy_context"]["action"] != slot:
+                    raise ValueError("走/站模型选择必须与 policy_context.action 一致")
+                session = sessions[slot]
                 reply, feedback = run_step(instance, contract, session, request["frame"], feedback)
                 emit(reply)
             else:

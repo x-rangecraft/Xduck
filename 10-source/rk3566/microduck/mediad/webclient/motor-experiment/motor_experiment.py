@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Uploaded motor tasks v2. Python 3.10+, standard library; no real-time control API."""
+"""Uploaded motor tasks v4. Python 3.10+, standard library; no real-time control API."""
 import argparse
 import hashlib
 import http.client

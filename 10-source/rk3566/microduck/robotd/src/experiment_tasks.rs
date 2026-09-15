@@ -115,6 +115,8 @@ pub struct Meta {
     pub executed_frames: u64,
     pub reason: Option<String>,
     pub disabled_confirmed: bool,
+    #[serde(default)]
+    pub initialized_confirmed: bool,
     pub result_sha256: Option<String>,
     pub result_bytes: Option<u64>,
 }
@@ -156,6 +158,7 @@ impl Store {
                 m.state = "interrupted".into();
                 m.reason = Some("robotd restarted; task never resumes automatically".into());
                 m.disabled_confirmed = false;
+                m.initialized_confirmed = false;
                 store.save(&m)?;
                 store.package(&mut m)?;
             }
@@ -223,7 +226,7 @@ impl Store {
             .map(|m| self.status_unlocked(&m.id))
             .collect::<Result<Vec<_>>>()?;
         Ok(
-            json!({"tasks":rows,"limits":{"max_input_bytes":MAX_INPUT,"max_result_bytes":MAX_RESULT,"max_store_bytes":MAX_STORE,"max_tasks":MAX_TASKS,"max_duration_ms":1_800_000,"period_ms":20,"buffer_frames":BUFFER},"disconnect_policy":"continue","end_behavior":"disable_all"}),
+            json!({"tasks":rows,"limits":{"max_input_bytes":MAX_INPUT,"max_result_bytes":MAX_RESULT,"max_store_bytes":MAX_STORE,"max_tasks":MAX_TASKS,"max_duration_ms":1_800_000,"period_ms":20,"buffer_frames":BUFFER},"disconnect_policy":"continue","end_behavior":"return_to_initialized_home"}),
         )
     }
     fn status_unlocked(&self, id: &str) -> Result<Value> {
@@ -275,6 +278,7 @@ impl Store {
             executed_frames: 0,
             reason: None,
             disabled_confirmed: false,
+            initialized_confirmed: false,
             result_sha256: None,
             result_bytes: None,
         };
@@ -452,6 +456,8 @@ impl Store {
                     meta.state = "storage_failed".into();
                     meta.disabled_confirmed =
                         worker.finish.lock().unwrap().as_ref().is_some_and(|v| v.2);
+                    meta.initialized_confirmed =
+                        worker.finish.lock().unwrap().as_ref().is_some_and(|v| v.3);
                     let _ = store.save(&meta);
                     let _ = store.package(&mut meta);
                     *worker.meta.lock().unwrap() = meta;
@@ -462,6 +468,7 @@ impl Store {
             *shared.finish.lock().unwrap() = Some((
                 "failed".into(),
                 "task prefetch failed before control started".into(),
+                false,
                 false,
             ));
             return Err("task prefetch failed".into());
@@ -545,11 +552,13 @@ impl Store {
             "failed".into(),
             "execution handle disappeared".into(),
             false,
+            false,
         ));
         let mut m = shared.meta.lock().unwrap().clone();
         m.state = outcome.0;
         m.reason = Some(outcome.1);
         m.disabled_confirmed = outcome.2;
+        m.initialized_confirmed = outcome.3;
         self.save(&m)?;
         self.package(&mut m)?;
         *shared.meta.lock().unwrap() = m;
@@ -597,7 +606,7 @@ impl Store {
 pub struct RunShared {
     pub id: String,
     meta: Mutex<Meta>,
-    finish: Mutex<Option<(String, String, bool)>>,
+    finish: Mutex<Option<(String, String, bool, bool)>>,
     failure: Mutex<Option<String>>,
 }
 pub struct Run {
@@ -623,6 +632,7 @@ impl Drop for Run {
             *finish = Some((
                 "interrupted".into(),
                 "control handle dropped; no automatic resume".into(),
+                false,
                 false,
             ))
         }
@@ -702,8 +712,8 @@ impl Run {
         m.executed_frames = self.index;
         Ok(())
     }
-    pub fn finish(&mut self, state: &str, reason: &str, disabled: bool) {
-        *self.shared.finish.lock().unwrap() = Some((state.into(), reason.into(), disabled));
+    pub fn finish(&mut self, state: &str, reason: &str, disabled: bool, initialized: bool) {
+        *self.shared.finish.lock().unwrap() = Some((state.into(), reason.into(), disabled, initialized));
         self.shared.meta.lock().unwrap().state = "finalizing".into();
         self.records.take();
     }
@@ -818,7 +828,7 @@ mod tests {
         run.records = Some(tx);
         run.record(json!({"sample":1}), true).unwrap();
         assert!(run.record(json!({"sample":2}), true).is_err());
-        run.finish("failed", "test overflow", true);
+        run.finish("failed", "test overflow", true, false);
     }
     #[test]
     fn execution_waits_for_time_and_detects_late_local_ticks() {
@@ -830,7 +840,7 @@ mod tests {
         assert!(!run.next(&cfg, false).unwrap().unwrap().1);
         run.last_tick = Some(Instant::now() - Duration::from_millis(50));
         assert!(run.next(&cfg, false).unwrap_err().contains("40 ms"));
-        run.finish("failed", "test late tick", true);
+        run.finish("failed", "test late tick", true, false);
     }
     #[test]
     fn frame_paced_execution_advances_when_the_host_clock_is_slightly_early() {
@@ -847,7 +857,7 @@ mod tests {
         run.started = Some(Instant::now() - Duration::from_millis(101));
         assert_eq!(run.next(&cfg, true).unwrap().unwrap().0.at_ms, 40,
             "host clock drift must not reject a continuous hardware frame stream");
-        run.finish("completed", "test complete", true);
+        run.finish("completed", "test complete", true, false);
     }
     #[test]
     fn restart_marks_interrupted_and_never_resumes() {

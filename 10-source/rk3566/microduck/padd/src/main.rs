@@ -353,6 +353,7 @@ fn main() -> std::process::ExitCode {
             if let Err(e) = notify(&mut stream, &proto::Call::RobotMove(proto::MoveParams {
                 source: Some(proto::ControlSource::Gamepad),
                 source_available: Some(true),
+                head_mode: Some(mode == Mode::Head),
                 ..proto::MoveParams::default()
             })) {
                 tracing::error!(error = %e, "send failed");
@@ -370,6 +371,7 @@ fn main() -> std::process::ExitCode {
             tap.watch(&pad);
         }
 
+        let previous_mode = mode;
         if toggle_head {
             mode = if mode == Mode::Head {
                 Mode::Drive
@@ -395,6 +397,19 @@ fn main() -> std::process::ExitCode {
                     return std::process::ExitCode::FAILURE;
                 }
             }
+        }
+        if mode != previous_mode
+            && let Err(e) = notify(
+                &mut stream,
+                &proto::Call::RobotMove(proto::MoveParams {
+                    source: Some(proto::ControlSource::Gamepad),
+                    head_mode: Some(mode == Mode::Head),
+                    ..proto::MoveParams::default()
+                }),
+            )
+        {
+            tracing::error!(error = %e, "cannot publish gamepad mode");
+            return std::process::ExitCode::FAILURE;
         }
 
         // At most one centre-button posture request per tick. Relax wins if two buttons land

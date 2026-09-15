@@ -9,6 +9,8 @@ const end = html.indexOf('// ── looking', start);
 assert(start > 0 && end > start);
 const stateUpdate = html.match(/  const source = state\.control_source[\s\S]*?\$\("control-source"\)\.value = source;/)?.[0];
 assert(stateUpdate);
+const headStateUpdate = html.match(/  \$\("t-head-mode"\)\.textContent = state\.head_mode[\s\S]*?\$\("t-head-requested"\)\.textContent = `[^`]+`;/)?.[0];
+assert(headStateUpdate);
 const elements = new Map(), events = new Map(), timers = [], sent = [];
 function element(id) {
   if (!elements.has(id)) elements.set(id, {
@@ -32,6 +34,7 @@ const context = vm.createContext({
 });
 vm.runInContext(html.slice(start, end), context);
 const receiveState = vm.runInContext(`(state) => {${stateUpdate}}`, context);
+const receiveHeadState = vm.runInContext(`(state) => {${headStateUpdate}}`, context);
 function tick() { for (const fn of timers) fn(); }
 function key(name) { events.get('keydown')({key: name, target: {}, preventDefault() {}}); }
 const pointer = {pointerId: 1, clientX: 50, clientY: 0};
@@ -71,4 +74,10 @@ element('pad-move').listeners.pointerdown(pointer);
 tick();
 assert.equal(sent.length, before, 'browser cannot request a hardware control mode');
 assert(sent.every(({params}) => ['drag', 'keyboard'].includes(params.source)));
+receiveHeadState({head_mode: true, head_requested: [0.1, -0.2, 0.3, -0.4]});
+assert.equal(element('t-head-mode').textContent, '头部模式');
+assert.equal(element('t-head-requested').textContent, '颈俯仰 0.100 · 头俯仰 -0.200 · 头偏航 0.300 · 头横滚 -0.400 rad');
+receiveHeadState({head_mode: false});
+assert.equal(element('t-head-mode').textContent, '正常模式');
+assert.equal(element('t-head-requested').textContent, '颈俯仰 0.000 · 头俯仰 0.000 · 头偏航 0.000 · 头横滚 0.000 rad');
 console.log('PASS: web handoff clears held input; no stale motion or hardware source impersonation');

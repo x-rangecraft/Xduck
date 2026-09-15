@@ -45,7 +45,7 @@ use clap::{Parser, Subcommand};
 use duck_control::fall::{FallPredictor, FallPredictorConfig};
 use duck_control::io::RobotIo;
 use duck_control::obs::{BodyPose, Command as PolicyCommand};
-use duck_control::policy::{DEFAULT_STANDING_THRESHOLD, Policy, PolicyPaths};
+use duck_control::policy::{DEFAULT_STANDING_THRESHOLD, PolicyPaths};
 use duck_control::safety::{Safety, SafetyConfig};
 use duck_control::{DEFAULT_POSITION, FakeIo, NUM_JOINTS};
 use duck_ipc_proto as proto;
@@ -1310,14 +1310,14 @@ fn build_controller(
             state.policy_error.store(Some(Arc::new(error)));
             return None;
         }
-        match Policy::load(&paths, DEFAULT_STANDING_THRESHOLD) {
-            Ok(mut policy) => {
-                // Roller mode has no standing network — command magnitude stops selecting
-                // it. Nothing else reserves it: limp-fall hands back by *letting* the
-                // standing network be selected, which is what stands the robot up.
-                if policy_cfg.mode == Mode::Roller {
-                    policy.set_standing_disabled(true);
-                }
+        let mut controller = Controller::new(&paths, DEFAULT_STANDING_THRESHOLD, tuning, skills);
+        // Roller mode has no standing network — command magnitude stops selecting it. Nothing
+        // else reserves it: limp-fall hands back by explicitly selecting the standing slot.
+        if policy_cfg.mode == Mode::Roller {
+            controller.set_standing_disabled(true);
+        }
+        match state.models.restore_controls(&mut controller) {
+            Ok(()) => {
                 tracing::warn!(
                     mode = policy_cfg.mode.as_str(),
                     walk = %policy_cfg.walk.display(),
@@ -1327,17 +1327,14 @@ fn build_controller(
                     kicks = policy_cfg.kick_left.is_some() || policy_cfg.kick_right.is_some(),
                     roulade = ?policy_cfg.roulade.as_ref().map(|p| p.display().to_string()),
                     limp_fall,
-                    "policy loaded"
+                    "two-file policies loaded"
                 );
-                {
-                    let mut controller = Controller::new(policy, tuning, skills);
-                    state.models.restore_controls(&mut controller);
-                    Some(controller)
-                }
+                Some(controller)
             }
-            Err(e) => {
-                tracing::error!(error = %e, "policy unavailable; holding the pose");
-                state.policy_error.store(Some(Arc::new(e.to_string())));
+            Err(error) => {
+                tracing::error!(%error, "two-file policy unavailable; holding the pose");
+                state.models.set_load_error(error.clone());
+                state.policy_error.store(Some(Arc::new(error)));
                 None
             }
         }
@@ -1392,7 +1389,7 @@ async fn control_loop<T: RobotIo>(
         return ControlLoopExit::Shutdown;
     };
 
-    state.experiment.stop("motor bus disconnected");
+    state.experiment.abort("motor bus disconnected");
     state.calibration.disconnected();
 
     // Was the robot powered on already sitting? A seated duck has hips and knees folded
@@ -1634,7 +1631,7 @@ async fn control_loop<T: RobotIo>(
                         consecutive = n,
                         "STM32 USB link lost; entering safe state and reconnecting"
                     );
-                    state.experiment.stop("motor bus disconnected");
+                    state.experiment.abort("motor bus disconnected");
                     state.policy_experiment.abort("motor bus disconnected");
                     state.calibration.disconnected();
                     let _ = safety.set_torque(false);
@@ -1679,6 +1676,16 @@ async fn control_loop<T: RobotIo>(
         }
         state.fallen.store(safety.fallen(), Ordering::Relaxed);
 
+        // A motor task may acquire a relaxed robot and enable it itself. Once fresh feedback
+        // confirms that handoff, its post-task home hold is the ordinary initialized state.
+        if state.experiment.active()
+            && bringup == Bringup::Limp
+            && safety.motor_torque_enabled() == Some(true)
+        {
+            bringup = Bringup::Ready;
+            init_homing = false;
+        }
+
         if state.experiment.active() { intents.set_enabled(false); }
         state.models.tick(
             !state.experiment.active() && bringup == Bringup::Limp && !intents.snapshot().enabled
@@ -1692,28 +1699,6 @@ async fn control_loop<T: RobotIo>(
             state.motor_control_error.store(Some(Arc::new(error.clone())));
             intents.set_enabled(false);
         }
-        let mut snapshot = intents.snapshot();
-        let at_home = fresh.as_ref().is_some_and(|sensors|
-            configured_motors_at_home(sensors, &state.calibration.config().home));
-        let policy_experiment_drive = state.policy_experiment.before_policy(
-            fresh.as_ref(),
-            fresh.is_some() && safety.motor_control_error().is_none()
-                && safety.position_limits_ready() != Some(false),
-            safety.imu_ready(),
-            bringup == Bringup::Ready,
-            at_home,
-            safety.fallen(),
-        );
-        if let Some(drive) = policy_experiment_drive {
-            snapshot.command = drive.command;
-            snapshot.twist_age = Duration::ZERO;
-            snapshot.enabled = true;
-        } else if state.policy_experiment.active() {
-            snapshot.enabled = false;
-        }
-        let (gated, deadman) = safety.gate(snapshot.command, snapshot.twist_age);
-        let mut limits: Vec<duck_control::safety::Limit> = deadman.into_iter().collect();
-
         // An explicit `robot.init` / `robot.relax`, taken once.
         //
         // Before the enable-driven bring-up below, so a `relax` that arrives in the same tick as a
@@ -1779,6 +1764,28 @@ async fn control_loop<T: RobotIo>(
             },
             None => {}
         }
+
+        let mut snapshot = intents.snapshot();
+        let at_home = fresh.as_ref().is_some_and(|sensors|
+            configured_motors_at_home(sensors, &state.calibration.config().home));
+        let policy_experiment_drive = state.policy_experiment.before_policy(
+            fresh.as_ref(),
+            fresh.is_some() && safety.motor_control_error().is_none()
+                && safety.position_limits_ready() != Some(false),
+            safety.imu_ready(),
+            bringup == Bringup::Ready,
+            at_home,
+            safety.fallen(),
+        );
+        if let Some(drive) = policy_experiment_drive {
+            snapshot.command = drive.command;
+            snapshot.twist_age = Duration::ZERO;
+            snapshot.enabled = true;
+        } else if state.policy_experiment.active() {
+            snapshot.enabled = false;
+        }
+        let (gated, deadman) = safety.gate(snapshot.command, snapshot.twist_age);
+        let mut limits: Vec<duck_control::safety::Limit> = deadman.into_iter().collect();
 
         // One-shot skill requests, taken once per tick like the power request. They need a
         // driving robot — the prototype's buttons likewise did nothing until the policy ran.
@@ -2193,8 +2200,8 @@ async fn control_loop<T: RobotIo>(
                 init_homing = false;
             }
             // Home, and a switch waiting: load the other mode's bundle here, where the robot is
-            // standing still at a known pose with torque on. `Policy::load` validates and warms
-            // up each network, so this blocks the loop for a moment — deliberately, and in the one
+            // standing still at a known pose with torque on. Each two-file worker validates and
+            // warms its network, so this blocks the loop for a moment — deliberately, and in the one
             // place where a stalled command stream costs nothing, because the robot is holding a
             // pose rather than mid-stride. Missed ticks in that window are expected.
             if let Some(target) = mode_change.take() {
@@ -2335,7 +2342,33 @@ async fn control_loop<T: RobotIo>(
             },
             (true, Some(sensors)) => {
                 let controller = controller.as_mut().expect("driving implies a controller");
-                let stepped = if let Some(experiment) = policy_experiment_drive {
+                let action_error = policy_experiment_drive
+                    .and_then(|experiment| experiment.action)
+                    .and_then(|action| {
+                        use proto::PolicyExperimentAction as Action;
+                        let result = match action {
+                            Action::SitToggle => controller.sit_toggle().map(|_| ()),
+                            Action::GroundPick => controller.start_ground_pick(),
+                            Action::KickLeft => controller.start_kick(true),
+                            Action::KickRight => controller.start_kick(false),
+                            Action::Roulade => controller.request_roulade().map(|_| ()),
+                        };
+                        match result {
+                            Ok(()) => {
+                                tracing::warn!(?action, "policy experiment action started");
+                                None
+                            }
+                            Err(reason) => {
+                                state.policy_experiment.action_failed(action, reason);
+                                Some(reason)
+                            }
+                        }
+                    });
+                let stepped = if let Some(reason) = action_error {
+                    Err(duck_control::policy::PolicyError::Inference(format!(
+                        "policy experiment action refused: {reason}"
+                    )))
+                } else if let Some(experiment) = policy_experiment_drive {
                     controller.step_selected(sensors, &command, snapshot.pose.active, dt, scale_mult, experiment.policy)
                 } else {
                     controller.step(sensors, &command, snapshot.pose.active, dt, scale_mult)
@@ -2353,7 +2386,7 @@ async fn control_loop<T: RobotIo>(
                     )},
                     Err(e) => {
                         tracing::warn!(error = %e, "inference failed; holding");
-                        if policy_experiment_drive.is_some() {
+                        if policy_experiment_drive.is_some() && action_error.is_none() {
                             state.policy_experiment.inference_failed(&e.to_string());
                         }
                         (hold, policy_cfg.gain, false, "held")
@@ -2564,9 +2597,24 @@ async fn control_loop<T: RobotIo>(
         }
 
         let write_start = Instant::now();
+        let motor_experiment_state = match bringup {
+            Bringup::Limp if !intents.snapshot().enabled => experiment::NormalState::Relaxed,
+            Bringup::Ready => experiment::NormalState::Initialized,
+            _ => experiment::NormalState::Unavailable,
+        };
+        let motor_experiment_was_active = state.experiment.active();
         let experiment_owned = state.experiment.tick(&mut safety, fresh.as_ref(), &state.calibration.config(),
-            bringup == Bringup::Limp && !intents.snapshot().enabled,
+            motor_experiment_state,
             state.ticks.load(Ordering::Relaxed), state.started.elapsed().as_micros() as u64);
+        if state.experiment.returning_home()
+            || (motor_experiment_was_active && !state.experiment.active() && !experiment_owned)
+        {
+            hold = home;
+            targets = home;
+            gain = policy_cfg.gain;
+            policy_pd = None;
+            policy_mit = None;
+        }
         let mut applied_targets = targets;
         let mut applied_ok = false;
         if !experiment_owned { match safety.apply_with_control(targets, hold, gain, policy_pd, policy_mit) {
@@ -2628,6 +2676,8 @@ async fn control_loop<T: RobotIo>(
                     limited_by: limits.iter().map(|l| limit_name(*l).to_owned()).collect(),
                 },
                 head: command.head,
+                head_requested: snapshot.command.head,
+                head_mode: intents.gamepad_head_mode(),
                 policy: policy_label.to_owned(),
                 control_state: control_state.to_owned(),
                 control_owner: state.control_owner.current().map(|owner| owner.as_str().to_owned()),
@@ -3136,7 +3186,12 @@ async fn handle(
                 let state=Arc::clone(&state);
                 let intents=Arc::clone(&intents);
                 let policies=state.policies.load_full();
-                let available=[policies.walk.is_some(),policies.stand.is_some()];
+                let available=policy_experiment::Availability {
+                    walk:policies.walk.is_some(), stand:policies.stand.is_some(),
+                    sitstand:policies.sitstand.is_some(), ground_pick:policies.ground_pick.is_some(),
+                    kick_left:policies.kick_left.is_some(), kick_right:policies.kick_right.is_some(),
+                    roulade:policies.roulade.is_some(),
+                };
                 let identity=state.models.experiment_identity();
                 let reply=tokio::task::spawn_blocking(move || state.policy_experiment.request(&params,&intents,available,identity)).await;
                 let response=match reply {Ok(Ok(value))=>proto::Response::ok(Some(id),&value),result=>{let e=match result {Ok(Err(e))=>e,Err(e)=>e.to_string(),_=>unreachable!()};proto::Response::err(Some(id),proto::Error::new(proto::code::INVALID_PARAMS,e))}};
@@ -3267,7 +3322,7 @@ fn dispatch(
 ) -> proto::Response {
     let emergency = matches!(call, proto::Call::RobotRelax | proto::Call::RobotShutdown);
     if emergency {
-        if state.experiment.active() { state.experiment.stop("operator relax or shutdown"); }
+        if state.experiment.active() { state.experiment.abort("operator relax or shutdown"); }
         if state.policy_experiment.active() { state.policy_experiment.abort("operator relax or shutdown"); }
         intents.request_relax();
     }
@@ -3301,7 +3356,12 @@ fn dispatch(
         }
         proto::Call::RobotPolicyExperiment(params) => {
             let policies=state.policies.load_full();
-            let available=[policies.walk.is_some(),policies.stand.is_some()];
+            let available=policy_experiment::Availability {
+                walk:policies.walk.is_some(), stand:policies.stand.is_some(),
+                sitstand:policies.sitstand.is_some(), ground_pick:policies.ground_pick.is_some(),
+                kick_left:policies.kick_left.is_some(), kick_right:policies.kick_right.is_some(),
+                roulade:policies.roulade.is_some(),
+            };
             match state.policy_experiment.request(params, intents, available, state.models.experiment_identity()) {
                 Ok(value) => proto::Response::ok(Some(id), &value),
                 Err(error) => proto::Response::err(Some(id), proto::Error::new(proto::code::INVALID_PARAMS, error)),
@@ -3726,7 +3786,7 @@ mod tests {
         for (&id, joint) in duck_control::bus::STM32_MOTOR_IDS.iter().zip(duck_control::bus::STM32_TO_CONTROL_JOINT) {
             if id != 0 { sensors.motor_flags[joint] = 3; }
         }
-        s.experiment.tick(&mut safety, Some(&sensors), &s.calibration.config(), true, 1, 20_000);
+        s.experiment.tick(&mut safety, Some(&sensors), &s.calibration.config(), experiment::NormalState::Relaxed, 1, 20_000);
         let _task_files = s.experiment.claim_for_test(&s.calibration.config());
         assert!(!s.safe_to_restart().safe);
         for call in [proto::Call::RobotInit, proto::Call::RobotEnable(proto::EnableParams { on: true, toggle: false }),
@@ -3739,7 +3799,7 @@ mod tests {
         let reply = dispatch(&s, &intents, proto::Id::Number(4), &proto::Call::RobotRelax);
         assert!(reply.error.is_none());
         assert_eq!(intents.take_power_request(), Some(intents::PowerRequest::Relax));
-        s.experiment.tick(&mut safety, Some(&sensors), &s.calibration.config(), true, 2, 40_000);
+        s.experiment.tick(&mut safety, Some(&sensors), &s.calibration.config(), experiment::NormalState::Relaxed, 2, 40_000);
         assert!(s.safe_to_restart().safe);
     }
 
@@ -4693,13 +4753,9 @@ mod tests {
     /// working: the loop keeps ticking at rate, holds its pose, and health says why.
     ///
     /// This is the branch that makes a broken bundle a rollback instead of an outage. It
-    /// nearly did not work at all — `ort` does not return an error when ONNX Runtime is
-    /// missing, it `expect`s deep inside a lazy init, so the control thread died, no tick
-    /// ever landed, and health reported "the loop has not completed a cycle" forever. The
-    /// daemon looked wedged rather than saying what was wrong.
-    ///
-    /// Works whether or not ONNX Runtime is installed: with it, the bogus path fails to
-    /// load; without it, the runtime probe fails first. Either way the contract is the same.
+    /// The runtime now fails closed while resolving every configured model into a two-file
+    /// bundle. Whether resolution itself or the Python worker fails, the control loop must
+    /// stay alive and publish the underlying error instead of looking wedged.
     #[tokio::test]
     async fn an_unloadable_policy_holds_the_pose_and_reports_why() {
         let mut params = Params::default();
@@ -4745,10 +4801,11 @@ mod tests {
         // The detail, not just the category. The updater quotes this string as the reason it
         // rolled a release back, so "policy unavailable" on its own is not actionable — that
         // is the same failure as the useless "loop has not completed a cycle" this branch
-        // exists to avoid. Which detail arrives depends on the machine: the bogus path where
-        // ONNX Runtime is installed, the runtime's own diagnosis where it is not.
+        // exists to avoid. Resolution may report the bogus filename or the operating-system
+        // error from the attempted two-file migration.
         assert!(
-            reason.contains("definitely-not-a-policy.onnx") || reason.contains("ONNX Runtime"),
+            reason.contains("definitely-not-a-policy.onnx")
+                || reason.contains("No such file or directory"),
             "health must carry the underlying cause, got {reason:?}"
         );
         assert!(

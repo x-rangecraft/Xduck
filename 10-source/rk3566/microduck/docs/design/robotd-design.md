@@ -149,15 +149,13 @@ Where the data goes, once per period:
    Sensors ──────────┬──────────────────────► safety.observe ──► fallen? (debounced)
    joints, IMU       │
                      ▼
-              Observation::build  ◄──── Command ◄── gate(deadman) ◄── intent snapshot
-                     │              (twist, head, body = nominal)
-                     │  [f32; 61]
+              selected two-file worker ◄── Command ◄── gate(deadman) ◄── intent snapshot
+                     │                 (twist, head, body = nominal)
+                     │  policy.py preprocess → ONNX → policy.py postprocess
+                     │  roulade > kick > ground pick > sit/rise >
+                     │  stand (by |twist|, or forced) > walk
                      ▼
-              Policy::infer ──── roulade > kick > ground pick > sit/rise >
-                     │           stand (by |twist|, or forced) > walk
-                     │  [f32; 14]   — mouth excluded
-                     ▼
-              home pose + scale × action ──► low-pass on head and legs
+              14 complete per-joint MIT targets — mouth excluded
                      │
                      │  [f64; 15] proposed targets
                      ▼
@@ -341,21 +339,23 @@ points that open a real port are gated, so a Mac build still refuses to pretend 
 robot: `robotd --fake` is the laptop path, and it must be asked for explicitly rather than
 fallen back to.
 
-### 2.2 One observation builder
+### 2.2 Default-consumer observation layout
 
-Every alpha policy is `obs[1,61] → actions[1,14]` — verified across walking, standing, ground
-pick, ball kick and sit. So there is exactly one layout:
+The bundled alpha models are `obs[1,61] → actions[1,14]` — verified across walking, standing,
+ground pick, ball kick and sit. Each slot-specific default `policy.py` reconstructs this legacy
+layout; it is not a platform-wide constraint on uploaded consumers:
 
 ```
 [ gyro(3) | projected_gravity(3) | joint_pos(14) | joint_vel(14) | last_action(14) | command(13) ]
                                                                     command = vel(3) + head(4) + body(6)
 ```
 
-Joints exclude the mouth throughout; actions map directly to array indices 0–13, while mouth is joint 15 at index 14 and remains
-zero. The 51/54D legacy, 49D wheeled and 85D tracking layouts go away with the variants.
+In those defaults, joints exclude the mouth throughout; actions map directly to array indices
+0–13, while mouth is joint 15 at index 14 and remains zero. Custom API-v2 consumers may instead
+declare different named tensors, dimensions and output layouts.
 
-The command block, which was the only part in doubt, is settled — read out of the prototype's
-`control_step` rather than guessed:
+For the bundled defaults, the command block was read out of the prototype's `control_step`
+rather than guessed:
 
 ```text
 48..51   vx, vy, vyaw
@@ -378,47 +378,49 @@ Three things about it are individually plausible and wrong:
 
 ### 2.3 The policy
 
-Shaped like the runtime's, deliberately. `robotd/src/control.rs` holds the priority chain and
-every numeric default from `control_step`, which it replaces:
+`robotd/src/control.rs` holds the priority chain and skill lifecycle, while each `policy.py`
+owns the complete model-facing interpretation:
 
 ```text
 skill windows ← advance / expire (roulade window, kick timer, ground-pick phase, sit↔stand rise)
-command       ← the caller's smoothed command, re-encoded for the active skill
+base command  ← the caller's platform-gated and smoothed command, never skill-encoded
 net           ← roulade > kick > ground pick > sit/rise > stand-by-magnitude (or forced) > walk
-action        ← ONNX
-targets       ← home pose + action_scale × action
-filters       ← first-order low-pass on head and legs
+context       ← action + optional ground-pick phase + body-pose-mode state
+inputs        ← selected policy.py preprocess(base command, context, sensors)
+action        ← selected ONNX
+targets       ← selected policy.py postprocess(action)
 ```
 
-Two subtleties of the prototype are worth naming because they are easy to "fix" by accident.
-**A kick window runs at standing tuning** — the kick's observation carries an all-zero command
-and the standing transition fires on exactly that, so a kick runs at `standing_action_scale`
-and the softened standing gain. Kept, because the kicks were tuned against it. **The sitstand
-*rise* also runs at the standing gain** (its command is all-zero) while the *sit* does not (its
-posture flag makes the twist magnitude 1). Same mechanism, same reason. One deliberate
-divergence: the prototype tracks the standing action scale by saving and restoring
-`action_scale` across transitions, which can leave a stale value behind after a sit→stand cycle
-until the next walk; here scale and gain are recomputed from the active state every tick.
+The scheduler owns skill priority, timing, phase advancement, reset boundaries and safety, but no
+model command encoding. API v2 passes the unchanged base command plus
+`policy_context={action, phase, body_active}`. The selected consumer alone decides whether that
+becomes velocity/head/body values, ground-pick sine/cosine, the sit flag, zeros, or an entirely
+different custom observation. API v1 is rejected rather than adapted through a second encoding
+path.
 
-Policy files come from paths in the params file, defaulting into the release directory — so a
-normal update carries the policy trained against the binary, and a dev points a path at their
-own `.onnx` and iterates without cutting a release.
+Policy model paths come from the params file, but `robotd` materializes every configured ONNX
+into `/var/lib/robotd/policies/` with a required partner `policy.py`. Built-in partners are
+slot-specific: locomotion (shared Walk/Stand), ground pick, left/right kick, roulade and sitstand.
+An import may replace the corresponding consumer for that version.
+There is no single-file RPC, Rust ONNX session, or runtime fallback. Old manifests are migrated
+atomically before the controller is constructed.
 
-Everything is validated at **load**, not at inference: observation width, action count, and
-whether ONNX Runtime is present at all. Every net must be 61-input, 14-output, checked at load
-rather than discovered mid-stride. The runtime also ships a 51-D family using the legacy
-3-value command; those load only under its `--new-cmd-obs=false` path, and `robotd` refuses
-them with `observation width is 51, expected 61`. A warm-up inference runs before the loop
-starts, which both pays the first-call cost off the hot path — where it would look identical to
-a missed deadline — and proves the dylib resolved.
+When both Walk and Stand exist they share one consumer file, one Python `Policy` instance and
+one feedback stream, with two preloaded ONNX sessions. Only the selected model runs each inference
+period; raw action feedback and output low-pass history continue across the selection, without
+cross-fading two model outputs. Uploading or rolling back either slot synchronizes its consumer
+to the peer while retaining the peer's ONNX. Both contracts and alternating warmups must pass
+before a single atomic manifest commit updates both records and their two-entry histories.
+Shared immutable files are collected only after all active/history references disappear.
+The other skills retain independent workers and reset on entry. Explicit controller reset
+also resets the shared locomotion consumer. Identical code cannot prove compatible training
+semantics; custom recurrent state is also shared instance state, not automatically reset per net.
 
-**`ort` panics when ONNX Runtime is missing.** It `expect`s inside `setup_api`, on a lazy path
-reachable from any API call, so it cannot be caught as an error. Left alone that killed the
-control thread: no tick ever landed and health reported "the loop has not completed a cycle"
-forever, so the daemon looked wedged rather than naming the cause — worse than the crashloop
-this design rejected. `policy::ensure_runtime` therefore probes for the dylib with the same
-loader and search rule `ort` uses, before `ort` is touched, so a missing library becomes an
-ordinary error.
+Everything is validated at **load**, not at inference: `describe()` must match every ONNX input
+and output name, dtype and shape; `reset()` must succeed; and three warm-up steps must return
+complete, finite MIT targets for all 14 controlled joints. The worker owns ONNX Runtime and runs
+under `bubblewrap` plus the unprivileged `robot-policy` identity. A missing runtime, bad contract,
+policy exception or warm-up failure leaves the controller unavailable and the robot holding.
 
 **`policy.enabled` separates "no policy wanted" from "policy broken".** The first is healthy
 and is the right configuration for bench updater testing; the second is unhealthy, so the
@@ -426,20 +428,11 @@ updater rolls the release back. Collapsing them would either make a bench robot 
 let an unusable bundle pass the gate. `robotd --no-policy` sets it, and the gate tests use it,
 since neither CI nor a laptop has ONNX Runtime installed.
 
-ONNX Runtime is a **board prerequisite**, installed by `scripts/install.sh`, not shipped in the
-release. It changes far less often than the daemon, and ~20 MB in every artifact would enlarge
-every update for nothing. The trade is that a board missing it installs and starts fine and
-then cannot walk — which is why health reports the searched path.
-
-Not done, and deliberately: pre-binding the ONNX input/output tensors. The current path
-allocates a 61-float vector per inference, ~244 bytes at 50 Hz. Worth measuring on the board
-before optimising.
-
-**Carried over from the runtime because it works** — head and leg low-pass filters, action
-scale, voltage-adaptive scaling, the standing-transition gain change. These are tunables
-(§4.2), not decisions to revisit. The low-pass alphas in particular are the values the alpha
-policies are *trained* with, so they must match training or transfer degrades. The rule is not
-to regress what already runs.
+The managed Python and ONNX Runtime environment is a **board prerequisite** at
+`/var/lib/robotd/model-python/`, installed by `scripts/setup-model-import.sh`. The default policy
+for each slot owns its command encoding together with the established action scale, 0.7/0.5
+leg/head low-pass filters and Kp 60/Kd 4. A custom policy may define different values, but they
+remain versioned with its ONNX and pass the same platform limits.
 
 ### 2.4 Safety
 
