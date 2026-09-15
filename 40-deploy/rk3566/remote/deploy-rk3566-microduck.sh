@@ -86,6 +86,8 @@ done
     --include "updater/systemd/updaterd.service=systemd/updaterd.service" \
     --include "updater/systemd/sysusers.d/robot.conf=systemd/sysusers.d/robot.conf" \
     --include "robotd/systemd/robotd.service=systemd/robotd.service" \
+    --include "robotd/systemd/robot-policy-performance.service=systemd/robot-policy-performance.service" \
+    --include "robotd/scripts/robot-policy-cpu-governor=scripts/robot-policy-cpu-governor" \
     --include "robotd/systemd/sysusers.d/robot-policy.conf=systemd/sysusers.d/robot-policy.conf" \
     --include "hooks/postinstall=hooks/postinstall" \
     --include "duck-detect/models/duck_detect.rknn=models/duck_detect.rknn" \

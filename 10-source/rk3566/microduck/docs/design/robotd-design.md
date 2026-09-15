@@ -422,6 +422,15 @@ complete, finite MIT targets for all 14 controlled joints. The worker owns ONNX 
 under `bubblewrap` plus the unprivileged `robot-policy` identity. A missing runtime, bad contract,
 policy exception or warm-up failure leaves the controller unavailable and the robot holding.
 
+On the four-core K11C, systemd constrains `robotd` and every child policy worker to CPU3 with
+`AllowedCPUs=3` and gives that cgroup `CPUWeight=10000`; `mediad` is constrained to CPUs 0–2.
+Because policy workers are resident for the lifetime of a policy-enabled robotd,
+`robot-policy-performance.service` raises every cpufreq policy to `performance` before robotd
+starts and restores `ondemand` whenever robotd stops, fails or restarts. The helper alone may write
+that sysfs node. `robotd` retains `ProtectKernelTunables=yes`, and sandboxed policy code receives
+neither the write path nor realtime privilege. An unavailable governor is a startup failure, not a
+silent scheduling downgrade.
+
 **`policy.enabled` separates "no policy wanted" from "policy broken".** The first is healthy
 and is the right configuration for bench updater testing; the second is unhealthy, so the
 updater rolls the release back. Collapsing them would either make a bench robot look broken or

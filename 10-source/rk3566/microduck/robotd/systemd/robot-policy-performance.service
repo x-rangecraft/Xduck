@@ -1,0 +1,37 @@
+# Raise the RK3566 CPU-frequency governor only while robotd's resident policy workers exist.
+# This unit deliberately owns the narrow sysfs write instead of weakening robotd's
+# ProtectKernelTunables sandbox or granting any privilege to uploaded Python policy code.
+
+[Unit]
+Description=Policy inference CPU-frequency governor
+BindsTo=robotd.service
+PartOf=robotd.service
+Before=robotd.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/robot-policy-cpu-governor performance
+ExecStop=/usr/local/sbin/robot-policy-cpu-governor ondemand
+TimeoutStartSec=5s
+TimeoutStopSec=5s
+User=root
+Group=root
+
+# The sole privileged operation is writing scaling_governor.  Keep the rest of the host read-only
+# and inaccessible; ProtectKernelTunables cannot be enabled because it would make that exact sysfs
+# subtree read-only.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_UNIX
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+
+# No [Install] section: robotd is the only owner of this lifecycle.

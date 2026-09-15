@@ -61,6 +61,10 @@ const PORT_TOKEN: &str = "{{SIGNALLING_PORT}}";
 /// Where it carries the API version this release speaks.
 const API_TOKEN: &str = "{{API_VERSION}}";
 
+/// An 8 KiB model chunk is hex encoded by the console, so its payload alone is 16 KiB. Leave room
+/// for the JSON-RPC envelope while staying below robotd's 64 KiB line limit.
+const CONTROL_BODY_LIMIT: usize = 32 * 1024;
+
 /// The page, with the signalling port and the API version filled in.
 pub fn page(signalling_port: u32) -> String {
     PAGE.replace(PORT_TOKEN, &signalling_port.to_string())
@@ -112,7 +116,7 @@ fn router(page: String) -> Router {
         .route("/policy-experiment.md", get(|| async { ([("content-type","text/plain; charset=utf-8")], include_str!("../webclient/policy-experiment/policy-experiment.md")) }))
         .route("/policy_experiment.py", get(|| async { ([("content-type","text/x-python; charset=utf-8"),("content-disposition","attachment; filename=policy_experiment.py")], include_str!("../webclient/policy-experiment/policy_experiment.py")) }))
         .route("/policy-experiment-example.json", get(|| async { ([("content-type","application/json"),("content-disposition","attachment; filename=policy-experiment-example.json")], include_str!("../webclient/policy-experiment/example.json")) }))
-        .layer(axum::extract::DefaultBodyLimit::max(16 * 1024))
+        .layer(axum::extract::DefaultBodyLimit::max(CONTROL_BODY_LIMIT))
 }
 
 #[cfg(test)]
@@ -190,6 +194,59 @@ mod tests {
             !answer.contains(PORT_TOKEN),
             "the page went out over the wire with its port token still in it"
         );
+    }
+
+    /// Model uploads carry 8 KiB as hexadecimal, which is already exactly 16 KiB before the
+    /// JSON-RPC envelope. Keep the HTTP fallback large enough for the same chunk the WebRTC data
+    /// channel accepts. An unknown method makes the request stop locally with structured JSON, so
+    /// this test never reaches a real robotd socket even when it runs on a robot.
+    #[tokio::test]
+    async fn http_control_accepts_a_full_model_chunk_envelope() {
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("a loopback port");
+        let address = listener.local_addr().expect("the port it took");
+        tokio::spawn(async move {
+            let _ = axum::serve(listener, router(page(8443))).await;
+        });
+
+        let body = serde_json::json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "test.unknown",
+            "params": { "hex": "00".repeat(8192) }
+        })
+        .to_string();
+        assert!(body.len() > 16 * 1024);
+        assert!(body.len() < CONTROL_BODY_LIMIT);
+
+        let request = format!(
+            "POST /api/control HTTP/1.1\r\nHost: robot\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+            body.len(),
+            body
+        );
+        let mut stream = tokio::net::TcpStream::connect(address)
+            .await
+            .expect("the server is listening");
+        stream
+            .write_all(request.as_bytes())
+            .await
+            .expect("wrote the request");
+        let mut answer = String::new();
+        stream
+            .read_to_string(&mut answer)
+            .await
+            .expect("read the answer");
+
+        assert!(
+            answer.starts_with("HTTP/1.1 400"),
+            "the request was rejected before JSON-RPC parsing: {}",
+            answer.lines().next().unwrap_or("nothing at all")
+        );
+        assert!(answer.contains("content-type: application/json"));
+        assert!(!answer.contains("length limit exceeded"));
     }
 
     /// The token is in the page, spelled the way this module spells it. Without this, a rename on

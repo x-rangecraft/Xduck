@@ -1,0 +1,58 @@
+#!/bin/sh
+# Set every CPU-frequency policy on the board to the requested governor.
+# Production calls this only from robot-policy-performance.service.  XDUCK_CPUFREQ_ROOT exists so
+# the failure and rollback paths can be tested against a temporary tree without touching sysfs.
+set -eu
+
+case "${1:-}" in
+    performance|ondemand) governor="$1" ;;
+    *) echo "usage: $0 performance|ondemand" >&2; exit 2 ;;
+esac
+
+root="${XDUCK_CPUFREQ_ROOT:-/sys/devices/system/cpu/cpufreq}"
+found=0
+changed=""
+
+rollback() {
+    [ "$governor" = performance ] || return 0
+    for file in $changed; do
+        printf '%s\n' ondemand > "$file" 2>/dev/null || true
+    done
+}
+trap rollback HUP INT TERM
+
+for dir in "$root"/policy[0-9]*; do
+    [ -d "$dir" ] || continue
+    found=1
+    available="$dir/scaling_available_governors"
+    target="$dir/scaling_governor"
+    [ -r "$available" ] && [ -w "$target" ] || {
+        echo "robot-policy-cpu-governor: unusable cpufreq policy: $dir" >&2
+        rollback
+        exit 1
+    }
+    if ! grep -qw "$governor" "$available"; then
+        echo "robot-policy-cpu-governor: $governor is unavailable for $dir" >&2
+        rollback
+        exit 1
+    fi
+    printf '%s\n' "$governor" > "$target" || {
+        rollback
+        exit 1
+    }
+    changed="$changed $target"
+    actual="$(cat "$target")"
+    [ "$actual" = "$governor" ] || {
+        echo "robot-policy-cpu-governor: $dir remained at $actual" >&2
+        rollback
+        exit 1
+    }
+done
+
+[ "$found" = 1 ] || {
+    echo "robot-policy-cpu-governor: no cpufreq policies below $root" >&2
+    exit 1
+}
+
+trap - HUP INT TERM
+echo "robot-policy-cpu-governor: set $governor"

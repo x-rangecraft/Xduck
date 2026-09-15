@@ -37,11 +37,11 @@ SBIN_DIR=/usr/local/sbin
 
 # Hooks run with the release directory as their working directory.
 
-# The recovery scripts, copied out for the same reason as the units below and one more: they are what
-# runs when this release cannot start, so they must not be read through `current`. A warning and not
-# a failure — a release that cannot install them is still a release worth having, and `install.sh`
-# puts them there on a fresh board.
-for script in robot-rescue robot-boot-check; do
+# The recovery and service-lifecycle scripts, copied out for the same reason as the units below and
+# one more: they may run while `current` is being replaced or rolled back, so they must not be read
+# through that symlink. A warning and not a failure — a release that cannot install them is still a
+# release worth having, and `install.sh` puts them there on a fresh board.
+for script in robot-rescue robot-boot-check robot-policy-cpu-governor; do
     [ -f "scripts/${script}" ] || continue
     mkdir -p "$SBIN_DIR"
     install -m 755 "scripts/${script}" "${SBIN_DIR}/${script}" \

@@ -15,6 +15,8 @@ MANIFEST = Path("/var/lib/robotd/policies/manifest.json")
 WORKER = Path("/home/xduck1/xrange/10-source/rk3566/microduck/robotd/src/custom_policy_worker.py")
 PYTHON = "/var/lib/robotd/model-python/bin/python"
 SAMPLES = int(os.environ.get("XDUCK_BENCH_SAMPLES", "50"))
+INFERENCE_SAMPLES = int(os.environ.get("XDUCK_BENCH_INFERENCE_SAMPLES", "0"))
+INFERENCE_WARMUPS = int(os.environ.get("XDUCK_BENCH_INFERENCE_WARMUPS", "20"))
 STATES = ["walk", "stand", "ground_pick", "kick_left", "kick_right", "roulade", "sit", "rise"]
 SOURCES = os.environ.get("XDUCK_BENCH_SOURCES", ",".join(STATES)).split(",")
 TARGETS = os.environ.get("XDUCK_BENCH_TARGETS", ",".join(STATES)).split(",")
@@ -92,6 +94,11 @@ def request(process, action, state):
     frame["sequence"] = sequence
     frame["gateway_tick_ms"] = sequence * 20
     frame["command"] = dict(FRAME["command"], twist=COMMAND[state])
+    frame["policy_context"] = {
+        "action": state,
+        "phase": 0.25 if state == "ground_pick" else None,
+        "body_active": False,
+    }
     value = {"action": action, "frame": frame}
     if action == "step" and state in MODEL:
         value["model"] = MODEL[state]
@@ -152,6 +159,21 @@ def scheduler_snapshot(pid):
 
 def scheduler_delta(before, after):
     return {key: after[key] - before[key] for key in before}
+
+
+def scheduling_environment():
+    cgroup = Path("/proc/self/cgroup").read_text().strip().split(":")[-1]
+    cpu_weight = int((Path("/sys/fs/cgroup") / cgroup.lstrip("/") / "cpu.weight").read_text())
+    mediad_pid = int(subprocess.check_output(
+        ["systemctl", "show", "-p", "MainPID", "--value", "mediad.service"], text=True,
+    ).strip())
+    governor = Path("/sys/devices/system/cpu/cpufreq/policy0/scaling_governor").read_text().strip()
+    return {
+        "affinity": sorted(os.sched_getaffinity(0)),
+        "cpu_weight": cpu_weight,
+        "mediad_affinity": sorted(os.sched_getaffinity(mediad_pid)),
+        "governor": governor,
+    }
 
 
 records = json.loads(MANIFEST.read_text())
@@ -255,23 +277,63 @@ try:
         resets = [v for item in items if item["reset_ms"] for v in item["reset_ms"]]
         by_target[target] = {"reset": summarize(resets) if resets else None,
                              "first_step": summarize(steps), "blocking_total": summarize(totals)}
+
+    inference_raw = {}
+    inference = {}
+    if INFERENCE_SAMPLES:
+        for state in STATES:
+            process = workers[state]
+            request(process, "reset", state)
+            for _ in range(INFERENCE_WARMUPS):
+                request(process, "step", state)
+            wall_ms = []
+            scheduler = []
+            client_scheduler = []
+            for _ in range(INFERENCE_SAMPLES):
+                sched_before = scheduler_snapshot(worker_pids[state])
+                client_sched_before = scheduler_snapshot(os.getpid())
+                began = time.perf_counter_ns()
+                request(process, "step", state)
+                finished = time.perf_counter_ns()
+                client_sched_after = scheduler_snapshot(os.getpid())
+                sched_after = scheduler_snapshot(worker_pids[state])
+                wall_ms.append((finished - began) / 1e6)
+                scheduler.append(scheduler_delta(sched_before, sched_after))
+                client_scheduler.append(scheduler_delta(client_sched_before, client_sched_after))
+            worker_cpu_ms = [item["runtime_ns"] / 1e6 for item in scheduler]
+            worker_wait_ms = [item["runqueue_wait_ns"] / 1e6 for item in scheduler]
+            inference_raw[state] = {
+                "wall_ms": wall_ms,
+                "scheduler": scheduler,
+                "client_scheduler": client_scheduler,
+            }
+            inference[state] = {
+                "wall": summarize(wall_ms),
+                "worker_cpu": summarize(worker_cpu_ms),
+                "worker_runqueue_wait": summarize(worker_wait_ms),
+            }
     report = {
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "samples_per_ordered_pair": SAMPLES,
+        "steady_inference_samples_per_state": INFERENCE_SAMPLES,
+        "steady_inference_warmups_per_state": INFERENCE_WARMUPS,
         "states": STATES, "sources": SOURCES, "targets": TARGETS, "motor_control": False,
         "semantics": "Walk/Stand: one shared prewarmed consumer, step only. Other targets: reset request/reply plus first step, matching reset-on-enter.",
         "scope": "Wall clock includes JSON IPC, policy preprocess, CPU ONNX inference and postprocess; excludes RobotIo, motor application and Rust scheduler overhead.",
         "sandbox": "bwrap, network namespace isolated, private /dev, read-only host, nobody uid, numerical threads=1",
+        "scheduling": scheduling_environment(),
         "production_version": subprocess.check_output(["readlink", "-f", "/opt/robot/daemon/current"], text=True).strip(),
         "models": {slot: {"id": value["id"], "model": value["path"],
                            "policy": value["policy_path"]} for slot, value in active.items()},
         "by_target": by_target, "transition_matrix": matrix, "raw_samples": raw,
+        "steady_inference": inference, "steady_inference_raw": inference_raw,
     }
     output_dir = Path("/home/xduck1/xrange/50-logs/test/rk3566/microduck")
     output_dir.mkdir(parents=True, exist_ok=True)
     output = output_dir / f"policy-switch-benchmark-{time.strftime('%Y%m%d-%H%M%S')}.json"
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(output)
-    print(json.dumps({"by_target": by_target}, ensure_ascii=False, indent=2))
+    print(json.dumps({"by_target": by_target, "steady_inference": inference},
+                     ensure_ascii=False, indent=2))
 finally:
     for process in processes:
         if process.poll() is None:

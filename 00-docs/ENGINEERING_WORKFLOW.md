@@ -184,6 +184,15 @@ STM32 H7 通过 `[bus].port = "/dev/ttyACM0"` 同时提供电机状态和主 BMI
 
 `robotd.service` 的停止超时固定为 5 秒。USB CDC 驱动异常时阻塞读可能无法响应 SIGTERM；systemd 必须在 5 秒后结束旧进程，避免一次更新把 30 秒健康门控窗口全部耗在停止旧版本上。不得通过延长健康门控掩盖这个退出问题。
 
+K11C 的策略调度固定为：`robotd` 及其全部隔离 Python worker 通过 systemd
+`AllowedCPUs=3` 约束在 CPU3，并使用 `CPUWeight=10000`；`mediad` 约束在 CPU0–2，避免媒体
+管线与 50 Hz 控制/推理争用同一核心。`robot-policy-performance.service` 与 `robotd` 生命周期
+绑定，在 resident policy worker 启动前把所有 cpufreq policy 切到 `performance`，在 robotd
+正常停止、失败或重启时恢复 `ondemand`。唯一的 sysfs 写权限属于这个 root oneshot；
+`robotd` 保持 `ProtectKernelTunables=yes`，上传的 `robot-policy` Python 进程不获得额外权限。
+若 governor 不可用或写入验证失败，辅助 unit 必须失败并阻止 robotd 启动，禁止静默退回不确定
+调度。
+
 K11C 厂商内核启用了 uinput，但没有 `xpad`、`joydev` 或可加载的内核模块。飞智 Dune Fox 接收器以 Xbox 360 兼容设备 `045e:028e` 枚举，但 Debian `xboxdrv 0.8.8` 不能把它的输入包转换成 evdev 事件。因此硬件适配固定在底层 `10-source/rk3566/microduck/drivers/flydigi-xpad/`：`xpad-usbd.service` 独占 USB interface 0，把 20 字节 Xbox 360 报告转换为标准 `/dev/input/event*`，`padd` 只读取标准 evdev，禁止在 `padd` 中解析该接收器的私有 USB 数据。驱动支持拔插自动重连，断开时立即销毁虚拟输入设备，使 `padd` 上报手柄不可用并触发安全回退。运行日志读取：`journalctl -u xpad-usbd -b`。
 
 验收至少检查：当前 release 链接、服务的 active/enabled 状态、`systemctl --failed`、`robotctl health`、各进程实际可执行路径、30 秒 CPU/load/内存/温度采样。缺少 `/dev/ttyACM0` 时 `robotd` 的 degraded 是真实硬件状态，不能写成“全部功能正常”。

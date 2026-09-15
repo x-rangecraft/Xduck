@@ -72,6 +72,9 @@ SupplementaryGroups=video render robot systemd-journal
 Restart=always
 RestartSec=5s
 
+# Keep camera/WebRTC work off the dedicated policy/control core.
+AllowedCPUs=0-2
+
 # Hardening, as far as a process driving a hardware codec can go.
 #
 # NOT PrivateDevices=yes: it would hide /dev/mpp_service, /dev/rga and the capture nodes, which are

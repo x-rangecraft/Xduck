@@ -19,7 +19,8 @@ Description=Robot control daemon
 Documentation=file:///opt/robot/daemon/current/docs/architecture.md
 # No network dependency on purpose: the robot must stand up, hold its joints and answer
 # health with no connectivity at all. Only mediad's remote gateway needs the network.
-After=local-fs.target
+Requires=robot-policy-performance.service
+After=local-fs.target robot-policy-performance.service
 
 [Service]
 Type=exec
@@ -62,6 +63,12 @@ RestartSec=2s
 # A disconnected USB CDC driver can leave a blocking read that outlives SIGTERM. Do not let that
 # consume updaterd's entire apply/health window; systemd escalates to SIGKILL after this bound.
 TimeoutStopSec=5s
+
+# Keep the control loop and every policy worker it launches on the isolated fourth core.  The
+# workers inherit both the cpuset and cgroup weight, so uploaded Python code cannot escape this
+# scheduling boundary or acquire realtime privileges.
+AllowedCPUs=3
+CPUWeight=10000
 
 # Modest hardening. Deliberately NOT ProtectSystem=strict or PrivateDevices: this process
 # exists to talk to hardware.

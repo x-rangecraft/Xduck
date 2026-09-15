@@ -821,6 +821,8 @@ install_units() {
             robot-boot-check.timer) ;;
             # Started by its timer, never enabled. See above.
             robot-boot-check.service) ;;
+            # Bound to robotd and intentionally has no [Install] section.
+            robot-policy-performance.service) ;;
             *) warn "${unit} was installed but not enabled — this script does not know where
   it belongs in the start order. Add it to install_units, or start it by hand." ;;
         esac
