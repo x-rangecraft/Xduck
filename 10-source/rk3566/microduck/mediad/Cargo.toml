@@ -32,7 +32,7 @@ duck-detect = { path = "../duck-detect" }
 #
 # Default features off: this serves one file over GET, and JSON extractors, multipart, forms and
 # tracing middleware are all weight for routes that do not exist.
-axum = { version = "0.8.9", default-features = false, features = ["http1", "tokio"] }
+axum = { version = "0.8.9", default-features = false, features = ["http1", "json", "tokio"] }
 clap = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
 futures-util = "0.3"

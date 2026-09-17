@@ -2610,7 +2610,7 @@ pub struct HealthResult {
     pub degraded: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub reason: Option<String>,
-    /// Motor-bus voltage, when it has been read.
+    /// Battery voltage, from the external meter when available.
     ///
     /// **Reported, never judged.** Nothing here may influence `healthy` or `degraded`: a flat
     /// pack is a fact about the robot, and a release rolled back over one would be replaced by
@@ -2760,16 +2760,15 @@ pub struct MotorThermal {
     pub mean_c: f64,
 }
 
-/// Motor-bus voltage, and what fraction of a pack that is.
-///
-/// Both, deliberately. Volts is the measurement; percent is a *mapping* over a pack the
-/// robot knows and a client should not have to (`duck_control::model::battery_percent`).
-/// The prototype shipped volts only, and the mapping was duplicated into the app — which is
-/// how two screens end up disagreeing about the same battery.
+/// Battery voltage and percentage. The external meter provides both directly; older
+/// backends may still estimate percentage from supply voltage.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct Battery {
     pub volts: f64,
     pub percent: f64,
+    /// External meter alarm, when available. None for older battery sources.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub alarm: Option<bool>,
 }
 
 /// Answer to a discrete intent — [`Call::RobotStop`], [`Call::RobotEnable`].
@@ -5113,6 +5112,7 @@ mod tests {
             battery: Some(Battery {
                 volts: 7.62,
                 percent: 63.75,
+                alarm: None,
             }),
             ..unread
         };

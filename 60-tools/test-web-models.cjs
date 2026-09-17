@@ -34,6 +34,10 @@ element('model-epsilon').value='0.01';
 (async()=>{
   await vm.runInContext('refreshModels()',context);
   assert.equal(element('model-import').disabled,false);
+  status.slots[0].active={name:'custom.py + alpha.pt',model_filename:'alpha.onnx',policy_filename:'custom.py'};
+  await vm.runInContext('refreshModels()',context);
+  assert.equal(element('model-file-current').textContent,'当前模型：alpha.onnx');
+  assert.equal(element('model-policy-file-current').textContent,'当前策略代码：custom.py');
   status.slots[0].shared_consumer='walk_stand';
   await vm.runInContext('refreshModels()',context);
   assert(element('model-current').textContent.includes('走/站共享消费文件与反馈/滤波'));

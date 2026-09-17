@@ -71,6 +71,7 @@ void MotorApp_FillSpiStateCompact(h7spi_motor_state_compact_frame_t *State, unsi
 unsigned char MotorApp_GetMotorCount(void);
 unsigned char MotorApp_GetMotorIdByIndex(unsigned char Index);
 unsigned short MotorApp_GetLastCommandSeq(void);
+unsigned short MotorApp_GetMotorLastCommandSeq(unsigned char MotorID);
 
 #ifdef __cplusplus
 }

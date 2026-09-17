@@ -1455,6 +1455,11 @@ unsigned short MotorApp_GetLastCommandSeq(void)
   return g_motorAppLastCommandSeq;
 }
 
+unsigned short MotorApp_GetMotorLastCommandSeq(unsigned char MotorID)
+{
+  return MotorID < MOTOR_NUM ? g_motorAppMotorLastCommandSeq[MotorID] : 0U;
+}
+
 void MotorApp_GetStatus(MotorApp_Status_t *Status)
 {
   unsigned char index;

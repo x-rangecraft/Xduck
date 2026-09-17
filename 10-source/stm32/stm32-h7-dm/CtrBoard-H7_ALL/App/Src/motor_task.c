@@ -3,6 +3,9 @@
 #include "task.h"
 #include "cmsis_os.h"
 #include "motor_app.h"
+#if H7DM_CAN_CAPTURE
+#include "can_capture.h"
+#endif
 
 #include <string.h>
 
@@ -39,6 +42,9 @@ static void StartMotorTask(void const *argument)
 
     MotorApp_ProcessPendingSpiMotorCommand();
     MotorApp_Tick();
+#if H7DM_CAN_CAPTURE
+    CanCapture_Poll();
+#endif
     delay_ticks = kMotorTaskCadenceTicks[cadence_index];
     now_tick = xTaskGetTickCount();
     if ((now_tick - last_wake_tick) >= delay_ticks) {

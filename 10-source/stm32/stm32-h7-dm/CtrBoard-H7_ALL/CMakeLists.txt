@@ -12,6 +12,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 # Explicit maintenance image: one populated route, incompatible with the
 # production robotd's required 14-slot stream. Never enable automatically.
 option(H7DM_BENCH_ID1_ONLY "Build an isolated CAN1 ID1 commissioning image" OFF)
+option(H7DM_CAN_CAPTURE "Build a debugger-triggered motor command and CAN capture image" OFF)
 set(TARGET_NAME CtrBoard-H7_ALL)
 set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32H723VGTX_FLASH.ld)
 set(DM_OPENOCD_INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/openocd/dm-cmsis-dap-port-1-2.cfg)
@@ -49,6 +50,7 @@ add_executable(${TARGET_NAME}.elf
   App/Src/h7spi_protocol.c
   App/Src/dmusb_protocol.c
   App/Src/dmusb_task.c
+  App/Src/battery_meter.c
   App/Src/mahony_ahrs.c
   App/Src/imu_task.c
   USB_DEVICE/App/usb_device.c
@@ -100,6 +102,10 @@ add_executable(${TARGET_NAME}.elf
   Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c
 )
 
+if(H7DM_CAN_CAPTURE)
+  target_sources(${TARGET_NAME}.elf PRIVATE Bsp/Src/can_capture.c)
+endif()
+
 set_target_properties(${TARGET_NAME}.elf PROPERTIES LINKER_LANGUAGE C)
 
 target_include_directories(${TARGET_NAME}.elf PRIVATE
@@ -127,6 +133,7 @@ target_compile_definitions(${TARGET_NAME}.elf PRIVATE
   DM_CAN_FD_MOTOR=1
   H7DM_MOTOR_AUTO_ENABLE=0
   H7DM_BENCH_ID1_ONLY=$<BOOL:${H7DM_BENCH_ID1_ONLY}>
+  H7DM_CAN_CAPTURE=$<BOOL:${H7DM_CAN_CAPTURE}>
   DMUSB_BINARY_PROTOCOL=1
 )
 

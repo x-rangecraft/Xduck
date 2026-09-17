@@ -29,6 +29,7 @@
 #include "motor_app.h"
 #include "motor_task.h"
 #include "dmusb_task.h"
+#include "battery_meter.h"
 #include "imu_task.h"
 #include "usbd_cdc_if.h"
 
@@ -135,6 +136,7 @@ void MX_FREERTOS_Init(void) {
   DMUSB_TaskInit();
   IMU_TaskInit();
   MotorTask_Init();
+  BatteryMeter_TaskInit();
   /* USER CODE END RTOS_THREADS */
 
 }

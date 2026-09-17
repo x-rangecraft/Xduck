@@ -4,9 +4,13 @@
 #include "cmsis_os.h"
 #include "dmusb_protocol.h"
 #include "dmusb_motor_bridge.h"
+#include "battery_meter.h"
 #include "h7spi_protocol.h"
 #include "imu_task.h"
 #include "motor_app.h"
+#if H7DM_CAN_CAPTURE
+#include "can_capture.h"
+#endif
 #include "task.h"
 #include "usbd_cdc_if.h"
 
@@ -162,6 +166,9 @@ static void send_admin_result(uint16_t request_seq, uint8_t op, uint8_t result)
 
 static void handle_frame(const dmusb_header_t *header, const uint8_t *payload)
 {
+#if H7DM_CAN_CAPTURE
+  uint32_t received_cycle = DWT->CYCCNT;
+#endif
   uint8_t route_ids[DMUSB_MAX_MOTORS];
   uint8_t route_count = MotorApp_GetMotorCount();
   uint8_t slot;
@@ -182,7 +189,16 @@ static void handle_frame(const dmusb_header_t *header, const uint8_t *payload)
     memcpy(in.motors, payload + base, in.motor_count * sizeof(in.motors[0]));
     if (DMUSB_BuildMotorCommand(&in, route_ids, route_count, &command) != H7SPI_RESULT_OK)
       return;
-    (void)MotorApp_SubmitSpiMotorCommandAsync(&command);
+    if (MotorApp_SubmitSpiMotorCommandAsync(&command) != H7SPI_RESULT_OK) return;
+#if H7DM_CAN_CAPTURE
+    for (slot = 0U; slot < command.motor_count; slot++) {
+      const h7spi_motor_cmd_t *cmd = &command.motors[slot];
+      CanCapture_CommandReceived(cmd->motor_id, command.command_seq,
+                                 cmd->p_mrad, cmd->v_mrad_s,
+                                 cmd->kp_centi, cmd->kd_milli,
+                                 cmd->torque_mnm, received_cycle);
+    }
+#endif
   } else if (header->msg_type == DMUSB_MSG_SET_LIMITS) {
     dmusb_position_limit_t limits[DMUSB_MAX_MOTORS];
     uint8_t count;
@@ -260,6 +276,8 @@ static void publish_state(void)
   uint16_t frame_len;
   uint8_t index;
   uint8_t tx_result;
+  battery_meter_sample_t meter;
+  dmusb_battery_meter_t meter_wire;
   float filtered_gyro[3];
   float filtered_gravity[3];
   publish_count++;
@@ -287,7 +305,8 @@ static void publish_state(void)
   out.fault_flags = source.fault_flags;
   out.mode = DMUSB_MODE_MIT;
   out.reserved = DMUSB_CAP_SPARSE_COMMAND | DMUSB_CAP_ENABLE_TARGETS |
-                 DMUSB_CAP_CALIBRATION | DMUSB_CAP_FAULT_DIAGNOSTICS;
+                 DMUSB_CAP_CALIBRATION | DMUSB_CAP_FAULT_DIAGNOSTICS |
+                 DMUSB_CAP_BATTERY_METER;
   if (MotorApp_PositionLimitsReady() != 0U) out.reserved |= DMUSB_STATE_LIMITS_READY;
   out.motor_count = source.motor_count;
   (void)IMU_GetSnapshot(&imu);
@@ -311,9 +330,26 @@ static void publish_state(void)
   }
   payload_len = (uint16_t)(offsetof(dmusb_state_frame_t, motors) +
                            out.motor_count * sizeof(out.motors[0]));
-  if (DMUSB_Pack(DMUSB_MSG_STATE_FRAME, ++g_tx_seq, HAL_GetTick() * 1000U,
-                 out.fault_flags, &out, payload_len, g_tx, sizeof(g_tx),
-                 &frame_len) != 0U) {
+  memset(&meter_wire, 0, sizeof(meter_wire));
+  if (BatteryMeter_GetSnapshot(&meter) != 0U) {
+    meter_wire.voltage_centi_v = meter.voltage_centi_v;
+    meter_wire.percent = (uint8_t)meter.percent;
+    meter_wire.alarm = (uint8_t)meter.alarm;
+    meter_wire.valid = 1U;
+  }
+  /* Pack into the existing TX buffer, then append the suffix and refresh CRC.
+   * The state struct contains storage for 24 routes, so append after the
+   * actual motor count rather than after sizeof(out). */
+  {
+    uint8_t payload[sizeof(out) + sizeof(meter_wire)];
+    memcpy(payload, &out, payload_len);
+    memcpy(payload + payload_len, &meter_wire, sizeof(meter_wire));
+    payload_len = (uint16_t)(payload_len + sizeof(meter_wire));
+    if (DMUSB_Pack(DMUSB_MSG_STATE_FRAME, ++g_tx_seq, HAL_GetTick() * 1000U,
+                   out.fault_flags, payload, payload_len, g_tx, sizeof(g_tx),
+                   &frame_len) == 0U) return;
+  }
+  {
     tx_result = CDC_Transmit_HS(g_tx, frame_len);
     if (first_tx_result == 0xFFU) {
       first_tx_result = tx_result;

@@ -197,8 +197,9 @@ fn main() -> ExitCode {
         // neither. So this is logged at error and the daemon carries on.
         let page = mediad::web::page(args.port);
         let (web_host, web_port) = (args.host.clone(), args.web_port);
+        let connected_clients = mediad::web::ConnectedClients::default();
         tokio::spawn(async move {
-            if let Err(e) = mediad::web::serve(&web_host, web_port, page).await {
+            if let Err(e) = mediad::web::serve(&web_host, web_port, page, connected_clients).await {
                 tracing::error!(
                     error = %format!("{e:#}"),
                     "the console is not being served; video and control are unaffected"

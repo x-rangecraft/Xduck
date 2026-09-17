@@ -3209,6 +3209,7 @@ mod tests {
             battery: Some(proto::Battery {
                 volts: 7.66,
                 percent: 66.0,
+                alarm: None,
             }),
             motors: Some(proto::MotorThermal {
                 hottest: "left_knee".to_owned(),

@@ -8,7 +8,7 @@ use std::io::{Read, Write};
 use std::time::{Duration, Instant};
 
 use crate::imu::ImuData;
-use crate::io::{MotorPositionLimit, ImuStale, IoError, JointTargets, Result, RobotIo, Sensors, SlowSensors};
+use crate::io::{BatteryMeter, MotorPositionLimit, ImuStale, IoError, JointTargets, Result, RobotIo, Sensors, SlowSensors};
 use crate::model::{JOINT_NAMES, NUM_JOINTS};
 
 const MAGIC: u16 = 0x4D47;
@@ -39,6 +39,7 @@ const CONFIGURED_MOTOR_IDS: [u8; STM32_MOTOR_COUNT] = STM32_MOTOR_IDS;
 /// Older v4 firmware remains read-only even though motor control is now permitted.
 const CONTROL_CAPABILITIES: u16 = 0x0003;
 const FAULT_DIAGNOSTICS_CAPABILITY: u16 = 0x0010;
+const BATTERY_METER_CAPABILITY: u16 = 0x0020;
 pub const STM32_MOTOR_IDS: [u8; STM32_MOTOR_COUNT] = [
     0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
 ];
@@ -79,6 +80,7 @@ pub struct DynamixelIo {
     gateway_faults: u32,
     last_motor_state: Option<(Sensors, Instant)>,
     last_temps_c: [f64; NUM_JOINTS],
+    battery_meter: Option<BatteryMeter>,
 }
 
 impl DynamixelIo {
@@ -99,7 +101,7 @@ impl DynamixelIo {
             command_seq: 0, kp_centi: 20_000, started: Instant::now(),
             stale_imu: StaleImuTracker::default(), imu_sensor_ok: false, imu_ready: false,
             control_capabilities: 0, gateway_faults: 0, last_motor_state: None,
-            last_temps_c: [0.0; NUM_JOINTS] }
+            last_temps_c: [0.0; NUM_JOINTS], battery_meter: None }
 
     }
 
@@ -289,6 +291,7 @@ impl DynamixelIo {
         self.imu_sensor_ok = parsed.imu_flags & IMU_SENSOR_OK != 0;
         self.imu_ready = parsed.imu_flags & IMU_CALIBRATED != 0;
         self.last_temps_c = parsed.temps_c;
+        self.battery_meter = parsed.battery_meter;
         self.control_capabilities = parsed.control_capabilities;
         self.gateway_faults = parsed.gateway_faults;
         self.last_motor_state = Some((parsed.sensors, Instant::now()));
@@ -340,10 +343,11 @@ impl RobotIo for DynamixelIo {
     fn set_gain(&mut self, kp: u16) -> Result<()> { self.kp_centi = kp.saturating_mul(100); Ok(()) }
     fn set_torque(&mut self, on: bool) -> Result<()> { DynamixelIo::set_torque(self, on) }
     fn slow_sensors(&mut self) -> Result<SlowSensors> {
-        // DMUSB has rotor temperature but no supply-voltage field. Values are refreshed by
-        // the ordinary 50 Hz state read, so this accessor adds no USB transaction.
+        // Motor temperatures come from the 50 Hz state stream. The optional battery
+        // meter is exposed separately so its voltage is never used for motor control.
         Ok(SlowSensors { volts: 0.0, temps_c: self.last_temps_c })
     }
+    fn battery_meter(&self) -> Option<BatteryMeter> { self.battery_meter }
     fn imu_stale(&self) -> ImuStale { self.stale_imu.stale }
     fn imu_ready(&self) -> bool { self.imu_ready }
     fn motor_torque_enabled(&self) -> Option<bool> {
@@ -563,6 +567,7 @@ struct ParsedState {
     imu_sequence: u32,
     imu_flags: u8,
     temps_c: [f64; NUM_JOINTS],
+    battery_meter: Option<BatteryMeter>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -629,8 +634,13 @@ fn parse_state(payload: &[u8]) -> Result<ParsedState> {
         });
     }
     let expected = STATE_PREFIX_LEN + count * MOTOR_OBSERVATION_LEN;
-    if payload.len() != expected {
-        return Err(IoError::ShortRead { what: "STM32 state payload", expected, got: payload.len() });
+    let control_capabilities = get_u16(&payload[14..16]);
+    if control_capabilities & BATTERY_METER_CAPABILITY == 0 {
+        return Err(IoError::Bus("STM32 固件缺少必需的电池表状态格式".into()));
+    }
+    let expected_payload = expected + 8;
+    if payload.len() != expected_payload {
+        return Err(IoError::ShortRead { what: "STM32 state payload", expected: expected_payload, got: payload.len() });
     }
     let mut out = Sensors::default();
     let mut temps_c = [0.0; NUM_JOINTS];
@@ -674,7 +684,14 @@ fn parse_state(payload: &[u8]) -> Result<ParsedState> {
         };
         temps_c[joint] = temperature_c;
     }
-    let control_capabilities = get_u16(&payload[14..16]);
+    let battery_meter = if payload[expected + 4] == 1 {
+        let volts = get_u16(&payload[expected..expected + 2]) as f64 / 100.0;
+        let percent = payload[expected + 2];
+        let alarm = payload[expected + 3];
+        (volts > 0.0 && percent <= 100 && alarm <= 1).then_some(BatteryMeter {
+            volts, percent, alarm: alarm == 1,
+        })
+    } else { None };
     let route = payload[62] as usize;
     // Old v4 firmware left these bytes reserved. Do not invent a fault location
     // from zeros or malformed diagnostics, and never use diagnostics to enable.
@@ -692,6 +709,7 @@ fn parse_state(payload: &[u8]) -> Result<ParsedState> {
         imu_sequence: get_u32(&payload[56..60]),
         imu_flags: payload[60],
         temps_c,
+        battery_meter,
     })
 }
 
@@ -775,6 +793,27 @@ fn put_f32(p: &mut [u8], v: f32) { p[..4].copy_from_slice(&v.to_le_bytes()); }
 mod tests {
     use super::*;
 
+    #[cfg(unix)]
+    #[test]
+    fn battery_meter_suffix_requires_capability_and_valid_sample() {
+        let mut payload = test_state_payload(false);
+        assert_eq!(parse_state(&payload).unwrap().battery_meter, None);
+        payload.truncate(STATE_PREFIX_LEN + STM32_MOTOR_COUNT * MOTOR_OBSERVATION_LEN);
+        assert!(parse_state(&payload).is_err(), "battery suffix is mandatory");
+        payload.extend_from_slice(&[0x4a, 0x0b, 80, 1, 1, 0, 0, 0]);
+        assert_eq!(parse_state(&payload).unwrap().battery_meter,
+            Some(BatteryMeter { volts: 28.90, percent: 80, alarm: true }));
+        put_u16(&mut payload[14..16], CONTROL_CAPABILITIES);
+        assert!(parse_state(&payload).is_err(), "old firmware is rejected");
+        put_u16(&mut payload[14..16], CONTROL_CAPABILITIES | BATTERY_METER_CAPABILITY);
+        let valid = payload.len() - 4;
+        payload[valid] = 0;
+        assert_eq!(parse_state(&payload).unwrap().battery_meter, None);
+        payload[valid] = 1;
+        payload[valid - 2] = 101;
+        assert_eq!(parse_state(&payload).unwrap().battery_meter, None);
+    }
+
     #[test]
     fn physical_motor_ids_map_to_left_right_then_head() {
         let names = STM32_TO_CONTROL_JOINT.map(|joint| JOINT_NAMES[joint]);
@@ -791,7 +830,7 @@ mod tests {
         payload[61] = 11;
         payload[62] = 10;
         assert_eq!(parse_state(&payload).unwrap().fault_motor, None, "old firmware has reserved bytes");
-        put_u16(&mut payload[14..16], 0x1f);
+        put_u16(&mut payload[14..16], 0x3f);
         assert_eq!(parse_state(&payload).unwrap().fault_motor,
             Some(FaultMotor { id: 11, route: 10, joint: "neck_pitch" }));
         for (id, route) in [(1, 255), (2, 5), (0, 1), (1, 14)] {
@@ -915,9 +954,9 @@ mod tests {
 
     #[cfg(unix)]
     fn test_state_payload(enabled: bool) -> Vec<u8> {
-        let mut p = vec![0u8; STATE_PREFIX_LEN + STM32_MOTOR_COUNT * MOTOR_OBSERVATION_LEN];
+        let mut p = vec![0u8; STATE_PREFIX_LEN + STM32_MOTOR_COUNT * MOTOR_OBSERVATION_LEN + 8];
         p[13] = STM32_MOTOR_COUNT as u8;
-        put_u16(&mut p[14..16], CONTROL_CAPABILITIES);
+        put_u16(&mut p[14..16], CONTROL_CAPABILITIES | BATTERY_METER_CAPABILITY);
         put_f32(&mut p[40..44], 1.0);
         p[60] = IMU_SENSOR_OK | IMU_CALIBRATED;
         for slot in 0..STM32_MOTOR_COUNT {
@@ -1091,7 +1130,8 @@ mod tests {
     }
     #[test]
     fn state_order_is_fourteen_routes_with_no_mouth_slot() {
-        let mut p = vec![0u8; STATE_PREFIX_LEN + STM32_MOTOR_COUNT * MOTOR_OBSERVATION_LEN];
+        let mut p = vec![0u8; STATE_PREFIX_LEN + STM32_MOTOR_COUNT * MOTOR_OBSERVATION_LEN + 8];
+        put_u16(&mut p[14..16], BATTERY_METER_CAPABILITY);
         put_u32(&mut p[4..8], 10_000);
         p[13] = STM32_MOTOR_COUNT as u8;
         for (index, value) in [1.0f32, 2.0, 3.0, 0.0, 0.0, -1.0]

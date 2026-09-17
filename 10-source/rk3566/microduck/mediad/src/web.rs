@@ -37,13 +37,18 @@
 //! the part worth a test: a page served with the token still in it would connect to the wrong port
 //! and say nothing about why.
 
-use std::net::SocketAddr;
+use std::collections::HashMap;
+use std::net::{IpAddr, SocketAddr};
+use std::sync::{Arc, Mutex};
+use std::time::{Duration, Instant};
 
 use anyhow::{Context, Result};
-use axum::Router;
-use axum::response::Html;
+use axum::extract::{ConnectInfo, State};
+use axum::response::{Html, Json};
 use axum::routing::{get, post};
+use axum::Router;
 use duck_ipc_proto as proto;
+use serde_json::json;
 
 /// The page as it sits in the source tree.
 ///
@@ -65,6 +70,35 @@ const API_TOKEN: &str = "{{API_VERSION}}";
 /// for the JSON-RPC envelope while staying below robotd's 64 KiB line limit.
 const CONTROL_BODY_LIMIT: usize = 32 * 1024;
 
+/// A browser is considered connected while it renews this lease. The browser sends the lease only
+/// after its HTTP-control or WebRTC connection is ready, so merely opening the page is not enough.
+const CLIENT_PRESENCE_TTL: Duration = Duration::from_secs(15);
+
+/// The active console clients, keyed by their page instance and source IP.
+#[derive(Clone, Default)]
+pub struct ConnectedClients(Arc<Mutex<HashMap<(IpAddr, String), Instant>>>);
+
+impl ConnectedClients {
+    fn update(&self, ip: IpAddr, client_id: String, connected: bool) {
+        let mut clients = self.0.lock().unwrap_or_else(|error| error.into_inner());
+        if connected {
+            clients.insert((ip, client_id), Instant::now());
+        } else {
+            clients.remove(&(ip, client_id));
+        }
+    }
+
+    fn ips(&self) -> Vec<String> {
+        let now = Instant::now();
+        let mut clients = self.0.lock().unwrap_or_else(|error| error.into_inner());
+        clients.retain(|_, last_seen| now.duration_since(*last_seen) <= CLIENT_PRESENCE_TTL);
+        let mut ips: Vec<_> = clients.keys().map(|(ip, _)| ip.to_string()).collect();
+        ips.sort();
+        ips.dedup();
+        ips
+    }
+}
+
 /// The page, with the signalling port and the API version filled in.
 pub fn page(signalling_port: u32) -> String {
     PAGE.replace(PORT_TOKEN, &signalling_port.to_string())
@@ -76,7 +110,7 @@ pub fn page(signalling_port: u32) -> String {
 /// Returns only on failure — a bind that was refused, or a listener that died. The caller decides
 /// what that costs; in `mediad` it costs the page and not the video, because a robot that streams
 /// and answers control calls with no console is a great deal better than one that does neither.
-pub async fn serve(host: &str, port: u16, page: String) -> Result<()> {
+pub async fn serve(host: &str, port: u16, page: String, clients: ConnectedClients) -> Result<()> {
     let address: SocketAddr = format!("{host}:{port}")
         .parse()
         .with_context(|| format!("{host}:{port} is not an address to listen on"))?;
@@ -85,14 +119,45 @@ pub async fn serve(host: &str, port: u16, page: String) -> Result<()> {
         .with_context(|| format!("could not listen on {address}"))?;
 
     tracing::info!(%address, "serving the console");
-    axum::serve(listener, router(page))
+    axum::serve(
+        listener,
+        router(page, clients).into_make_service_with_connect_info::<SocketAddr>(),
+    )
         .await
         .context("the console's listener stopped")
 }
 
+/// Record whether the page's control/video connection is alive, using the HTTP source IP.
+async fn client_presence(
+    ConnectInfo(address): ConnectInfo<SocketAddr>,
+    State(clients): State<ConnectedClients>,
+    Json(presence): Json<serde_json::Value>,
+) -> Json<serde_json::Value> {
+    let client_id = presence
+        .get("client_id")
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or_default();
+    let connected = presence
+        .get("connected")
+        .and_then(serde_json::Value::as_bool)
+        .unwrap_or(false);
+    if !client_id.is_empty() && client_id.len() <= 128 {
+        clients.update(address.ip(), client_id.to_owned(), connected);
+    }
+    Json(json!({"clients": clients.ips()}))
+}
+
 /// One route, returning `page`.
-fn router(page: String) -> Router {
-    Router::new().route("/", get(move || std::future::ready(Html(page))))
+fn router(page: String, clients: ConnectedClients) -> Router {
+    Router::new()
+        .route("/", get(move || std::future::ready(Html(page))))
+        .route("/api/client-presence", post(client_presence))
+        .route(
+            "/api/connected-clients",
+            get(|State(clients): State<ConnectedClients>| async move {
+                Json(json!({"clients": clients.ips()}))
+            }),
+        )
         .route("/api/control", post(crate::control_http::call))
         .route("/api/motor-experiment/capabilities", get(crate::experiment_tasks_http::capabilities))
         .route("/api/motor-experiment/tasks", get(crate::experiment_tasks_http::list))
@@ -117,6 +182,7 @@ fn router(page: String) -> Router {
         .route("/policy_experiment.py", get(|| async { ([("content-type","text/x-python; charset=utf-8"),("content-disposition","attachment; filename=policy_experiment.py")], include_str!("../webclient/policy-experiment/policy_experiment.py")) }))
         .route("/policy-experiment-example.json", get(|| async { ([("content-type","application/json"),("content-disposition","attachment; filename=policy-experiment-example.json")], include_str!("../webclient/policy-experiment/example.json")) }))
         .layer(axum::extract::DefaultBodyLimit::max(CONTROL_BODY_LIMIT))
+        .with_state(clients)
 }
 
 #[cfg(test)]
@@ -168,7 +234,12 @@ mod tests {
             .expect("a loopback port");
         let address = listener.local_addr().expect("the port it took");
         tokio::spawn(async move {
-            let _ = axum::serve(listener, router(page(8443))).await;
+            let _ = axum::serve(
+                listener,
+                router(page(8443), ConnectedClients::default())
+                    .into_make_service_with_connect_info::<SocketAddr>(),
+            )
+            .await;
         });
 
         let mut stream = tokio::net::TcpStream::connect(address)
@@ -196,6 +267,42 @@ mod tests {
         );
     }
 
+    #[tokio::test]
+    async fn connected_clients_track_only_live_page_connections() {
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("a loopback port");
+        let address = listener.local_addr().expect("the port it took");
+        tokio::spawn(async move {
+            let _ = axum::serve(
+                listener,
+                router(page(8443), ConnectedClients::default())
+                    .into_make_service_with_connect_info::<SocketAddr>(),
+            )
+            .await;
+        });
+
+        let mut stream = tokio::net::TcpStream::connect(address)
+            .await
+            .expect("the server is listening");
+        stream
+            .write_all(
+                b"POST /api/client-presence HTTP/1.1\r\nHost: robot\r\nContent-Type: application/json\r\nContent-Length: 37\r\nConnection: close\r\n\r\n{\"client_id\":\"test\",\"connected\":true}",
+            )
+            .await
+            .expect("wrote the request");
+        let mut answer = String::new();
+        stream
+            .read_to_string(&mut answer)
+            .await
+            .expect("read the answer");
+
+        assert!(answer.starts_with("HTTP/1.1 200"), "{answer}");
+        assert!(answer.contains(r#"{"clients":["127.0.0.1"]}"#), "{answer}");
+    }
+
     /// Model uploads carry 8 KiB as hexadecimal, which is already exactly 16 KiB before the
     /// JSON-RPC envelope. Keep the HTTP fallback large enough for the same chunk the WebRTC data
     /// channel accepts. An unknown method makes the request stop locally with structured JSON, so
@@ -209,7 +316,12 @@ mod tests {
             .expect("a loopback port");
         let address = listener.local_addr().expect("the port it took");
         tokio::spawn(async move {
-            let _ = axum::serve(listener, router(page(8443))).await;
+            let _ = axum::serve(
+                listener,
+                router(page(8443), ConnectedClients::default())
+                    .into_make_service_with_connect_info::<SocketAddr>(),
+            )
+            .await;
         });
 
         let body = serde_json::json!({

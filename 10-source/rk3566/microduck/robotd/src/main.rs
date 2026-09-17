@@ -468,6 +468,10 @@ struct RobotState {
     /// distinction that has to survive to the wire, since zero volts and unknown volts look
     /// nothing alike to whoever is deciding whether to charge the robot.
     battery_v: AtomicU64,
+    meter_v: AtomicU64,
+    battery_percent: AtomicU32,
+    battery_alarm: AtomicU32,
+    battery_sample_us: AtomicU64,
     /// Hottest servo of the last thermal sample: temperature as `f64::to_bits`, and which
     /// joint it was. Zero means *not read yet*, same as the battery.
     motor_max_c: AtomicU64,
@@ -579,6 +583,10 @@ impl RobotState {
             consecutive_errors: AtomicU32::new(0),
             startup_bus_failures: AtomicU32::new(0),
             battery_v: AtomicU64::new(0),
+            meter_v: AtomicU64::new(0),
+            battery_percent: AtomicU32::new(101),
+            battery_alarm: AtomicU32::new(2),
+            battery_sample_us: AtomicU64::new(0),
             motor_max_c: AtomicU64::new(0),
             motor_mean_c: AtomicU64::new(0),
             motor_hottest: AtomicU32::new(0),
@@ -764,15 +772,20 @@ impl RobotState {
     /// The last battery reading, mapped to a percentage — or `None` if there has not been
     /// one.
     ///
-    /// Zero is the "never read" sentinel rather than a measurement: the atomic starts there,
-    /// and a robot whose bus cannot answer never leaves it. Reporting that as `0.00 V, 0%`
-    /// would put a flat-battery warning in front of anyone whose robot has been up for less
-    /// than a second.
+    /// Only the USART1 meter can supply the displayed battery reading. Missing or stale
+    /// samples stay absent instead of falling back to the legacy motor voltage estimate.
     fn battery(&self) -> Option<proto::Battery> {
-        let volts = f64::from_bits(self.battery_v.load(Ordering::Relaxed));
-        (volts > 0.0).then(|| proto::Battery {
+        let sample_us = self.battery_sample_us.load(Ordering::Relaxed);
+        let fresh = sample_us == 0 ||
+            (self.started.elapsed().as_micros() as u64).saturating_sub(sample_us) <= 3_000_000;
+        if !fresh { return None; }
+        let volts = f64::from_bits(self.meter_v.load(Ordering::Relaxed));
+        let percent = self.battery_percent.load(Ordering::Relaxed);
+        let alarm = self.battery_alarm.load(Ordering::Relaxed);
+        (volts > 0.0 && percent <= 100 && alarm <= 1).then(|| proto::Battery {
             volts,
-            percent: duck_control::battery_percent(volts),
+            percent: percent as f64,
+            alarm: Some(alarm == 1),
         })
     }
 
@@ -2922,15 +2935,20 @@ fn publish_slow_sensors<T: RobotIo>(io: &mut Safety<T>, state: &RobotState) {
 
     match io.slow_sensors() {
         Ok(slow) => {
+            let meter = io.battery_meter();
             let previous = f64::from_bits(state.battery_v.load(Ordering::Relaxed));
             // Seed from the first reading rather than blending up from zero, which would
             // spend ten seconds reporting a battery flatter than it is.
-            let smoothed = if previous > 0.0 {
+            let smoothed = if previous > 0.0 && slow.volts > 0.0 {
                 BATTERY_EMA_ALPHA * slow.volts + (1.0 - BATTERY_EMA_ALPHA) * previous
             } else {
                 slow.volts
             };
             state.battery_v.store(smoothed.to_bits(), Ordering::Relaxed);
+            state.meter_v.store(meter.map_or(0.0, |m| m.volts).to_bits(), Ordering::Relaxed);
+            state.battery_percent.store(meter.map_or(101, |m| m.percent as u32), Ordering::Relaxed);
+            state.battery_alarm.store(meter.map_or(2, |m| u32::from(m.alarm)), Ordering::Relaxed);
+            state.battery_sample_us.store(state.started.elapsed().as_micros() as u64, Ordering::Relaxed);
 
             // Temperature is not smoothed: a servo's case is already a slow signal, and an
             // EMA would only delay the one reading anybody cares about — the joint climbing
@@ -4969,13 +4987,16 @@ mod tests {
     fn a_flat_battery_is_reported_and_changes_no_verdict() {
         let s = state();
         ticked(&s, 100);
-        // Below BATTERY_EMPTY_V: the pack is done and the robot is struggling.
-        s.battery_v.store(6.1f64.to_bits(), Ordering::Relaxed);
+        // A reported empty pack must remain visible without changing health.
+        s.meter_v.store(6.1f64.to_bits(), Ordering::Relaxed);
+        s.battery_percent.store(0, Ordering::Relaxed);
+        s.battery_alarm.store(1, Ordering::Relaxed);
 
         let health = s.health();
         let battery = health.battery.expect("a flat battery is still a reading");
-        assert!(battery.volts < duck_control::BATTERY_EMPTY_V);
+        assert_eq!(battery.volts, 6.1);
         assert_eq!(battery.percent, 0.0);
+        assert_eq!(battery.alarm, Some(true));
 
         assert!(health.healthy, "{:?}", health.reason);
         assert!(!health.degraded);
@@ -4998,7 +5019,9 @@ mod tests {
     fn battery_is_reported_alongside_an_unhealthy_verdict() {
         let s = state();
         s.startup_bus_failures.store(4, Ordering::Relaxed);
-        s.battery_v.store(7.5f64.to_bits(), Ordering::Relaxed);
+        s.meter_v.store(7.5f64.to_bits(), Ordering::Relaxed);
+        s.battery_percent.store(12, Ordering::Relaxed);
+        s.battery_alarm.store(0, Ordering::Relaxed);
         s.motor_max_c.store(48.0f64.to_bits(), Ordering::Relaxed);
 
         let health = s.health();

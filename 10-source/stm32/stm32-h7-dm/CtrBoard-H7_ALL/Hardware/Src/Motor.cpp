@@ -7,6 +7,10 @@
 
 #include "Motor.h"
 #include "BSP_CAN.h"
+#if H7DM_CAN_CAPTURE
+#include "can_capture.h"
+#include "motor_app.h"
+#endif
 #include "usbd_cdc_if.h"
 
 #include <string.h>
@@ -872,6 +876,9 @@ unsigned char Motor_CAN_Send(unsigned char Code)
     return 0U;
   }
   motor_mit_tx_count[Code]++;
+#if H7DM_CAN_CAPTURE
+  CanCapture_Tx(Code, MotorApp_GetMotorLastCommandSeq(Code), TxData);
+#endif
   return 1U;
 }
 
@@ -984,6 +991,9 @@ static void MotorCanCallBack(unsigned char Port, unsigned int ID, unsigned char 
   int Code;
   unsigned char FeedbackID;
   unsigned char Err;
+#if H7DM_CAN_CAPTURE
+  uint32_t received_cycle = DWT->CYCCNT;
+#endif
 
   if (Motor_RegisterOnRx(Port, ID, Data) != 0U) {
     return;
@@ -993,6 +1003,9 @@ static void MotorCanCallBack(unsigned char Port, unsigned int ID, unsigned char 
   Err = (Data[0] >> 4) & 0x0FU;
   Code = Motor_FindCodeByFeedback(Port, ID, FeedbackID);
   if (Code >= 0) {
+#if H7DM_CAN_CAPTURE
+    CanCapture_Rx((uint8_t)Code, received_cycle, Data);
+#endif
     Err = Motor_NormalizeFeedbackState((unsigned char)Code, ID, Err, Data);
     Motor_CAN_Back((unsigned char)Code, Err, Data);
   }

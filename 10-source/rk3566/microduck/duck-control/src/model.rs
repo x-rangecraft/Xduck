@@ -101,10 +101,9 @@ pub fn joint_index(name: &str) -> Option<usize> {
 
 // ── battery ──────────────────────────────────────────────────────────────────
 //
-// There is no fuel gauge and no ADC. The only measurement available is what the servos
-// report as their own supply (`crate::bus::DynamixelIo::bus_voltage`), which is the pack
-// seen through the bus — so it sags under load and recovers when the robot stands still.
-// That is why the span below is *usable-under-load*, not the cell chemistry's range.
+// Legacy 2S motor-bus mapping for backends that still report supply voltage.
+// The current STM32 robot uses a 7S pack and forwards the external meter's own
+// percentage separately; this mapping must never be applied to its meter voltage.
 
 /// Off a full charge, under load. NP-F550, 2S Li-ion.
 pub const BATTERY_FULL_V: f64 = 8.2;

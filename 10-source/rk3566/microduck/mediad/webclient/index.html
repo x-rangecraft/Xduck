@@ -67,6 +67,7 @@
   section { border: 1px solid var(--line); border-radius: 6px; padding: .75rem; }
   .row { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; }
   .hint { margin: .5rem 0 0; font-size: 12px; opacity: .6; }
+  .file-current { margin: 0; overflow-wrap: anywhere; }
 
   #control-live { margin: 0 0 .6rem; }
   #control-feedback, #skill-feedback, #sound-feedback {
@@ -167,6 +168,7 @@
   <h1 id="robot">xduck1</h1>
   <span id="release" class="pill dim">版本未知</span>
   <span id="api" class="pill dim">API 未知</span>
+  <span id="connected-clients" class="pill dim" title="已点击连接且连接仍保持的网页客户端">已连接设备 IP：读取中…</span>
   <span class="grow"></span>
   <span id="state" class="pill">未连接</span>
   <span id="dcstate" class="pill dim">控制通道未连接</span>
@@ -318,7 +320,8 @@
       <tr><th>重力投影 Y</th><td id="t-pitch">–</td></tr>
       <tr><th>重力投影 Z</th><td id="t-yaw">–</td></tr>
       <tr><th>健康状态</th><td id="t-health">–</td></tr>
-      <tr><th>电池</th><td id="t-battery">–</td></tr>
+      <tr><th>电池</th><td id="t-battery">未读取</td></tr>
+      <tr><th>电池报警</th><td id="t-battery-alarm" class="dim">未读取</td></tr>
       <tr><th>主板温度</th><td id="t-temps">–</td></tr>
     </table>
     <p class="hint">页面运行数据通过 <code>robot.subscribe</code> 以 10 Hz 刷新，机器人控制循环仍保持 50 Hz；健康状态、电池和温度通过
@@ -331,8 +334,8 @@
     <div class="row"><label>替换模型 <select id="model-slot" aria-label="替换模型"><option value="">连接后读取模型</option></select></label><button id="model-refresh">刷新</button></div>
     <p id="model-current" class="hint">连接后读取现有模型</p>
     <p id="model-shared" class="hint">走和站共享消费文件与运行状态：上传或回滚任一侧会同步另一侧的消费文件，另一侧 ONNX 不变；两侧联合校验通过后原子更新。省略消费文件则两侧一起恢复默认消费代码。</p>
-    <div class="row"><label>模型文件 <input id="model-file" type="file" accept=".pt,.pth,.onnx"></label></div>
-    <div class="row"><label>策略代码（可选） <input id="model-policy-file" type="file" accept=".py"></label></div>
+    <div class="row"><label>模型文件 <input id="model-file" type="file" accept=".pt,.pth,.onnx"></label><span id="model-file-current" class="hint file-current">当前模型：未读取</span></div>
+    <div class="row"><label>策略代码（可选） <input id="model-policy-file" type="file" accept=".py"></label><span id="model-policy-file-current" class="hint file-current">当前策略代码：未读取</span></div>
     <p class="hint">不选择策略代码时，本次导入按目标槽位使用名称为“默认”的内置 API v2 消费文件（各自构造 61 维观测；动作缩放 0.9、腿/头低通 0.7/0.5、Kp 60、Kd 4）。选择的自定义 <code>policy.py</code> 只用于本次导入；请求成功后此处自动恢复默认。</p>
     <div class="row"><label>PPO 激活函数 <select id="model-activation"><option value="elu">ELU（UniLab 默认）</option><option value="relu">ReLU</option><option value="tanh">Tanh</option><option value="selu">SELU</option><option value="leaky_relu">LeakyReLU</option></select></label></div>
     <div class="row"><label>观测归一化 ε <input id="model-epsilon" type="number" value="0.01" min="0.000000000001" max="1" step="any" style="width:90px"></label><span class="hint">仅转换含归一化器的 .pt/.pth 时使用；生成的 ONNX 内嵌归一化</span></div>
@@ -454,6 +457,56 @@ function setDc(text, cls = "dim") { $("dcstate").textContent = text; $("dcstate"
 
 function banner(html) { $("banner").innerHTML = html; $("banner").hidden = false; }
 
+const CLIENT_ID = globalThis.crypto?.randomUUID?.()
+  || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+let presenceConnected = false;
+
+function renderConnectedClients(ips) {
+  const label = ips.length ? ips.join("、") : "无";
+  $("connected-clients").textContent = `已连接设备 IP：${label}`;
+  $("connected-clients").className = ips.length ? "pill in" : "pill dim";
+}
+
+async function refreshConnectedClients() {
+  try {
+    const response = await fetch("/api/connected-clients", {cache: "no-store"});
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    renderConnectedClients(Array.isArray(data.clients) ? data.clients : []);
+  } catch {
+    $("connected-clients").textContent = "已连接设备 IP：未知";
+    $("connected-clients").className = "pill dim";
+  }
+}
+
+function updateClientPresence(connected, unload = false) {
+  const body = JSON.stringify({client_id: CLIENT_ID, connected});
+  if (unload && navigator.sendBeacon) {
+    navigator.sendBeacon("/api/client-presence", new Blob([body], {type: "application/json"}));
+    return;
+  }
+  fetch("/api/client-presence", {
+    method: "POST",
+    headers: {"content-type": "application/json"},
+    body,
+    keepalive: unload,
+  }).then(() => refreshConnectedClients()).catch(() => {});
+}
+
+function setClientPresence(connected) {
+  presenceConnected = connected;
+  updateClientPresence(connected);
+}
+
+refreshConnectedClients();
+setInterval(() => {
+  if (presenceConnected) updateClientPresence(true);
+  else refreshConnectedClients();
+}, 5000);
+addEventListener("pagehide", () => {
+  if (presenceConnected) updateClientPresence(false, true);
+});
+
 // ── signalling ─────────────────────────────────────────────────────────────────
 
 let ws = null, pc = null, sessionId = null, control = null, producerId = null;
@@ -483,6 +536,7 @@ $("signalling").textContent = SIGNALLING_URL;
 
 $("connect").onclick = () => {
   if (httpControl) {
+    setClientPresence(false);
     httpControl = false;
     $("connect").textContent = "连接";
     $("video-toggle").disabled = true;
@@ -521,6 +575,7 @@ $("connect").onclick = () => {
         + `请使用机器人提供的控制台页面。`);
   };
   ws.onclose = () => {
+    setClientPresence(false);
     const reconnectForVideo = restartingForVideo;
     setState("已断开", "bad"); setDc("控制通道未连接");
     $("connect").textContent = "连接";
@@ -696,6 +751,7 @@ function newPeerConnection() {
     control = event.channel;
     reportConnectionIssue("dim", "datachannel:", control.label);
     control.onopen = () => {
+      setClientPresence(true);
       restartingForVideo = false;
       videoReconnectAttempts = 0;
       setDc("控制通道已连接", "in");
@@ -704,6 +760,7 @@ function newPeerConnection() {
       refreshVolume();
     };
     control.onclose = () => {
+      setClientPresence(false);
       setDc("控制通道已关闭", "bad");
       $("speaker-volume").disabled = true;
       $("volume-feedback").textContent = "控制通道已断开";
@@ -725,6 +782,7 @@ $("video-toggle").onclick = () => {
   videoReconnectAttempts = 0;
   $("video-toggle").disabled = true;
   if (httpControl) {
+    setClientPresence(false);
     httpControl = false;
     $("connect").textContent = "连接";
     stopTelemetry();
@@ -753,6 +811,7 @@ function open() { return httpControl || (control && control.readyState === "open
 function startHttpControl() {
   if (httpControl || ws || videoEnabled) return;
   httpControl = true;
+  setClientPresence(true);
   $("connect").textContent = "断开连接";
   $("video-toggle").disabled = false;
   setState("已连接", "in");
@@ -971,6 +1030,9 @@ async function poll() {
     $("t-battery").textContent = health.battery
       ? `${health.battery.volts.toFixed(2)} V · ${Math.round(health.battery.percent)}%`
       : "未读取";
+    const alarm = health.battery?.alarm;
+    $("t-battery-alarm").textContent = alarm === true ? "报警" : alarm === false ? "未报警" : "未读取";
+    $("t-battery-alarm").className = alarm === true ? "bad" : alarm === false ? "in" : "dim";
     const cpu = health.cpu_temp_c !== undefined && health.cpu_temp_c !== null
       ? `${health.cpu_temp_c.toFixed(0)} °C` : null;
     $("t-temps").textContent = cpu || "未读取";
@@ -2098,8 +2160,14 @@ function modelControls() {
   for (const button of $("model-history").querySelectorAll("button")) button.disabled = !safe || modelLocked();
   $("model-safety").textContent = safe ? "已确认放松 · 全部配置电机已失能，可以替换/回滚" : "替换已锁定 · 请先放松并等待全部配置电机失能反馈";
 }
+function renderCurrentModelFiles(slot) {
+  const active = slot?.active;
+  $("model-file-current").textContent = `当前模型：${active?.model_filename || slot?.file || "未读取"}`;
+  $("model-policy-file-current").textContent = `当前策略代码：${active?.policy_filename || active?.name || "未读取"}`;
+}
 function renderModelHistory() {
   const slot = modelStatus?.slots.find(s => s.id === $("model-slot").value);
+  renderCurrentModelFiles(slot);
   $("model-current").textContent = slot ? `当前：${slot.active?.name || slot.file} · 双文件策略${slot.shared_consumer === "walk_stand" ? " · 走/站共享消费文件与反馈/滤波" : ""}` : "没有可替换的已配置策略";
   const historyKey = JSON.stringify(slot || null);
   if (historyKey === modelHistoryKey) { modelControls(); return; }
@@ -2110,7 +2178,9 @@ function renderModelHistory() {
     const row = document.createElement("div"); row.className = "row";
     const label = document.createElement("span");
     const timestamp = Number(version.id.split("-")[0]);
-    label.textContent = `${version.name} · ${new Date(timestamp).toLocaleString()} · 双文件策略`;
+    const model = version.model_filename || version.name;
+    const policy = version.policy_filename ? ` · 策略代码 ${version.policy_filename}` : "";
+    label.textContent = `${model}${policy} · ${new Date(timestamp).toLocaleString()} · 双文件策略`;
     const button = document.createElement("button"); button.textContent = "回滚";
     button.onclick = () => runModelRequest({action:"rollback",slot:slot.id,version:version.id});
     row.append(label,button); $("model-history").append(row);

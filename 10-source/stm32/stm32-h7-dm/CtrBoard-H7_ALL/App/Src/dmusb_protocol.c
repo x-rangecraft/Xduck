@@ -4,6 +4,7 @@
 
 _Static_assert(sizeof(dmusb_motor_command_t) == 20U, "166 command ABI changed");
 _Static_assert(sizeof(dmusb_motor_observation_t) == 20U, "166 state ABI changed");
+_Static_assert(sizeof(dmusb_battery_meter_t) == 8U, "battery suffix ABI changed");
 _Static_assert(offsetof(dmusb_motor_observation_t, rotor_temperature_c) == 17U,
                "motor temperature wire offset changed");
 _Static_assert(sizeof(dmusb_admin_op_frame_t) == 28U, "166 admin ABI changed");

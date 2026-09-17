@@ -139,6 +139,10 @@ impl<T: RobotIo> Safety<T> {
         self.io.slow_sensors()
     }
 
+    pub fn battery_meter(&self) -> Option<crate::io::BatteryMeter> {
+        self.io.battery_meter()
+    }
+
     pub fn imu_stale(&self) -> crate::io::ImuStale {
         self.io.imu_stale()
     }

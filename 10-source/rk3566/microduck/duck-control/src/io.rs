@@ -110,8 +110,8 @@ pub type Result<T> = std::result::Result<T, IoError>;
 /// second bus transaction to learn nothing new.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct SlowSensors {
-    /// Mean supply voltage across the servos, in volts — the only battery measurement the
-    /// robot has, since there is no fuel gauge anywhere on the hat.
+    /// Legacy motor supply voltage, when that backend provides it. The STM32 gateway
+    /// reports the dedicated battery meter separately.
     pub volts: f64,
     /// Per-joint case temperature in °C, indexed as [`crate::model::JOINT_NAMES`].
     ///
@@ -119,6 +119,13 @@ pub struct SlowSensors {
     /// the load — a knee holding a squat runs far hotter than the mouth, and a mean over
     /// fifteen servos hides exactly the servo about to latch its overheat shutdown.
     pub temps_c: [f64; NUM_JOINTS],
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct BatteryMeter {
+    pub volts: f64,
+    pub percent: u8,
+    pub alarm: bool,
 }
 
 /// IMU reads that came back byte-for-byte identical to their predecessor.
@@ -199,6 +206,9 @@ pub trait RobotIo {
     /// costs a transaction of its own — about a millisecond. Negligible once a second, 5% of
     /// the budget at 50 Hz.
     fn slow_sensors(&mut self) -> Result<SlowSensors>;
+
+    /// Optional external meter from the STM32 state stream. None means stale or absent.
+    fn battery_meter(&self) -> Option<BatteryMeter> { None }
 
     /// Diagnostics the bus keeps about itself. Default to "nothing to report" so a fake or a
     /// future backend is not obliged to invent them.

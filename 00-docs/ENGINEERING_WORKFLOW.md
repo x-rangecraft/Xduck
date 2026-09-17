@@ -49,6 +49,8 @@
 | RK3566 Microduck Rust workspace | `10-source/rk3566/microduck/` |
 | STM32↔RK3566 DMUSB v4 协议事实源 | `10-source/rk3566/STM32_DMUSB_V4_PROTOCOL.md` |
 | STM32 H7 固件 | `10-source/stm32/stm32-h7-dm/` |
+| H52CT 电压表 USART1 轮询 | `10-source/stm32/stm32-h7-dm/CtrBoard-H7_ALL/App/Src/battery_meter.c`；9600 8N1，Modbus RTU 地址 1，状态经 DMUSB v4 必需电池后缀送往 robotd |
+| STM32 电机命令与 CAN 双向短时采集 | 可选固件模块 `Bsp/Src/can_capture.c`；电脑端入口 `60-tools/capture-stm32-can.py`；采集文件存放 `50-logs/test/motor/gf43x40-10-i2rt/data/can-capture/`。仅在独立采集构建中启用，不改变默认固件 |
 | GF43X40-10 / I2RT 通信与辨识工具 | `10-source/tools/motor/gf43x40-10-i2rt/` |
 | GF43X40-10 厂商参数与 I2RT 指令手册 | 仓库同级 `../Motor/电机参数.pdf`、`../Motor/I2RT_CAN通信协议与指令手册.docx` |
 | 电机建模与辨识方案 | `00-docs/hardware/motors/` |

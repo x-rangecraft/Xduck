@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "usb_device.h"
+#include "main.h"
 #include "usbd_core.h"
 #include "usbd_desc.h"
 #include "usbd_cdc.h"
@@ -98,4 +99,3 @@ void MX_USB_DEVICE_Init(void)
 /**
   * @}
   */
-

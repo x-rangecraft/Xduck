@@ -34,6 +34,16 @@ extern "C" {
 /* imu.reserved[0:2] carries the last protection fault's motor ID and route.
  * It survives disable/recovery; ID 0 / route 0xff means no specific motor. */
 #define DMUSB_CAP_FAULT_DIAGNOSTICS 0x0010U
+#define DMUSB_CAP_BATTERY_METER    0x0020U
+/* Required 8-byte suffix after the last motor observation. When valid==0,
+ * voltage/percent/alarm are unknown and must not be reused by the host. */
+typedef struct {
+  uint16_t voltage_centi_v;
+  uint8_t percent;
+  uint8_t alarm;
+  uint8_t valid;
+  uint8_t reserved[3];
+} dmusb_battery_meter_t;
 
 /* Exact-length payload: request_seq:u16, count:u8, reserved:u8, then
  * count records {motor_id:u8, reserved[3], min_mrad:i32, max_mrad:i32}.

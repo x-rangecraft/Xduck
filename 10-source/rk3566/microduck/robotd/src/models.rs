@@ -33,6 +33,41 @@ fn default_policy(net: Net) -> &'static [u8] {
         Net::Roulade => DEFAULT_ROULADE_POLICY,
     }
 }
+
+fn default_policy_filename(net: Net) -> &'static str {
+    match net {
+        Net::Walk | Net::Stand => "default_locomotion_policy.py",
+        Net::SitStand => "default_sitstand_policy.py",
+        Net::GroundPick => "default_ground_pick_policy.py",
+        Net::KickLeft => "default_kick_left_policy.py",
+        Net::KickRight => "default_kick_right_policy.py",
+        Net::Roulade => "default_roulade_policy.py",
+    }
+}
+
+/// The runtime artifact is always ONNX, but keep the uploaded model's stem in its displayed name.
+/// This makes `walk.pt` visibly become `walk.onnx` after conversion instead of exposing the
+/// internal upload token used for immutable storage.
+fn display_model_filename(name: &str) -> String {
+    let path = Path::new(name);
+    let file_name = path.file_name().and_then(|value| value.to_str()).unwrap_or(name);
+    let extension = path.extension().and_then(|value| value.to_str()).unwrap_or("");
+    if matches!(extension.to_ascii_lowercase().as_str(), "pt" | "pth") {
+        let mut output = PathBuf::from(file_name);
+        output.set_extension("onnx");
+        output.to_string_lossy().into_owned()
+    } else {
+        file_name.to_owned()
+    }
+}
+
+fn stored_filename(path: &Path, fallback: &str) -> String {
+    path.file_name()
+        .and_then(|value| value.to_str())
+        .map(str::to_owned)
+        .unwrap_or_else(|| fallback.to_owned())
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 struct Version {
     id: String,
@@ -42,6 +77,11 @@ struct Version {
     policy_path: Option<PathBuf>,
     #[serde(default)]
     contract: Option<Value>,
+    /// Original/display name, separate from the internal immutable storage path.
+    #[serde(default)]
+    model_filename: Option<String>,
+    #[serde(default)]
+    policy_filename: Option<String>,
 }
 #[derive(Clone, Default, Serialize, Deserialize)]
 struct Record {
@@ -52,6 +92,12 @@ fn version_json(version: &Version) -> Value {
     json!({
         "id": version.id,
         "name": version.name,
+        "model_filename": version.model_filename.as_deref()
+            .map(str::to_owned)
+            .unwrap_or_else(|| display_model_filename(&stored_filename(&version.path, "model.onnx"))),
+        "policy_filename": version.policy_filename.as_deref()
+            .map(str::to_owned)
+            .or_else(|| version.policy_path.as_deref().map(|path| stored_filename(path, "policy.py"))),
         "two_file": true,
         "contract": version.contract,
     })
@@ -166,6 +212,8 @@ fn default_version(root: &Path, source: &Path, net: Net) -> Result<Version, Stri
         path: model,
         policy_path: Some(policy),
         contract: None,
+        model_filename: Some(display_model_filename(&stored_filename(source, "model.onnx"))),
+        policy_filename: Some(default_policy_filename(net).into()),
     })
 }
 
@@ -214,6 +262,33 @@ fn normalize_default_name(version: &mut Version, net: Net) -> Result<bool, Strin
         return Ok(true);
     }
     Ok(false)
+}
+
+fn normalize_filenames(version: &mut Version, net: Net) -> bool {
+    let mut changed = false;
+    if version.model_filename.is_none() {
+        let legacy_name = version.name
+            .split_once(" + ")
+            .map(|(_, model)| display_model_filename(model));
+        version.model_filename = Some(legacy_name.unwrap_or_else(|| {
+            display_model_filename(&stored_filename(&version.path, "model.onnx"))
+        }));
+        changed = true;
+    }
+    if version.policy_filename.is_none() {
+        let legacy_name = version.name
+            .split_once(" + ")
+            .map(|(policy, _)| policy.to_owned());
+        version.policy_filename = Some(if version.name == DEFAULT_POLICY_LABEL {
+            default_policy_filename(net).into()
+        } else {
+            legacy_name
+                .or_else(|| version.policy_path.as_deref().map(|path| stored_filename(path, "policy.py")))
+                .unwrap_or_else(|| default_policy_filename(net).into())
+        });
+        changed = true;
+    }
+    changed
 }
 
 impl Default for Models {
@@ -286,6 +361,7 @@ impl Models {
                     changed = true;
                 }
                 changed |= normalize_default_name(version, net)?;
+                changed |= normalize_filenames(version, net);
             }
             *path = record.active.as_ref().ok_or("策略槽位缺少活动版本")?.path.clone();
             Ok(())
@@ -612,6 +688,8 @@ impl Models {
                     path: model.clone(),
                     policy_path: Some(policy.clone()),
                     contract: None,
+                    model_filename: Some(display_model_filename(&upload.model.name)),
+                    policy_filename: Some(upload.policy.name.clone()),
             })
         })();
         if result.is_err() {
@@ -649,6 +727,8 @@ impl Models {
                 path: current.path.clone(),
                 policy_path: Some(path.clone()),
                 contract: Some(runtime.contract().clone()),
+                model_filename: current.model_filename.clone(),
+                policy_filename: version.policy_filename.clone(),
             };
             (runtime, Some((peer, companion, current.id)))
         } else {
@@ -863,6 +943,14 @@ fn convert(
 mod tests {
     use super::*;
 
+    #[test]
+    fn converted_models_keep_the_uploaded_stem_in_the_display_name() {
+        assert_eq!(display_model_filename("walk.pt"), "walk.onnx");
+        assert_eq!(display_model_filename("walk.pth"), "walk.onnx");
+        assert_eq!(display_model_filename("walk.onnx"), "walk.onnx");
+        assert_eq!(display_model_filename("/tmp/走路.pt"), "走路.onnx");
+    }
+
     fn configured_pair(root: &Path) -> (Arc<Models>, PolicyPaths) {
         let walk = root.join("walk.onnx");
         let stand = root.join("stand.onnx");
@@ -998,7 +1086,15 @@ mod tests {
             fs::write(&policy, format!("{}\n# {tag}\n",
                 String::from_utf8_lossy(default_policy(Net::Walk)))).unwrap();
             assert!(slots.values().any(|s| s.key == slot.key));
-            Version { id, name: tag.into(), path: model, policy_path: Some(policy), contract: None }
+            Version {
+                id,
+                name: tag.into(),
+                path: model,
+                policy_path: Some(policy),
+                contract: None,
+                model_filename: Some(format!("{tag}.onnx")),
+                policy_filename: Some(format!("{tag}.py")),
+            }
         };
         for (target, peer) in [("walk", "stand"), ("stand", "walk")] {
             let (slots, before) = snapshot();
@@ -1069,6 +1165,8 @@ mod tests {
             path,
             policy_path: Some(policy_path),
             contract: None,
+            model_filename: Some(format!("{id}.onnx")),
+            policy_filename: Some(format!("{id}.py")),
         }
     }
 

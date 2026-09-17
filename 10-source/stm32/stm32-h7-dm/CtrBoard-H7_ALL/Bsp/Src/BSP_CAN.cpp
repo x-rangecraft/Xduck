@@ -6,6 +6,9 @@
   */
 
 #include "BSP_CAN.h"
+#if H7DM_CAN_CAPTURE
+#include "can_capture.h"
+#endif
 
 #include <string.h>
 
@@ -93,6 +96,10 @@ void BSP_CAN_Init(void)
   for (Index = 0U; Index < BSP_CAN_CALLBACK_MAX; Index++) {
     g_canCallbacks[Index] = 0;
   }
+
+#if H7DM_CAN_CAPTURE
+  CanCapture_Init();
+#endif
 
   BSP_CAN_ConfigFilterAndStart(&hfdcan1);
   BSP_CAN_ConfigFilterAndStart(&hfdcan2);
