@@ -43,46 +43,6 @@ volatile uint8_t usb_dev_state;
 volatile uint8_t first_tx_result = 0xFFU;
 volatile uint8_t last_tx_result = 0xFFU;
 
-static float g_gyro_history[2][3];
-static float g_gravity_history[2][3];
-static uint8_t g_imu_median_initialized;
-
-static float median3(float a, float b, float c)
-{
-  if (a > b) { float swap = a; a = b; b = swap; }
-  if (b > c) { float swap = b; b = c; c = swap; }
-  if (a > b) b = a;
-  return b;
-}
-
-static void median_filter_imu(const float gyro[3], const float gravity[3],
-                              float gyro_out[3], float gravity_out[3])
-{
-  uint8_t axis;
-  if (g_imu_median_initialized == 0U) {
-    for (axis = 0U; axis < 3U; axis++) {
-      g_gyro_history[0][axis] = gyro[axis];
-      g_gyro_history[1][axis] = gyro[axis];
-      g_gravity_history[0][axis] = gravity[axis];
-      g_gravity_history[1][axis] = gravity[axis];
-      gyro_out[axis] = gyro[axis];
-      gravity_out[axis] = gravity[axis];
-    }
-    g_imu_median_initialized = 1U;
-    return;
-  }
-  for (axis = 0U; axis < 3U; axis++) {
-    gyro_out[axis] = median3(g_gyro_history[0][axis],
-                             g_gyro_history[1][axis], gyro[axis]);
-    gravity_out[axis] = median3(g_gravity_history[0][axis],
-                                g_gravity_history[1][axis], gravity[axis]);
-    g_gyro_history[0][axis] = g_gyro_history[1][axis];
-    g_gyro_history[1][axis] = gyro[axis];
-    g_gravity_history[0][axis] = g_gravity_history[1][axis];
-    g_gravity_history[1][axis] = gravity[axis];
-  }
-}
-
 static uint16_t get_u16(const uint8_t *p)
 {
   return (uint16_t)((uint16_t)p[0] | ((uint16_t)p[1] << 8));
@@ -278,8 +238,6 @@ static void publish_state(void)
   uint8_t tx_result;
   battery_meter_sample_t meter;
   dmusb_battery_meter_t meter_wire;
-  float filtered_gyro[3];
-  float filtered_gravity[3];
   publish_count++;
   USB_CDC_GetTxState((uint8_t *)&usb_dev_state, (uint32_t *)&usb_tx_state);
   if (USB_CDC_TxReady() == 0U) {
@@ -310,10 +268,10 @@ static void publish_state(void)
   if (MotorApp_PositionLimitsReady() != 0U) out.reserved |= DMUSB_STATE_LIMITS_READY;
   out.motor_count = source.motor_count;
   (void)IMU_GetSnapshot(&imu);
-  median_filter_imu(imu.base_ang_vel, imu.projected_gravity,
-                    filtered_gyro, filtered_gravity);
-  memcpy(out.imu.base_ang_vel, filtered_gyro, sizeof(out.imu.base_ang_vel));
-  memcpy(out.imu.projected_gravity, filtered_gravity,
+  /* Keep gyro, gravity, quaternion and sequence from this same atomic sample.
+   * Filtering only gyro/gravity here delayed them by one 50 Hz state frame. */
+  memcpy(out.imu.base_ang_vel, imu.base_ang_vel, sizeof(out.imu.base_ang_vel));
+  memcpy(out.imu.projected_gravity, imu.projected_gravity,
          sizeof(out.imu.projected_gravity));
   memcpy(out.imu.quaternion, imu.quaternion, sizeof(out.imu.quaternion));
   out.imu.sample_sequence = imu.sample_sequence;

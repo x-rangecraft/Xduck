@@ -12,10 +12,10 @@ set(CMAKE_CXX_EXTENSIONS ON)
 # Explicit maintenance image: one populated route, incompatible with the
 # production robotd's required 14-slot stream. Never enable automatically.
 option(H7DM_BENCH_ID1_ONLY "Build an isolated CAN1 ID1 commissioning image" OFF)
-option(H7DM_CAN_CAPTURE "Build a debugger-triggered motor command and CAN capture image" OFF)
+option(H7DM_CAN_CAPTURE "Build debugger-triggered motor command and CAN capture support" ON)
 set(TARGET_NAME CtrBoard-H7_ALL)
 set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32H723VGTX_FLASH.ld)
-set(DM_OPENOCD_INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/openocd/dm-cmsis-dap-port-1-2.cfg)
+set(DM_OPENOCD_INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/openocd/dm-cmsis-dap.cfg CACHE FILEPATH "OpenOCD interface configuration for flash and reset")
 
 set(CPU_FLAGS
   -mcpu=cortex-m7

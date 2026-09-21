@@ -22,7 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECT = ROOT / "10-source/stm32/stm32-h7-dm/CtrBoard-H7_ALL"
-DEFAULT_ELF = ROOT / "20-build/stm32/stm32-h7-dm/can-capture/CtrBoard-H7_ALL.elf"
+DEFAULT_ELF = ROOT / "30-artifacts/stm32/stm32-h7-dm/imu-phase-2026-09-21/CtrBoard-H7_ALL.elf"
 DEFAULT_OUTPUT = ROOT / "50-logs/test/motor/gf43x40-10-i2rt/data/can-capture"
 INTERFACE = PROJECT / "cmake/openocd/dm-cmsis-dap.cfg"
 HEADER = struct.Struct("<12I")

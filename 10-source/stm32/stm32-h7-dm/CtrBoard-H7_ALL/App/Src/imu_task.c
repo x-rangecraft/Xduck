@@ -10,6 +10,7 @@
 #include <string.h>
 
 #define IMU_PERIOD_MS          1U
+#define IMU_MAX_INTEGRATION_GAP_MS 50U
 #define GYRO_CALIBRATION_SAMPLES 1000U
 #define IMU_READY_SAMPLES        500U /* 25 consecutive 50 Hz observation periods */
 #define IMU_LPF_TIME_CONSTANT_S  0.005305165f /* 30 Hz one-pole cutoff */
@@ -18,14 +19,14 @@
 #define STATIONARY_ACCEL_MIN_G   0.85f
 #define STATIONARY_ACCEL_MAX_G   1.15f
 
-/* BMI088 sensor axes -> robot body forward/left/up.  The repository has no
- * mechanical assembly source that proves a different mounting, so identity is
- * retained until the six-face hardware test establishes these six constants. */
-#define BODY_X_SENSOR_AXIS 0U
+/* BMI088 sensor axes -> robot body forward/left/up.  The production mounting
+ * was measured on the assembled robot with a six-face gravity test:
+ * body X = +sensor Z, body Y = -sensor Y, body Z = +sensor X. */
+#define BODY_X_SENSOR_AXIS 2U
 #define BODY_Y_SENSOR_AXIS 1U
-#define BODY_Z_SENSOR_AXIS 2U
+#define BODY_Z_SENSOR_AXIS 0U
 #define BODY_X_SENSOR_SIGN 1.0f
-#define BODY_Y_SENSOR_SIGN 1.0f
+#define BODY_Y_SENSOR_SIGN -1.0f
 #define BODY_Z_SENSOR_SIGN 1.0f
 
 static imu_snapshot_t g_snapshot = {
@@ -37,8 +38,7 @@ static uint32_t g_magnetometer_tick_ms;
 static osThreadId g_imu_task;
 
 /* BMI088 sensor frame -> robot body frame. Keep gyro and acceleration on the
- * same mapping. This identity is correct only when the control-board X/Y/Z
- * markings are aligned with the robot's forward/left/up body axes. */
+ * same proper rotation so Mahony integration and projected gravity agree. */
 static void sensor_to_body(const float sensor[3], float body[3])
 {
   body[0] = BODY_X_SENSOR_SIGN * sensor[BODY_X_SENSOR_AXIS];
@@ -137,9 +137,25 @@ static void StartIMUTask(void const *argument)
     uint32_t mag_tick_ms;
     uint8_t axis;
     TickType_t now_tick = xTaskGetTickCount();
-    float dt_s = (float)(now_tick - last_sample_tick) * (float)portTICK_PERIOD_MS * 0.001f;
+    TickType_t elapsed_ticks = now_tick - last_sample_tick;
+    float dt_s = (float)elapsed_ticks * (float)portTICK_PERIOD_MS * 0.001f;
     last_sample_tick = now_tick;
-    if (dt_s < 0.0005f || dt_s > 0.010f) dt_s = 0.001f;
+    if (elapsed_ticks == 0U) {
+      /* A catch-up iteration in the same RTOS tick has no time to integrate. */
+      last_wake = now_tick;
+      vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(IMU_PERIOD_MS));
+      continue;
+    }
+    /* Integrate real elapsed time after a short scheduling delay. A much longer
+     * gap cannot be reconstructed from one new gyro sample: fail safe instead
+     * of silently treating the whole gap as a 1 ms update. */
+    if (elapsed_ticks > pdMS_TO_TICKS(IMU_MAX_INTEGRATION_GAP_MS)) {
+      ready_sample_count = 0U;
+      invalidate_snapshot();
+      last_wake = now_tick;
+      vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(IMU_PERIOD_MS));
+      continue;
+    }
     if (BMI088_Read(&sample) == BMI088_OK) {
       sensor_to_body(sample.gyro_rad_s, gyro);
       sensor_to_body(sample.accel_m_s2, accel);

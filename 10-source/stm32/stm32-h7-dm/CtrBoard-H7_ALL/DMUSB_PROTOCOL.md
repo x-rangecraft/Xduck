@@ -26,8 +26,11 @@ Version 4 uses a 64-byte state prefix. Bytes `16..64` contain:
 
 Motor observations immediately follow at byte 64. The BMI088 task samples at 1 kHz,
 applies a 30 Hz one-pole low-pass, and runs Mahony fusion. USB takes the latest atomic
-snapshot every 20 ms and applies a three-sample median to angular velocity and projected
-gravity. Gyro bias calibration accepts only consecutive stationary samples, and the ready
+snapshot every 20 ms without independently delaying angular velocity or projected
+gravity relative to its quaternion. Same-tick catch-up iterations are skipped;
+a task gap up to 50 ms uses its actual elapsed time for fusion. A longer gap
+invalidates IMU readiness until 500 consecutive valid samples arrive.
+Gyro bias calibration accepts only consecutive stationary samples, and the ready
 flag waits for the equivalent of 25 valid 50 Hz observation periods. The onboard
 BMI088 has no magnetometer, so the normal board configuration uses Mahony's 6DoF
 gyro/accelerometer path. `IMU_SetMagnetometer` accepts a future calibrated external
