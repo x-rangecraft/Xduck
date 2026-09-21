@@ -1,0 +1,119 @@
+# @package _global_
+# Frozen selected checkpoint recipe; historical run_config records every field.
+defaults:
+- /task/xduck_gf43x40_velocity_flat: mujoco
+- _self_
+training:
+  task_name: XDuckGF43X40WalkStopFlat
+  no_play: true
+algo:
+  experiment_name: xduck_walk_stop
+  run_name: walk_to_stop_v111
+  num_envs: 1024
+  num_steps_per_env: 24
+  max_iterations: 600
+  save_interval: 50
+  load_run: '-1'
+  policy:
+    init_noise_std: 0.2
+env:
+  reference_keyframe: GAIT_REFERENCE
+  scene:
+    fragment_files:
+    - src/unilab/envs/locomotion/xduck_gf43x40/sensors.xml
+    - src/unilab/envs/locomotion/xduck_gf43x40/gait_reference_v112.xml
+  action_offset_low:
+  - -1.19
+  - -0.11
+  - -3.374
+  - -1.19
+  - -1.1059999999999999
+  - -0.29
+  - -1.19
+  - -1.99
+  - -0.49
+  - -0.49
+  - -1.19
+  - -2.6060000000000003
+  - -1.49
+  - -1.674
+  action_offset_high:
+  - 0.49
+  - 1.49
+  - 2.6060000000000003
+  - 1.39
+  - 1.674
+  - 1.29
+  - 1.19
+  - 1.99
+  - 0.49
+  - 1.19
+  - 0.19
+  - 2.374
+  - 1.29
+  - 1.1059999999999999
+  handoff_bank: data/xduck_stop/mixed70stand30walk.npz
+  max_episode_seconds: 6.0
+  control_config:
+    joint_kp:
+    - 90
+    - 90
+    - 75
+    - 100
+    - 90
+    - 75
+    - 90
+    - 75
+    - 90
+    - 90
+    - 90
+    - 75
+    - 100
+    - 90
+    joint_kd:
+    - 2.5
+    - 2.5
+    - 2.5
+    - 3
+    - 3
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 3
+    - 3
+reward:
+  scales:
+    pose: 1.0
+    upright: 4.0
+    foot_slip: -0.04784688995215312
+    self_collisions: -1.0
+    air_time: 0.0
+    body_ang_vel: -0.1045
+    angular_momentum: -1.5522906106914684e-05
+    track_linear_velocity: 2.0
+    track_angular_velocity: 2.0
+    action_rate_l2: -0.05
+    foot_clearance: 0.0
+    foot_swing_height: 0.0
+    head_pose_tracking: 2.0
+    body_pose_tracking: 0.0
+    head_pose_bias: 0.0
+    dof_pos_limits: -1.0
+    command_progress: 0.0
+  linear_velocity_std: 0.2
+  angular_velocity_std: 0.35
+  upright_std: 0.22360679774997896
+  foot_target_height: 0.0418
+  air_time_threshold_min: 0.180710403685012
+  air_time_threshold_max: 0.4337049688440288
+  progress_command_threshold: 0.05
+  progress_upright_min: 0.8660254037844387
+play_profile:
+  env:
+    domain_rand:
+      velocity_pushes: false
+      push_robots: false

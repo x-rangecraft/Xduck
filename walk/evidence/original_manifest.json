@@ -1,0 +1,54 @@
+{
+  "status": "passed_strong_DR_joint_limit_and_no_fall_validation",
+  "model": "/Users/xiaoyaozi/xinchen/MicroDuck/output/strong_dr_v112_20260921/deliverables/model_1975_strong_bounded.pt",
+  "sha256": "5a8af3b43b1eb3820ea1f449081487bfdc3e13e839fb8eb7badb9f99bd4ba7d0",
+  "source_checkpoint": "/Users/xiaoyaozi/xinchen/MicroDuck/output/gait_v112_20260921/workspace/unilab/logs/rsl_rl_ppo/XDuckGF43X40VelocityFlat/v112_strong_bounded_50/model_1975.pt",
+  "robot": "V1.1.2",
+  "reference_keyframe": "GAIT_REFERENCE",
+  "policy_distribution": "unilab.algos.torch.bounded_gaussian.UnitSlopeBoundedGaussianDistribution",
+  "policy_target_margin_inside_existing_clip_rad": 0.05,
+  "strong_DR_enabled_in_training_and_validation": true,
+  "pushes_enabled_in_training_and_validation": true,
+  "video_only_pushes_disabled": true,
+  "validation_seeds": [
+    5101,
+    5102,
+    5103
+  ],
+  "trajectories": 84,
+  "seconds_per_trajectory": 30,
+  "push_events": 352,
+  "min_actual_joint_margin_rad": 0.052306532859802246,
+  "raw_target_clip_fraction": 0.0,
+  "actual_near_10mrad_fraction": 0.0,
+  "falls": 0,
+  "actual_parameter_ranges": {
+    "actual_kp": [
+      60.195360195360195,
+      118.43711843711844
+    ],
+    "actual_kd": [
+      2.029304029304029,
+      3.595848595848596
+    ],
+    "gf_torque_scale": [
+      0.8000025635897539,
+      1.1998881412381974
+    ],
+    "gf_friction_scale": [
+      0.8023868413813615,
+      1.199728160645909
+    ],
+    "gf_response_time_scale": [
+      0.8002298396121678,
+      1.199770469813468
+    ]
+  },
+  "forward_mean_speed_range": [
+    0.10190363973379135,
+    0.4251968264579773
+  ],
+  "remaining_issue": "Velocity consistency is not solved; development seed42 includes a nearly stationary/backward forward-command instance. No claim of final gait/velocity quality.",
+  "source_workspace": "/Users/xiaoyaozi/xinchen/MicroDuck/output/gait_v112_20260921/workspace/unilab",
+  "created_at": "2026-09-21T12:05:55.818076"
+}

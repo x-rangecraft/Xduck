@@ -1,0 +1,46 @@
+[build-system]
+requires = [
+    "setuptools>=64",
+    "wheel",
+    "pybind11>=2.12",
+    "numpy",
+    "mujoco>=3.5,<3.11",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mujoco-uni-runtime"
+version = "0.3.1"
+description = "Standalone MuJoCoUni batched executor layer"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = { text = "Apache-2.0" }
+dependencies = [
+    "mujoco>=3.5,<3.11",
+    "numpy",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+packages = [
+    "mujoco_uni",
+    "mujoco_uni.compiled",
+    "mujoco_uni.mujoco_runtime",
+    "mujoco_uni.native",
+    "mujoco_uni.runtime",
+]
+
+[tool.setuptools.package-data]
+mujoco_uni = ["native/*.cc", "native/*.h"]
+
+[dependency-groups]
+dev = ["pytest", "ruff"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+ignore = ["E501", "N806", "E402", "N801", "N802", "N803"]

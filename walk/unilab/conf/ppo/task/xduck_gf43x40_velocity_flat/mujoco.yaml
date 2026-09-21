@@ -1,0 +1,275 @@
+# @package _global_
+# Frozen selected checkpoint recipe; historical run_config records every field.
+training:
+  task_name: XDuckGF43X40VelocityFlat
+  sim_backend: mujoco
+  logger: tensorboard
+  wandb_project: mjlab_microduck
+  play_steps: 1000
+  play_env_num: 16
+algo:
+  seed: 1
+  num_envs: 1024
+  num_steps_per_env: 24
+  max_iterations: 600
+  save_interval: 50
+  empirical_normalization: true
+  experiment_name: xduck_gf43x40_velocity
+  run_name: xduck_gf43x40_official_recipe
+  obs_groups:
+    actor:
+    - actor
+    critic:
+    - critic
+  policy:
+    init_noise_std: 0.05
+    actor_hidden_dims:
+    - 512
+    - 256
+    - 128
+    critic_hidden_dims:
+    - 512
+    - 256
+    - 128
+    activation: elu
+    class_name: ActorCritic
+    distribution_class_name: unilab.algos.torch.bounded_gaussian.UnitSlopeBoundedGaussianDistribution
+    min_std: 0.01
+    max_std: 0.12
+    action_low:
+    - -9.5
+    - -0.5
+    - -27.700000000000003
+    - -9.5
+    - -8.799999999999999
+    - -2.0
+    - -9.5
+    - -16.166666666666668
+    - -3.666666666666667
+    - -3.666666666666667
+    - -9.5
+    - -21.300000000000004
+    - -12.0
+    - -13.533333333333333
+    action_high:
+    - 3.666666666666667
+    - 12.0
+    - 21.300000000000004
+    - 11.166666666666666
+    - 13.533333333333333
+    - 10.333333333333334
+    - 9.5
+    - 16.166666666666668
+    - 3.666666666666667
+    - 9.5
+    - 1.1666666666666667
+    - 19.36666666666667
+    - 10.333333333333334
+    - 8.799999999999999
+  algorithm:
+    value_loss_coef: 1.0
+    use_clipped_value_loss: true
+    clip_param: 0.2
+    entropy_coef: 0.0
+    num_learning_epochs: 5
+    num_mini_batches: 4
+    learning_rate: 0.0001
+    schedule: fixed
+    gamma: 0.99
+    lam: 0.95
+    desired_kl: 0.01
+    max_grad_norm: 1.0
+env:
+  reference_keyframe: GAIT_REFERENCE
+  scene:
+    fragment_files:
+    - src/unilab/envs/locomotion/xduck_gf43x40/sensors.xml
+    - src/unilab/envs/locomotion/xduck_gf43x40/gait_reference_v112.xml
+  action_offset_low:
+  - -1.19
+  - -0.11
+  - -3.374
+  - -1.19
+  - -1.1059999999999999
+  - -0.29
+  - -1.19
+  - -1.99
+  - -0.49
+  - -0.49
+  - -1.19
+  - -2.6060000000000003
+  - -1.49
+  - -1.674
+  action_offset_high:
+  - 0.49
+  - 1.49
+  - 2.6060000000000003
+  - 1.39
+  - 1.674
+  - 1.29
+  - 1.19
+  - 1.99
+  - 0.49
+  - 1.19
+  - 0.19
+  - 2.374
+  - 1.29
+  - 1.1059999999999999
+  sim_dt: 0.001
+  ctrl_dt: 0.02
+  max_episode_seconds: 20.0
+  policy_action_scale_rad: 0.12
+  communication:
+    jitter_mode: measured_20260918
+    command_jitter_ms:
+    - 0
+    - 0
+    feedback_jitter_ms:
+    - 0
+    - 0
+    feedback_delay_ms: 0.0
+    jitter_seed: 0
+  control_config:
+    action_scale: 1.0
+    simulate_action_latency: false
+    Kp: 60.0
+    Kd: 2.0
+    joint_kp:
+    - 90.0
+    - 90.0
+    - 75.0
+    - 100.0
+    - 90.0
+    - 75.0
+    - 90.0
+    - 75.0
+    - 90.0
+    - 90.0
+    - 90.0
+    - 75.0
+    - 100.0
+    - 90.0
+    joint_kd:
+    - 2.5
+    - 2.5
+    - 2.5
+    - 3.0
+    - 3.0
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 3.0
+    - 3.0
+  latency:
+    actuator_delay_ms:
+    - 0.0
+    - 0.0
+    imu_delay_ms:
+    - 0.0
+    - 20.0
+    joint_velocity_delay_ms: 20.0
+  noise_config:
+    level: 1.0
+    scale_joint_angle: 0.001
+    scale_joint_vel: 0.17292861596651865
+    scale_gyro: 0.020751433915982238
+    scale_gravity: 0.01
+    scale_linvel: 0.14456832294800961
+  commands:
+    velocity_low:
+    - -0.5782732917920385
+    - -0.4337049688440288
+    - -0.6917144638660746
+    velocity_high:
+    - 0.5782732917920385
+    - 0.4337049688440288
+    - 0.6917144638660746
+    resampling_time_range:
+    - 4.337049688440288
+    - 11.565465835840769
+    rel_forward_envs: 0.2
+    rel_turn_in_place_envs: 0.15
+    forward_min_speed: 0.4337049688440288
+    head_resampling_time_range:
+    - 2.891366458960192
+    - 7.22841614740048
+    body_resampling_time_range:
+    - 2.891366458960192
+    - 7.22841614740048
+  domain_rand:
+    randomize_base_mass: false
+    random_com: false
+    randomize_ground_friction: false
+    randomize_foot_friction: true
+    foot_friction_range:
+    - 0.7
+    - 1.3
+    randomize_dof_armature: true
+    dof_armature_multiplier_range:
+    - 0.9
+    - 1.1
+    randomize_kp: false
+    randomize_kd: false
+    randomize_joint_friction: false
+    push_robots: false
+    velocity_pushes: true
+    velocity_push_interval_s:
+    - 4.337049688440288
+    - 8.674099376880577
+    velocity_push_xy:
+    - -0.4337049688440288
+    - 0.4337049688440288
+    push_body_name: base_link
+    motor:
+      enabled: false
+  curriculum:
+    step_cap: null
+reward:
+  scales:
+    pose: 1.0
+    upright: 2.0
+    foot_slip: -0.04784688995215312
+    self_collisions: -1.0
+    air_time: 3.0
+    body_ang_vel: -0.1045
+    angular_momentum: -1.1111281185647048e-05
+    track_linear_velocity: 2.0
+    track_angular_velocity: 2.0
+    action_rate_l2: -0.1
+    foot_clearance: -0.6619277166182533
+    foot_swing_height: -0.25
+    head_pose_tracking: 2.0
+    body_pose_tracking: 0.0
+    head_pose_bias: 0.0
+    dof_pos_limits: -1.0
+    command_progress: 0
+    both_airborne: -6.0
+    target_limit_l2: -1.0
+    target_limit_l1: -2.0
+    joint_limit_margin_l1: -2.0
+  linear_velocity_std: 0.4571651780264985
+  angular_velocity_std: 0.4891159880445185
+  upright_std: 0.22360679774997896
+  foot_target_height: 0.0418
+  air_time_threshold_min: 0.180710403685012
+  air_time_threshold_max: 0.4337049688440288
+  progress_command_threshold: 0.05
+  progress_upright_min: 0.8660254037844387
+  action_rate_units: policy
+  action_rate_time_scale: 1.0
+  action_rate_reference_dt: 0.02
+  head_bias_tau_s: 1.0
+  scale_model_fingerprint: null
+  air_time_requires_support: true
+  airborne_cost_sampling: substep
+  target_limit_margin_rad: 0.025
+  joint_limit_margin_rad: 0.015
+play_profile:
+  enabled: true
+  env:
+    noise_config:
+      level: 0.0

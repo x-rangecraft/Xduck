@@ -1,0 +1,19 @@
+<mujoco>
+    <sensor>
+        <framezaxis name="imu_upvector" objtype="site" objname="imu" />
+        <contact name="left_foot_contact" geom1="floor" geom2="left_foot_collision"
+                 data="force" num="1" reduce="netforce" />
+        <contact name="right_foot_contact" geom1="floor" geom2="right_foot_collision"
+                 data="force" num="1" reduce="netforce" />
+        <contact name="left_foot_found" geom1="floor" geom2="left_foot_collision"
+                 data="found" num="1" reduce="none" />
+        <contact name="right_foot_found" geom1="floor" geom2="right_foot_collision"
+                 data="found" num="1" reduce="none" />
+        <framepos name="left_foot_pos" objtype="site" objname="left_foot" />
+        <framepos name="right_foot_pos" objtype="site" objname="right_foot" />
+        <framelinvel name="left_foot_vel" objtype="site" objname="left_foot" />
+        <framelinvel name="right_foot_vel" objtype="site" objname="right_foot" />
+        <contact name="self_collision_found" subtree1="trunk_base" subtree2="trunk_base"
+                 data="found" num="1" reduce="none" />
+    </sensor>
+</mujoco>
