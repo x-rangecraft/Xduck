@@ -1,0 +1,466 @@
+# @package _global_
+{
+  "env": {
+    "scene": {
+      "model_file": "assets/scene.xml",
+      "default_keyframe_name": "GAIT_REFERENCE",
+      "entities": {
+        "robot": {
+          "root_body_name": "base_link",
+          "joint_names": [
+            "left_hip_yaw_joint",
+            "left_hip_roll_joint",
+            "left_hip_pitch_joint",
+            "left_knee_pitch_joint",
+            "left_ankle_pitch_joint",
+            "neck_pitch_joint",
+            "head_pitch_joint",
+            "head_yaw_joint",
+            "head_roll_joint",
+            "right_hip_yaw_joint",
+            "right_hip_roll_joint",
+            "right_hip_pitch_joint",
+            "right_knee_pitch_joint",
+            "right_ankle_pitch_joint"
+          ],
+          "actuator_names": [
+            "left_hip_yaw",
+            "left_hip_roll",
+            "left_hip_pitch",
+            "left_knee_pitch",
+            "left_ankle_pitch",
+            "neck_pitch",
+            "head_pitch",
+            "head_yaw",
+            "head_roll",
+            "right_hip_yaw",
+            "right_hip_roll",
+            "right_hip_pitch",
+            "right_knee_pitch",
+            "right_ankle_pitch"
+          ],
+          "geom_names": [
+            "left_foot_collision",
+            "right_foot_collision"
+          ]
+        }
+      }
+    },
+    "sim_dt": 0.001,
+    "ctrl_dt": 0.02,
+    "max_episode_seconds": 20.0,
+    "policy_observation_group": "policy",
+    "critic_observation_group": "critic",
+    "observations": {
+      "policy": {
+        "terms": {
+          "legacy_order": {
+            "func": "xduck_walk_latest.observations.WalkPolicyObservation"
+          }
+        }
+      },
+      "critic": {
+        "terms": {
+          "legacy_order": {
+            "func": "xduck_walk_latest.observations.WalkCriticObservation"
+          }
+        }
+      }
+    },
+    "actions": {
+      "joint_pos": {
+        "_target_": "xduck_walk_latest.actions.GF43X40ActionCfg",
+        "entity_name": "robot",
+        "actuator_names": [
+          "left_hip_yaw_joint",
+          "left_hip_roll_joint",
+          "left_hip_pitch_joint",
+          "left_knee_pitch_joint",
+          "left_ankle_pitch_joint",
+          "neck_pitch_joint",
+          "head_pitch_joint",
+          "head_yaw_joint",
+          "head_roll_joint",
+          "right_hip_yaw_joint",
+          "right_hip_roll_joint",
+          "right_hip_pitch_joint",
+          "right_knee_pitch_joint",
+          "right_ankle_pitch_joint"
+        ],
+        "preserve_order": true,
+        "scale": 0.12,
+        "kp": [
+          90.0,
+          90.0,
+          75.0,
+          100.0,
+          90.0,
+          75.0,
+          90.0,
+          75.0,
+          90.0,
+          90.0,
+          90.0,
+          75.0,
+          100.0,
+          90.0
+        ],
+        "kd": [
+          2.5,
+          2.5,
+          2.5,
+          3.0,
+          3.0,
+          2.5,
+          2.5,
+          2.5,
+          2.5,
+          2.5,
+          2.5,
+          2.5,
+          3.0,
+          3.0
+        ],
+        "target_low": [
+          -1.19,
+          -0.11,
+          -2.99,
+          -1.19,
+          -1.4899999999999998,
+          -0.29,
+          -1.19,
+          -1.99,
+          -0.49,
+          -0.49,
+          -1.19,
+          -2.99,
+          -1.49,
+          -1.29
+        ],
+        "target_high": [
+          0.49,
+          1.49,
+          2.99,
+          1.39,
+          1.29,
+          1.29,
+          1.19,
+          1.99,
+          0.49,
+          1.19,
+          0.19,
+          1.9900000000000002,
+          1.29,
+          1.4899999999999998
+        ],
+        "kp_multiplier_range": [
+          0.8,
+          1.2
+        ],
+        "kd_multiplier_range": [
+          0.8,
+          1.2
+        ],
+        "motor_dr_ranges": {
+          "torque_scale_multiplier": [
+            0.8,
+            1.2
+          ],
+          "friction_scale_multiplier": [
+            0.8,
+            1.2
+          ],
+          "response_time_multiplier": [
+            0.8,
+            1.2
+          ]
+        }
+      }
+    },
+    "commands": {
+      "walk": {
+        "_target_": "xduck_walk_latest.commands.XDuckWalkCommandCfg",
+        "resampling_time_range": [
+          4.3370496884,
+          11.5654658358
+        ]
+      }
+    },
+    "events": {
+      "reset_scene": {
+        "func": "unilab.envs.mdp.reset_scene_to_default",
+        "mode": "reset"
+      },
+      "foot_friction": {
+        "func": "unilab.envs.mdp.geom_friction",
+        "mode": "reset",
+        "params": {
+          "ranges": [
+            0.4,
+            1.6
+          ],
+          "operation": "abs",
+          "asset_cfg": {
+            "_target_": "unilab.managers.scene_entity_config.SceneEntityCfg",
+            "name": "robot",
+            "geom_names": [
+              ".*foot_collision"
+            ]
+          }
+        }
+      },
+      "armature": {
+        "func": "unilab.envs.mdp.joint_armature",
+        "mode": "reset",
+        "params": {
+          "ranges": [
+            0.8,
+            1.2
+          ],
+          "operation": "scale",
+          "asset_cfg": {
+            "_target_": "unilab.managers.scene_entity_config.SceneEntityCfg",
+            "name": "robot",
+            "joint_names": [
+              ".*"
+            ]
+          }
+        }
+      },
+      "velocity_push": {
+        "func": "unilab.envs.mdp.push_by_setting_velocity",
+        "mode": "interval",
+        "interval_range_s": [
+          4.3370496884,
+          8.6740993769
+        ],
+        "params": {
+          "velocity_range": {
+            "x": [
+              -0.4337049688,
+              0.4337049688
+            ],
+            "y": [
+              -0.4337049688,
+              0.4337049688
+            ],
+            "z": [
+              0,
+              0
+            ],
+            "roll": [
+              0,
+              0
+            ],
+            "pitch": [
+              0,
+              0
+            ],
+            "yaw": [
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "reset_walk_history": {
+        "func": "xduck_walk_latest.task.reset_walk_history",
+        "mode": "reset"
+      }
+    },
+    "terminations": {
+      "time_out": {
+        "func": "unilab.envs.mdp.time_out",
+        "time_out": true
+      },
+      "bad_orientation": {
+        "func": "unilab.envs.mdp.bad_orientation",
+        "params": {
+          "limit_angle": 1.2217304763960306
+        }
+      }
+    }
+  },
+  "training": {
+    "task_name": "XDuckGF43X40VelocityFlatLatest",
+    "sim_backend": "mujoco",
+    "no_play": true
+  },
+  "algo": {
+    "num_envs": 512,
+    "num_steps_per_env": 48,
+    "max_iterations": 50,
+    "save_interval": 5,
+    "empirical_normalization": true,
+    "obs_groups": {
+      "default": [
+        "policy"
+      ],
+      "actor": [
+        "actor"
+      ],
+      "critic": [
+        "critic"
+      ]
+    },
+    "policy": {
+      "init_noise_std": 0.05,
+      "actor_hidden_dims": [
+        512,
+        256,
+        128
+      ],
+      "critic_hidden_dims": [
+        512,
+        256,
+        128
+      ],
+      "activation": "elu",
+      "class_name": "ActorCritic"
+    },
+    "actor": {
+      "class_name": "rsl_rl.models.MLPModel",
+      "hidden_dims": [
+        512,
+        256,
+        128
+      ],
+      "activation": "elu",
+      "obs_normalization": true,
+      "distribution_cfg": {
+        "class_name": "xduck_walk_latest.bounded_gaussian.UnitSlopeBoundedGaussianDistribution",
+        "init_std": 0.05,
+        "min_std": 0.01,
+        "max_std": 0.12,
+        "action_low": [
+          -9.5,
+          -0.5,
+          -27.700000000000003,
+          -9.5,
+          -8.799999999999999,
+          -2.0,
+          -9.5,
+          -16.166666666666668,
+          -3.666666666666667,
+          -3.666666666666667,
+          -9.5,
+          -21.300000000000004,
+          -12.0,
+          -13.533333333333333
+        ],
+        "action_high": [
+          3.666666666666667,
+          12.0,
+          21.300000000000004,
+          11.166666666666666,
+          13.533333333333333,
+          10.333333333333334,
+          9.5,
+          16.166666666666668,
+          3.666666666666667,
+          9.5,
+          1.1666666666666667,
+          19.36666666666667,
+          10.333333333333334,
+          8.799999999999999
+        ]
+      }
+    },
+    "critic": {
+      "class_name": "rsl_rl.models.MLPModel",
+      "hidden_dims": [
+        512,
+        256,
+        128
+      ],
+      "activation": "elu",
+      "obs_normalization": true
+    }
+  },
+  "reward": {
+    "pose": {
+      "func": "xduck_walk_latest.rewards.pose",
+      "weight": 1.0
+    },
+    "upright": {
+      "func": "xduck_walk_latest.rewards.upright",
+      "weight": 2.0
+    },
+    "foot_slip": {
+      "func": "xduck_walk_latest.rewards.foot_slip",
+      "weight": -0.04784688995215312
+    },
+    "self_collisions": {
+      "func": "xduck_walk_latest.rewards.SelfCollisions",
+      "weight": -1.0
+    },
+    "air_time": {
+      "func": "xduck_walk_latest.rewards.air_time",
+      "weight": 3.0
+    },
+    "body_ang_vel": {
+      "func": "xduck_walk_latest.rewards.body_ang_vel",
+      "weight": -0.1045
+    },
+    "angular_momentum": {
+      "func": "xduck_walk_latest.rewards.AngularMomentum",
+      "weight": -1.1111281185647048e-05
+    },
+    "track_linear_velocity": {
+      "func": "xduck_walk_latest.rewards.track_linear_velocity",
+      "weight": 2.0
+    },
+    "track_angular_velocity": {
+      "func": "xduck_walk_latest.rewards.track_angular_velocity",
+      "weight": 2.0
+    },
+    "action_rate_l2": {
+      "func": "xduck_walk_latest.rewards.action_rate_l2",
+      "weight": -0.1
+    },
+    "foot_clearance": {
+      "func": "xduck_walk_latest.rewards.foot_clearance",
+      "weight": -0.6619277166182533
+    },
+    "foot_swing_height": {
+      "func": "xduck_walk_latest.rewards.foot_swing_height",
+      "weight": -0.25
+    },
+    "head_pose_tracking": {
+      "func": "xduck_walk_latest.rewards.head_pose_tracking",
+      "weight": 2.0
+    },
+    "body_pose_tracking": {
+      "func": "xduck_walk_latest.rewards.zero",
+      "weight": 0.0
+    },
+    "head_pose_bias": {
+      "func": "xduck_walk_latest.rewards.zero",
+      "weight": 0.0
+    },
+    "dof_pos_limits": {
+      "func": "xduck_walk_latest.rewards.dof_pos_limits",
+      "weight": -1.0
+    },
+    "command_progress": {
+      "func": "xduck_walk_latest.rewards.zero",
+      "weight": 0.0
+    },
+    "both_airborne": {
+      "func": "xduck_walk_latest.rewards.both_airborne",
+      "weight": -6.0
+    },
+    "target_limit_l2": {
+      "func": "xduck_walk_latest.rewards.target_limit_l2",
+      "weight": -1.0
+    },
+    "target_limit_l1": {
+      "func": "xduck_walk_latest.rewards.target_limit_l1",
+      "weight": -2.0
+    },
+    "joint_limit_margin_l1": {
+      "func": "xduck_walk_latest.rewards.joint_limit_margin_l1",
+      "weight": -2.0
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "measured_20260918",
+  "resolution_ms": 1,
+  "command_period_ms": 20,
+  "feedback_period_ms": 20,
+  "command": {
+    "delay_ms": [0, 1, 2, 3, 4, 5],
+    "counts": [3126, 7, 5, 1, 1, 1],
+    "source": "20260918T110255Z-110621Z.tar.gz",
+    "source_interval_count": 3141,
+    "source_rounded_interval_error_ms": [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5],
+    "source_interval_counts": [1, 1, 1, 5, 5, 3113, 7, 5, 1, 1, 1],
+    "method": "Use positive rounded receive-interval excess above 20 ms as rare late-frame amplitudes and counts. Collapse nonpositive excess to zero. A delayed frame followed by a normal frame generates the compensating short interval automatically. This is a late-event approximation, not an identified one-way latency distribution."
+  },
+  "feedback": {
+    "delay_ms": [0, 1],
+    "counts": [3247, 2],
+    "source": "rk-roundtrip-20260918T112252Z.tar.gz",
+    "source_usbmon_sha256": "1cdc5737e8664d86395817ebe93201c1a67e473b349e33c874cbb6333e4e5292",
+    "source_rounded_roundtrip_ms": [19, 20, 21],
+    "source_roundtrip_counts": [7, 3240, 2],
+    "method": "Use positive rounded ACK roundtrip excess above the existing 20 ms feedback schedule. Collapse 19/20 ms observations to zero extra delay; do not advance feedback or add another 20 ms. ACK confirms reception, not causal motor response."
+  },
+  "limitations": [
+    "Independent per-frame late-event sampling does not reproduce all temporal correlations or identify fixed one-way latency.",
+    "Command and feedback histograms are from different capture windows and are sampled independently.",
+    "One batched frame shares a delay across motors and environments.",
+    "Captures used constant position and gain commands; coverage under policy computation load is not established."
+  ]
+}
