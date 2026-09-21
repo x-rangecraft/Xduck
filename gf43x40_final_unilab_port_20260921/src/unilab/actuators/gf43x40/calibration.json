@@ -1,0 +1,417 @@
+{
+  "schema_version": 2,
+  "motor_model": "GF43X40-10",
+  "status": "shared_equivalent_actuator_calibration",
+  "model_revision": "shared_fixed_gain_kd_band_v8_torque_proxy",
+  "source_sha256": {
+    "parameters": "25c27cf4b1a4bc391a03d5e18958255970efc594fe4a15622d533b20b8135c9e",
+    "measured_points": "228cfc8a23003eb8f70c208b0a0c023bb5fb741d3f6e965d3d155a0712ed7172"
+  },
+  "bare_motor_physics": {
+    "armature": 0.25429975910988406,
+    "coulomb": 0.2789574700258063,
+    "viscous": 0.22184734374066803,
+    "friction_velocity": 0.03280873402539427,
+    "torque_scale": 5.307062074754017,
+    "torque_time_constant": 0.006753991462959274,
+    "low_speed_drive_limit": 47.232852465310756,
+    "coulomb_negative": 0.26657846409584113,
+    "braking_time_constant": 0.0010000000065905075,
+    "velocity_target_bias": -0.003890011703701447,
+    "braking_transition_low": 0.5,
+    "braking_transition_high": 2.0,
+    "friction_model": "stribeck_stick_slip",
+    "static_ratio": 1.9768494886559929,
+    "stiction_velocity": 1e-05,
+    "feedforward_gain": 0.2445125963333848,
+    "coast_drag_scale": 0.35,
+    "effort_slew_limit": 990.5691290877769,
+    "static_ratio_negative": 1.973417303124866,
+    "friction_memory_gain": 0.017171521159698763,
+    "friction_memory_distance": 0.012079130908237484,
+    "release_tc_ratio": 0.9285251412884641,
+    "internal_velocity_tc": 0.00027181289353167277,
+    "kp_gain_slope": -0.003094526540601425,
+    "kd_gain_slope": -0.004168324898426792,
+    "coast_transition_tc": 5.2449336094898405e-05,
+    "kd_gain_band_slope": 0.04,
+    "envelope_scale": 5.307062074754017,
+    "braking_limit": 47.232852465310756,
+    "mechanical_torque_limit": 148.5977380931125
+  },
+  "registers": {
+    "pmax": 12.5,
+    "vmax": 10.0,
+    "tmax": 28.0
+  },
+  "measured_torque_speed_points": [
+    {
+      "row": 1,
+      "voltage": 24.019,
+      "bus_current": 0.0,
+      "input_power": 0.0,
+      "torque": 1.14,
+      "rpm": 55.0,
+      "output_power": 6.5501,
+      "quality": "suspect_energy_fields"
+    },
+    {
+      "row": 2,
+      "voltage": 24.02,
+      "bus_current": 1.0833,
+      "input_power": 25.576,
+      "torque": 4.35,
+      "rpm": 52.0,
+      "output_power": 23.682,
+      "quality": "reference"
+    },
+    {
+      "row": 3,
+      "voltage": 23.834,
+      "bus_current": 1.2612,
+      "input_power": 29.517,
+      "torque": 5.08,
+      "rpm": 50.7,
+      "output_power": 26.958,
+      "quality": "reference"
+    },
+    {
+      "row": 4,
+      "voltage": 23.958,
+      "bus_current": 1.5342,
+      "input_power": 36.155,
+      "torque": 6.23,
+      "rpm": 49.5,
+      "output_power": 32.243,
+      "quality": "reference"
+    },
+    {
+      "row": 5,
+      "voltage": 23.916,
+      "bus_current": 1.7728,
+      "input_power": 41.923,
+      "torque": 7.36,
+      "rpm": 48.3,
+      "output_power": 37.217,
+      "quality": "reference"
+    },
+    {
+      "row": 6,
+      "voltage": 23.985,
+      "bus_current": 1.951,
+      "input_power": 46.466,
+      "torque": 7.79,
+      "rpm": 48.3,
+      "output_power": 39.43,
+      "quality": "reference"
+    },
+    {
+      "row": 7,
+      "voltage": 24.034,
+      "bus_current": 2.0618,
+      "input_power": 48.908,
+      "torque": 8.17,
+      "rpm": 47.5,
+      "output_power": 40.592,
+      "quality": "reference"
+    },
+    {
+      "row": 8,
+      "voltage": 23.959,
+      "bus_current": 2.232,
+      "input_power": 53.154,
+      "torque": 8.89,
+      "rpm": 46.7,
+      "output_power": 43.464,
+      "quality": "reference"
+    },
+    {
+      "row": 9,
+      "voltage": 23.865,
+      "bus_current": 2.4408,
+      "input_power": 57.695,
+      "torque": 9.61,
+      "rpm": 45.8,
+      "output_power": 46.134,
+      "quality": "reference"
+    },
+    {
+      "row": 10,
+      "voltage": 23.936,
+      "bus_current": 2.565,
+      "input_power": 60.408,
+      "torque": 9.98,
+      "rpm": 45.5,
+      "output_power": 47.544,
+      "quality": "reference"
+    },
+    {
+      "row": 11,
+      "voltage": 23.963,
+      "bus_current": 2.6488,
+      "input_power": 62.932,
+      "torque": 10.36,
+      "rpm": 44.9,
+      "output_power": 48.751,
+      "quality": "reference"
+    },
+    {
+      "row": 12,
+      "voltage": 23.96,
+      "bus_current": 2.7128,
+      "input_power": 64.609,
+      "torque": 10.74,
+      "rpm": 44.4,
+      "output_power": 49.98,
+      "quality": "reference"
+    },
+    {
+      "row": 13,
+      "voltage": 23.993,
+      "bus_current": 2.9873,
+      "input_power": 71.076,
+      "torque": 11.53,
+      "rpm": 43.6,
+      "output_power": 52.617,
+      "quality": "reference"
+    },
+    {
+      "row": 14,
+      "voltage": 23.994,
+      "bus_current": 3.1195,
+      "input_power": 74.205,
+      "torque": 12.3,
+      "rpm": 42.3,
+      "output_power": 54.519,
+      "quality": "reference"
+    },
+    {
+      "row": 15,
+      "voltage": 23.949,
+      "bus_current": 3.2104,
+      "input_power": 76.173,
+      "torque": 12.64,
+      "rpm": 41.5,
+      "output_power": 55.0,
+      "quality": "reference"
+    },
+    {
+      "row": 16,
+      "voltage": 23.873,
+      "bus_current": 3.2809,
+      "input_power": 77.74,
+      "torque": 12.99,
+      "rpm": 41.0,
+      "output_power": 55.835,
+      "quality": "reference"
+    },
+    {
+      "row": 17,
+      "voltage": 23.962,
+      "bus_current": 3.4649,
+      "input_power": 82.309,
+      "torque": 13.39,
+      "rpm": 40.6,
+      "output_power": 56.873,
+      "quality": "reference"
+    },
+    {
+      "row": 18,
+      "voltage": 24.014,
+      "bus_current": 3.5122,
+      "input_power": 83.733,
+      "torque": 13.8,
+      "rpm": 40.0,
+      "output_power": 57.713,
+      "quality": "reference"
+    },
+    {
+      "row": 19,
+      "voltage": 23.998,
+      "bus_current": 3.6295,
+      "input_power": 86.568,
+      "torque": 14.14,
+      "rpm": 39.2,
+      "output_power": 58.022,
+      "quality": "reference"
+    },
+    {
+      "row": 20,
+      "voltage": 24.064,
+      "bus_current": 3.7226,
+      "input_power": 89.044,
+      "torque": 14.59,
+      "rpm": 38.5,
+      "output_power": 58.769,
+      "quality": "reference"
+    },
+    {
+      "row": 21,
+      "voltage": 23.93,
+      "bus_current": 3.8304,
+      "input_power": 90.962,
+      "torque": 14.91,
+      "rpm": 37.3,
+      "output_power": 58.226,
+      "quality": "reference"
+    },
+    {
+      "row": 22,
+      "voltage": 24.077,
+      "bus_current": 3.9608,
+      "input_power": 94.71,
+      "torque": 15.26,
+      "rpm": 37.2,
+      "output_power": 59.405,
+      "quality": "reference"
+    },
+    {
+      "row": 23,
+      "voltage": 24.081,
+      "bus_current": 4.0589,
+      "input_power": 97.081,
+      "torque": 15.67,
+      "rpm": 36.3,
+      "output_power": 59.477,
+      "quality": "reference"
+    },
+    {
+      "row": 24,
+      "voltage": 24.002,
+      "bus_current": 4.1486,
+      "input_power": 98.96,
+      "torque": 16.09,
+      "rpm": 35.2,
+      "output_power": 59.245,
+      "quality": "reference"
+    },
+    {
+      "row": 25,
+      "voltage": 24.0,
+      "bus_current": 4.3283,
+      "input_power": 103.24,
+      "torque": 16.44,
+      "rpm": 34.6,
+      "output_power": 59.538,
+      "quality": "reference"
+    },
+    {
+      "row": 26,
+      "voltage": 24.008,
+      "bus_current": 4.3664,
+      "input_power": 104.25,
+      "torque": 16.71,
+      "rpm": 33.8,
+      "output_power": 59.123,
+      "quality": "reference"
+    },
+    {
+      "row": 27,
+      "voltage": 24.06,
+      "bus_current": 4.4767,
+      "input_power": 107.14,
+      "torque": 17.17,
+      "rpm": 32.7,
+      "output_power": 58.83,
+      "quality": "reference"
+    },
+    {
+      "row": 28,
+      "voltage": 24.085,
+      "bus_current": 4.6217,
+      "input_power": 110.69,
+      "torque": 17.54,
+      "rpm": 31.7,
+      "output_power": 58.239,
+      "quality": "reference"
+    },
+    {
+      "row": 29,
+      "voltage": 24.025,
+      "bus_current": 4.7002,
+      "input_power": 112.4,
+      "torque": 17.86,
+      "rpm": 30.6,
+      "output_power": 57.166,
+      "quality": "reference"
+    }
+  ],
+  "feedback_observation": {
+    "velocity_encoding": "floor",
+    "velocity_filter_tc": 0.0025412807208095266,
+    "velocity_feedback_scale": 0.9987451905437824,
+    "velocity_feedback_bias": -0.0012717069082022608,
+    "velocity_filter_kp_slope": 3.4681956441056276,
+    "model": "mechanical_torque_proxy",
+    "torque_feedback_gain": 0.1198991043896492
+  },
+  "timing_contract": {
+    "physics_step_s": 0.001,
+    "host_command_period_s": 0.02,
+    "host_feedback_period_s": 0.02,
+    "extra_command_delay_s": 0,
+    "extra_feedback_delay_s": 0.0,
+    "use_reported_feedback_age": false,
+    "extra_delay_meaning": "zero extra shift in timestamp replay; NOT a zero network latency measurement"
+  },
+  "validation_scope": {
+    "shared_across_all_motors": true,
+    "per_motor_overrides": false,
+    "bare_shaft_only": false,
+    "absolute_output_torque_calibrated": false,
+    "single_dof_stiction_needs_coupled_body_validation": true,
+    "electrical_and_thermal_model_validated": false,
+    "standalone_model_ported_to_UniLab": true,
+    "rider_suspended_load_development_validated": false,
+    "torque_residual_correction_enabled": false,
+    "fixed_gain_kd_band_enabled": true,
+    "grounded_robot_or_policy_validated": false,
+    "protocol_and_mechanical_force_units_separate": true,
+    "simulation_force_scale_is_not_absolute_hardware_capacity": true,
+    "linear_load_feedback_enabled": false,
+    "coarse_torque_proxy_enabled": true
+  },
+  "behavior_reference_sha256": "acaba42528f3be766d3c45cb7e071137bc0e1ab71ac452beec6ca3ec7d4ad91e",
+  "derived_physics": {
+    "envelope_scale": "physics.torque_scale",
+    "braking_limit": "physics.low_speed_drive_limit",
+    "mechanical_torque_limit": "physics.torque_scale * registers.tmax"
+  },
+  "hardware_reference": {
+    "torque_constant": 0.0832,
+    "reduction_ratio": 40,
+    "phase_current_limit": 12.0,
+    "undervoltage": 12.0,
+    "overvoltage": 35.0,
+    "stator_overtemperature": 115.0,
+    "mos_overtemperature": 85.0,
+    "speed_limit_register": 31.4,
+    "current_bandwidth": 250.0
+  },
+  "feedback_simplification": {
+    "baseline_sha256": "61fccf55bf7e4840b1fdfc5aeeb11d9befb5dec10ac1e0ac8fe4ff6e59825a0b",
+    "objective": "Equal-record-weighted least squares against frozen v8 feedback",
+    "training_runs": [
+      "train_01",
+      "range_01",
+      "gains_01",
+      "gains_03"
+    ],
+    "held_out_run": "check_01",
+    "within_run_check_cards_excluded_from_fit": true,
+    "load_numeric_parameters_before": 7,
+    "load_numeric_parameters_after": 1,
+    "mechanics_and_velocity_unchanged": true,
+    "feedback_accuracy_may_change": true
+  },
+  "behavior_reference_scope": "mechanics_and_velocity_only",
+  "torque_feedback_simplification": {
+    "baseline_sha256": "f1b71a730bf6d6239f67121aa9f792587dd472403a39bbce4f035f8875a6d5b0",
+    "objective": "Project previous feedback onto mechanical torque; equal bare/loaded group weights and equal record weights",
+    "torque_feedback_gain": 0.1198991043896492,
+    "torque_parameters_before": 11,
+    "torque_parameters_after": 1,
+    "purpose": "Coarse diagnostic output only; not a calibrated shaft torque or high-fidelity CAN current observer",
+    "mechanics_and_velocity_unchanged": true
+  }
+}
