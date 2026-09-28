@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_110_walk_flat/mujoco
+  - _self_
+
+training:
+  task_name: MicroDuckEnlarged111WalkFlat
+  sim_backend: mujoco
+
+reward:
+  # Supplied V1.1.1 HOME base height with both sole sites on the flat floor.
+  base_height_target: 0.313459
+  min_base_height: 0.198859

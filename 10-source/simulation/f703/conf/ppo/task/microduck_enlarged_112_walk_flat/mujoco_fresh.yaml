@@ -1,0 +1,39 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_feasible
+  - _self_
+
+# Independent skill-discovery pilot, not an adaptation of the V111 actor.
+# train_mlx_ppo loads by load_run, so resume=false alone is insufficient.
+training:
+  seed: 1721
+  log_root: logs/v112_training/fresh_start
+  no_play: true
+
+algo:
+  seed: 1721
+  resume: false
+  load_run: "-1"
+  resume_trainer_state: false
+  num_envs: 256
+  max_iterations: 501
+  save_interval: 50
+  policy:
+    init_noise_std: 0.1
+    resume_noise_std: null
+  algorithm:
+    learning_rate: 1.0e-4
+    schedule: adaptive
+    desired_kl: 0.01
+    target_kl_stop: 0.03
+    adaptive_lr_update_interval: 1
+
+# Only reward change: existing raw action-rate cost at discovery strength.
+# Official velocity recipe also starts at -0.1; the relative reward mass is
+# different here, so this is a bounded pilot, not claimed recipe equivalence.
+# Do not ramp before deterministic walking passes the behavior gate.
+reward:
+  action_rate_schedule_steps: [0]
+  action_rate_schedule_scales: [-0.1]
+  scales:
+    action_rate: -0.1

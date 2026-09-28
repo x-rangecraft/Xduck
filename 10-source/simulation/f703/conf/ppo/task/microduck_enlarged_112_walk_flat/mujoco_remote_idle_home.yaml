@@ -1,0 +1,21 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_remote_idle_refinement
+  - _self_
+
+# EXPERIMENTAL / NOT PROMOTED. Replace (do not stack) the idle objective.
+# HOME is physically reachable in the diagnostic stop/restart probe; the
+# deployed actor remains responsible for choosing all 14 raw actions.
+training:
+  log_root: logs/v112_training/refinement/idle_home
+
+algo:
+  max_iterations: 301
+
+env:
+  idle_home_target_scale_rad: 0.25
+
+reward:
+  scales:
+    idle_leg_motion: 0.0
+    idle_home_target: -2.0

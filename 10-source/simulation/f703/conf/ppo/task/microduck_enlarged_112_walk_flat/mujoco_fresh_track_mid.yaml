@@ -1,0 +1,16 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_explore_mid
+  - _self_
+
+# Final midpoint on velocity-task mass: 4 returned to stand; 20 forward-flopped.
+training:
+  seed: 1731
+  log_root: logs/v112_training/fresh_track_mid
+
+algo:
+  seed: 1731
+
+reward:
+  scales:
+    track_linear_velocity: 10.0

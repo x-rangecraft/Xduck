@@ -1,0 +1,27 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco
+  - _self_
+
+# Prerequisite: repair all-joint travel reserve before new skill curricula.
+# Same command distribution/optimizer as the prior steady-command run.
+# The sole reward change lives in the V112 all-joint clearance signal.
+algo:
+  # Local benchmark: ~18% more samples/s than 64 envs, 4x samples/update.
+  num_envs: 256
+  max_iterations: 501
+  policy:
+    init_noise_std: 0.05
+    resume_noise_std: 0.05
+  algorithm:
+    learning_rate: 3.0e-5
+    entropy_coef: 0.0
+env:
+  command_mode_probabilities: [0.05, 0.35, 0.15, 0.15, 0.15, 0.15]
+  command_resample_interval_s: 8.0
+  # A brief excursion must not be cheap compared with one gait reward step.
+  # At the 0.005 rad gate, this adds 25*(1-0.005/0.01)^2 = 6.25 raw cost;
+  # the existing -5 weight makes that -31.25 before time integration.
+  joint_limit_barrier_margin_rad: 0.01
+  joint_limit_barrier_scale: 25.0
+  joint_limit_termination_margin_rad: 0.005

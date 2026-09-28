@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_multidirectional_entropy
+  - _self_
+
+# One additional acquisition signal compared with the entropy-only experiment.
+# Correct signed lateral COM/base translation earns progress, capped at command
+# speed. Standing earns zero; moving opposite the command earns a penalty.
+# Existing two-axis tracking, physical constraints and all gait rewards remain.
+# No foot-yaw controller, target clamp or prescribed sideways joint trajectory.
+training:
+  log_root: logs/v112_training/multidirectional_progress
+algo:
+  max_iterations: 601
+reward:
+  scales:
+    lateral_command_progress: 20.0

@@ -1,0 +1,24 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_remote_head_level
+  - _self_
+
+# Second lesson: keep the identical head-shell roll objective, but prevent the
+# locomotion rewards from overwhelming it while a gait command is active.
+training:
+  seed: 4811
+  log_root: logs/v112_training/refinement/head_level_motion_train
+
+algo:
+  seed: 4811
+  load_run: logs/v112_training/refinement/head_level_train/MicroDuckEnlarged112WalkFlat/2026-09-22_18-02-05_mujoco/model_100.safetensors
+  max_iterations: 101
+
+env:
+  head_level_moving_multiplier: 2.0
+  head_level_bias_schedule_steps: [0, 600, 1200, 1800]
+  head_level_bias_schedule_scales: [6.0, 9.0, 12.0, 15.0]
+
+reward:
+  scales:
+    head_level_bias: 6.0

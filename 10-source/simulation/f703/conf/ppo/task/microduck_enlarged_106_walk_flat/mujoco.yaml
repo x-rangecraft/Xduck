@@ -1,0 +1,141 @@
+# @package _global_
+training:
+  task_name: MicroDuckEnlarged106WalkFlat
+  sim_backend: mujoco
+  play_steps: 500
+algo:
+  num_envs: 256
+  max_iterations: 5000
+  save_interval: 100
+  empirical_normalization: false
+  obs_groups:
+    default:
+      - policy
+  policy:
+    init_noise_std: 0.35
+    resume_noise_std: 0.35
+    actor_hidden_dims: [512, 256, 128]
+    critic_hidden_dims: [512, 256, 128]
+  algorithm:
+    schedule: adaptive
+    learning_rate: 1.0e-4
+    entropy_coef: 1.0e-2
+    desired_kl: 0.01
+    metrics_interval: 1
+    finite_check_interval: 1
+    disable_finite_checks: false
+    adaptive_lr_update_interval: 1
+env:
+  max_episode_seconds: 20.0
+  motor_constraints:
+    enabled: true
+    hard_duty: peak
+    hard_limit_margin: 0.98
+    rated_speed_soft_limit: true
+    envelope_model: gf43x40_hybrid
+    braking_duty: rated
+  identified_dynamics:
+    enabled: true
+    first_order_response: true
+    response_time_constant_range_s: [0.015, 0.030]
+    response_command_gain: 1.0
+    # Loaded-joint command-gain hypothesis.  The lower bound is deliberately
+    # conservative; the empty-load CAN fit is not treated as loaded truth.
+    response_command_gain_range: [0.90, 1.00]
+    asymmetric_friction: true
+    # Sample the imported three-motor X40 friction evidence per joint/episode.
+    randomize_friction_parameters: true
+    packet_loss_probability_range: [0.0007687281, 0.0009573922]
+    friction_transition_speed_rad_s: 0.01
+  commands:
+    vel_limit: [[0.0, 0.0, 0.0], [0.35, 0.0, 0.0]]
+    rel_standing_envs: 0.25
+    rel_forward_envs: 0.75
+    rel_turn_in_place_envs: 0.0
+  control_config:
+    action_scale: 0.25
+    Kp: 30.0
+    Kd: 1.0
+    # The measured CAN latency is below the 2 ms physics step.  A fixed 20 ms
+    # control-frame delay is retained as a separate stress test, not training DR.
+    simulate_action_latency: false
+  noise_config:
+    level: 1.0
+  domain_rand:
+    randomize_kp: true
+    kp_multiplier_range: [0.95, 1.05]
+    randomize_kd: true
+    kd_multiplier_range: [0.95, 1.05]
+    randomize_joint_position_bias: true
+    joint_position_bias_range_rad: [-0.005, 0.005]
+    randomize_joint_velocity_bias: true
+    joint_velocity_bias_range_rad_s: [-0.0025, 0.0025]
+    randomize_gyro_bias: true
+    gyro_bias_range_rad_s: [-0.01, 0.01]
+    randomize_ground_friction: true
+    ground_friction_multiplier_range: [0.9, 1.1]
+    randomize_body_mass: true
+    body_mass_multiplier_range: [0.97, 1.03]
+    random_com: true
+    com_offset_x: [-0.002, 0.002]
+    com_offset_y: [-0.002, 0.002]
+    com_offset_z: [-0.002, 0.002]
+    randomize_dof_armature: true
+    # 0.924x-1.25x spans the imported X40 effective-inertia evidence range.
+    dof_armature_multiplier_range: [0.924, 1.25]
+reward:
+  scales:
+    track_linear_velocity: 4.0
+    track_angular_velocity: 2.0
+    upright: 2.0
+    leg_pose: 1.0
+    head_pose: 2.0
+    single_support: 1.0
+    swing_time: 2.0
+    landing_quality: 8.0
+    short_swing: -12.0
+    flight: -8.0
+    double_support: -0.2
+    base_height: 2.0
+    foot_clearance: -2.0
+    foot_slip: -0.1
+    lin_vel_z: -2.0
+    ang_vel_xy: -0.05
+    action_rate: -0.1
+    motor_peak_envelope: -1.0
+    motor_peak_envelope_max: -0.5
+    motor_joint_target_limit: -0.5
+    motor_rated_torque: -0.20
+    motor_rated_power: -0.05
+    motor_speed: -0.02
+    motor_evidence_speed: -0.10
+    motor_evidence_speed_max: -0.25
+  tracking_sigma: 0.1
+  angular_tracking_sigma: 0.5
+  base_height_target: 0.2446
+  min_base_height: 0.13
+  max_tilt_deg: 70.0
+  foot_contact_force_threshold: 1.0
+  standing_leg_pose_stds: [0.1, 0.05, 0.15, 0.15, 0.1, 0.1, 0.05, 0.15, 0.15, 0.1]
+  walking_leg_pose_stds: [0.3, 0.05, 0.4, 0.4, 0.25, 0.3, 0.05, 0.4, 0.4, 0.25]
+  walking_command_threshold: 0.01
+  upright_std: 0.22360679774997896
+  head_pose_std: 0.5
+  swing_time_min: 0.17
+  swing_time_max: 0.44
+  swing_time_target: 0.275
+  swing_time_std: 0.069
+  short_swing_threshold: 0.18
+  gait_command_threshold: 0.01
+  base_height_std: 0.016
+  foot_height_target: 0.0418
+  foot_regularization_command_threshold: 0.01
+  action_rate_schedule_steps: [0, 12000, 18000, 24000, 30000, 36000]
+  action_rate_schedule_scales: [-0.1, -0.2, -0.4, -0.6, -0.8, -1.0]
+play_profile:
+  enabled: true
+  env:
+    render_spacing: 1.0
+interactive:
+  action_mode: policy
+  keyboard: true

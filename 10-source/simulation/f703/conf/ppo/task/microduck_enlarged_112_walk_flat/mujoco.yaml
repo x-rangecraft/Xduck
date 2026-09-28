@@ -1,0 +1,62 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_111_walk_flat/mujoco
+  - _self_
+
+training:
+  task_name: MicroDuckEnlarged112WalkFlat
+  no_play: true
+
+algo:
+  num_envs: 64
+  max_iterations: 1001
+  save_interval: 50
+  policy:
+    actor_hidden_dims: [512, 256, 128]
+    critic_hidden_dims: [512, 256, 128]
+    init_noise_std: 0.1
+    resume_noise_std: 0.1
+  algorithm:
+    learning_rate: 1.0e-4
+    schedule: fixed
+
+env:
+  identified_dynamics:
+    # Actuator V1: fixed engineering baseline across both hardware data sources.
+    # Not an identified motor constant; freeze T while auditing other parameters.
+    response_time_constant_range_s: [0.01, 0.01]
+  reset_base_qvel_limit: 0.0
+  adaptive_chunk_size: false
+  # Exclusive stand / forward / backward / lateral / yaw / mixed sampling.
+  # These are draw probabilities, not guaranteed live-environment fractions.
+  command_mode_probabilities: [0.20, 0.30, 0.10, 0.10, 0.15, 0.15]
+  command_resample_interval_s: 3.0
+  control_config:
+    action_scale: 1.0
+    simulate_action_latency: false
+  commands:
+    # Initial multi-direction curriculum; widen only after tracking validation.
+    vel_limit: [[-0.15, -0.12, -0.5], [0.3, 0.12, 0.5]]
+    rel_standing_envs: 0.0
+    rel_forward_envs: 0.0
+    rel_turn_in_place_envs: 0.0
+    head_limit: [[0, 0, 0, 0], [0, 0, 0, 0]]
+    body_limit: [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]
+
+reward:
+  # This owner continues a walking policy at the mature smoothing stage.
+  # A fresh environment or weights-only resume must not restart the weak ramp.
+  action_rate_schedule_steps: [0]
+  action_rate_schedule_scales: [-1.0]
+  # Direction-tracking lesson after stepping bootstrap: a 0.15 m/s error
+  # yields exp(-0.15**2 / 0.02)=0.325, instead of the former 0.799.
+  tracking_sigma: 0.02
+  scales:
+    action_rate: -1.0
+    # Nonzero commands must not collapse into stationary double support.
+    # The existing task gate leaves zero-command standing unpenalized.
+    double_support: -3.0
+    track_angular_velocity: 6.0
+    joint_limit_clearance: -5.0
+  base_height_target: 0.315013430981198
+  min_base_height: 0.20

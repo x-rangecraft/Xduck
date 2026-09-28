@@ -1,5 +1,7 @@
 # Xduck / xrange 工程工作区
 
+本分支保存 **F703阶段成果**。同事训练和回放从 [F703工程](10-source/simulation/f703/README.md) 开始，可复用现有 Apple Silicon UniLab 环境；包含训练配置、电机模型、模型资产、父权重和选定策略。
+
 本目录是本地工程根目录。目录布局、文件归属、RK3566 SSH 配置、上传和编译流程统一由
 [`00-docs/ENGINEERING_WORKFLOW.md`](00-docs/ENGINEERING_WORKFLOW.md) 约束。
 

@@ -1,0 +1,22 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_track_mid
+  - _self_
+
+# One-variable experiment: add a dense alternating foot-height reference to
+# the best random-initialization setup.  Actor observations/actions, mechanics,
+# motor envelope, command mix and exploration standard deviation stay fixed.
+training:
+  seed: 1733
+  log_root: logs/v112_training/fresh_phase
+
+algo:
+  seed: 1733
+
+reward:
+  scales:
+    phase_foot_height: 5.0
+
+env:
+  phase_gait_period_s: 0.4
+  phase_foot_height_std_m: 0.015

@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_lowstand
+  - _self_
+
+# Same single reward experiment bracketed between the static -3 run and the
+# unstable -15 run. Start from random weights; do not reuse either actor.
+training:
+  seed: 1725
+  log_root: logs/v112_training/fresh_step_mid
+
+algo:
+  seed: 1725
+
+reward:
+  scales:
+    double_support: -7.5

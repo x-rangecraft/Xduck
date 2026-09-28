@@ -1,0 +1,45 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_remote_head_level
+  - _self_
+
+# Recover the retained C actor with one unchanged behavior objective. Previous
+# refinements alternated between missing travel protection and a different
+# head/idle objective. Keep safety explicit and retain C's mature head weight.
+training:
+  seed: 17601
+  log_root: logs/v112_training/refinement/recovery_consistent
+  no_play: true
+
+algo:
+  seed: 17601
+  num_envs: 128
+  num_steps_per_env: 150
+  resume: true
+  resume_trainer_state: false
+  load_run: logs/v112_training/refinement/main_microstep947_after311_r1/interp_5_6/alpha_050.safetensors/model_0.safetensors
+  max_iterations: 201
+  save_interval: 25
+  policy:
+    init_noise_std: 0.03
+    resume_noise_std: 0.03
+  algorithm:
+    learning_rate: 2.0e-6
+    schedule: fixed
+    entropy_coef: 0.0
+
+env:
+  max_episode_seconds: 90.0
+  fixed_remote_sequence: false
+  fixed_remote_sequence_fraction: 0.25
+  joint_limit_barrier_margin_rad: 0.01
+  joint_limit_barrier_scale: 25.0
+  joint_limit_termination_margin_rad: 0.005
+  head_level_moving_multiplier: 1.0
+  head_level_bias_schedule_steps: [0]
+  head_level_bias_schedule_scales: [6.0]
+  termination_penalty: 50.0
+
+reward:
+  scales:
+    head_level_bias: 6.0

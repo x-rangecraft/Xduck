@@ -1,0 +1,15 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_lowstand
+  - _self_
+
+# Enlarged-robot exploration bracket: 0.1 stayed static; the official robot's
+# 1.0 drove the enlarged mean actor through hard limits. No actor is reused.
+training:
+  seed: 1729
+  log_root: logs/v112_training/fresh_explore_mid
+
+algo:
+  seed: 1729
+  policy:
+    init_noise_std: 0.35

@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_track_mid
+  - _self_
+
+# Stage 2 of the same fresh lineage. The discovery checkpoint has bilateral
+# landings but short survival. Sole experiment variable: lower rollout noise;
+# actor, plant, task reward, commands and adaptive optimizer settings persist.
+training:
+  seed: 1732
+  log_root: logs/v112_training/fresh_consolidate
+
+algo:
+  seed: 1732
+  resume_trainer_state: false
+  policy:
+    resume_noise_std: 0.1

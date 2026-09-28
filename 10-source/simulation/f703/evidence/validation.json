@@ -1,0 +1,44 @@
+{
+  "date": "2026-09-28",
+  "platform": "Apple Silicon macOS",
+  "installation": "Independent local environment created with uv; also verified reuse of existing UniLab environment without installing into it. MuJoCo wheel hash matches original lock.",
+  "regression": {
+    "passed": 119,
+    "deselected": 1,
+    "command": "uv run --no-sync pytest -q tests/envs/locomotion/microduck_enlarged_112 tests/actuators/test_gf43x.py tests/algos/test_mlx_ppo.py tests/algos/test_mlx_policy_consistency.py",
+    "after_configuration_pruning": "6 affected identity/configuration/entry tests passed"
+  },
+  "last_201_iterations_reproduction": {
+    "command": "uv run --no-sync python f703.py train --mode reproduce",
+    "seed": 293101,
+    "iterations": 201,
+    "environment_steps": 617472,
+    "wall_seconds": 169.10724233207293,
+    "checkpoint_sha256": "43564d0509d809bb5c11fd6189f8ae961825b1fddf8f4ed6247cb697da84a3d4",
+    "byte_identical_to_original_F703": true,
+    "weights_max_absolute_difference": 0,
+    "nonfinite_skip_maxima": {
+      "train/skipped_nonfinite_loss": 0.0,
+      "train/skipped_nonfinite_grads": 0.0
+    }
+  },
+  "onnx_18s_replay": {
+    "environments": 8,
+    "frames_per_environment": 900,
+    "passed": true,
+    "max_absolute_difference_from_original_trace": {
+      "tilt_deg": 0.0,
+      "velocity_body_xyz_m_s": 0.0,
+      "yaw_rad": 0.0
+    }
+  },
+  "existing_environment_continue_smoke": {
+    "completed_iterations": 2,
+    "status": "completed"
+  },
+  "scope": "Exact checkpoint reproduction demonstrated on this machine with the recorded dependencies; no guarantee of bitwise training identity on other chips/versions and no hardware qualification.",
+  "git_index_checkout": {
+    "status": "PASS",
+    "scope": "Exported only Git-tracked project files, reused the pre-existing UniLab environment, source/hash checks and 8-env 18s replay passed."
+  }
+}

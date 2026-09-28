@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_lowstand
+  - _self_
+
+# Final bounded midpoint on the same double-support experiment axis:
+# -7.5 stayed static; -15 fell immediately. No checkpoint is reused.
+training:
+  seed: 1726
+  log_root: logs/v112_training/fresh_step_bracket
+
+algo:
+  seed: 1726
+
+reward:
+  scales:
+    double_support: -11.25

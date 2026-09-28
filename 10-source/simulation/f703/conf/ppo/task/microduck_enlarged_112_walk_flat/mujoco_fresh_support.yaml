@@ -1,0 +1,18 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_lowstand
+  - _self_
+
+# New, single reward hypothesis after the double-support bracket failed:
+# reinforce commanded single support encountered during random exploration.
+# Alternating per-foot landings reject one-foot parking at the behavior gate.
+training:
+  seed: 1727
+  log_root: logs/v112_training/fresh_support
+
+algo:
+  seed: 1727
+
+reward:
+  scales:
+    single_support: 10.0

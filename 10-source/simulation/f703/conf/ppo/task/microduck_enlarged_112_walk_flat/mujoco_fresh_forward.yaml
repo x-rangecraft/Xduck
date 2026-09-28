@@ -1,0 +1,22 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh
+  - _self_
+
+# Stage 1: discover a stable alternating forward gait from random weights.
+# The sole experiment variable versus mujoco_fresh is command sampling.
+training:
+  seed: 1722
+  log_root: logs/v112_training/fresh_forward
+
+algo:
+  seed: 1722
+
+env:
+  command_mode_probabilities: []
+  command_resample_interval_s: 0.0
+  commands:
+    vel_limit: [[0.0, 0.0, 0.0], [0.3, 0.0, 0.0]]
+    rel_standing_envs: 0.25
+    rel_forward_envs: 0.75
+    rel_turn_in_place_envs: 0.0

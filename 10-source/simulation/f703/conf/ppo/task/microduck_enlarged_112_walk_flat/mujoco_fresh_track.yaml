@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_explore_mid
+  - _self_
+
+# The 0.35 exploration run sampled gait but its deterministic actor returned to
+# standing. Sole reward experiment: make forward velocity the dominant task.
+training:
+  seed: 1730
+  log_root: logs/v112_training/fresh_track
+
+algo:
+  seed: 1730
+
+reward:
+  scales:
+    track_linear_velocity: 20.0

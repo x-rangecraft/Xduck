@@ -1,0 +1,71 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_106_stand_flat/mujoco
+  - _self_
+
+training:
+  task_name: MicroDuckEnlarged107StandFlat
+  sim_backend: mujoco
+env:
+  # The supplied V1.0.7 mass distribution needs the same closed-loop stiffness
+  # already validated by the walking task; the inherited V1.0.6 Kp=9 profile
+  # cannot recover its initial settling transient on this model.
+  control_config:
+    Kp: 30.0
+    # The 93.3 ms actuator response needs more nominal damping than the old
+    # 15--30 ms profile; this gain is still randomized by the table's ±10%.
+    Kd: 2.0
+    simulate_action_latency: false
+  full_motor_dr:
+    enabled: true
+    torque_axis_scale_range: [0.90, 1.00]
+    speed_axis_scale_range: [0.9773, 1.00]
+    peak_curve_blend_range: [0.0, 1.0]
+    peak_power_scale_range: [0.90, 1.00]
+    rotor_inertia_nominal_kg_m2: 0.03047
+    rotor_inertia_scale_range: [0.737, 1.15]
+    coulomb_positive_nominal_nm: 0.272
+    coulomb_positive_scale_range: [0.85, 1.15]
+    coulomb_negative_nominal_nm: 0.325
+    coulomb_negative_scale_range: [0.85, 1.15]
+    viscous_positive_nominal_nm_s_rad: 0.02965
+    viscous_positive_scale_range: [0.8286, 1.15]
+    viscous_negative_nominal_nm_s_rad: 0.03051
+    viscous_negative_scale_range: [0.6891, 1.3109]
+    command_delay_steps: 2
+    command_delay_probability_range: [0.0, 1.0]
+    apply_velocity_measurement_fit: true
+    velocity_gain_positive: 0.9827
+    velocity_gain_negative: 0.9819
+  identified_dynamics:
+    enabled: true
+    first_order_response: true
+    response_time_constant_range_s: [0.079305, 0.107295]
+    response_command_gain_range: [0.85, 1.15]
+    asymmetric_friction: true
+    randomize_friction_parameters: true
+    packet_loss_probability_range: [0.0007687281, 0.0009573922]
+  noise_config:
+    level: 1.0
+    # Velocity gain/bias/noise comes from the imported three-motor fit.
+    scale_joint_vel: 0.0
+  domain_rand:
+    randomize_body_mass: true
+    body_mass_multiplier_range: [0.95, 1.05]
+    randomize_ground_friction: true
+    ground_friction_multiplier_range: [0.70, 1.30]
+    random_com: true
+    com_offset_x: [-0.002, 0.002]
+    com_offset_y: [-0.002, 0.002]
+    com_offset_z: [-0.002, 0.002]
+    randomize_dof_armature: true
+    dof_armature_multiplier_range: [0.90, 1.10]
+    randomize_kp: true
+    kp_multiplier_range: [0.90, 1.10]
+    randomize_kd: true
+    kd_multiplier_range: [0.90, 1.10]
+    randomize_joint_position_bias: true
+    joint_position_bias_range_rad: [-0.005, 0.005]
+    randomize_joint_velocity_bias: false
+    randomize_gyro_bias: false
+    push_robots: false

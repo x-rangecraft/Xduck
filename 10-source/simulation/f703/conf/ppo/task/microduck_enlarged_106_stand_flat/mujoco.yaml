@@ -1,0 +1,97 @@
+# @package _global_
+training:
+  task_name: MicroDuckEnlarged106StandFlat
+  sim_backend: mujoco
+  play_steps: 500
+algo:
+  num_envs: 256
+  max_iterations: 1000
+  save_interval: 50
+  empirical_normalization: false
+  obs_groups:
+    default:
+      - policy
+  policy:
+    init_noise_std: 0.08
+    resume_noise_std: 0.08
+    actor_hidden_dims: [512, 256, 128]
+    critic_hidden_dims: [512, 256, 128]
+  algorithm:
+    schedule: fixed
+    learning_rate: 2.0e-5
+    entropy_coef: 1.0e-3
+    target_kl_stop: 0.02
+    metrics_interval: 1
+    finite_check_interval: 1
+    disable_finite_checks: false
+env:
+  max_episode_seconds: 10.0
+  motor_constraints:
+    enabled: true
+    hard_duty: peak
+    hard_limit_margin: 0.98
+    rated_speed_soft_limit: true
+    envelope_model: gf43x40_hybrid
+    braking_duty: rated
+  identified_dynamics:
+    enabled: true
+    first_order_response: true
+    response_time_constant_range_s: [0.015, 0.030]
+    response_command_gain: 1.0
+    asymmetric_friction: true
+    friction_transition_speed_rad_s: 0.01
+  control_config:
+    action_scale: 0.25
+    Kp: 9.0
+    Kd: 1.5
+  noise_config:
+    level: 0.0
+  domain_rand:
+    randomize_kp: false
+    kp_multiplier_range: [0.95, 1.05]
+    randomize_kd: false
+    kd_multiplier_range: [0.95, 1.05]
+    randomize_ground_friction: true
+    ground_friction_multiplier_range: [0.9, 1.1]
+    randomize_body_mass: true
+    body_mass_multiplier_range: [0.97, 1.03]
+    random_com: true
+    com_offset_x: [-0.002, 0.002]
+    com_offset_y: [-0.002, 0.002]
+    com_offset_z: [-0.002, 0.002]
+    randomize_dof_armature: true
+    dof_armature_multiplier_range: [0.9, 1.1]
+reward:
+  scales:
+    upright: 2.0
+    body_pose: 8.0
+    leg_pose: 1.0
+    head_pose: 2.0
+    height_target: 1.0
+    lin_vel_z: -1.0
+    ang_vel_xy: -0.1
+    action_rate: -0.1
+    motor_peak_envelope: -1.0
+    motor_peak_envelope_max: -0.5
+    motor_joint_target_limit: -0.5
+    motor_rated_torque: -0.20
+    motor_rated_power: -0.05
+    motor_speed: -0.02
+    motor_evidence_speed: -0.10
+    motor_evidence_speed_max: -0.25
+  tracking_sigma: 0.25
+  base_height_target: 0.2446
+  min_base_height: 0.13
+  max_tilt_deg: 65.0
+  foot_contact_force_threshold: 1.0
+  leg_pose_stds: [0.3, 0.3, 0.6, 0.6, 0.4, 0.3, 0.3, 0.6, 0.6, 0.4]
+  head_pose_std: 0.5
+  upright_std: 0.22360679774997896
+  body_height_std: 0.032
+  body_angle_std: 0.2617993877991494
+  height_target_min: 0.20
+  height_target_max: 0.29
+play_profile:
+  enabled: true
+  env:
+    render_spacing: 1.0

@@ -1,0 +1,16 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_lowstand
+  - _self_
+
+# Official Micro Duck velocity training uses action scale 1.0 and Gaussian
+# init_std 1.0. Previous V112 fresh runs used 0.1 and sampled no useful gait.
+# This run changes only the initial exploration standard deviation.
+training:
+  seed: 1728
+  log_root: logs/v112_training/fresh_explore
+
+algo:
+  seed: 1728
+  policy:
+    init_noise_std: 1.0

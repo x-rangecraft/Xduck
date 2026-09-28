@@ -1,0 +1,37 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_remote
+  - _self_
+
+# Continue the best stillness candidate while correcting only the persistent
+# visible head-shell side tilt.  Natural instantaneous gait motion is retained.
+training:
+  seed: 4711
+  log_root: logs/v112_training/refinement/head_level_train
+
+algo:
+  seed: 4711
+  resume: true
+  resume_trainer_state: false
+  load_run: logs/v112_training/refinement/distill_idle_r1/model_100.safetensors
+  max_iterations: 101
+  save_interval: 25
+  algorithm:
+    learning_rate: 1.0e-5
+    schedule: fixed
+    entropy_coef: 0.0
+    metrics_interval: 1
+    finite_check_interval: 1
+    disable_finite_checks: false
+
+env:
+  head_level_bias_tau_s: 1.0
+  head_level_bias_schedule_steps: [0, 600, 1200, 1800]
+  head_level_bias_schedule_scales: [3.0, 4.0, 5.0, 6.0]
+
+reward:
+  head_pose_bias_schedule_steps: [0]
+  head_pose_bias_schedule_scales: [0.0]
+  scales:
+    head_pose_bias: 0.0
+    head_level_bias: 3.0

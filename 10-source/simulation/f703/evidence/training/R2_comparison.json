@@ -1,0 +1,84 @@
+{
+  "policy_id": "V112-COM35-HOME384-T1to10ms-Forward-20260928-F703",
+  "display_name": "A2.6-F703\uff08\u524d\u8fdb\u5019\u9009\uff09",
+  "checkpoint": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_19-13-39_mujoco/model_200.safetensors",
+  "checkpoint_sha256": "43564d0509d809bb5c11fd6189f8ae961825b1fddf8f4ed6247cb697da84a3d4",
+  "same_seed_protocol": "seeds1601/1811, 8env each, 5s zero +18s walk-stop, no added bias, fixed T endpoints; same mechanical/HOME/PD/rewards",
+  "metrics": [
+    {
+      "T_ms": 1.0,
+      "R2": {
+        "zero": 19.950379371643066,
+        "forward": 18.747363090515137,
+        "walk_pass": 0,
+        "survived": 16
+      },
+      "F703": {
+        "zero": 1.1344102025032043,
+        "forward": 4.64326810836792,
+        "walk_pass": 16,
+        "survived": 16
+      },
+      "zero_reduction_percent": 94.31384144947327,
+      "forward_reduction_percent": 75.23242022918365
+    },
+    {
+      "T_ms": 5.0,
+      "R2": {
+        "zero": 12.733679294586182,
+        "forward": 11.754047393798828,
+        "walk_pass": 0,
+        "survived": 16
+      },
+      "F703": {
+        "zero": 0.8196587860584259,
+        "forward": 4.475242376327515,
+        "walk_pass": 16,
+        "survived": 16
+      },
+      "zero_reduction_percent": 93.56306400454966,
+      "forward_reduction_percent": 61.9259457921826
+    },
+    {
+      "T_ms": 10.0,
+      "R2": {
+        "zero": 1.4994786977767944,
+        "forward": 5.098030090332031,
+        "walk_pass": 16,
+        "survived": 16
+      },
+      "F703": {
+        "zero": 0.5196412205696106,
+        "forward": 4.407877683639526,
+        "walk_pass": 16,
+        "survived": 16
+      },
+      "zero_reduction_percent": 65.34520821535791,
+      "forward_reduction_percent": 13.53762913250196
+    }
+  ],
+  "recorded_shadow": {
+    "R2": 6.768820668824999,
+    "F703": 5.273076642429155,
+    "reduction_percent": 22.09755730839137
+  },
+  "sensitivity": {
+    "gyro": {
+      "R2": 0.12975504270076177,
+      "F703": 0.11522897709246491,
+      "reduction_percent": 11.194991197218096
+    },
+    "dq": {
+      "R2": 0.09382177644807038,
+      "F703": 0.08385082414112512,
+      "reduction_percent": 10.627545847486818
+    }
+  },
+  "sources": {
+    "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/fast_response_20260928/baseline_100_f0_r2.json": "e9f4f6b979b082076b1a6e23dc4228ab8fd3a972372e4fb9f48d03a86c06320b",
+    "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/control_200_f0_r2.json": "b2d627f8aadcd34e78f16e9c12bd67d8097562a296aba94bac3471b2703b2bb8",
+    "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/control_200_nominal_short.json": "684a492a6217bd9d15633db140efb1d3fe3b8cdebdb2bcf8f7be7f11ca465cee"
+  },
+  "postprocessing_note": "Six simulation comparisons completed. Optional shadow rerun then stopped because the external historical consumer path is no longer present. Shadow and sensitivity numbers above are the already-saved SHA-linked evaluations, not newly rerun results.",
+  "hardware_verified": false
+}

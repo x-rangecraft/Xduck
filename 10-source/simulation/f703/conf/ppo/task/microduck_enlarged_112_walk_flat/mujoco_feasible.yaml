@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_limits
+  - _self_
+
+# Common prerequisite before command-specific skill lessons: remove permanent
+# raw target saturation. Same broad sampling, plant, safety, optimizer and
+# reward weights as the retained safety checkpoint. Only the existing target
+# limit reward signal changes. Two 0.20 rad excesses cost 16 before ctrl_dt.
+env:
+  raw_target_feasibility_scale_rad: 0.05

@@ -1,0 +1,22 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_107_stand_flat/mujoco
+  - _self_
+
+training:
+  task_name: MicroDuckEnlarged110StandFlat
+  sim_backend: mujoco
+algo:
+  policy:
+    # Preserve the old 0.08 * 0.25 rad physical exploration amplitude.
+    init_noise_std: 0.02
+    resume_noise_std: 0.02
+env:
+  # The former 10 s horizon hid a reproducible 15.42 s standing fall.
+  max_episode_seconds: 60.0
+  control_config:
+    # Team-wide raw-action contract for hot-switch compatibility.
+    action_scale: 1.0
+    # Travel reserve before command delay and fitted motor response.
+    joint_limit_margin_deg: 5.0
+    joint_limit_lookahead_s: 0.25

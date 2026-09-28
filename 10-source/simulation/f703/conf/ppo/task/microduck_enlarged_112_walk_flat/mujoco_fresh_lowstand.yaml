@@ -1,0 +1,17 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_forward
+  - _self_
+
+# Official Micro Duck begins gait discovery with about 2% standing samples and
+# only raises that fraction after walking exists. This run tests that one change.
+training:
+  seed: 1723
+  log_root: logs/v112_training/fresh_lowstand
+
+algo:
+  seed: 1723
+
+env:
+  commands:
+    rel_standing_envs: 0.02

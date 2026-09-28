@@ -1,0 +1,24 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_remote
+  - _self_
+
+# Single-variable continuation from the most survival-capable existing policy.
+# The only behavior objective added is the official one-second EMA penalty for
+# persistent neck/head command error. All plant, observation, action, command
+# distribution and existing reward settings remain unchanged.
+training:
+  seed: 3611
+  log_root: logs/v112_training/official_remote_head_bias
+
+algo:
+  seed: 3611
+  load_run: logs/v112_training/official_remote/MicroDuckEnlarged112WalkFlat/2026-09-21_19-22-36_mujoco/model_600.safetensors
+  max_iterations: 301
+
+reward:
+  head_pose_bias_tau_s: 1.0
+  head_pose_bias_schedule_steps: [0, 1200, 2400, 3600]
+  head_pose_bias_schedule_scales: [0.0, 1.0, 2.0, 3.0]
+  scales:
+    head_pose_bias: 0.0

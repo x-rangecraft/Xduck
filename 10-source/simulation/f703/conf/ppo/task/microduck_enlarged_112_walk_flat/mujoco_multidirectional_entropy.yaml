@@ -1,0 +1,25 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_lateral
+  - _self_
+
+# Preserve the existing walking actor and GF43X40/V112 constraints.
+# Prior lateral curricula already tested sampling, velocity weight, smoothing,
+# and initial std. This experiment changes sustained exploration: entropy 0.01,
+# the value used in the earlier successful V104 discovery run, instead of 0.
+# Select by held-out signed lateral velocity AND retained forward/back/yaw gait.
+# No hip-yaw output correction or restriction is introduced by this profile.
+training:
+  seed: 2311
+  log_root: logs/v112_training/multidirectional_entropy
+  no_play: true
+  save_interval: 50
+algo:
+  seed: 2311
+  resume: true
+  resume_trainer_state: false
+  load_run: logs/v112_training/course_limits/MicroDuckEnlarged112WalkFlat/2026-09-21_15-00-52_mujoco/model_50.safetensors
+  max_iterations: 1501
+  save_interval: 50
+  algorithm:
+    entropy_coef: 0.01

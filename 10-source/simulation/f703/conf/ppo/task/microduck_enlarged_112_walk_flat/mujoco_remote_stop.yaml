@@ -1,0 +1,20 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_remote
+  - _self_
+
+# Final single-variable consolidation from the best broad remote checkpoint.
+# Only the command mix changes: more zero-command experience should shorten
+# stopping time without changing rewards, plant, observations or actions.
+training:
+  seed: 3511
+  log_root: logs/v112_training/official_remote_stop
+
+algo:
+  seed: 3511
+  load_run: logs/v112_training/official_remote/MicroDuckEnlarged112WalkFlat/2026-09-21_19-22-36_mujoco/model_350.safetensors
+  max_iterations: 201
+
+env:
+  # stand / forward / backward / forward arc / backward arc
+  remote_command_probabilities: [0.40, 0.20, 0.10, 0.20, 0.10]

@@ -54,6 +54,7 @@
 | GF43X40-10 / I2RT 通信与辨识工具 | `10-source/tools/motor/gf43x40-10-i2rt/` |
 | GF43X40-10 厂商参数与 I2RT 指令手册 | 仓库同级 `../Motor/电机参数.pdf`、`../Motor/I2RT_CAN通信协议与指令手册.docx` |
 | 电机建模与辨识方案 | `00-docs/hardware/motors/` |
+| F703仿真阶段快照 | `10-source/simulation/f703/` 保存冻结源码、模型、电机实现、配置、选定权重及最小复现证据；入口为其README，可复用现有UniLab环境 |
 | STM32 CMake 输出 | `20-build/stm32/stm32-h7-dm/` |
 | Python 虚拟环境与缓存 | `20-build/tools/motor/gf43x40-10-i2rt/` |
 | 电机采集数据与拟合结果 | `50-logs/test/motor/gf43x40-10-i2rt/data/` |

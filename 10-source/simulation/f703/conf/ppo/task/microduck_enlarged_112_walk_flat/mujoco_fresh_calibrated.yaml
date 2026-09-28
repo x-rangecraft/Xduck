@@ -1,0 +1,19 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_track_mid
+  - _self_
+
+# Discovery experiment against fresh_track_mid, using the identical seed.
+# The inherited 0.05 rad raw-request scale priced a walking diagnostic at
+# about -33 reward/s versus +10/s for stationary HOME.  A 0.25 rad scale
+# reduces ONLY that signal by 25x; it does not widen any physical limit or
+# alter the request governor, termination reserve, or motor envelope.
+# This is a discovery profile, not a qualified deployment policy.
+training:
+  log_root: logs/v112_training/fresh_calibrated
+
+algo:
+  max_iterations: 601
+
+env:
+  raw_target_feasibility_scale_rad: 0.25

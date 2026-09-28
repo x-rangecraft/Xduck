@@ -1,0 +1,625 @@
+{
+  "run": {
+    "algo": "mlx_ppo",
+    "task": "MicroDuckEnlarged112WalkFlat",
+    "sim_backend": "mujoco",
+    "device": "mps",
+    "collector_device": null,
+    "log_dir": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/feedback_robust_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_18-27-06_mujoco",
+    "start_time_utc": "2026-09-28T10:27:06.031923+00:00",
+    "hostname": "Mac",
+    "user": "rangemini-003",
+    "git": {
+      "commit": "d6e2afe59f02806b788bf8b803c33f8fd4a79c63",
+      "branch": "codex/microduck-sim-bootstrap",
+      "dirty": true
+    },
+    "hardware": {
+      "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+      "chip": "Apple M4",
+      "cpu_total_cores": "10",
+      "cpu_performance_cores": "unknown",
+      "cpu_efficiency_cores": "unknown",
+      "gpu_cores": "10",
+      "memory": "16 GB",
+      "cpu_core_type_1": "Performance",
+      "cpu_core_count_1": "4",
+      "cpu_core_type_2": "Efficiency",
+      "cpu_core_count_2": "6"
+    },
+    "wandb": {
+      "project": "unilab",
+      "entity": null,
+      "name": "mlx_ppo__MicroDuckEnlarged112WalkFlat__2026-09-28_18-27-06_mujoco",
+      "group": "MicroDuckEnlarged112WalkFlat",
+      "job_type": "mlx_ppo",
+      "tags": [
+        "mlx_ppo",
+        "MicroDuckEnlarged112WalkFlat",
+        "mujoco",
+        "user-rangemini-003"
+      ],
+      "notes": null,
+      "mode": null
+    },
+    "configured_seed": 292827,
+    "configured_seed_source": "algo.seed",
+    "effective_seed": 292827
+  },
+  "config": {
+    "algo": {
+      "algo": "ppo",
+      "algo_log_name": "mlx_rl_train",
+      "seed": 292827,
+      "num_envs": 128,
+      "num_steps_per_env": 24,
+      "rollout_batches": 1,
+      "max_iterations": 201,
+      "save_interval": 100,
+      "empirical_normalization": false,
+      "resume": true,
+      "load_run": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/fast_response_20260928/fast_extend/MicroDuckEnlarged112WalkFlat/2026-09-28_18-08-06_mujoco/model_199.safetensors",
+      "resume_trainer_state": true,
+      "checkpoint": -1,
+      "obs_groups": {
+        "default": [
+          "policy"
+        ]
+      },
+      "policy": {
+        "init_noise_std": 0.02,
+        "actor_hidden_dims": [
+          512,
+          256,
+          128
+        ],
+        "critic_hidden_dims": [
+          512,
+          256,
+          128
+        ],
+        "activation": "elu",
+        "class_name": "ActorCritic",
+        "resume_noise_std": null
+      },
+      "algorithm": {
+        "class_name": "PPO",
+        "value_loss_coef": 1.0,
+        "use_clipped_value_loss": true,
+        "clip_param": 0.2,
+        "entropy_coef": 0.01,
+        "num_learning_epochs": 5,
+        "num_mini_batches": 4,
+        "learning_rate": 5e-06,
+        "schedule": "fixed",
+        "gamma": 0.99,
+        "lam": 0.95,
+        "desired_kl": 0.01,
+        "target_kl_stop": null,
+        "max_grad_norm": 1.0,
+        "adaptive_kl_beta": 0.9,
+        "adaptive_lr_growth": 1.1,
+        "adaptive_lr_decay": 1.2,
+        "adaptive_lr_update_interval": 1,
+        "metrics_interval": 1,
+        "finite_check_interval": 1,
+        "enable_compile": false,
+        "warmup_strict_iters": 0,
+        "warmup_metrics_interval": 1,
+        "warmup_finite_check_interval": 1,
+        "disable_finite_checks": false,
+        "reward_normalization": false,
+        "policy_consistency": {
+          "weight": 0.0,
+          "obs_noise_half_width": [
+            0.03,
+            0.03,
+            0.03,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "action_scale": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    },
+    "training": {
+      "task_name": "MicroDuckEnlarged112WalkFlat",
+      "device": "mlx",
+      "sim_backend": "mujoco",
+      "play_only": false,
+      "no_play": true,
+      "sim2sim_strict": true,
+      "play_render_mode": "auto",
+      "play_env_num": 16,
+      "play_steps": 500,
+      "logger": "tensorboard",
+      "wandb_project": "unilab",
+      "wandb_entity": null,
+      "wandb_group": null,
+      "wandb_job_type": null,
+      "wandb_name": null,
+      "wandb_tags": [],
+      "wandb_notes": null,
+      "wandb_mode": null,
+      "fp16": false,
+      "seed": 292827,
+      "log_interval": 10,
+      "save_interval": 100,
+      "log_root": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/feedback_robust_20260928/control"
+    },
+    "env": {
+      "post_step_forward_sensor": false,
+      "adaptive_chunk_size": false,
+      "chunk_size": null,
+      "max_episode_seconds": 75.0,
+      "motor_constraints": {
+        "enabled": true,
+        "hard_duty": "peak",
+        "hard_limit_margin": 0.98,
+        "rated_speed_soft_limit": true,
+        "envelope_model": "gf43x40_hybrid",
+        "braking_duty": "rated"
+      },
+      "identified_dynamics": {
+        "enabled": true,
+        "first_order_response": true,
+        "response_time_constant_range_s": [
+          0.001,
+          0.01
+        ],
+        "response_command_gain": 1.0,
+        "response_command_gain_range": [
+          0.85,
+          1.15
+        ],
+        "asymmetric_friction": true,
+        "randomize_friction_parameters": true,
+        "packet_loss_probability_range": [
+          0.0007687281,
+          0.0009573922
+        ],
+        "friction_transition_speed_rad_s": 0.01
+      },
+      "commands": {
+        "vel_limit": [
+          [
+            0.3,
+            0,
+            0
+          ],
+          [
+            0.3,
+            0,
+            0
+          ]
+        ],
+        "rel_standing_envs": 0.25,
+        "rel_forward_envs": 1.0,
+        "rel_turn_in_place_envs": 0.0,
+        "head_limit": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "body_limit": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "control_config": {
+        "action_scale": 1.0,
+        "Kp": 30.0,
+        "Kd": 3.0,
+        "simulate_action_latency": false,
+        "joint_limit_margin_deg": 5.0,
+        "joint_limit_lookahead_s": 0.25
+      },
+      "noise_config": {
+        "level": 1.0,
+        "scale_joint_vel": 0.0
+      },
+      "domain_rand": {
+        "randomize_kp": true,
+        "kp_multiplier_range": [
+          0.9,
+          1.1
+        ],
+        "randomize_kd": true,
+        "kd_multiplier_range": [
+          0.9,
+          1.1
+        ],
+        "randomize_joint_position_bias": true,
+        "joint_position_bias_range_rad": [
+          -0.005,
+          0.005
+        ],
+        "randomize_joint_velocity_bias": false,
+        "joint_velocity_bias_range_rad_s": [
+          -0.0025,
+          0.0025
+        ],
+        "randomize_gyro_bias": false,
+        "gyro_bias_range_rad_s": [
+          -0.01,
+          0.01
+        ],
+        "randomize_ground_friction": true,
+        "ground_friction_multiplier_range": [
+          0.7,
+          1.3
+        ],
+        "randomize_body_mass": true,
+        "body_mass_multiplier_range": [
+          0.95,
+          1.05
+        ],
+        "random_com": true,
+        "com_offset_x": [
+          -0.002,
+          0.002
+        ],
+        "com_offset_y": [
+          -0.002,
+          0.002
+        ],
+        "com_offset_z": [
+          -0.002,
+          0.002
+        ],
+        "randomize_dof_armature": true,
+        "dof_armature_multiplier_range": [
+          0.9,
+          1.1
+        ],
+        "push_robots": false
+      },
+      "full_motor_dr": {
+        "enabled": true,
+        "torque_axis_scale_range": [
+          0.9,
+          1.0
+        ],
+        "speed_axis_scale_range": [
+          0.9773,
+          1.0
+        ],
+        "peak_curve_blend_range": [
+          0.0,
+          1.0
+        ],
+        "peak_power_scale_range": [
+          0.9,
+          1.0
+        ],
+        "rotor_inertia_nominal_kg_m2": 0.03047,
+        "rotor_inertia_scale_range": [
+          0.737,
+          1.15
+        ],
+        "coulomb_positive_nominal_nm": 0.272,
+        "coulomb_positive_scale_range": [
+          0.85,
+          1.15
+        ],
+        "coulomb_negative_nominal_nm": 0.325,
+        "coulomb_negative_scale_range": [
+          0.85,
+          1.15
+        ],
+        "viscous_positive_nominal_nm_s_rad": 0.02965,
+        "viscous_positive_scale_range": [
+          0.8286,
+          1.15
+        ],
+        "viscous_negative_nominal_nm_s_rad": 0.03051,
+        "viscous_negative_scale_range": [
+          0.6891,
+          1.3109
+        ],
+        "command_delay_steps": 2,
+        "command_delay_probability_range": [
+          0.0,
+          1.0
+        ],
+        "apply_velocity_measurement_fit": true,
+        "velocity_gain_positive": 0.9827,
+        "velocity_gain_negative": 0.9819
+      },
+      "reset_base_qvel_limit": 0.0,
+      "command_mode_probabilities": [],
+      "command_resample_interval_s": 3.0,
+      "fixed_remote_sequence": true,
+      "fixed_remote_sequence_commands": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "linear_velocity_tracking_tau_s": 0.25,
+      "dry_friction_enabled": false
+    },
+    "interactive": {
+      "action_mode": "policy",
+      "policy_obs_mode": "auto",
+      "show_target_bodies": false,
+      "show_reward_debug": false,
+      "target_show_axes": false,
+      "target_body_names": "",
+      "target_max_bodies": 0,
+      "target_marker_radius": 0.02,
+      "target_axis_length": 0.08,
+      "target_marker_alpha": 0.75,
+      "reward_debug_show_velocity": false,
+      "reward_debug_lin_vel_scale": 0.08,
+      "reward_debug_ang_vel_scale": 0.05,
+      "reward_debug_show_connectors": false,
+      "reward_debug_show_global_anchor": false,
+      "camera_follow_body": true,
+      "camera_focus_body_name": "",
+      "camera_height_offset": 0.15,
+      "camera_distance": null,
+      "camera_elevation": null,
+      "camera_azimuth": null,
+      "use_env_visual_model": true,
+      "speed": 1.0,
+      "start_paused": false,
+      "keyboard": true,
+      "keyboard_step_lin": 0.1,
+      "keyboard_step_ang": 0.2,
+      "require_keyboard_command_obs": true
+    },
+    "reward": {
+      "scales": {
+        "track_linear_velocity": 18.0,
+        "track_angular_velocity": 6.0,
+        "upright": 2.0,
+        "leg_pose": 1.0,
+        "head_pose": 2.0,
+        "single_support": 1.0,
+        "swing_time": 2.0,
+        "landing_quality": 8.0,
+        "short_swing": -12.0,
+        "flight": -8.0,
+        "double_support": -3.0,
+        "base_height": 2.0,
+        "foot_clearance": -2.0,
+        "foot_slip": -0.1,
+        "lin_vel_z": -2.0,
+        "ang_vel_xy": -0.05,
+        "action_rate": -0.1,
+        "motor_peak_envelope": -1.0,
+        "motor_peak_envelope_max": -0.5,
+        "motor_joint_target_limit": -0.5,
+        "motor_rated_torque": -0.2,
+        "motor_rated_power": -0.05,
+        "motor_speed": -0.02,
+        "motor_evidence_speed": -0.1,
+        "motor_evidence_speed_max": -0.25,
+        "joint_limit_clearance": -5.0,
+        "idle_home_target": -2.0
+      },
+      "tracking_sigma": 0.02,
+      "angular_tracking_sigma": 0.5,
+      "base_height_target": 0.315013430981198,
+      "min_base_height": 0.2,
+      "max_tilt_deg": 70.0,
+      "foot_contact_force_threshold": 1.0,
+      "standing_leg_pose_stds": [
+        0.1,
+        0.05,
+        0.15,
+        0.15,
+        0.1,
+        0.1,
+        0.05,
+        0.15,
+        0.15,
+        0.1
+      ],
+      "walking_leg_pose_stds": [
+        0.3,
+        0.05,
+        0.4,
+        0.4,
+        0.25,
+        0.3,
+        0.05,
+        0.4,
+        0.4,
+        0.25
+      ],
+      "walking_command_threshold": 0.01,
+      "upright_std": 0.22360679774997896,
+      "head_pose_std": 0.5,
+      "swing_time_min": 0.17,
+      "swing_time_max": 0.44,
+      "swing_time_target": 0.275,
+      "swing_time_std": 0.069,
+      "short_swing_threshold": 0.18,
+      "gait_command_threshold": 0.01,
+      "base_height_std": 0.016,
+      "foot_height_target": 0.0418,
+      "foot_regularization_command_threshold": 0.01,
+      "action_rate_schedule_steps": [
+        0,
+        12000,
+        18000,
+        24000,
+        30000,
+        36000
+      ],
+      "action_rate_schedule_scales": [
+        -0.1,
+        -0.2,
+        -0.4,
+        -0.6,
+        -0.8,
+        -1.0
+      ]
+    },
+    "play_profile": {
+      "enabled": true,
+      "env": {
+        "render_spacing": 1.0
+      }
+    }
+  },
+  "contract_snapshot": {
+    "algo.obs_groups": {
+      "default": [
+        "policy"
+      ]
+    },
+    "env.control_config.action_scale": 1.0,
+    "algo.policy.actor_hidden_dims": [
+      512,
+      256,
+      128
+    ],
+    "algo.policy.critic_hidden_dims": [
+      512,
+      256,
+      128
+    ],
+    "algo.empirical_normalization": false,
+    "reward.scales": {
+      "track_linear_velocity": 18.0,
+      "track_angular_velocity": 6.0,
+      "upright": 2.0,
+      "leg_pose": 1.0,
+      "head_pose": 2.0,
+      "single_support": 1.0,
+      "swing_time": 2.0,
+      "landing_quality": 8.0,
+      "short_swing": -12.0,
+      "flight": -8.0,
+      "double_support": -3.0,
+      "base_height": 2.0,
+      "foot_clearance": -2.0,
+      "foot_slip": -0.1,
+      "lin_vel_z": -2.0,
+      "ang_vel_xy": -0.05,
+      "action_rate": -0.1,
+      "motor_peak_envelope": -1.0,
+      "motor_peak_envelope_max": -0.5,
+      "motor_joint_target_limit": -0.5,
+      "motor_rated_torque": -0.2,
+      "motor_rated_power": -0.05,
+      "motor_speed": -0.02,
+      "motor_evidence_speed": -0.1,
+      "motor_evidence_speed_max": -0.25,
+      "joint_limit_clearance": -5.0,
+      "idle_home_target": -2.0
+    },
+    "reward.base_height_target": 0.315013430981198,
+    "reward.max_tilt_deg": 70.0,
+    "reward.min_base_height": 0.2,
+    "env.control_config.simulate_action_latency": false
+  }
+}

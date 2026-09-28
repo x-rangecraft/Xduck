@@ -1,0 +1,12 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_balanced
+  - _self_
+
+# Quality lesson: preserve every learned safety constraint and command range.
+# Pending trace-driven objective selection: the experiment driver refuses to
+# launch this unchanged weight as though it were a new smoothing intervention.
+reward:
+  action_rate_schedule_scales: [-1.0]
+  scales:
+    action_rate: -1.0

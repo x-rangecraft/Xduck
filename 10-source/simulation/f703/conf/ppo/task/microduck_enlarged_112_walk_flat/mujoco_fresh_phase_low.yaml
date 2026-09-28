@@ -1,0 +1,14 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_phase
+  - _self_
+
+# Controlled bracket against fresh_phase: same seed and every other setting,
+# with half the phase-reference weight so stability and commanded velocity can
+# dominate once alternating swing has been discovered.
+training:
+  log_root: logs/v112_training/fresh_phase_low
+
+reward:
+  scales:
+    phase_foot_height: 2.5

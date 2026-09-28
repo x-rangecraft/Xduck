@@ -1,0 +1,385 @@
+{
+  "policy": "A2.6-F703",
+  "checkpoint": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_19-13-39_mujoco/model_200.safetensors",
+  "checkpoint_sha256": "43564d0509d809bb5c11fd6189f8ae961825b1fddf8f4ed6247cb697da84a3d4",
+  "config_sha256": "89ce9a1446f525e661a4d17b906db156dd3842373ae9ef81d3be6a564724703a",
+  "control_dt_s": 0.02,
+  "physics_dt_s": 0.002,
+  "effective_config": {
+    "domain_rand": {
+      "randomize_base_mass": false,
+      "added_mass_range": [
+        -1.5,
+        1.5
+      ],
+      "randomize_body_mass": true,
+      "body_mass_multiplier_range": [
+        0.95,
+        1.05
+      ],
+      "random_com": true,
+      "com_offset_x": [
+        -0.002,
+        0.002
+      ],
+      "randomize_gravity": false,
+      "gravity_range": [
+        [
+          0.0,
+          0.0,
+          -9.81
+        ],
+        [
+          0.0,
+          0.0,
+          -9.81
+        ]
+      ],
+      "randomize_ground_friction": true,
+      "ground_friction_multiplier_range": [
+        0.7,
+        1.3
+      ],
+      "randomize_dof_armature": true,
+      "dof_armature_multiplier_range": [
+        0.9,
+        1.1
+      ],
+      "push_robots": false,
+      "push_interval": 750,
+      "max_force": [
+        1.0,
+        1.0,
+        0.5
+      ],
+      "push_body_name": "base_link",
+      "com_offset_y": [
+        -0.002,
+        0.002
+      ],
+      "com_offset_z": [
+        -0.002,
+        0.002
+      ],
+      "randomize_kp": true,
+      "kp_multiplier_range": [
+        0.9,
+        1.1
+      ],
+      "randomize_kd": true,
+      "kd_multiplier_range": [
+        0.9,
+        1.1
+      ],
+      "randomize_joint_position_bias": true,
+      "joint_position_bias_range_rad": [
+        -0.005,
+        0.005
+      ],
+      "randomize_joint_velocity_bias": false,
+      "joint_velocity_bias_range_rad_s": [
+        -0.0025,
+        0.0025
+      ],
+      "randomize_gyro_bias": false,
+      "gyro_bias_range_rad_s": [
+        -0.01,
+        0.01
+      ]
+    },
+    "noise_config": {
+      "level": 1.0,
+      "scale_joint_angle": 0.001,
+      "scale_joint_vel": 0.0,
+      "scale_gyro": 0.03,
+      "scale_gravity": 0.01,
+      "scale_linvel": 0.1,
+      "seed": null
+    },
+    "full_motor_dr": {
+      "enabled": true,
+      "torque_axis_scale_range": [
+        0.9,
+        1.0
+      ],
+      "speed_axis_scale_range": [
+        0.9773,
+        1.0
+      ],
+      "peak_curve_blend_range": [
+        0.0,
+        1.0
+      ],
+      "peak_power_scale_range": [
+        0.9,
+        1.0
+      ],
+      "rotor_inertia_nominal_kg_m2": 0.03047,
+      "rotor_inertia_scale_range": [
+        0.737,
+        1.15
+      ],
+      "coulomb_positive_nominal_nm": 0.272,
+      "coulomb_positive_scale_range": [
+        0.85,
+        1.15
+      ],
+      "coulomb_negative_nominal_nm": 0.325,
+      "coulomb_negative_scale_range": [
+        0.85,
+        1.15
+      ],
+      "viscous_positive_nominal_nm_s_rad": 0.02965,
+      "viscous_positive_scale_range": [
+        0.8286,
+        1.15
+      ],
+      "viscous_negative_nominal_nm_s_rad": 0.03051,
+      "viscous_negative_scale_range": [
+        0.6891,
+        1.3109
+      ],
+      "command_delay_steps": 2,
+      "command_delay_probability_range": [
+        0.0,
+        1.0
+      ],
+      "apply_velocity_measurement_fit": true,
+      "velocity_gain_positive": 0.9827,
+      "velocity_gain_negative": 0.9819
+    },
+    "identified_dynamics": {
+      "enabled": true,
+      "first_order_response": true,
+      "response_time_constant_range_s": [
+        0.001,
+        0.01
+      ],
+      "response_command_gain": 1.0,
+      "response_command_gain_range": [
+        0.85,
+        1.15
+      ],
+      "asymmetric_friction": true,
+      "randomize_friction_parameters": true,
+      "packet_loss_probability_range": [
+        0.0007687281,
+        0.0009573922
+      ],
+      "friction_transition_speed_rad_s": 0.01
+    },
+    "control_config": {
+      "action_scale": 1.0,
+      "simulate_action_latency": false,
+      "Kp": 30.0,
+      "Kd": 3.0,
+      "joint_limit_margin_deg": 5.0,
+      "joint_limit_lookahead_s": 0.25
+    },
+    "motor_constraints": {
+      "enabled": true,
+      "hard_duty": "peak",
+      "hard_limit_margin": 0.98,
+      "rated_speed_soft_limit": true,
+      "envelope_model": "gf43x40_hybrid",
+      "braking_duty": "rated"
+    },
+    "commands": {
+      "vel_limit": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0.3,
+          0,
+          0
+        ]
+      ],
+      "resampling_time": 0.0,
+      "heading_command": false,
+      "heading_range": [
+        -3.14,
+        3.14
+      ],
+      "heading_control_stiffness": 0.5,
+      "rel_standing_envs": 0.25,
+      "rel_forward_envs": 1.0,
+      "rel_turn_in_place_envs": 0.0,
+      "head_limit": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "body_limit": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "reset_base_qvel_limit": 0.0,
+    "bootstrap_actuator": {
+      "enabled": false,
+      "armature": 0.001,
+      "damping": 0.0,
+      "frictionloss": 0.0
+    },
+    "dry_friction_enabled": false,
+    "fixed_remote_sequence": true,
+    "fixed_remote_sequence_fraction": 0.0,
+    "fixed_remote_sequence_commands": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0.3,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "command_resample_interval_s": 3.0
+  },
+  "sources_sha256": {
+    "scripts/train_mlx_ppo.py": "b57a112311c9cacbde445bd709a9304c3b09d1c5f1136e195f7c7438fb896f7e",
+    "src/unilab/algos/mlx/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/unilab/algos/mlx/common/__init__.py": "137132d0449f63ffe6ed3c0a9e0331fc088f79e9d4ff951cd0322c4076eebfd6",
+    "src/unilab/algos/mlx/common/activations.py": "fc9539d53c2bef1d2b7ad8a2226a8a954f7d08b5b8d12de6187fde78841022dc",
+    "src/unilab/algos/mlx/common/distributions.py": "836dc6028cef6a8183f78f1b6c76aa87a1375bc27a33d9b7bf0a7fed466528bd",
+    "src/unilab/algos/mlx/common/mlp.py": "ebd052b30f3c4914e788e20587d83ceeb728f5e7096cb882948a06208779999e",
+    "src/unilab/algos/mlx/common/normalization.py": "0ffa46976ebc03ac6a2b9d3d0f667917540aec4da992805cc26101b573f89372",
+    "src/unilab/algos/mlx/common/rollout_storage.py": "c5a36d0292bb44d53f36ef53af4ca3242de0aebba3ddb128ea1943a39dbccb50",
+    "src/unilab/algos/mlx/common/rotation.py": "734e7b3a924c5d7267bee275b919015d128381b6805e687031d53c368ff124fb",
+    "src/unilab/algos/mlx/ppo/__init__.py": "b18fc5c57b2b5f8a35f606a8d7eb57f7ddfd2f2ca3d3bd9581f9df94065dcaae",
+    "src/unilab/algos/mlx/ppo/export.py": "ea388c47556f0e17854020df16905b640ba3f00209be0588e5d33464bc0939c4",
+    "src/unilab/algos/mlx/ppo/model.py": "1bb64fb1ab8899393ea5e6aa27706da278d5e124893a345827c638fb3d12239b",
+    "src/unilab/algos/mlx/ppo/ppo.py": "319b5fa664d573a7065d2b045b5f3fcfbd6aff4cc25e903510dc82c3e3cfcd99",
+    "src/unilab/algos/mlx/ppo/runner.py": "6e5cf06ea59536139a862d5348aaeac2b4d0dbfdcd8f40c880b55b103d4e4b7e",
+    "src/unilab/envs/locomotion/microduck_enlarged/__init__.py": "8ecba1f87d251d6df87008f8ee2acaf667024d0824c3d011c569356dacaf65dc",
+    "src/unilab/envs/locomotion/microduck_enlarged/stand.py": "f5d4fe345b483cc79a63f2d3d4551b1895e026ea3d23d6c17c8a021dedd54016",
+    "src/unilab/envs/locomotion/microduck_enlarged/walk.py": "f945357b6987420cf84fa6b2abff59832841b4c2a1cf93f179c0e749cf0f66a4",
+    "src/unilab/envs/locomotion/microduck_enlarged_102/__init__.py": "97dba06a28f648ee83721fee4273f67215f65f731c6a80f1628ee9a3510c89c9",
+    "src/unilab/envs/locomotion/microduck_enlarged_102/recovery.py": "1be783f0b4326312e77ec65b8360e5ba7397b097fdd565cb3ba9396a73d5bbad",
+    "src/unilab/envs/locomotion/microduck_enlarged_102/tasks.py": "be47d22d09dd226c5b181a16d9ab9deeaefce2f5e944cbaa7bc6b932ddabd2d1",
+    "src/unilab/envs/locomotion/microduck_enlarged_103/__init__.py": "90d4fa32de07bb5b9ad47693f0f44eac90b361fddf68da61a3083a6dd8ea0993",
+    "src/unilab/envs/locomotion/microduck_enlarged_103/tasks.py": "e5fffd1f67c840129fa3b8a0f1e696b9f70e23032d1ce91c112a59485412e682",
+    "src/unilab/envs/locomotion/microduck_enlarged_104/__init__.py": "8e23d612199f91415da61f7bb07e13b869802e179af7099ea528351665da029c",
+    "src/unilab/envs/locomotion/microduck_enlarged_104/recovery.py": "8b9d3798ecd77412339502ee0c6c264486cb7151f575287cf4cc0c72983450b3",
+    "src/unilab/envs/locomotion/microduck_enlarged_104/tasks.py": "05f8b4327316f3ef0b282da866787a57baed56659d92b56b86fd838e59f910b1",
+    "src/unilab/envs/locomotion/microduck_enlarged_105/__init__.py": "55bc353f8ce382e7dd552e90477140359dddf7f56c02c3def81101f4a0ce8bfa",
+    "src/unilab/envs/locomotion/microduck_enlarged_105/recovery.py": "67c6e44a1fd8a63f78ad004452851d2310f469383b325e2d59476642dd79d7ba",
+    "src/unilab/envs/locomotion/microduck_enlarged_105/sitstand.py": "3caacfdd7d9a48740d65cceb1f0e15fde72a57127d6971cbb5383b9d32e5ba8b",
+    "src/unilab/envs/locomotion/microduck_enlarged_105/tasks.py": "36587c5ad007273ea21a355f037c8f0db722901523a41bb2fcaa872d4d1eb4c7",
+    "src/unilab/envs/locomotion/microduck_enlarged_106/__init__.py": "638e8986b44cb26f4bacef5f2631f2a88af0b174b5d212eb56ef4c590f898f07",
+    "src/unilab/envs/locomotion/microduck_enlarged_106/roulade.py": "adf37c0c8771eae43950def3649fe117cc48a8abb36830c4ef1e9c256ca5c302",
+    "src/unilab/envs/locomotion/microduck_enlarged_106/roulade_reference.py": "8e36babe79c8e22d58a77a055ea93ce5856c9216b7bf1a0d40f51d67cd8cbd02",
+    "src/unilab/envs/locomotion/microduck_enlarged_106/sitstand.py": "81350d4b6fcf331b4f3a5a760df5afd5421910b0cf18b78cf8bbdf059abe69d6",
+    "src/unilab/envs/locomotion/microduck_enlarged_106/tasks.py": "13feb34ec9783dec352a7af06ce4652f1967320f4e5dfeb8a6ccbd422c399eb4",
+    "src/unilab/envs/locomotion/microduck_enlarged_107/__init__.py": "9f95c6a20e0f4cf82f5c51fdb65523ec283aed29df393a4709d77b55fa3cd106",
+    "src/unilab/envs/locomotion/microduck_enlarged_107/tasks.py": "8ac51db6e87f2956b12025a605b27656a0b2d9f1a30bfc2408390154ad3db129",
+    "src/unilab/envs/locomotion/microduck_enlarged_110/__init__.py": "85b7abe2c532e80ade87f168d0694fc4ab7016a37e77a3c412ef43f20043fc88",
+    "src/unilab/envs/locomotion/microduck_enlarged_110/tasks.py": "f3e947590b74c245b984ab17a9c5a2d492c03a2bc7ffcf05b80ccbae469d7e92",
+    "src/unilab/envs/locomotion/microduck_enlarged_111/__init__.py": "52e178a1c14f8e15f27edee57ef96f436a7ee57c5cae1c91aa1778231cd3b87f",
+    "src/unilab/envs/locomotion/microduck_enlarged_111/tasks.py": "371887d69f674a2c1a286b50f3cf71add4540a0bfa90d8a1edda4626667d9737",
+    "src/unilab/envs/locomotion/microduck_enlarged_112/__init__.py": "c0ab492d326054b53c542c8012aa5b5232b4f7fd4e849b81e4632ac49727e078",
+    "src/unilab/envs/locomotion/microduck_enlarged_112/friction.py": "24988f4f85f4f83c1ac3ce798eaec71db9df9c93dbc3f2db19b1af25d24ffce4",
+    "src/unilab/envs/locomotion/microduck_enlarged_112/tasks.py": "ebd70b66bb9829b42dc393cfab6e0d2de488fb4e2a4edb7a29c4a29ff68f6ba2",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1/__init__.py": "09304a939ccaefbb53713965d2b88ec4909e6935b2f4818bf456dc497cd1828f",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1/roller.py": "3767dd627b5c5f57415b6f272f54e9532df89a81b35a5010e308ebdda64e558a",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1/roller_crouch.py": "7bf0f8d4d64679cd9405c14e7b7fcbd6fdd446fdca4000d583dbc05e5a57c9aa",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1/tasks.py": "a831257386009c42a31ec36d22e07d342dcd8d00ab872fb8725623051c3fccce",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1_2knee/__init__.py": "ae8eb2aab1bd8fe50b8595428b39072e6372dd8f45ab145182ae03100200bc29",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1_2knee/tasks.py": "ad4fa5d80aa569b676ba7199243f314f154801e7c4ef2b36a5083664d8e145d4",
+    "src/unilab/envs/locomotion/microduck_enlarged_roulade_c085_leg25_mixed/__init__.py": "c3b4ee21b1dd27218ed06f1f4b289b477f8d2a3bb1ae9e50c4756384c5e805a9",
+    "src/unilab/envs/locomotion/microduck_enlarged_roulade_c085_leg25_mixed/demonstration_reset.py": "fe94c1c6513231fc4f1adcb1ef779bf9c1d13146baa0a53d81c6e4ccdb2399b1",
+    "src/unilab/envs/locomotion/microduck_enlarged_roulade_c085_leg25_mixed/quiet_stand.py": "e43a580deffd1a17d339b48c5ddec6138b651c9a91a545cb9ea0cacb2765d9e1",
+    "src/unilab/envs/locomotion/microduck_enlarged_roulade_c085_leg25_mixed/reference_motion.py": "351f017d3d2dbde65214abdff45664d50ac95e9f28cd27ce131abaeda6b7703f",
+    "src/unilab/envs/locomotion/microduck_enlarged_roulade_c085_leg25_mixed/roulade.py": "da5cbb7367b8b03d43d83fd9547cf0d7ee3d2d2087456b206ca6ef67289508ff",
+    "src/unilab/actuators/gf43x.py": "bc842c4f8c1628b82bdbd61dfaad9c7a3c8f4167198d80c2ae3473b0937650e5",
+    "src/unilab/structured_configs.py": "6becc66d70ea31b3f9ee1c37eb3af69f7fda77d5dab3bf6cbaaec3ee3a3ef0aa"
+  },
+  "scope": "Read-only inventory; no training or changes to policy, physics, default YAML, or deployment.",
+  "runtime_semantics": {
+    "body_mass": "base_link only, including proportional inertia scaling",
+    "contact_friction": "only foot sliding-friction coefficients are multiplied; ground template restored",
+    "armature": "0.03047 * U(.9,1.1) * U(.737,1.15)",
+    "command_delay": "episode-fixed per joint, either zero or two physics substeps (4ms), approximately 50% marginal delayed probability",
+    "packet_loss": "per joint/control step, independently sampled event using per-episode probability; holds previous effective action",
+    "friction_parameters": "full_motor_dr resets overwrite the older fitted ranges; no double multiplication",
+    "initial_conditions": "xy +/-0.5m and yaw +/-pi sampled per reset; other HOME pose fixed, base velocity zero",
+    "noise": "per observation uniform gyro/gravity/q; dq has independent Gaussian motor feedback noise plus fixed gain/bias; generic dq scale=0",
+    "commands": "fixed zero3s / forward0.3m/s3s / stop3s repeating; command distribution probabilities inactive here",
+    "unused_config_entries": [
+      "noise_config.scale_linvel: no actor linear-velocity input",
+      "randomize_base_mass=false: added_mass_range inactive",
+      "randomize_gravity=false: gravity_range inactive",
+      "push_robots=false: push_interval/max_force inactive",
+      "policy_consistency.weight=0: perturbation magnitudes inactive"
+    ]
+  },
+  "velocity_readout": {
+    "gain_positive": 0.9827,
+    "gain_negative": 0.9819,
+    "fixed_bias_rad_s": [
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024,
+      -0.0024420024420024
+    ],
+    "gaussian_std_rad_s": [
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442,
+      0.002442002442002442
+    ]
+  }
+}

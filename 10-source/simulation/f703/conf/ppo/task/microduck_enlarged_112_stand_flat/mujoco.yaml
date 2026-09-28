@@ -1,0 +1,38 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_111_stand_flat/mujoco
+  - _self_
+
+training:
+  task_name: MicroDuckEnlarged112StandFlat
+  no_play: true
+
+algo:
+  num_envs: 64
+  max_iterations: 301
+  save_interval: 50
+  policy:
+    actor_hidden_dims: [128, 128, 64]
+    critic_hidden_dims: [128, 128, 64]
+    init_noise_std: 0.02
+  algorithm:
+    learning_rate: 2.0e-6
+
+env:
+  identified_dynamics:
+    # Actuator V1: fixed engineering baseline across both hardware data sources.
+    # Not an identified motor constant; freeze T while auditing other parameters.
+    response_time_constant_range_s: [0.01, 0.01]
+  max_episode_seconds: 30.0
+  reset_base_qvel_limit: 0.0
+  adaptive_chunk_size: false
+  control_config:
+    action_scale: 1.0
+    simulate_action_latency: false
+
+reward:
+  # Accepted driver-initialization HOME; both feet meet the flat floor.
+  base_height_target: 0.3137586725540157
+  min_base_height: 0.20
+  height_target_min: 0.27
+  height_target_max: 0.36

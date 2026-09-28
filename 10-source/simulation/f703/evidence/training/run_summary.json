@@ -1,0 +1,643 @@
+{
+  "status": "COMPLETE_CONTROL_PREFERRED_FOR_FORWARD_STAGE",
+  "parent_checkpoint": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/feedback_robust_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_18-27-06_mujoco/model_200.safetensors",
+  "identities": {
+    "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/feedback_robust_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_18-27-06_mujoco/model_200.safetensors": "25dd5a4dd0f442eab9eedef3591a533175542d19a7a051bed01ee08578a0b0be",
+    "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/feedback_robust_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_18-27-06_mujoco/trainer_200.pkl": "a259eddc8cfb22bcbbc10b04af2c46b61952d2edeb0a4dcc9e7080f06d845800",
+    "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/feedback_robust_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_18-27-06_mujoco/run_config.json": "b729f0dbe2d4580fb15884e5d827856d87748de555fa68d5d682261cc9cb0ce1",
+    "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/src/unilab/assets/robots/microduck_enlarged_112/scene_flat.xml": "49b6470c23351d39aa0234f4094abc8452c7f262944ca9628357a6136f0c0dac",
+    "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/src/unilab/assets/robots/microduck_enlarged_112/microduck_enlarged_112.xml": "88e7801536b1fcdd3853d24f7bec81ad09a93d0612ae5b6a4a617ba01467cdec"
+  },
+  "sources_sha256": {
+    "scripts/train_mlx_ppo.py": "b57a112311c9cacbde445bd709a9304c3b09d1c5f1136e195f7c7438fb896f7e",
+    "src/unilab/algos/mlx/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/unilab/algos/mlx/common/__init__.py": "137132d0449f63ffe6ed3c0a9e0331fc088f79e9d4ff951cd0322c4076eebfd6",
+    "src/unilab/algos/mlx/common/activations.py": "fc9539d53c2bef1d2b7ad8a2226a8a954f7d08b5b8d12de6187fde78841022dc",
+    "src/unilab/algos/mlx/common/distributions.py": "836dc6028cef6a8183f78f1b6c76aa87a1375bc27a33d9b7bf0a7fed466528bd",
+    "src/unilab/algos/mlx/common/mlp.py": "ebd052b30f3c4914e788e20587d83ceeb728f5e7096cb882948a06208779999e",
+    "src/unilab/algos/mlx/common/normalization.py": "0ffa46976ebc03ac6a2b9d3d0f667917540aec4da992805cc26101b573f89372",
+    "src/unilab/algos/mlx/common/rollout_storage.py": "c5a36d0292bb44d53f36ef53af4ca3242de0aebba3ddb128ea1943a39dbccb50",
+    "src/unilab/algos/mlx/common/rotation.py": "734e7b3a924c5d7267bee275b919015d128381b6805e687031d53c368ff124fb",
+    "src/unilab/algos/mlx/ppo/__init__.py": "b18fc5c57b2b5f8a35f606a8d7eb57f7ddfd2f2ca3d3bd9581f9df94065dcaae",
+    "src/unilab/algos/mlx/ppo/export.py": "ea388c47556f0e17854020df16905b640ba3f00209be0588e5d33464bc0939c4",
+    "src/unilab/algos/mlx/ppo/model.py": "1bb64fb1ab8899393ea5e6aa27706da278d5e124893a345827c638fb3d12239b",
+    "src/unilab/algos/mlx/ppo/ppo.py": "319b5fa664d573a7065d2b045b5f3fcfbd6aff4cc25e903510dc82c3e3cfcd99",
+    "src/unilab/algos/mlx/ppo/runner.py": "6e5cf06ea59536139a862d5348aaeac2b4d0dbfdcd8f40c880b55b103d4e4b7e",
+    "src/unilab/envs/locomotion/microduck_enlarged/__init__.py": "8ecba1f87d251d6df87008f8ee2acaf667024d0824c3d011c569356dacaf65dc",
+    "src/unilab/envs/locomotion/microduck_enlarged/stand.py": "f5d4fe345b483cc79a63f2d3d4551b1895e026ea3d23d6c17c8a021dedd54016",
+    "src/unilab/envs/locomotion/microduck_enlarged/walk.py": "f945357b6987420cf84fa6b2abff59832841b4c2a1cf93f179c0e749cf0f66a4",
+    "src/unilab/envs/locomotion/microduck_enlarged_102/__init__.py": "97dba06a28f648ee83721fee4273f67215f65f731c6a80f1628ee9a3510c89c9",
+    "src/unilab/envs/locomotion/microduck_enlarged_102/recovery.py": "1be783f0b4326312e77ec65b8360e5ba7397b097fdd565cb3ba9396a73d5bbad",
+    "src/unilab/envs/locomotion/microduck_enlarged_102/tasks.py": "be47d22d09dd226c5b181a16d9ab9deeaefce2f5e944cbaa7bc6b932ddabd2d1",
+    "src/unilab/envs/locomotion/microduck_enlarged_103/__init__.py": "90d4fa32de07bb5b9ad47693f0f44eac90b361fddf68da61a3083a6dd8ea0993",
+    "src/unilab/envs/locomotion/microduck_enlarged_103/tasks.py": "e5fffd1f67c840129fa3b8a0f1e696b9f70e23032d1ce91c112a59485412e682",
+    "src/unilab/envs/locomotion/microduck_enlarged_104/__init__.py": "8e23d612199f91415da61f7bb07e13b869802e179af7099ea528351665da029c",
+    "src/unilab/envs/locomotion/microduck_enlarged_104/recovery.py": "8b9d3798ecd77412339502ee0c6c264486cb7151f575287cf4cc0c72983450b3",
+    "src/unilab/envs/locomotion/microduck_enlarged_104/tasks.py": "05f8b4327316f3ef0b282da866787a57baed56659d92b56b86fd838e59f910b1",
+    "src/unilab/envs/locomotion/microduck_enlarged_105/__init__.py": "55bc353f8ce382e7dd552e90477140359dddf7f56c02c3def81101f4a0ce8bfa",
+    "src/unilab/envs/locomotion/microduck_enlarged_105/recovery.py": "67c6e44a1fd8a63f78ad004452851d2310f469383b325e2d59476642dd79d7ba",
+    "src/unilab/envs/locomotion/microduck_enlarged_105/sitstand.py": "3caacfdd7d9a48740d65cceb1f0e15fde72a57127d6971cbb5383b9d32e5ba8b",
+    "src/unilab/envs/locomotion/microduck_enlarged_105/tasks.py": "36587c5ad007273ea21a355f037c8f0db722901523a41bb2fcaa872d4d1eb4c7",
+    "src/unilab/envs/locomotion/microduck_enlarged_106/__init__.py": "638e8986b44cb26f4bacef5f2631f2a88af0b174b5d212eb56ef4c590f898f07",
+    "src/unilab/envs/locomotion/microduck_enlarged_106/roulade.py": "adf37c0c8771eae43950def3649fe117cc48a8abb36830c4ef1e9c256ca5c302",
+    "src/unilab/envs/locomotion/microduck_enlarged_106/roulade_reference.py": "8e36babe79c8e22d58a77a055ea93ce5856c9216b7bf1a0d40f51d67cd8cbd02",
+    "src/unilab/envs/locomotion/microduck_enlarged_106/sitstand.py": "81350d4b6fcf331b4f3a5a760df5afd5421910b0cf18b78cf8bbdf059abe69d6",
+    "src/unilab/envs/locomotion/microduck_enlarged_106/tasks.py": "13feb34ec9783dec352a7af06ce4652f1967320f4e5dfeb8a6ccbd422c399eb4",
+    "src/unilab/envs/locomotion/microduck_enlarged_107/__init__.py": "9f95c6a20e0f4cf82f5c51fdb65523ec283aed29df393a4709d77b55fa3cd106",
+    "src/unilab/envs/locomotion/microduck_enlarged_107/tasks.py": "8ac51db6e87f2956b12025a605b27656a0b2d9f1a30bfc2408390154ad3db129",
+    "src/unilab/envs/locomotion/microduck_enlarged_110/__init__.py": "85b7abe2c532e80ade87f168d0694fc4ab7016a37e77a3c412ef43f20043fc88",
+    "src/unilab/envs/locomotion/microduck_enlarged_110/tasks.py": "f3e947590b74c245b984ab17a9c5a2d492c03a2bc7ffcf05b80ccbae469d7e92",
+    "src/unilab/envs/locomotion/microduck_enlarged_111/__init__.py": "52e178a1c14f8e15f27edee57ef96f436a7ee57c5cae1c91aa1778231cd3b87f",
+    "src/unilab/envs/locomotion/microduck_enlarged_111/tasks.py": "371887d69f674a2c1a286b50f3cf71add4540a0bfa90d8a1edda4626667d9737",
+    "src/unilab/envs/locomotion/microduck_enlarged_112/__init__.py": "c0ab492d326054b53c542c8012aa5b5232b4f7fd4e849b81e4632ac49727e078",
+    "src/unilab/envs/locomotion/microduck_enlarged_112/friction.py": "24988f4f85f4f83c1ac3ce798eaec71db9df9c93dbc3f2db19b1af25d24ffce4",
+    "src/unilab/envs/locomotion/microduck_enlarged_112/tasks.py": "ebd70b66bb9829b42dc393cfab6e0d2de488fb4e2a4edb7a29c4a29ff68f6ba2",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1/__init__.py": "09304a939ccaefbb53713965d2b88ec4909e6935b2f4818bf456dc497cd1828f",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1/roller.py": "3767dd627b5c5f57415b6f272f54e9532df89a81b35a5010e308ebdda64e558a",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1/roller_crouch.py": "7bf0f8d4d64679cd9405c14e7b7fcbd6fdd446fdca4000d583dbc05e5a57c9aa",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1/tasks.py": "a831257386009c42a31ec36d22e07d342dcd8d00ab872fb8725623051c3fccce",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1_2knee/__init__.py": "ae8eb2aab1bd8fe50b8595428b39072e6372dd8f45ab145182ae03100200bc29",
+    "src/unilab/envs/locomotion/microduck_enlarged_mod1_2knee/tasks.py": "ad4fa5d80aa569b676ba7199243f314f154801e7c4ef2b36a5083664d8e145d4",
+    "src/unilab/envs/locomotion/microduck_enlarged_roulade_c085_leg25_mixed/__init__.py": "c3b4ee21b1dd27218ed06f1f4b289b477f8d2a3bb1ae9e50c4756384c5e805a9",
+    "src/unilab/envs/locomotion/microduck_enlarged_roulade_c085_leg25_mixed/demonstration_reset.py": "fe94c1c6513231fc4f1adcb1ef779bf9c1d13146baa0a53d81c6e4ccdb2399b1",
+    "src/unilab/envs/locomotion/microduck_enlarged_roulade_c085_leg25_mixed/quiet_stand.py": "e43a580deffd1a17d339b48c5ddec6138b651c9a91a545cb9ea0cacb2765d9e1",
+    "src/unilab/envs/locomotion/microduck_enlarged_roulade_c085_leg25_mixed/reference_motion.py": "351f017d3d2dbde65214abdff45664d50ac95e9f28cd27ce131abaeda6b7703f",
+    "src/unilab/envs/locomotion/microduck_enlarged_roulade_c085_leg25_mixed/roulade.py": "da5cbb7367b8b03d43d83fd9547cf0d7ee3d2d2087456b206ca6ef67289508ff",
+    "src/unilab/actuators/gf43x.py": "bc842c4f8c1628b82bdbd61dfaad9c7a3c8f4167198d80c2ae3473b0937650e5",
+    "src/unilab/structured_configs.py": "6becc66d70ea31b3f9ee1c37eb3af69f7fda77d5dab3bf6cbaaec3ee3a3ef0aa"
+  },
+  "cases": {
+    "smoke": {
+      "status": "TRAINED",
+      "yaml": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/smoke.yaml",
+      "yaml_sha256": "7c3931f60d8e2d9d3fb1a93ada0b69e827d76c9397bf9a709df15c051ef7288b",
+      "iterations": 5,
+      "run": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/smoke/MicroDuckEnlarged112WalkFlat/2026-09-28_19-09-58_mujoco",
+      "config_sha256": "df19d1421122ed67780a5492d17c339d50960b52cc091472d9d297ced5af926f",
+      "metrics": {
+        "train/approx_kl": {
+          "first": 0.03301035240292549,
+          "last": 0.011397786438465118,
+          "min": 0.01095361728221178,
+          "max": 0.03301035240292549,
+          "samples": 5
+        },
+        "train/policy_consistency_rad2": {
+          "first": 0.0,
+          "last": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "samples": 5
+        },
+        "train/updates_applied": {
+          "first": 20.0,
+          "last": 20.0,
+          "min": 20.0,
+          "max": 20.0,
+          "samples": 5
+        },
+        "train/skipped_nonfinite_loss": {
+          "first": 0.0,
+          "last": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "samples": 5
+        },
+        "train/skipped_nonfinite_grads": {
+          "first": 0.0,
+          "last": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "samples": 5
+        }
+      },
+      "checkpoints": {
+        "model_4.safetensors": "e38b2dfabcdd2144353729864f4b341672399782f6ce187315749e25e8f07346",
+        "model_0.safetensors": "8aa96df461f1d681ffe8e5eb5853c452d23343f96e8d03ba3bb4373f1f4d835f"
+      }
+    },
+    "control": {
+      "status": "TRAINED",
+      "yaml": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/control.yaml",
+      "yaml_sha256": "9fc5cbba09c5d86399c796d9f5b2d36056170d4f40c90fcac1d01351c22dd6bb",
+      "iterations": 201,
+      "run": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_19-13-39_mujoco",
+      "config_sha256": "89ce9a1446f525e661a4d17b906db156dd3842373ae9ef81d3be6a564724703a",
+      "metrics": {
+        "train/approx_kl": {
+          "first": 0.02703726664185524,
+          "last": 0.007640731520950794,
+          "min": 0.004448786843568087,
+          "max": 0.02703726664185524,
+          "samples": 201
+        },
+        "train/policy_consistency_rad2": {
+          "first": 0.0,
+          "last": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "samples": 201
+        },
+        "train/updates_applied": {
+          "first": 20.0,
+          "last": 20.0,
+          "min": 20.0,
+          "max": 20.0,
+          "samples": 201
+        },
+        "train/skipped_nonfinite_loss": {
+          "first": 0.0,
+          "last": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "samples": 201
+        },
+        "train/skipped_nonfinite_grads": {
+          "first": 0.0,
+          "last": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "samples": 201
+        }
+      },
+      "checkpoints": {
+        "model_200.safetensors": "43564d0509d809bb5c11fd6189f8ae961825b1fddf8f4ed6247cb697da84a3d4",
+        "model_100.safetensors": "951032dde3ded9d9902f1cf86cecafa8ddd54a305b69d1d7b94ad62e8b8647d5",
+        "model_0.safetensors": "17f384e4f06cf28ae4a748a9d9f03e872d1bbfd1f9f2d7787560617d569eefb0"
+      },
+      "trainer_final_sha256": "071e01c25effc8808e7d957da4648ce5e420b2e7d18ab0b006e135709f0ebb98"
+    },
+    "bias": {
+      "status": "TRAINED",
+      "yaml": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/bias.yaml",
+      "yaml_sha256": "d2386106e8eb62606f90de291e20957a8c231727bacae6d7958829869a518d96",
+      "iterations": 201,
+      "run": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/bias/MicroDuckEnlarged112WalkFlat/2026-09-28_19-10-26_mujoco",
+      "config_sha256": "8e206818e9c41134810459364a6d194685fc2db3c9d6595c274da4a624c24732",
+      "metrics": {
+        "train/approx_kl": {
+          "first": 0.03301035240292549,
+          "last": 0.00917603075504303,
+          "min": 0.003935256972908974,
+          "max": 0.03301035240292549,
+          "samples": 201
+        },
+        "train/policy_consistency_rad2": {
+          "first": 0.0,
+          "last": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "samples": 201
+        },
+        "train/updates_applied": {
+          "first": 20.0,
+          "last": 20.0,
+          "min": 20.0,
+          "max": 20.0,
+          "samples": 201
+        },
+        "train/skipped_nonfinite_loss": {
+          "first": 0.0,
+          "last": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "samples": 201
+        },
+        "train/skipped_nonfinite_grads": {
+          "first": 0.0,
+          "last": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "samples": 201
+        }
+      },
+      "checkpoints": {
+        "model_200.safetensors": "8fe398691e306ea9e052b2bdf4434612d9fbeeb656aec1044a6f2ad035fac184",
+        "model_100.safetensors": "52e23e9f8609d4513c75a1b42e5f4150f3355330f0ddd41f6cbd99c023a0d24f",
+        "model_0.safetensors": "8aa96df461f1d681ffe8e5eb5853c452d23343f96e8d03ba3bb4373f1f4d835f"
+      },
+      "trainer_final_sha256": "5169cba9597f830081c11eed06b392e6ba5e76412a09d49d405937b701946b8d"
+    }
+  },
+  "selected": null,
+  "hardware_verified": false,
+  "runtime_check": {
+    "passed": true,
+    "observation_shape": [
+      8,
+      61
+    ],
+    "gyro_bias_range": [
+      -0.00997566431760788,
+      0.008849598467350006
+    ],
+    "dq_bias_range": [
+      -0.0024033638183027506,
+      0.0024894471280276775
+    ],
+    "maximum_bias_injection_error": 1.3969838619232178e-09,
+    "physics_unchanged": true,
+    "fixed_within_episode": true,
+    "resampled_at_reset": true
+  },
+  "decision": "Extra small gyro/dq episode bias did not beat matched continuation on target-step or high-frequency metrics. Retain both forward-capable candidates. Prefer control703 for further stage-one work; default R2 unchanged. No hardware or straight-heading acceptance.",
+  "evaluation_summary": {
+    "short": [
+      {
+        "case": "bias",
+        "mode": "bias",
+        "source": "bias_200_bias_short.json",
+        "source_sha256": "9a622e4ff3fe5d392ee76ac8b6031728a3c0b64e96332d308950689b4fd046f8",
+        "checkpoint": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/bias/MicroDuckEnlarged112WalkFlat/2026-09-28_19-10-26_mujoco/model_200.safetensors",
+        "groups": 6,
+        "complete": true,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "zero_survived": 48,
+        "minimum_forward_vx": 0.2178027018904686,
+        "by_T": {
+          "0.001": {
+            "zero_raw_rms_deg": 1.169053077697754,
+            "forward_raw_rms_deg": 4.739214658737183,
+            "forward_q_rms_deg": 1.5829811096191406,
+            "forward_worst_axis_raw_rms_deg": 10.018815994262695,
+            "forward_hf_raw_rms_deg": 2.556876398493234,
+            "startup_max_target_step_deg": 31.266674041748047
+          },
+          "0.005": {
+            "zero_raw_rms_deg": 0.8422676920890808,
+            "forward_raw_rms_deg": 4.647135257720947,
+            "forward_q_rms_deg": 1.5967971682548523,
+            "forward_worst_axis_raw_rms_deg": 9.033618927001953,
+            "forward_hf_raw_rms_deg": 2.3186315164362115,
+            "startup_max_target_step_deg": 31.037887573242188
+          },
+          "0.01": {
+            "zero_raw_rms_deg": 0.5079755783081055,
+            "forward_raw_rms_deg": 4.578862190246582,
+            "forward_q_rms_deg": 1.6132409572601318,
+            "forward_worst_axis_raw_rms_deg": 8.996733665466309,
+            "forward_hf_raw_rms_deg": 2.0788883458407383,
+            "startup_max_target_step_deg": 30.17617416381836
+          }
+        },
+        "shadow_all14_rms_deg": 5.3166374666829315,
+        "sensitivity_deg": {
+          "gyro": 0.11514265267626163,
+          "dq": 0.08265617140923924
+        }
+      },
+      {
+        "case": "bias",
+        "mode": "nominal",
+        "source": "bias_200_nominal_short.json",
+        "source_sha256": "f92c9ce5d2116db576fe01021982767fafff3f26446155aaa3f5ace5e891f32a",
+        "checkpoint": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/bias/MicroDuckEnlarged112WalkFlat/2026-09-28_19-10-26_mujoco/model_200.safetensors",
+        "groups": 6,
+        "complete": true,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "zero_survived": 48,
+        "minimum_forward_vx": 0.2223805320262909,
+        "by_T": {
+          "0.001": {
+            "zero_raw_rms_deg": 1.2243309020996094,
+            "forward_raw_rms_deg": 4.626874685287476,
+            "forward_q_rms_deg": 1.5790314674377441,
+            "forward_worst_axis_raw_rms_deg": 9.093708992004395,
+            "forward_hf_raw_rms_deg": 2.3069406795126413,
+            "startup_max_target_step_deg": 31.35725975036621
+          },
+          "0.005": {
+            "zero_raw_rms_deg": 0.8786253929138184,
+            "forward_raw_rms_deg": 4.617259979248047,
+            "forward_q_rms_deg": 1.5947865843772888,
+            "forward_worst_axis_raw_rms_deg": 9.160839080810547,
+            "forward_hf_raw_rms_deg": 2.2220456366610906,
+            "startup_max_target_step_deg": 30.31235694885254
+          },
+          "0.01": {
+            "zero_raw_rms_deg": 0.5162807106971741,
+            "forward_raw_rms_deg": 4.576876640319824,
+            "forward_q_rms_deg": 1.6098840236663818,
+            "forward_worst_axis_raw_rms_deg": 9.256009101867676,
+            "forward_hf_raw_rms_deg": 2.056169339163046,
+            "startup_max_target_step_deg": 31.117509841918945
+          }
+        },
+        "shadow_all14_rms_deg": 5.3166374666829315,
+        "sensitivity_deg": {
+          "gyro": 0.11514265267626163,
+          "dq": 0.08265617140923924
+        }
+      },
+      {
+        "case": "control",
+        "mode": "bias",
+        "source": "control_200_bias_short.json",
+        "source_sha256": "fd09dc69fe16784402645beaa32553dfa7c17e3922edc7ec13ec8fc75facf241",
+        "checkpoint": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_19-13-39_mujoco/model_200.safetensors",
+        "groups": 6,
+        "complete": true,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "zero_survived": 48,
+        "minimum_forward_vx": 0.2107634225487709,
+        "by_T": {
+          "0.001": {
+            "zero_raw_rms_deg": 1.133393406867981,
+            "forward_raw_rms_deg": 4.619332313537598,
+            "forward_q_rms_deg": 1.6245079040527344,
+            "forward_worst_axis_raw_rms_deg": 9.476248741149902,
+            "forward_hf_raw_rms_deg": 2.4853789847455685,
+            "startup_max_target_step_deg": 29.936037063598633
+          },
+          "0.005": {
+            "zero_raw_rms_deg": 0.8201352953910828,
+            "forward_raw_rms_deg": 4.498298406600952,
+            "forward_q_rms_deg": 1.6411203742027283,
+            "forward_worst_axis_raw_rms_deg": 8.925622940063477,
+            "forward_hf_raw_rms_deg": 2.1921804533290157,
+            "startup_max_target_step_deg": 28.698755264282227
+          },
+          "0.01": {
+            "zero_raw_rms_deg": 0.514887660741806,
+            "forward_raw_rms_deg": 4.420416831970215,
+            "forward_q_rms_deg": 1.6568717956542969,
+            "forward_worst_axis_raw_rms_deg": 8.84861946105957,
+            "forward_hf_raw_rms_deg": 1.9732437583809026,
+            "startup_max_target_step_deg": 27.41485595703125
+          }
+        },
+        "shadow_all14_rms_deg": 5.273076642429155,
+        "sensitivity_deg": {
+          "gyro": 0.11522897709246491,
+          "dq": 0.08385082414112512
+        }
+      },
+      {
+        "case": "control",
+        "mode": "nominal",
+        "source": "control_200_nominal_short.json",
+        "source_sha256": "684a492a6217bd9d15633db140efb1d3fe3b8cdebdb2bcf8f7be7f11ca465cee",
+        "checkpoint": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_19-13-39_mujoco/model_200.safetensors",
+        "groups": 6,
+        "complete": true,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "zero_survived": 48,
+        "minimum_forward_vx": 0.21758501917123796,
+        "by_T": {
+          "0.001": {
+            "zero_raw_rms_deg": 1.2211353778839111,
+            "forward_raw_rms_deg": 4.491978645324707,
+            "forward_q_rms_deg": 1.6174929738044739,
+            "forward_worst_axis_raw_rms_deg": 8.99320125579834,
+            "forward_hf_raw_rms_deg": 2.2161934101313205,
+            "startup_max_target_step_deg": 29.697736740112305
+          },
+          "0.005": {
+            "zero_raw_rms_deg": 0.9150722920894623,
+            "forward_raw_rms_deg": 4.471245527267456,
+            "forward_q_rms_deg": 1.6354302167892456,
+            "forward_worst_axis_raw_rms_deg": 8.952821731567383,
+            "forward_hf_raw_rms_deg": 2.1085591546149183,
+            "startup_max_target_step_deg": 27.886152267456055
+          },
+          "0.01": {
+            "zero_raw_rms_deg": 0.521256685256958,
+            "forward_raw_rms_deg": 4.423021078109741,
+            "forward_q_rms_deg": 1.6507455110549927,
+            "forward_worst_axis_raw_rms_deg": 8.893155097961426,
+            "forward_hf_raw_rms_deg": 1.9563852451070032,
+            "startup_max_target_step_deg": 28.272890090942383
+          }
+        },
+        "shadow_all14_rms_deg": 5.273076642429155,
+        "sensitivity_deg": {
+          "gyro": 0.11522897709246491,
+          "dq": 0.08385082414112512
+        }
+      },
+      {
+        "case": "parent",
+        "mode": "bias",
+        "source": "parent_200_bias_short.json",
+        "source_sha256": "6055ba59fba91cdb92f67b40eebfa5dc16f213095b85e5c7dba5a3d23e0a0dfb",
+        "checkpoint": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/feedback_robust_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_18-27-06_mujoco/model_200.safetensors",
+        "groups": 6,
+        "complete": true,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "zero_survived": 48,
+        "minimum_forward_vx": 0.1986488726735115,
+        "by_T": {
+          "0.001": {
+            "zero_raw_rms_deg": 1.3943943977355957,
+            "forward_raw_rms_deg": 4.801092624664307,
+            "forward_q_rms_deg": 1.5023959875106812,
+            "forward_worst_axis_raw_rms_deg": 10.540148735046387,
+            "forward_hf_raw_rms_deg": 2.9480139164053316,
+            "startup_max_target_step_deg": 31.958436965942383
+          },
+          "0.005": {
+            "zero_raw_rms_deg": 1.045283555984497,
+            "forward_raw_rms_deg": 4.4766685962677,
+            "forward_q_rms_deg": 1.5250751376152039,
+            "forward_worst_axis_raw_rms_deg": 8.907373428344727,
+            "forward_hf_raw_rms_deg": 2.3296358378465216,
+            "startup_max_target_step_deg": 30.070144653320312
+          },
+          "0.01": {
+            "zero_raw_rms_deg": 0.5740824937820435,
+            "forward_raw_rms_deg": 4.370261907577515,
+            "forward_q_rms_deg": 1.5432168245315552,
+            "forward_worst_axis_raw_rms_deg": 8.714142799377441,
+            "forward_hf_raw_rms_deg": 2.0236496009737603,
+            "startup_max_target_step_deg": 30.344100952148438
+          }
+        },
+        "shadow_all14_rms_deg": 5.530592458061939,
+        "sensitivity_deg": {
+          "gyro": 0.11698690076992296,
+          "dq": 0.08428456404673093
+        }
+      },
+      {
+        "case": "parent",
+        "mode": "nominal",
+        "source": "parent_200_nominal_short.json",
+        "source_sha256": "30e3933a2b32e1dc2c983e7d81cf5aa73562afc493e909d3f4e02c7453b537d8",
+        "checkpoint": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/feedback_robust_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_18-27-06_mujoco/model_200.safetensors",
+        "groups": 6,
+        "complete": true,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "zero_survived": 48,
+        "minimum_forward_vx": 0.2009711730480194,
+        "by_T": {
+          "0.001": {
+            "zero_raw_rms_deg": 1.4069200158119202,
+            "forward_raw_rms_deg": 4.7016823291778564,
+            "forward_q_rms_deg": 1.5006943345069885,
+            "forward_worst_axis_raw_rms_deg": 9.191590309143066,
+            "forward_hf_raw_rms_deg": 2.7675646975536212,
+            "startup_max_target_step_deg": 30.783832550048828
+          },
+          "0.005": {
+            "zero_raw_rms_deg": 1.131267786026001,
+            "forward_raw_rms_deg": 4.482899188995361,
+            "forward_q_rms_deg": 1.5226327180862427,
+            "forward_worst_axis_raw_rms_deg": 8.954599380493164,
+            "forward_hf_raw_rms_deg": 2.3092390744860305,
+            "startup_max_target_step_deg": 30.256824493408203
+          },
+          "0.01": {
+            "zero_raw_rms_deg": 0.5845884680747986,
+            "forward_raw_rms_deg": 4.39323091506958,
+            "forward_q_rms_deg": 1.5421768426895142,
+            "forward_worst_axis_raw_rms_deg": 8.861075401306152,
+            "forward_hf_raw_rms_deg": 2.0353653358416492,
+            "startup_max_target_step_deg": 29.856124877929688
+          }
+        },
+        "shadow_all14_rms_deg": 5.530592458061939,
+        "sensitivity_deg": {
+          "gyro": 0.11698690076992296,
+          "dq": 0.08428456404673093
+        }
+      }
+    ],
+    "continuous": [
+      {
+        "source": "bias_200_bias_continuous54.json",
+        "source_sha256": "17c81fa93948f9df58f5996441ce2705ed7780f5049c0d97b9aca2901d32cc5b",
+        "case": "bias",
+        "mode": "bias",
+        "groups": 6,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "horizon_s": 54.0,
+        "minimum_forward_vx": 0.223851018846035,
+        "maximum_heading_drift_deg": 295.37176513671875
+      },
+      {
+        "source": "bias_200_nominal_continuous54.json",
+        "source_sha256": "76d3acd3b9f67d7481d98d5d64d3737f9aa11d6d45c3520f9dd8f0d6916e8f91",
+        "case": "bias",
+        "mode": "nominal",
+        "groups": 6,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "horizon_s": 54.0,
+        "minimum_forward_vx": 0.21659208357334137,
+        "maximum_heading_drift_deg": 262.0773620605469
+      },
+      {
+        "source": "control_200_bias_continuous54.json",
+        "source_sha256": "3786c19dbbf558782bd3717c51660919adea73e13a703761531a0a3d57611968",
+        "case": "control",
+        "mode": "bias",
+        "groups": 6,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "horizon_s": 54.0,
+        "minimum_forward_vx": 0.22216335207223892,
+        "maximum_heading_drift_deg": 258.2070617675781
+      },
+      {
+        "source": "control_200_nominal_continuous54.json",
+        "source_sha256": "612224a1916d8550f37708068db90857a5510a29ca716a62a3f6acd989e8f3a1",
+        "case": "control",
+        "mode": "nominal",
+        "groups": 6,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "horizon_s": 54.0,
+        "minimum_forward_vx": 0.21179566234350206,
+        "maximum_heading_drift_deg": 241.898681640625
+      },
+      {
+        "source": "parent_200_nominal_continuous54.json",
+        "source_sha256": "bf3295c7a1c3887a3b45c4829842cb0ccc83d12e561f938491b4802ee7227ae9",
+        "case": "parent",
+        "mode": "nominal",
+        "groups": 6,
+        "passed": true,
+        "survived": 48,
+        "total": 48,
+        "horizon_s": 54.0,
+        "minimum_forward_vx": 0.19334148347377778,
+        "maximum_heading_drift_deg": 502.7104797363281
+      }
+    ],
+    "hardware_verified": false
+  },
+  "observation_dr_decision": {
+    "episode_bias": "TESTED_NOT_SELECTED_FOR_MAINLINE",
+    "additional_correlated_noise": "NOT_ADDED_STATIC_REFERENCE_DOES_NOT_ESTABLISH_NEED",
+    "sensor_readout_delay": "NOT_ADDED_NO_INDEPENDENT_IMU_TIMESTAMP",
+    "mechanical_DR": "UNCHANGED_T1_TO10MS"
+  },
+  "preferred_forward_candidate": {
+    "checkpoint": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/observation_bias_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_19-13-39_mujoco/model_200.safetensors",
+    "checkpoint_sha256": "43564d0509d809bb5c11fd6189f8ae961825b1fddf8f4ed6247cb697da84a3d4",
+    "updates_after_R2": 703,
+    "scope": "Body-forward survival, no heading or hardware acceptance; no additional inference filter.",
+    "short_survival": "96/96 at 18s walk-stop plus 5s zero",
+    "continuous_survival": "96/96 at 54s: 3s zero then 51s body-forward; nominal and bias evaluation modes",
+    "onnx_exported": false,
+    "policy_id": "V112-COM35-HOME384-T1to10ms-Forward-20260928-F703",
+    "display_name": "A2.6-F703\uff08\u524d\u8fdb\u5019\u9009\uff09",
+    "short_name": "A2.6-F703",
+    "aliases": [
+      "F703",
+      "control703"
+    ],
+    "identity_rule": "Names always resolve to checkpoint SHA43564d0509d809bb5c11fd6189f8ae961825b1fddf8f4ed6247cb697da84a3d4; do not repoint to later checkpoints."
+  },
+  "retained_parent": "/Users/rangemini-003/Desktop/Micro_duck_study/Unilab_MicroDuck/logs/v112_training/feedback_robust_20260928/control/MicroDuckEnlarged112WalkFlat/2026-09-28_18-27-06_mujoco/model_200.safetensors",
+  "straight_heading_verified": false,
+  "files_disposition": "All experiment configs/scripts/checkpoints/traces retained as minimal reproducible evidence in ignored logs; no shared sources or default configs changed.",
+  "artifact_sha256": {
+    "run.py": "5385165d72f55fa62266569fd2fec55358241d020ac4bbb3f97aa0751864947c",
+    "audit.json": "ea6f8c96f711fdfd78a7d94af1ff96fcce16f5f8f7a9141d4839c0f30f1d0e84",
+    "control_200_nominal_continuous54.json": "612224a1916d8550f37708068db90857a5510a29ca716a62a3f6acd989e8f3a1",
+    "audit.py": "1a65fe8906c8f8bde2cdf4a821942bc59ca24ede8d4624d53740d99066cc15de",
+    "bias_200_bias_continuous54.json": "17c81fa93948f9df58f5996441ce2705ed7780f5049c0d97b9aca2901d32cc5b",
+    "parent_200_nominal_continuous54.json": "bf3295c7a1c3887a3b45c4829842cb0ccc83d12e561f938491b4802ee7227ae9",
+    "control_200_bias_short.json": "fd09dc69fe16784402645beaa32553dfa7c17e3922edc7ec13ec8fc75facf241",
+    "bias_200_nominal_short.json": "f92c9ce5d2116db576fe01021982767fafff3f26446155aaa3f5ace5e891f32a",
+    "control_200_bias_continuous54.json": "3786c19dbbf558782bd3717c51660919adea73e13a703761531a0a3d57611968",
+    "comparison.json": "5b592b16531c38f3427e910b60ca2b8104d7536b8a12ebbe471397f131e54b39",
+    "parent_200_nominal_short.json": "30e3933a2b32e1dc2c983e7d81cf5aa73562afc493e909d3f4e02c7453b537d8",
+    "control_200_nominal_short.json": "684a492a6217bd9d15633db140efb1d3fe3b8cdebdb2bcf8f7be7f11ca465cee",
+    "bias_200_bias_short.json": "9a622e4ff3fe5d392ee76ac8b6031728a3c0b64e96332d308950689b4fd046f8",
+    "closeout.py": "601af40cc708f33642cb5916daf2b480f8852adda5c2fdab8ba475bb90d5f1b8",
+    "evaluate.py": "71eaf5fcc016ff1de4ae46c830c210bbb41226ecdbca0d004ad76bd8b26fb527",
+    "bias_200_nominal_continuous54.json": "76d3acd3b9f67d7481d98d5d64d3737f9aa11d6d45c3520f9dd8f0d6916e8f91",
+    "parent_200_bias_short.json": "6055ba59fba91cdb92f67b40eebfa5dc16f213095b85e5c7dba5a3d23e0a0dfb",
+    "bias.yaml": "d2386106e8eb62606f90de291e20957a8c231727bacae6d7958829869a518d96",
+    "smoke.yaml": "7c3931f60d8e2d9d3fb1a93ada0b69e827d76c9397bf9a709df15c051ef7288b",
+    "control.yaml": "9fc5cbba09c5d86399c796d9f5b2d36056170d4f40c90fcac1d01351c22dd6bb",
+    "control_200_f0_r2.json": "b2d627f8aadcd34e78f16e9c12bd67d8097562a296aba94bac3471b2703b2bb8",
+    "R2_comparison.json": "57689c5ae5be9cdc2c27145cc3628732dcd3cdfac5bc89dcf8c628eebccfcab3",
+    "DR_inventory.json": "e81ede3f66b497ec1ac6e5445ad5365e19ad6573640a1bcc82f4efe57e345935",
+    "DR_inventory.md": "cb637f9926ca33cf3ac44711d05355abc8336696ce65c9cc364310daba1689c6"
+  },
+  "r2_comparison": "R2_comparison.json",
+  "domain_randomization_inventory": {
+    "readable": "DR_inventory.md",
+    "effective_config": "DR_inventory.json"
+  }
+}

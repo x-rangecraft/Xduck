@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco
+  - _self_
+
+# Friction-V1 candidate, not hardware-calibrated or behavior-accepted.
+env:
+  dry_friction_enabled: true
+  full_motor_dr:
+    coulomb_positive_scale_range: [1.0, 1.0]
+    coulomb_negative_scale_range: [1.0, 1.0]

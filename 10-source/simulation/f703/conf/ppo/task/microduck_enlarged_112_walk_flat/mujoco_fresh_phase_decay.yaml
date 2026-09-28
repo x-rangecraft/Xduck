@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_phase_low
+  - _self_
+
+# Stage 2 of the fresh phase-guided lineage.  Load the gait-discovery actor,
+# halve only the phase-reference weight, and use a new optimizer so the old
+# reward value function and momentum do not bias the stabilization stage.
+training:
+  log_root: logs/v112_training/fresh_phase_decay
+
+algo:
+  resume_trainer_state: false

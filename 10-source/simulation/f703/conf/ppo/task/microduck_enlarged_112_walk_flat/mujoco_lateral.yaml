@@ -1,0 +1,25 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_limits
+  - _self_
+
+# After physical reserve is validated: concentrate experience on the missing
+# skill while retaining every other command bucket.
+algo:
+  policy:
+    # Skill discovery trial: the prior 0.05 rad noise contracted near 0.03
+    # without acquiring signed lateral motion. Keep the same learner/reward.
+    init_noise_std: 0.15
+    resume_noise_std: 0.15
+env:
+  command_mode_probabilities: [0.05, 0.10, 0.10, 0.60, 0.10, 0.05]
+  # Approximately half a gait cycle. Score net motion without taxing the
+  # unavoidable 0.15 m/s lateral sway more than the 0.12 m/s command itself.
+  # This changes reward measurement only, not the control/actuator pipeline.
+  linear_velocity_tracking_tau_s: 0.25
+reward:
+  scales:
+    # Sampling-only trial learned stationary stepping. The existing gait
+    # bonuses can total 11, versus only 4 for velocity tracking. Make actual
+    # translation the primary lesson without removing physical constraints.
+    track_linear_velocity: 20.0

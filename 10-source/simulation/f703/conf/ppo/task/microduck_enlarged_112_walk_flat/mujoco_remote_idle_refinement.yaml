@@ -1,0 +1,28 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_remote_head_bias
+  - _self_
+
+# One new objective. Preserve the mature head-bias weight rather than restarting
+# its warm-up when loading weights only. No plant, I/O or command-mix changes.
+# EXPERIMENTAL / NOT PROMOTED: the first 101 iterations did not meet stillness
+# acceptance. See logs/v112_training/refinement/PLAN.md before continuing.
+training:
+  seed: 4211
+  log_root: logs/v112_training/refinement/idle_motion
+
+algo:
+  seed: 4211
+  load_run: logs/v112_training/official_remote_head_bias/MicroDuckEnlarged112WalkFlat/2026-09-22_11-34-43_mujoco/model_300.safetensors
+  max_iterations: 101
+
+env:
+  idle_leg_velocity_deadband_rad_s: 0.15
+  idle_leg_velocity_scale_rad_s: 1.0
+
+reward:
+  head_pose_bias_schedule_steps: [0]
+  head_pose_bias_schedule_scales: [3.0]
+  scales:
+    head_pose_bias: 3.0
+    idle_leg_motion: -2.0

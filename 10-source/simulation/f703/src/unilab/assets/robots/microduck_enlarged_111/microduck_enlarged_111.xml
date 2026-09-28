@@ -1,0 +1,319 @@
+<?xml version="1.0" ?>
+<!-- Converted from xduck_V1.1.1_urdf/robot.urdf with MuJoCo (frames, masses and
+     inertias exact); fixed links (Battery, IMU, left_hip, right_hip, control-box)
+     fused into their parents by the compiler. -->
+<mujoco model="microduck_enlarged_111">
+  <!-- XDuck V1.1.1 mechanics with the established V1.1.0 all-GF43X40
+       actuator contract; 14 DoF, total rigid-body mass 8.8933 kg including
+       the fixed 135 g battery-top payload. -->
+  <compiler angle="radian" meshdir="assets" texturedir="assets" autolimits="true"/>
+  <default>
+    <default class="xduck">
+      <joint frictionloss="0.1" armature="0.005"/>
+      <position kp="50" dampratio="1"/>
+      <default class="visual">
+        <geom type="mesh" contype="0" conaffinity="0" group="2"/>
+      </default>
+      <default class="collision">
+        <geom group="3"/>
+      </default>
+    </default>
+  </default>
+  <!-- Additional joints_properties.xml -->
+  <default>
+    <default class="perfect_actuator">
+      <geom contype="0" conaffinity="0"/>
+      <joint damping="0.15" frictionloss="0.1" armature="0.001"/>
+      <position kp="10.0" kv="0.1" forcerange="-20.0 20.0"/>
+    </default>
+    <default class="chosen_actuator_old">
+      <geom contype="0" conaffinity="0"/>
+      <joint damping="0.048" frictionloss="0.006" armature="0.002"/>
+      <position kp="0.52" kv="0.0" forcerange="-0.91 0.91" ctrlrange="-10.0 10.0"/>
+    </default>
+    <default class="chosen_actuator_new">
+      <!-- removing contaminated data -->
+      <geom contype="0" conaffinity="0"/>
+      <joint damping="0.041" frictionloss="0.032" armature="0.002"/>
+      <position kp="0.386" kv="0.0" forcerange="-0.67 0.67" ctrlrange="-10.0 10.0"/>
+    </default>
+    <default class="chosen_actuator_antoine">
+      <geom contype="0" conaffinity="0"/>
+      <joint damping="0.044" frictionloss="0.013" armature="0.0017"/>
+      <position kp="0.43" kv="0.0" forcerange="-0.75 0.75" ctrlrange="-10.0 10.0"/>
+    </default>
+    <default class="chosen_actuator">
+      <!-- marc -->
+      <geom contype="0" conaffinity="0"/>
+      <joint damping="0.053" frictionloss="0.0048" armature="0.0018"/>
+      <!-- 200 kp -->
+      <position kp="0.55" kv="0.0" forcerange="-0.96 0.96" ctrlrange="-10.0 10.0"/>
+      <!-- 125 kp -->
+      <!-- <position kp="0.35" kv="0.0" forcerange="-0.96 0.96" ctrlrange="-10.0 10.0"/> -->
+    </default>
+    <default class="gf4340">
+      <!-- GF43X40-10 24V
+           forcerange +/-23.5 (datasheet peak); armature 0.0288 = 40:1^2 x 1.8e-5 -->
+      <geom contype="0" conaffinity="0"/>
+      <joint damping="0.1" frictionloss="0.1" armature="0.0288"/>
+      <position kp="10.0" kv="0.5" forcerange="-23.5 23.5" ctrlrange="-10.0 10.0"/>
+    </default>
+    <default class="passive_wheel">
+      <geom contype="0" conaffinity="0"/>
+      <joint damping="0.0" frictionloss="0.0" armature="0.0001"/>
+    </default>
+    <default class="passive_joint">
+      <geom contype="0" conaffinity="0"/>
+      <joint damping="0.0" frictionloss="0.0" armature="0.0001"/>
+    </default>
+  </default>
+  <!-- Additional sensors.xml -->
+  <sensor>
+    <framequat name="orientation" objtype="site" noise="0.001" objname="imu"/>
+    <gyro name="angular-velocity" site="imu" noise="0.005"/>
+    <gyro name="imu_ang_vel" site="imu"/>
+    <velocimeter name="imu_lin_vel" site="imu"/>
+    <accelerometer name="imu_accel" site="imu"/>
+    <subtreeangmom name="root_angmom" body="base_link"/>
+  </sensor>
+  <!-- Additional additional.xml -->
+  <default>
+    <default class="self_collision_only">
+      <geom group="3" contype="2" conaffinity="2"/>
+    </default>
+    <equality solref="0.002 1" solimp="0.99 0.999 0.0005 0.5 2"/>
+  </default>
+  <!-- Convex-hull artefacts: the URDF gives every link a collision mesh; MuJoCo collides
+       meshes via convex hulls, and the base_link hull spatially contains the hip_roll
+       brackets (~50 mm hull overlap), head_pitch likewise overlaps head_roll (~6 mm).
+       These are rigidly-assembled neighbours in the CAD; without the excludes the contact
+       solver constantly pushes the legs/head off the trunk. -->
+  <contact>
+    <exclude body1="base_link" body2="left_hip_roll"/>
+    <exclude body1="base_link" body2="right_hip_roll"/>
+    <exclude body1="head_pitch" body2="head_roll"/>
+  </contact>
+  <worldbody>
+    <!-- Link base_link -->
+    <body name="base_link" pos="0 0 0.29463" quat="1 0 0 0" childclass="xduck">
+      <freejoint name="base_link_freejoint"/>
+      <inertial pos="-0.071761 0.000115187 -0.0703574" quat="0.929928 -0.00590986 0.367636 -0.00647809" mass="2.0548" diaginertia="0.00914523 0.00872461 0.0045732"/>
+      <!-- Part base_link -->
+      <geom type="mesh" class="visual" mesh="base_link" material="base_link_material"/>
+      <geom type="mesh" class="collision" mesh="base_link" material="base_link_material"/>
+      <!-- Part Battery -->
+      <geom type="mesh" class="visual" pos="-0.112234 0 -0.1046" quat="0.499999 0.500001 -0.500001 -0.499999" mesh="Battery" material="Battery_material"/>
+      <geom type="mesh" class="collision" pos="-0.112234 0 -0.1046" quat="0.499999 0.500001 -0.500001 -0.499999" mesh="Battery" material="Battery_material"/>
+      <!-- Part IMU -->
+      <geom type="mesh" class="visual" pos="-0.0812283 0 -0.1731" quat="0.499999 0.500001 -0.500001 -0.499999" mesh="IMU" material="IMU_material"/>
+      <geom type="mesh" class="collision" pos="-0.0812283 0 -0.1731" quat="0.499999 0.500001 -0.500001 -0.499999" mesh="IMU" material="IMU_material"/>
+      <!-- Part left_hip -->
+      <geom type="mesh" class="visual" pos="-0.0299997 0.037 -0.0701001" quat="1.29867e-06 -0.707107 0.707107 -1.29867e-06" mesh="left_hip" material="left_hip_material"/>
+      <geom type="mesh" class="collision" pos="-0.0299997 0.037 -0.0701001" quat="1.29867e-06 -0.707107 0.707107 -1.29867e-06" mesh="left_hip" material="left_hip_material"/>
+      <!-- Part right_hip -->
+      <geom type="mesh" class="visual" pos="-0.0299997 -0.037 -0.0701001" quat="1.29867e-06 -0.707107 0.707107 -1.29867e-06" mesh="right_hip" material="right_hip_material"/>
+      <geom type="mesh" class="collision" pos="-0.0299997 -0.037 -0.0701001" quat="1.29867e-06 -0.707107 0.707107 -1.29867e-06" mesh="right_hip" material="right_hip_material"/>
+      <!-- Fixed battery-top payload, matched exactly to the xduck V1.1.1 model. -->
+      <body name="payload" pos="-0.1122 0 -0.0221">
+        <inertial pos="0 0 0" quat="1 0 0 0" mass="0.135" diaginertia="5.9625e-05 3.2738e-05 8.3363e-05"/>
+        <geom name="payload" type="box" size="0.02505 0.035 0.01" rgba="0.55 0.2 0.2 0.9"/>
+      </body>
+      <!-- Frame imu -->
+      <site group="3" name="imu" pos="-0.0812283 0 -0.1731" quat="0.499999 0.500001 -0.500001 -0.499999"/>
+      <geom type="sphere" class="visual" group="2" name="imu_marker" pos="-0.0812283 0 -0.1731" size="0.008" material="imu_marker_material"/>
+      <!-- Link left_hip_yaw -->
+      <body name="left_hip_yaw" pos="-0.0299997 0.037 -0.0721001" quat="1.29867e-06 -0.707107 0.707107 -1.29867e-06">
+        <!-- Joint from base_link to left_hip_yaw -->
+        <joint axis="0 0 1" name="left_hip_yaw_joint" type="hinge" range="-0.53 0.47" class="gf4340"/>
+        <inertial pos="-0.000162505 -0.000436199 0.0350355" quat="0.66612 0.744989 -0.0343133 -0.00993187" mass="0.4703" diaginertia="0.000244895 0.000230996 0.000212952"/>
+        <!-- Part left_hip_yaw -->
+        <geom type="mesh" class="visual" mesh="left_hip_yaw" material="left_hip_yaw_material"/>
+        <geom type="mesh" class="collision" mesh="left_hip_yaw" material="left_hip_yaw_material"/>
+        <!-- Link left_hip_roll -->
+        <body name="left_hip_roll" pos="1.97678e-05 -0.0295 0.037" quat="0.5 0.5 0.5 -0.5">
+          <!-- Joint from left_hip_yaw to left_hip_roll -->
+          <joint axis="0 0 1" name="left_hip_roll_joint" type="hinge" range="-0.4 0.37" class="gf4340"/>
+          <inertial pos="0.000170696 -0.0285529 -0.024589" quat="0.982657 -0.180527 -0.0109383 -0.0409353" mass="0.0792" diaginertia="8.37039e-05 7.48891e-05 4.0136e-05"/>
+          <!-- Part left_hip_roll -->
+          <geom type="mesh" class="visual" mesh="left_hip_roll" material="left_hip_roll_material"/>
+          <geom type="mesh" class="collision" mesh="left_hip_roll" material="left_hip_roll_material"/>
+          <!-- Link left_hip_pitch -->
+          <body name="left_hip_pitch" pos="0 -0.055 -0.0295" quat="0.707107 -0.707107 0 0">
+            <!-- Joint from left_hip_roll to left_hip_pitch -->
+            <joint axis="0 0 -1" name="left_hip_pitch_joint" type="hinge" range="-3.14159 1.1" class="gf4340"/>
+            <inertial pos="-0.0197325 0.0403566 -0.0287768" quat="0.346449 0.601418 -0.372717 0.615915" mass="0.9512" diaginertia="0.00223365 0.00219663 0.000617775"/>
+            <!-- Part left_hip_pitch -->
+            <geom type="mesh" class="visual" mesh="left_hip_pitch" material="left_hip_pitch_material"/>
+            <geom type="mesh" class="collision" mesh="left_hip_pitch" material="left_hip_pitch_material"/>
+            <!-- Link left_knee_pitch -->
+            <body name="left_knee_pitch" pos="-0.0445293 0.0760232 0">
+              <!-- Joint from left_hip_pitch to left_knee_pitch -->
+              <joint axis="0 0 1" name="left_knee_pitch_joint" type="hinge" range="-2.1 1.28" class="gf4340"/>
+              <inertial pos="-0.0788339 0.00030431 -0.0287451" quat="0.5306 0.444443 0.440208 0.571972" mass="0.5065" diaginertia="0.000528788 0.000459098 0.000287425"/>
+              <!-- Part left_knee_pitch -->
+              <geom type="mesh" class="visual" mesh="left_knee_pitch" material="left_knee_pitch_material"/>
+              <geom type="mesh" class="collision" mesh="left_knee_pitch" material="left_knee_pitch_material"/>
+              <!-- Link left_ankle_pitch_joint -->
+              <body name="left_ankle_pitch_joint" pos="-0.088 -3.8147e-09 -0.05825" quat="0 0 -1 0">
+                <!-- Joint from left_knee_pitch to left_ankle_pitch_joint -->
+                <joint axis="0 0 1" name="left_ankle_pitch_joint" type="hinge" range="-1.5 1.5" class="gf4340"/>
+                <inertial pos="0.0344131 -0.0112669 -0.025996" quat="0.952205 -0.286334 -0.0975896 0.0423781" mass="0.1223" diaginertia="0.000226955 0.000154706 0.000141665"/>
+                <!-- Part left_ankle_pitch_joint -->
+                <geom type="mesh" class="visual" mesh="left_ankle_pitch_joint" material="left_ankle_pitch_joint_material"/>
+                <geom name="left_foot_collision" type="mesh" class="collision" mesh="left_ankle_pitch_joint" material="left_ankle_pitch_joint_material"/>
+                <!-- Frame left_foot -->
+                <site group="3" name="left_foot" pos="0.053000 -0.015445 -0.029100" quat="0.500001 0.500001 -0.499999 -0.499999"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <!-- Link neck_pitch -->
+      <body name="neck_pitch" pos="0.0250711 0.0291 0.000100089" quat="1.29867e-06 -1.29867e-06 0.707107 0.707107">
+        <!-- Joint from base_link to neck_pitch -->
+        <joint axis="0 0 -1" name="neck_pitch_joint" type="hinge" range="-1.4 0.8" class="gf4340"/>
+        <inertial pos="-5.40694e-05 0.052 -0.0287362" quat="0.707076 0.707076 -0.00661901 0.00661901" mass="0.9505" diaginertia="0.00281421 0.00273623 0.000484571"/>
+        <!-- Part neck_pitch -->
+        <geom type="mesh" class="visual" mesh="neck_pitch" material="neck_pitch_material"/>
+        <geom type="mesh" class="collision" mesh="neck_pitch" material="neck_pitch_material"/>
+        <!-- Link head_pitch -->
+        <body name="head_pitch" pos="0 0.104 0" quat="0.707107 0 0 -0.707107">
+          <!-- Joint from neck_pitch to head_pitch -->
+          <joint axis="0 0 1" name="head_pitch_joint" type="hinge" range="-1 1.3" class="gf4340"/>
+          <inertial pos="-0.0175176 -0.000356252 -0.0211039" quat="0.754209 0.0880237 0.114803 0.6405" mass="0.0515" diaginertia="5.86488e-05 5.40845e-05 2.43187e-05"/>
+          <!-- Part head_pitch -->
+          <geom type="mesh" class="visual" mesh="head_pitch" material="head_pitch_material"/>
+          <geom type="mesh" class="collision" mesh="head_pitch" material="head_pitch_material"/>
+          <!-- Link head_yaw -->
+          <body name="head_yaw" pos="-0.04 0 -0.0295" quat="0.707107 0 0.707107 0">
+            <!-- Joint from head_pitch to head_yaw -->
+            <joint axis="0 0 -1" name="head_yaw_joint" type="hinge" range="-2 2" class="gf4340"/>
+            <inertial pos="0.000207245 0.0013683 -0.0285729" quat="0.999755 0.0183225 0.0097009 0.00779827" mass="0.446" diaginertia="0.000220937 0.000210359 0.00019464"/>
+            <!-- Part head_yaw -->
+            <geom type="mesh" class="visual" mesh="head_yaw" material="head_yaw_material"/>
+            <geom type="mesh" class="collision" mesh="head_yaw" material="head_yaw_material"/>
+            <!-- Link head_roll -->
+            <body name="head_roll" pos="1.97677e-05 0.035 -0.0295" quat="0 0 0.707107 -0.707107">
+              <!-- Joint from head_yaw to head_roll -->
+              <joint axis="0 0 -1" name="head_roll_joint" type="hinge" range="-0.5 0.5" class="gf4340"/>
+              <inertial pos="-7.18432e-05 0.0067267 0.0218878" quat="0.706487 -0.0268326 0.0273278 0.706689" mass="0.9954" diaginertia="0.00671727 0.0060389 0.00241949"/>
+              <!-- Part head_roll -->
+              <geom type="mesh" class="visual" mesh="head_roll" material="head_roll_material"/>
+              <geom type="mesh" class="collision" mesh="head_roll" material="head_roll_material"/>
+              <!-- Part control-box -->
+              <geom type="mesh" class="visual" pos="-0.00145096 -0.033 0.103761" quat="0.5 -0.5 0.5 0.5" mesh="control-box" material="control-box_material"/>
+              <geom type="mesh" class="collision" pos="-0.00145096 -0.033 0.103761" quat="0.5 -0.5 0.5 0.5" mesh="control-box" material="control-box_material"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <!-- Link right_hip_yaw -->
+      <body name="right_hip_yaw" pos="-0.0299997 -0.037 -0.0721001" quat="1.29867e-06 -0.707107 0.707107 -1.29867e-06">
+        <!-- Joint from base_link to right_hip_yaw -->
+        <joint axis="0 0 1" name="right_hip_yaw_joint" type="hinge" range="-0.47 0.53" class="gf4340"/>
+        <inertial pos="0.0002828 -8.76164e-06 0.0349243" quat="0.681691 0.731454 0.0164163 -0.00175594" mass="0.4699" diaginertia="0.000245948 0.000227761 0.00021266"/>
+        <!-- Part right_hip_yaw -->
+        <geom type="mesh" class="visual" mesh="right_hip_yaw" material="right_hip_yaw_material"/>
+        <geom type="mesh" class="collision" mesh="right_hip_yaw" material="right_hip_yaw_material"/>
+        <!-- Link right_hip_roll -->
+        <body name="right_hip_roll" pos="-1.97678e-05 -0.029 0.037" quat="0.5 0.5 0.5 -0.5">
+          <!-- Joint from right_hip_yaw to right_hip_roll -->
+          <joint axis="0 0 1" name="right_hip_roll_joint" type="hinge" range="-0.37 0.4" class="gf4340"/>
+          <inertial pos="0.000170596 0.0285528 -0.0245891" quat="0.982657 0.180524 -0.0109429 0.0409436" mass="0.0795" diaginertia="8.40213e-05 7.51728e-05 4.02883e-05"/>
+          <!-- Part right_hip_roll -->
+          <geom type="mesh" class="visual" mesh="right_hip_roll" material="right_hip_roll_material"/>
+          <geom type="mesh" class="collision" mesh="right_hip_roll" material="right_hip_roll_material"/>
+          <!-- Link right_hip_pitch -->
+          <body name="right_hip_pitch" pos="0 0.055 -0.0295" quat="0 0 0.707107 -0.707107">
+            <!-- Joint from right_hip_roll to right_hip_pitch -->
+            <joint axis="0 0 -1" name="right_hip_pitch_joint" type="hinge" range="-1.1 3.14159" class="gf4340"/>
+            <inertial pos="0.0196418 0.0405671 -0.0288167" quat="0.598856 0.342282 -0.61848 0.376427" mass="0.9531" diaginertia="0.00222996 0.00219209 0.000621775"/>
+            <!-- Part right_hip_pitch -->
+            <geom type="mesh" class="visual" mesh="right_hip_pitch" material="right_hip_pitch_material"/>
+            <geom type="mesh" class="collision" mesh="right_hip_pitch" material="right_hip_pitch_material"/>
+            <!-- Link right_knee_pitch -->
+            <body name="right_knee_pitch" pos="0.0445293 0.0760232 0" quat="1 0 0 0">
+              <!-- Joint from right_hip_pitch to right_knee_pitch -->
+              <joint axis="0 0 1" name="right_knee_pitch_joint" type="hinge" range="-1.28 2.1" class="gf4340"/>
+              <inertial pos="0.0787744 0.000360812 -0.0287271" quat="0.439302 0.569521 0.537222 0.440513" mass="0.5061" diaginertia="0.000527762 0.000457633 0.000284512"/>
+              <!-- Part right_knee_pitch -->
+              <geom type="mesh" class="visual" mesh="right_knee_pitch" material="right_knee_pitch_material"/>
+              <geom type="mesh" class="collision" mesh="right_knee_pitch" material="right_knee_pitch_material"/>
+              <!-- Link right_ankle_pitch -->
+              <body name="right_ankle_pitch" pos="0.088 -3.8147e-09 -0.05825" quat="0 0 -1 0">
+                <!-- Joint from right_knee_pitch to right_ankle_pitch -->
+                <joint axis="0 0 1" name="right_ankle_pitch_joint" type="hinge" range="-1.5 1.5" class="gf4340"/>
+                <inertial pos="-0.0344127 -0.0112671 -0.0259971" quat="0.952201 -0.286347 0.0975865 -0.0423709" mass="0.122" diaginertia="0.000226393 0.000154332 0.000141309"/>
+                <!-- Part right_ankle_pitch -->
+                <geom type="mesh" class="visual" mesh="right_ankle_pitch" material="right_ankle_pitch_material"/>
+                <geom name="right_foot_collision" type="mesh" class="collision" mesh="right_ankle_pitch" material="right_ankle_pitch_material"/>
+                <!-- Frame right_foot -->
+                <site group="3" name="right_foot" pos="-0.053000 -0.015513 -0.029210" quat="-0.499999 0.499999 -0.500001 0.500001"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <asset>
+    <mesh file="base_link.stl"/>
+    <mesh file="Battery.stl"/>
+    <mesh file="IMU.stl"/>
+    <mesh file="neck_pitch.stl"/>
+    <mesh file="head_pitch.stl"/>
+    <mesh file="head_yaw.stl"/>
+    <mesh file="head_roll.stl"/>
+    <mesh file="left_hip.stl"/>
+    <mesh file="left_hip_yaw.stl"/>
+    <mesh file="left_hip_roll.stl"/>
+    <mesh file="left_hip_pitch.stl"/>
+    <mesh file="left_knee_pitch.stl"/>
+    <mesh file="left_ankle_pitch_joint.stl"/>
+    <mesh file="control-box.stl"/>
+    <mesh file="right_hip.stl"/>
+    <mesh file="right_hip_yaw.stl"/>
+    <mesh file="right_hip_roll.stl"/>
+    <mesh file="right_hip_pitch.stl"/>
+    <mesh file="right_knee_pitch.stl"/>
+    <mesh file="right_ankle_pitch.stl"/>
+    <material name="imu_marker_material" rgba="1 0 0 1"/>
+    <material name="base_link_material" rgba="0.34902 0.376471 0.4 0.2"/>
+    <material name="Battery_material" rgba="0.901961 0.901961 0.901961 1"/>
+    <material name="IMU_material" rgba="0.313725 0.486275 0.411765 1"/>
+    <material name="neck_pitch_material" rgba="0.8 0.8 0.8 0.2"/>
+    <material name="head_pitch_material" rgba="0.34902 0.376471 0.4 0.2"/>
+    <material name="head_yaw_material" rgba="0.768627 0.886275 0.952941 0.2"/>
+    <material name="head_roll_material" rgba="0.901961 0.901961 0.901961 0.2"/>
+    <material name="left_hip_material" rgba="0.901961 0.901961 0.901961 0.2"/>
+    <material name="left_hip_yaw_material" rgba="0.647059 0.647059 0.647059 0.2"/>
+    <material name="left_hip_roll_material" rgba="0.262745 0.282353 0.301961 0.2"/>
+    <material name="left_hip_pitch_material" rgba="0.866667 0.866667 0.866667 0.2"/>
+    <material name="left_knee_pitch_material" rgba="0.811765 0.858824 0.898039 0.2"/>
+    <material name="left_ankle_pitch_joint_material" rgba="0.980392 0.713725 0.00392157 1"/>
+    <material name="control-box_material" rgba="0.294118 0.290196 0.290196 1"/>
+    <material name="right_hip_material" rgba="0.901961 0.901961 0.901961 0.2"/>
+    <material name="right_hip_yaw_material" rgba="0.647059 0.647059 0.647059 0.2"/>
+    <material name="right_hip_roll_material" rgba="0.262745 0.282353 0.301961 0.2"/>
+    <material name="right_hip_pitch_material" rgba="0.866667 0.866667 0.866667 0.2"/>
+    <material name="right_knee_pitch_material" rgba="0.811765 0.858824 0.898039 0.2"/>
+    <material name="right_ankle_pitch_material" rgba="0.980392 0.713725 0.00392157 1"/>
+  </asset>
+  <actuator>
+    <position class="gf4340" name="left_hip_yaw" joint="left_hip_yaw_joint"/>
+    <position class="gf4340" name="left_hip_roll" joint="left_hip_roll_joint"/>
+    <position class="gf4340" name="left_hip_pitch" joint="left_hip_pitch_joint"/>
+    <position class="gf4340" name="left_knee" joint="left_knee_pitch_joint"/>
+    <position class="gf4340" name="left_ankle" joint="left_ankle_pitch_joint"/>
+    <position class="gf4340" name="neck_pitch" joint="neck_pitch_joint"/>
+    <position class="gf4340" name="head_pitch" joint="head_pitch_joint"/>
+    <position class="gf4340" name="head_yaw" joint="head_yaw_joint"/>
+    <position class="gf4340" name="head_roll" joint="head_roll_joint"/>
+    <position class="gf4340" name="right_hip_yaw" joint="right_hip_yaw_joint"/>
+    <position class="gf4340" name="right_hip_roll" joint="right_hip_roll_joint"/>
+    <position class="gf4340" name="right_hip_pitch" joint="right_hip_pitch_joint"/>
+    <position class="gf4340" name="right_knee" joint="right_knee_pitch_joint"/>
+    <position class="gf4340" name="right_ankle" joint="right_ankle_pitch_joint"/>
+  </actuator>
+  <equality/>
+</mujoco>

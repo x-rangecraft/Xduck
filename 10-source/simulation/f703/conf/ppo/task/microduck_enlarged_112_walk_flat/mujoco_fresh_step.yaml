@@ -1,0 +1,19 @@
+# @package _global_
+defaults:
+  - /task/microduck_enlarged_112_walk_flat/mujoco_fresh_lowstand
+  - _self_
+
+# Stage-1 gait discovery after low standing prevalence alone remained static.
+# Sole reward experiment: make commanded double support more expensive than the
+# dense static positive stack. Survival + alternating landing gates reject
+# one-foot parking and early-termination reward hacking.
+training:
+  seed: 1724
+  log_root: logs/v112_training/fresh_step
+
+algo:
+  seed: 1724
+
+reward:
+  scales:
+    double_support: -15.0

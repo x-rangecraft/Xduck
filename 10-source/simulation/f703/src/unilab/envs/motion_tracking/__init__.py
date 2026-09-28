@@ -1,0 +1,64 @@
+"""Motion tracking environments."""
+
+__unilab_registry_modules__ = (
+    "unilab.envs.motion_tracking.g1",
+    "unilab.envs.motion_tracking.x2",
+)
+
+from .g1 import (
+    BoxMotionData,
+    BoxMotionLoader,
+    G1BoxTrackingCfg,
+    G1BoxTrackingEnv,
+    G1BoxTrackingEnvCfg,
+    G1ClimbTrackingCfg,
+    G1ClimbTrackingEnv,
+    G1ClimbTrackingEnvCfg,
+    G1FlipTrackingCfg,
+    G1FlipTrackingEnv,
+    G1FlipTrackingEnvCfg,
+    G1MotionTrackingCfg,
+    G1MotionTrackingEnv,
+    G1MotionTrackingEnvCfg,
+    G1MotionTrackingSACCfg,
+    G1MotionTrackingSACEnv,
+    G1WallFlipTrackingCfg,
+    G1WallFlipTrackingEnv,
+    G1WallFlipTrackingEnvCfg,
+    G1WBTObsCfg,
+    G1WBTObsEnv,
+)
+from .x2 import (
+    X2MotionTrackingCfg,
+    X2WallFlipTrackingCfg,
+    X2WallFlipTrackingEnv,
+    X2WallFlipTrackingEnvCfg,
+)
+
+__all__ = [
+    "G1MotionTrackingCfg",
+    "G1MotionTrackingEnv",
+    "G1MotionTrackingEnvCfg",
+    "G1MotionTrackingSACCfg",
+    "G1MotionTrackingSACEnv",
+    "G1WBTObsCfg",
+    "G1WBTObsEnv",
+    "G1FlipTrackingCfg",
+    "G1FlipTrackingEnv",
+    "G1FlipTrackingEnvCfg",
+    "G1WallFlipTrackingCfg",
+    "G1WallFlipTrackingEnv",
+    "G1WallFlipTrackingEnvCfg",
+    "G1ClimbTrackingCfg",
+    "G1ClimbTrackingEnv",
+    "G1ClimbTrackingEnvCfg",
+    "G1BoxTrackingCfg",
+    "G1BoxTrackingEnv",
+    "G1BoxTrackingEnvCfg",
+    "BoxMotionData",
+    "BoxMotionLoader",
+    "X2MotionTrackingCfg",
+    "X2WallFlipTrackingCfg",
+    "X2WallFlipTrackingEnv",
+    "X2WallFlipTrackingEnvCfg",
+]
