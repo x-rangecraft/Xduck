@@ -1,0 +1,1226 @@
+[2026-09-30 16:41:22,789][OpenGL.acceleratesupport][INFO] - No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
+[rank 0/1] Using device: cuda
+Warp 1.14.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.0
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 5090 D" (31 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /home/xingchen/.cache/warp/1.14.0
+Module mujoco_warp._src.smooth e597d07 load on device 'cuda:0' took 3.32 ms  (cached)
+Module _nxn_broadphase__locals__kernel_a09fd5ac a09fd5a load on device 'cuda:0' took 0.26 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_3ea99d4a 3ea99d4 load on device 'cuda:0' took 1.50 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_3ea99d4a 90186a8 load on device 'cuda:0' took 1.46 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_c894beba c894beb load on device 'cuda:0' took 0.42 ms  (cached)
+Module mujoco_warp._src.constraint 880bd7f load on device 'cuda:0' took 0.20 ms  (cached)
+Module _friction_dof__locals__kernel_7f5fef1d 7f5fef1 load on device 'cuda:0' took 0.28 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_2e45505b 2e45505 load on device 'cuda:0' took 0.28 ms  (cached)
+Module _efc_contact_init__locals__kernel_0171803d 0171803 load on device 'cuda:0' took 0.25 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_24b53e9d a78316d load on device 'cuda:0' took 0.29 ms  (cached)
+Module _efc_contact_update__locals__kernel_710e1642 710e164 load on device 'cuda:0' took 0.27 ms  (cached)
+Module mujoco_warp._src.sensor 42e0a24 load on device 'cuda:0' took 1.35 ms  (cached)
+Module mujoco_warp._src.forward 687ddb7 load on device 'cuda:0' took 0.69 ms  (cached)
+Module mujoco_warp._src.passive 8ff6993 load on device 'cuda:0' took 0.82 ms  (cached)
+Module mujoco_warp._src.forward 2190340 load on device 'cuda:0' took 0.71 ms  (cached)
+Module _qfrc_smooth__locals__kernel_412ce125 412ce12 load on device 'cuda:0' took 0.22 ms  (cached)
+Module mujoco_warp._src.support d1e71d9 load on device 'cuda:0' took 0.25 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_98d0fb03 c208c6c load on device 'cuda:0' took 17.45 ms  (cached)
+Module _solve_init_dof__locals__kernel_61467459 6146745 load on device 'cuda:0' took 0.22 ms  (cached)
+Module mujoco_warp._src.solver 245b5b3 load on device 'cuda:0' took 1.09 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_ad4c3bd6 ad4c3bd load on device 'cuda:0' took 0.24 ms  (cached)
+Module mul_m_kernel__locals___mul_m_60e7d061 60e7d06 load on device 'cuda:0' took 0.29 ms  (cached)
+Module _update_constraint_efc__locals__kernel_5d0c511e 5d0c511 load on device 'cuda:0' took 0.25 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_15dd8e78 15dd8e7 load on device 'cuda:0' took 0.34 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_6b40d785 6b40d78 load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_grad__locals__kernel_9aa8c0ee 9aa8c0e load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_3a1a2d02 43866fe load on device 'cuda:0' took 0.51 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_f56de101 a6b1ba8 load on device 'cuda:0' took 22.81 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_9e301f59 176d4e7 load on device 'cuda:0' took 0.39 ms  (cached)
+Module _update_constraint_efc__locals__kernel_6a49458a 6a49458 load on device 'cuda:0' took 0.26 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_ecad82c3 ecad82c load on device 'cuda:0' took 0.25 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_32b39599 32b3959 load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_grad__locals__kernel_00e53288 00e5328 load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_3993fc14 a6a7304 load on device 'cuda:0' took 22.73 ms  (cached)
+Module _contact_sort__locals__contact_sort_7bada88e 026fd42 load on device 'cuda:0' took 0.27 ms  (cached)
+Module mujoco_warp._src.derivative e770e28 load on device 'cuda:0' took 0.61 ms  (cached)
+Module _next_time_builder__locals___next_time_1f10e805 1f10e80 load on device 'cuda:0' took 0.27 ms  (cached)
+/home/xingchen/Xduck/xduck_speed_correction_20260930/project/.venv/lib/python3.10/site-packages/gymnasium/spaces/box.py:226: RuntimeWarning: overflow encountered in cast
+  elif low.dtype != self.dtype and np.any(low < dtype_min):
+/home/xingchen/Xduck/xduck_speed_correction_20260930/project/.venv/lib/python3.10/site-packages/gymnasium/spaces/box.py:296: RuntimeWarning: overflow encountered in cast
+  elif high.dtype != self.dtype and np.any(dtype_max < high):
+Module reset_data__locals__reset_xfrc_applied_68cbd089 68cbd08 load on device 'cuda:0' took 0.30 ms  (cached)
+Module reset_data__locals__reset_M_e750f49f e750f49 load on device 'cuda:0' took 0.21 ms  (cached)
+Module reset_data__locals__reset_mocap_8d259ef0 8d259ef load on device 'cuda:0' took 0.21 ms  (cached)
+Module reset_data__locals__reset_contact_657e565e 657e565 load on device 'cuda:0' took 0.21 ms  (cached)
+Module reset_data__locals__reset_sleep_ef1daa14 ef1daa1 load on device 'cuda:0' took 0.20 ms  (cached)
+Module reset_data__locals__reset_nworld_3f93673c 3f93673 load on device 'cuda:0' took 0.26 ms  (cached)
+--------------------------------------------------------------------------------
+Resolved observation sets: 
+	 default :  ['policy']
+	 actor :  ['actor']
+	 critic :  ['critic']
+--------------------------------------------------------------------------------
+Actor Model: MLPModel(
+  (obs_normalizer): EmpiricalNormalization()
+  (distribution): GaussianDistribution()
+  (mlp): MLP(
+    (0): Linear(in_features=61, out_features=512, bias=True)
+    (1): ELU(alpha=1.0)
+    (2): Linear(in_features=512, out_features=256, bias=True)
+    (3): ELU(alpha=1.0)
+    (4): Linear(in_features=256, out_features=128, bias=True)
+    (5): ELU(alpha=1.0)
+    (6): Linear(in_features=128, out_features=14, bias=True)
+  )
+)
+Critic Model: MLPModel(
+  (obs_normalizer): EmpiricalNormalization()
+  (mlp): MLP(
+    (0): Linear(in_features=76, out_features=512, bias=True)
+    (1): ELU(alpha=1.0)
+    (2): Linear(in_features=512, out_features=256, bias=True)
+    (3): ELU(alpha=1.0)
+    (4): Linear(in_features=256, out_features=128, bias=True)
+    (5): ELU(alpha=1.0)
+    (6): Linear(in_features=128, out_features=1, bias=True)
+  )
+)
+Resuming from /home/xingchen/Xduck/xduck_rigid4096_220after900_20260930/rigid4096_220after900/model_1199.pt
+Restored environment progress to step 28800
+Could not find git repository in /home/xingchen/Xduck/xduck_speed_correction_20260930/project/.venv/lib/python3.10/site-packages/rsl_rl/__init__.py. Skipping.
+################################################################################
+[1m                          Learning iteration 1200/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 118063104 
+                       Steps per second: 18712 
+                        Collection time: 4.933s 
+                          Learning time: 0.321s 
+                        Mean value loss: 0.0601
+                    Mean surrogate loss: 0.0058
+                      Mean entropy loss: 7.5517
+                        Mean action std: 0.47
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 0.0958
+                 speed/mean_track_delta: 0.0000
+                    speed/variance_cost: 0.0000
+                  audit/reference_score: 0.3417
+              curriculum/effective_step: 28823.0000
+            audit/gf_peak_abs_torque_nm: 61.4326
+            audit/gf_mean_abs_torque_nm: 10.5115
+              audit/cadence_steps_per_s: 6.9332
+--------------------------------------------------------------------------------
+                         Iteration time: 5.25s
+                           Time elapsed: 02:11:56
+                                    ETA: 15:46:26
+
+################################################################################
+[1m                          Learning iteration 1201/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 118161408 
+                       Steps per second: 18798 
+                        Collection time: 5.004s 
+                          Learning time: 0.226s 
+                        Mean value loss: 0.0115
+                    Mean surrogate loss: -0.0132
+                      Mean entropy loss: 7.3957
+                            Mean reward: -0.17
+                    Mean episode length: 36.25
+                        Mean action std: 0.47
+                    audit/cadence_score: 0.0544
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 0.1958
+                 speed/mean_track_delta: -0.7378
+                    speed/variance_cost: 0.0000
+                  audit/reference_score: 0.3854
+              curriculum/effective_step: 28847.0000
+            audit/gf_peak_abs_torque_nm: 56.2720
+            audit/gf_mean_abs_torque_nm: 10.3436
+              audit/cadence_steps_per_s: 4.2015
+--------------------------------------------------------------------------------
+                         Iteration time: 5.23s
+                           Time elapsed: 02:12:02
+                                    ETA: 06:48:28
+
+################################################################################
+[1m                          Learning iteration 1202/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 118259712 
+                       Steps per second: 20113 
+                        Collection time: 4.690s 
+                          Learning time: 0.198s 
+                        Mean value loss: 0.0083
+                    Mean surrogate loss: -0.0133
+                      Mean entropy loss: 7.1820
+                            Mean reward: -0.17
+                    Mean episode length: 36.25
+                        Mean action std: 0.46
+                    audit/cadence_score: 0.0759
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 0.2958
+                 speed/mean_track_delta: -0.7482
+                    speed/variance_cost: 0.0000
+                  audit/reference_score: 0.3859
+              curriculum/effective_step: 28871.0000
+            audit/gf_peak_abs_torque_nm: 50.5084
+            audit/gf_mean_abs_torque_nm: 10.2267
+              audit/cadence_steps_per_s: 3.7003
+--------------------------------------------------------------------------------
+                         Iteration time: 4.89s
+                           Time elapsed: 02:12:06
+                                    ETA: 19:49:02
+
+################################################################################
+[1m                          Learning iteration 1203/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 118358016 
+                       Steps per second: 19779 
+                        Collection time: 4.772s 
+                          Learning time: 0.198s 
+                        Mean value loss: 0.0095
+                    Mean surrogate loss: -0.0114
+                      Mean entropy loss: 6.9610
+                            Mean reward: 0.04
+                    Mean episode length: 44.60
+                        Mean action std: 0.45
+                    audit/cadence_score: 0.0787
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 0.3958
+                 speed/mean_track_delta: -0.7488
+                    speed/variance_cost: 0.4889
+                  audit/reference_score: 0.3927
+              curriculum/effective_step: 28895.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 10.0327
+              audit/cadence_steps_per_s: 3.6191
+--------------------------------------------------------------------------------
+                         Iteration time: 4.97s
+                           Time elapsed: 02:12:11
+                                    ETA: 14:19:17
+
+################################################################################
+[1m                          Learning iteration 1204/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 118456320 
+                       Steps per second: 19875 
+                        Collection time: 4.748s 
+                          Learning time: 0.198s 
+                        Mean value loss: 0.0079
+                    Mean surrogate loss: -0.0124
+                      Mean entropy loss: 6.7195
+                            Mean reward: 0.04
+                    Mean episode length: 44.60
+                        Mean action std: 0.45
+                    audit/cadence_score: 0.0754
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 0.4958
+                 speed/mean_track_delta: -0.7566
+                    speed/variance_cost: 0.4845
+                  audit/reference_score: 0.3920
+              curriculum/effective_step: 28919.0000
+            audit/gf_peak_abs_torque_nm: 60.1741
+            audit/gf_mean_abs_torque_nm: 9.8697
+              audit/cadence_steps_per_s: 3.6054
+--------------------------------------------------------------------------------
+                         Iteration time: 4.95s
+                           Time elapsed: 02:12:16
+                                    ETA: 11:01:24
+
+################################################################################
+[1m                          Learning iteration 1205/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 118554624 
+                       Steps per second: 20085 
+                        Collection time: 4.696s 
+                          Learning time: 0.198s 
+                        Mean value loss: 0.0081
+                    Mean surrogate loss: -0.0104
+                      Mean entropy loss: 6.5550
+                            Mean reward: 0.04
+                    Mean episode length: 44.60
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0754
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 0.5958
+                 speed/mean_track_delta: -0.7635
+                    speed/variance_cost: 0.4751
+                  audit/reference_score: 0.3967
+              curriculum/effective_step: 28943.0000
+            audit/gf_peak_abs_torque_nm: 54.4193
+            audit/gf_mean_abs_torque_nm: 9.6292
+              audit/cadence_steps_per_s: 3.5887
+--------------------------------------------------------------------------------
+                         Iteration time: 4.89s
+                           Time elapsed: 02:12:21
+                                    ETA: 08:49:26
+
+################################################################################
+[1m                          Learning iteration 1206/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 118652928 
+                       Steps per second: 20088 
+                        Collection time: 4.701s 
+                          Learning time: 0.192s 
+                        Mean value loss: 0.0098
+                    Mean surrogate loss: -0.0110
+                      Mean entropy loss: 6.3469
+                            Mean reward: 0.04
+                    Mean episode length: 44.60
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0797
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 0.6958
+                 speed/mean_track_delta: -0.7389
+                    speed/variance_cost: 0.4760
+                  audit/reference_score: 0.4010
+              curriculum/effective_step: 28967.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.5115
+              audit/cadence_steps_per_s: 3.5695
+--------------------------------------------------------------------------------
+                         Iteration time: 4.89s
+                           Time elapsed: 02:12:26
+                                    ETA: 07:15:10
+
+################################################################################
+[1m                          Learning iteration 1207/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 118751232 
+                       Steps per second: 20215 
+                        Collection time: 4.664s 
+                          Learning time: 0.198s 
+                        Mean value loss: 0.0139
+                    Mean surrogate loss: -0.0088
+                      Mean entropy loss: 6.2111
+                            Mean reward: 0.04
+                    Mean episode length: 44.60
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0792
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 0.7958
+                 speed/mean_track_delta: -0.7710
+                    speed/variance_cost: 0.4777
+                  audit/reference_score: 0.4009
+              curriculum/effective_step: 28991.0000
+            audit/gf_peak_abs_torque_nm: 52.7972
+            audit/gf_mean_abs_torque_nm: 9.3712
+              audit/cadence_steps_per_s: 3.5462
+--------------------------------------------------------------------------------
+                         Iteration time: 4.86s
+                           Time elapsed: 02:12:31
+                                    ETA: 06:04:26
+
+################################################################################
+[1m                          Learning iteration 1208/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 118849536 
+                       Steps per second: 19762 
+                        Collection time: 4.774s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.0137
+                    Mean surrogate loss: -0.0087
+                      Mean entropy loss: 6.0516
+                            Mean reward: 2.07
+                    Mean episode length: 65.50
+                        Mean action std: 0.43
+                    audit/cadence_score: 0.0788
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 0.8958
+                 speed/mean_track_delta: -0.7513
+                    speed/variance_cost: 0.4747
+                  audit/reference_score: 0.4016
+              curriculum/effective_step: 29015.0000
+            audit/gf_peak_abs_torque_nm: 50.0376
+            audit/gf_mean_abs_torque_nm: 9.2388
+              audit/cadence_steps_per_s: 3.5322
+--------------------------------------------------------------------------------
+                         Iteration time: 4.97s
+                           Time elapsed: 02:12:36
+                                    ETA: 05:09:25
+
+################################################################################
+[1m                          Learning iteration 1209/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 118947840 
+                       Steps per second: 19559 
+                        Collection time: 4.827s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.2947
+                    Mean surrogate loss: -0.0050
+                      Mean entropy loss: 6.0260
+                            Mean reward: 5.70
+                    Mean episode length: 108.50
+                        Mean action std: 0.43
+                    audit/cadence_score: 0.0766
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 0.9958
+                 speed/mean_track_delta: -0.6831
+                    speed/variance_cost: 0.3932
+                  audit/reference_score: 0.3897
+              curriculum/effective_step: 29039.0000
+            audit/gf_peak_abs_torque_nm: 75.7812
+            audit/gf_mean_abs_torque_nm: 9.3135
+              audit/cadence_steps_per_s: 3.5211
+--------------------------------------------------------------------------------
+                         Iteration time: 5.03s
+                           Time elapsed: 02:12:41
+                                    ETA: 04:25:22
+
+################################################################################
+[1m                          Learning iteration 1210/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 119046144 
+                       Steps per second: 16525 
+                        Collection time: 5.749s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.2880
+                    Mean surrogate loss: -0.0066
+                      Mean entropy loss: 6.0625
+                            Mean reward: 16.58
+                    Mean episode length: 227.88
+                        Mean action std: 0.43
+                    audit/cadence_score: 0.0682
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6561
+                    speed/variance_cost: 0.3139
+                  audit/reference_score: 0.3720
+              curriculum/effective_step: 29063.0000
+            audit/gf_peak_abs_torque_nm: 78.5502
+            audit/gf_mean_abs_torque_nm: 9.3845
+              audit/cadence_steps_per_s: 3.5753
+                    Episode_Reward/pose: 0.2149
+                 Episode_Reward/upright: 0.4108
+               Episode_Reward/foot_slip: -0.0001
+         Episode_Reward/self_collisions: -0.0015
+                Episode_Reward/air_time: 0.1575
+            Episode_Reward/body_ang_vel: -0.0359
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.2203
+  Episode_Reward/track_angular_velocity: 0.0477
+          Episode_Reward/action_rate_l2: -0.3473
+          Episode_Reward/foot_clearance: -0.0032
+       Episode_Reward/foot_swing_height: -0.0051
+      Episode_Reward/head_pose_tracking: 0.4798
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0529
+          Episode_Reward/dof_pos_limits: -0.0206
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 5.95s
+                           Time elapsed: 02:12:47
+                                    ETA: 03:49:21
+
+################################################################################
+[1m                          Learning iteration 1211/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 119144448 
+                       Steps per second: 15674 
+                        Collection time: 6.072s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.2481
+                    Mean surrogate loss: -0.0067
+                      Mean entropy loss: 6.0902
+                            Mean reward: 18.79
+                    Mean episode length: 253.13
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0672
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6647
+                    speed/variance_cost: 0.2486
+                  audit/reference_score: 0.3791
+              curriculum/effective_step: 29087.0000
+            audit/gf_peak_abs_torque_nm: 77.5490
+            audit/gf_mean_abs_torque_nm: 9.4510
+              audit/cadence_steps_per_s: 3.6230
+                    Episode_Reward/pose: 0.1784
+                 Episode_Reward/upright: 0.4688
+               Episode_Reward/foot_slip: -0.0001
+         Episode_Reward/self_collisions: -0.0037
+                Episode_Reward/air_time: 0.0940
+            Episode_Reward/body_ang_vel: -0.0443
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.3082
+  Episode_Reward/track_angular_velocity: 0.0584
+          Episode_Reward/action_rate_l2: -0.3747
+          Episode_Reward/foot_clearance: -0.0021
+       Episode_Reward/foot_swing_height: -0.0047
+      Episode_Reward/head_pose_tracking: 0.5387
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0353
+          Episode_Reward/dof_pos_limits: -0.0230
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.27s
+                           Time elapsed: 02:12:53
+                                    ETA: 03:19:20
+
+################################################################################
+[1m                          Learning iteration 1212/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 119242752 
+                       Steps per second: 16004 
+                        Collection time: 5.942s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.2395
+                    Mean surrogate loss: -0.0065
+                      Mean entropy loss: 6.1201
+                            Mean reward: 21.20
+                    Mean episode length: 282.90
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0698
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6728
+                    speed/variance_cost: 0.2481
+                  audit/reference_score: 0.3739
+              curriculum/effective_step: 29111.0000
+            audit/gf_peak_abs_torque_nm: 81.3647
+            audit/gf_mean_abs_torque_nm: 9.4762
+              audit/cadence_steps_per_s: 3.6414
+                    Episode_Reward/pose: 0.2512
+                 Episode_Reward/upright: 0.5026
+               Episode_Reward/foot_slip: -0.0003
+         Episode_Reward/self_collisions: -0.0060
+                Episode_Reward/air_time: 0.1995
+            Episode_Reward/body_ang_vel: -0.0542
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.2788
+  Episode_Reward/track_angular_velocity: 0.0470
+          Episode_Reward/action_rate_l2: -0.4535
+          Episode_Reward/foot_clearance: -0.0029
+       Episode_Reward/foot_swing_height: -0.0031
+      Episode_Reward/head_pose_tracking: 0.5684
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0512
+          Episode_Reward/dof_pos_limits: -0.0232
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.14s
+                           Time elapsed: 02:12:59
+                                    ETA: 02:53:55
+
+################################################################################
+[1m                          Learning iteration 1213/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 119341056 
+                       Steps per second: 16344 
+                        Collection time: 5.814s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.2492
+                    Mean surrogate loss: -0.0054
+                      Mean entropy loss: 6.1386
+                            Mean reward: 22.68
+                    Mean episode length: 303.31
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0643
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6661
+                    speed/variance_cost: 0.2502
+                  audit/reference_score: 0.3757
+              curriculum/effective_step: 29135.0000
+            audit/gf_peak_abs_torque_nm: 80.6254
+            audit/gf_mean_abs_torque_nm: 9.4995
+              audit/cadence_steps_per_s: 3.6536
+                    Episode_Reward/pose: 0.2702
+                 Episode_Reward/upright: 0.5329
+               Episode_Reward/foot_slip: -0.0003
+         Episode_Reward/self_collisions: -0.0090
+                Episode_Reward/air_time: 0.1845
+            Episode_Reward/body_ang_vel: -0.0536
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.2875
+  Episode_Reward/track_angular_velocity: 0.0626
+          Episode_Reward/action_rate_l2: -0.4651
+          Episode_Reward/foot_clearance: -0.0029
+       Episode_Reward/foot_swing_height: -0.0044
+      Episode_Reward/head_pose_tracking: 0.6150
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0574
+          Episode_Reward/dof_pos_limits: -0.0271
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.01s
+                           Time elapsed: 02:13:05
+                                    ETA: 02:32:06
+
+################################################################################
+[1m                          Learning iteration 1214/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 119439360 
+                       Steps per second: 15747 
+                        Collection time: 6.044s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.2385
+                    Mean surrogate loss: -0.0071
+                      Mean entropy loss: 6.1587
+                            Mean reward: 24.51
+                    Mean episode length: 329.87
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0625
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6526
+                    speed/variance_cost: 0.2579
+                  audit/reference_score: 0.3716
+              curriculum/effective_step: 29159.0000
+            audit/gf_peak_abs_torque_nm: 86.4607
+            audit/gf_mean_abs_torque_nm: 9.5212
+              audit/cadence_steps_per_s: 3.6589
+                    Episode_Reward/pose: 0.2942
+                 Episode_Reward/upright: 0.6041
+               Episode_Reward/foot_slip: -0.0001
+         Episode_Reward/self_collisions: -0.0020
+                Episode_Reward/air_time: 0.2490
+            Episode_Reward/body_ang_vel: -0.0534
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.2983
+  Episode_Reward/track_angular_velocity: 0.0621
+          Episode_Reward/action_rate_l2: -0.4525
+          Episode_Reward/foot_clearance: -0.0040
+       Episode_Reward/foot_swing_height: -0.0029
+      Episode_Reward/head_pose_tracking: 0.6809
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0380
+          Episode_Reward/dof_pos_limits: -0.0308
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.24s
+                           Time elapsed: 02:13:12
+                                    ETA: 02:13:12
+
+################################################################################
+[1m                          Learning iteration 1215/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 119537664 
+                       Steps per second: 16164 
+                        Collection time: 5.881s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.2296
+                    Mean surrogate loss: -0.0065
+                      Mean entropy loss: 6.1780
+                            Mean reward: 26.42
+                    Mean episode length: 354.22
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0655
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6781
+                    speed/variance_cost: 0.2526
+                  audit/reference_score: 0.3686
+              curriculum/effective_step: 29183.0000
+            audit/gf_peak_abs_torque_nm: 71.2846
+            audit/gf_mean_abs_torque_nm: 9.5230
+              audit/cadence_steps_per_s: 3.6635
+                    Episode_Reward/pose: 0.2932
+                 Episode_Reward/upright: 0.6347
+               Episode_Reward/foot_slip: -0.0004
+         Episode_Reward/self_collisions: -0.0180
+                Episode_Reward/air_time: 0.2580
+            Episode_Reward/body_ang_vel: -0.0706
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.3403
+  Episode_Reward/track_angular_velocity: 0.0713
+          Episode_Reward/action_rate_l2: -0.5545
+          Episode_Reward/foot_clearance: -0.0041
+       Episode_Reward/foot_swing_height: -0.0084
+      Episode_Reward/head_pose_tracking: 0.6624
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0999
+          Episode_Reward/dof_pos_limits: -0.0321
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.08s
+                           Time elapsed: 02:13:18
+                                    ETA: 01:56:38
+
+################################################################################
+[1m                          Learning iteration 1216/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 119635968 
+                       Steps per second: 15827 
+                        Collection time: 6.011s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.2598
+                    Mean surrogate loss: -0.0062
+                      Mean entropy loss: 6.2020
+                            Mean reward: 28.60
+                    Mean episode length: 380.26
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0602
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6561
+                    speed/variance_cost: 0.2501
+                  audit/reference_score: 0.3645
+              curriculum/effective_step: 29207.0000
+            audit/gf_peak_abs_torque_nm: 72.1141
+            audit/gf_mean_abs_torque_nm: 9.4877
+              audit/cadence_steps_per_s: 3.6903
+                    Episode_Reward/pose: 0.3291
+                 Episode_Reward/upright: 0.6679
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: -0.0010
+                Episode_Reward/air_time: 0.2370
+            Episode_Reward/body_ang_vel: -0.0638
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.5063
+  Episode_Reward/track_angular_velocity: 0.0794
+          Episode_Reward/action_rate_l2: -0.5216
+          Episode_Reward/foot_clearance: -0.0031
+       Episode_Reward/foot_swing_height: -0.0057
+      Episode_Reward/head_pose_tracking: 0.7626
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0511
+          Episode_Reward/dof_pos_limits: -0.0330
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.21s
+                           Time elapsed: 02:13:24
+                                    ETA: 01:42:00
+
+################################################################################
+[1m                          Learning iteration 1217/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 119734272 
+                       Steps per second: 15492 
+                        Collection time: 6.144s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.1979
+                    Mean surrogate loss: -0.0075
+                      Mean entropy loss: 6.2202
+                            Mean reward: 30.05
+                    Mean episode length: 402.64
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0662
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6603
+                    speed/variance_cost: 0.2486
+                  audit/reference_score: 0.3651
+              curriculum/effective_step: 29231.0000
+            audit/gf_peak_abs_torque_nm: 72.0646
+            audit/gf_mean_abs_torque_nm: 9.5044
+              audit/cadence_steps_per_s: 3.7089
+                    Episode_Reward/pose: 0.2288
+                 Episode_Reward/upright: 0.7452
+               Episode_Reward/foot_slip: -0.0001
+         Episode_Reward/self_collisions: -0.0025
+                Episode_Reward/air_time: 0.1665
+            Episode_Reward/body_ang_vel: -0.0591
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.4744
+  Episode_Reward/track_angular_velocity: 0.0857
+          Episode_Reward/action_rate_l2: -0.5603
+          Episode_Reward/foot_clearance: -0.0018
+       Episode_Reward/foot_swing_height: -0.0029
+      Episode_Reward/head_pose_tracking: 0.8157
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0571
+          Episode_Reward/dof_pos_limits: -0.0341
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.35s
+                           Time elapsed: 02:13:30
+                                    ETA: 01:29:00
+
+################################################################################
+[1m                          Learning iteration 1218/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 119832576 
+                       Steps per second: 16738 
+                        Collection time: 5.674s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.0705
+                    Mean surrogate loss: -0.0066
+                      Mean entropy loss: 6.2074
+                            Mean reward: 31.23
+                    Mean episode length: 420.66
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0706
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6976
+                    speed/variance_cost: 0.2861
+                  audit/reference_score: 0.3829
+              curriculum/effective_step: 29255.0000
+            audit/gf_peak_abs_torque_nm: 67.6099
+            audit/gf_mean_abs_torque_nm: 9.4194
+              audit/cadence_steps_per_s: 3.6863
+--------------------------------------------------------------------------------
+                         Iteration time: 5.87s
+                           Time elapsed: 02:13:36
+                                    ETA: 01:17:21
+
+################################################################################
+[1m                          Learning iteration 1219/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 119930880 
+                       Steps per second: 17769 
+                        Collection time: 5.331s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.0812
+                    Mean surrogate loss: -0.0068
+                      Mean entropy loss: 6.1687
+                            Mean reward: 32.16
+                    Mean episode length: 434.98
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0757
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6821
+                    speed/variance_cost: 0.3131
+                  audit/reference_score: 0.3898
+              curriculum/effective_step: 29279.0000
+            audit/gf_peak_abs_torque_nm: 51.0506
+            audit/gf_mean_abs_torque_nm: 9.3238
+              audit/cadence_steps_per_s: 3.6417
+                    Episode_Reward/pose: 0.3828
+                 Episode_Reward/upright: 0.7839
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: -0.0060
+                Episode_Reward/air_time: 0.2895
+            Episode_Reward/body_ang_vel: -0.0579
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.5479
+  Episode_Reward/track_angular_velocity: 0.0892
+          Episode_Reward/action_rate_l2: -0.6268
+          Episode_Reward/foot_clearance: -0.0045
+       Episode_Reward/foot_swing_height: -0.0037
+      Episode_Reward/head_pose_tracking: 0.9096
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0541
+          Episode_Reward/dof_pos_limits: -0.0387
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 5.53s
+                           Time elapsed: 02:13:42
+                                    ETA: 01:06:51
+
+################################################################################
+[1m                          Learning iteration 1220/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 120029184 
+                       Steps per second: 18349 
+                        Collection time: 5.158s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.0853
+                    Mean surrogate loss: -0.0056
+                      Mean entropy loss: 6.1419
+                            Mean reward: 32.35
+                    Mean episode length: 439.51
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0806
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6938
+                    speed/variance_cost: 0.3434
+                  audit/reference_score: 0.3920
+              curriculum/effective_step: 29303.0000
+            audit/gf_peak_abs_torque_nm: 50.8292
+            audit/gf_mean_abs_torque_nm: 9.3011
+              audit/cadence_steps_per_s: 3.6188
+                    Episode_Reward/pose: 0.3976
+                 Episode_Reward/upright: 0.8423
+               Episode_Reward/foot_slip: -0.0004
+         Episode_Reward/self_collisions: -0.0030
+                Episode_Reward/air_time: 0.3060
+            Episode_Reward/body_ang_vel: -0.0750
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.4785
+  Episode_Reward/track_angular_velocity: 0.0800
+          Episode_Reward/action_rate_l2: -0.6688
+          Episode_Reward/foot_clearance: -0.0050
+       Episode_Reward/foot_swing_height: -0.0068
+      Episode_Reward/head_pose_tracking: 0.9051
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0951
+          Episode_Reward/dof_pos_limits: -0.0410
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 5.36s
+                           Time elapsed: 02:13:47
+                                    ETA: 00:57:20
+
+################################################################################
+[1m                          Learning iteration 1221/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 120127488 
+                       Steps per second: 17872 
+                        Collection time: 5.300s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.1402
+                    Mean surrogate loss: -0.0057
+                      Mean entropy loss: 6.1425
+                            Mean reward: 33.10
+                    Mean episode length: 449.77
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0780
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6565
+                    speed/variance_cost: 0.3279
+                  audit/reference_score: 0.3883
+              curriculum/effective_step: 29327.0000
+            audit/gf_peak_abs_torque_nm: 85.3589
+            audit/gf_mean_abs_torque_nm: 9.3109
+              audit/cadence_steps_per_s: 3.6010
+--------------------------------------------------------------------------------
+                         Iteration time: 5.50s
+                           Time elapsed: 02:13:52
+                                    ETA: 00:48:41
+
+################################################################################
+[1m                          Learning iteration 1222/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 120225792 
+                       Steps per second: 16857 
+                        Collection time: 5.627s 
+                          Learning time: 0.204s 
+                        Mean value loss: 0.1226
+                    Mean surrogate loss: -0.0059
+                      Mean entropy loss: 6.1479
+                            Mean reward: 34.16
+                    Mean episode length: 466.19
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0751
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6770
+                    speed/variance_cost: 0.3095
+                  audit/reference_score: 0.3778
+              curriculum/effective_step: 29351.0000
+            audit/gf_peak_abs_torque_nm: 63.2532
+            audit/gf_mean_abs_torque_nm: 9.3502
+              audit/cadence_steps_per_s: 3.5870
+--------------------------------------------------------------------------------
+                         Iteration time: 5.83s
+                           Time elapsed: 02:13:58
+                                    ETA: 00:40:46
+
+################################################################################
+[1m                          Learning iteration 1223/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 120324096 
+                       Steps per second: 18166 
+                        Collection time: 5.211s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.1225
+                    Mean surrogate loss: -0.0057
+                      Mean entropy loss: 6.1480
+                            Mean reward: 35.00
+                    Mean episode length: 471.97
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0758
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6545
+                    speed/variance_cost: 0.2914
+                  audit/reference_score: 0.3870
+              curriculum/effective_step: 29375.0000
+            audit/gf_peak_abs_torque_nm: 88.8135
+            audit/gf_mean_abs_torque_nm: 9.3632
+              audit/cadence_steps_per_s: 3.5977
+--------------------------------------------------------------------------------
+                         Iteration time: 5.41s
+                           Time elapsed: 02:14:04
+                                    ETA: 00:33:31
+
+################################################################################
+[1m                          Learning iteration 1224/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 120422400 
+                       Steps per second: 16936 
+                        Collection time: 5.603s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.1930
+                    Mean surrogate loss: -0.0054
+                      Mean entropy loss: 6.1633
+                            Mean reward: 37.02
+                    Mean episode length: 495.08
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0732
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6769
+                    speed/variance_cost: 0.2888
+                  audit/reference_score: 0.3837
+              curriculum/effective_step: 29399.0000
+            audit/gf_peak_abs_torque_nm: 93.4834
+            audit/gf_mean_abs_torque_nm: 9.4132
+              audit/cadence_steps_per_s: 3.6002
+--------------------------------------------------------------------------------
+                         Iteration time: 5.80s
+                           Time elapsed: 02:14:10
+                                    ETA: 00:26:50
+
+################################################################################
+[1m                          Learning iteration 1225/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 120520704 
+                       Steps per second: 16780 
+                        Collection time: 5.659s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.1841
+                    Mean surrogate loss: -0.0066
+                      Mean entropy loss: 6.1724
+                            Mean reward: 39.37
+                    Mean episode length: 518.68
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0727
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6898
+                    speed/variance_cost: 0.2957
+                  audit/reference_score: 0.3766
+              curriculum/effective_step: 29423.0000
+            audit/gf_peak_abs_torque_nm: 75.6014
+            audit/gf_mean_abs_torque_nm: 9.4565
+              audit/cadence_steps_per_s: 3.6066
+--------------------------------------------------------------------------------
+                         Iteration time: 5.86s
+                           Time elapsed: 02:14:15
+                                    ETA: 00:20:39
+
+################################################################################
+[1m                          Learning iteration 1226/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 120619008 
+                       Steps per second: 16056 
+                        Collection time: 5.922s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.2280
+                    Mean surrogate loss: -0.0076
+                      Mean entropy loss: 6.1825
+                            Mean reward: 42.24
+                    Mean episode length: 557.59
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0664
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6645
+                    speed/variance_cost: 0.2916
+                  audit/reference_score: 0.3688
+              curriculum/effective_step: 29447.0000
+            audit/gf_peak_abs_torque_nm: 80.4458
+            audit/gf_mean_abs_torque_nm: 9.5234
+              audit/cadence_steps_per_s: 3.6218
+                    Episode_Reward/pose: 0.4749
+                 Episode_Reward/upright: 1.1296
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: -0.0070
+                Episode_Reward/air_time: 0.3360
+            Episode_Reward/body_ang_vel: -0.0673
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.7805
+  Episode_Reward/track_angular_velocity: 0.1307
+          Episode_Reward/action_rate_l2: -0.7530
+          Episode_Reward/foot_clearance: -0.0028
+       Episode_Reward/foot_swing_height: -0.0045
+      Episode_Reward/head_pose_tracking: 1.2074
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0971
+          Episode_Reward/dof_pos_limits: -0.0523
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.12s
+                           Time elapsed: 02:14:22
+                                    ETA: 00:14:55
+
+################################################################################
+[1m                          Learning iteration 1227/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 120717312 
+                       Steps per second: 16359 
+                        Collection time: 5.810s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.1872
+                    Mean surrogate loss: -0.0061
+                      Mean entropy loss: 6.2038
+                            Mean reward: 44.07
+                    Mean episode length: 589.97
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0670
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6804
+                    speed/variance_cost: 0.2850
+                  audit/reference_score: 0.3687
+              curriculum/effective_step: 29471.0000
+            audit/gf_peak_abs_torque_nm: 94.3670
+            audit/gf_mean_abs_torque_nm: 9.4913
+              audit/cadence_steps_per_s: 3.6164
+                    Episode_Reward/pose: 0.5287
+                 Episode_Reward/upright: 1.0818
+               Episode_Reward/foot_slip: -0.0006
+         Episode_Reward/self_collisions: -0.0050
+                Episode_Reward/air_time: 0.4620
+            Episode_Reward/body_ang_vel: -0.0996
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.6841
+  Episode_Reward/track_angular_velocity: 0.1233
+          Episode_Reward/action_rate_l2: -0.9874
+          Episode_Reward/foot_clearance: -0.0072
+       Episode_Reward/foot_swing_height: -0.0084
+      Episode_Reward/head_pose_tracking: 1.2561
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0928
+          Episode_Reward/dof_pos_limits: -0.0554
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.01s
+                           Time elapsed: 02:14:28
+                                    ETA: 00:09:36
+
+################################################################################
+[1m                          Learning iteration 1228/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 120815616 
+                       Steps per second: 16085 
+                        Collection time: 5.907s 
+                          Learning time: 0.204s 
+                        Mean value loss: 0.1971
+                    Mean surrogate loss: -0.0067
+                      Mean entropy loss: 6.2242
+                            Mean reward: 47.51
+                    Mean episode length: 635.87
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0618
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6534
+                    speed/variance_cost: 0.2741
+                  audit/reference_score: 0.3685
+              curriculum/effective_step: 29495.0000
+            audit/gf_peak_abs_torque_nm: 93.9830
+            audit/gf_mean_abs_torque_nm: 9.5122
+              audit/cadence_steps_per_s: 3.6305
+                    Episode_Reward/pose: 0.5684
+                 Episode_Reward/upright: 1.2215
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: 0.0000
+                Episode_Reward/air_time: 0.4530
+            Episode_Reward/body_ang_vel: -0.0701
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.7125
+  Episode_Reward/track_angular_velocity: 0.1458
+          Episode_Reward/action_rate_l2: -0.8247
+          Episode_Reward/foot_clearance: -0.0050
+       Episode_Reward/foot_swing_height: -0.0049
+      Episode_Reward/head_pose_tracking: 1.3028
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.1028
+          Episode_Reward/dof_pos_limits: -0.0607
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.11s
+                           Time elapsed: 02:14:34
+                                    ETA: 00:04:38
+
+################################################################################
+[1m                          Learning iteration 1229/1230                          [0m 
+
+                               Run name: mean_var
+                            Total steps: 120913920 
+                       Steps per second: 16503 
+                        Collection time: 5.757s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.1481
+                    Mean surrogate loss: -0.0065
+                      Mean entropy loss: 6.2469
+                            Mean reward: 48.82
+                    Mean episode length: 655.07
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0629
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                            speed/alpha: 1.0000
+                 speed/mean_track_delta: -0.6558
+                    speed/variance_cost: 0.2845
+                  audit/reference_score: 0.3691
+              curriculum/effective_step: 29519.0000
+            audit/gf_peak_abs_torque_nm: 69.9166
+            audit/gf_mean_abs_torque_nm: 9.4823
+              audit/cadence_steps_per_s: 3.6408
+                    Episode_Reward/pose: 0.5777
+                 Episode_Reward/upright: 1.2508
+               Episode_Reward/foot_slip: -0.0003
+         Episode_Reward/self_collisions: -0.0240
+                Episode_Reward/air_time: 0.4980
+            Episode_Reward/body_ang_vel: -0.0879
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.7863
+  Episode_Reward/track_angular_velocity: 0.1289
+          Episode_Reward/action_rate_l2: -0.8997
+          Episode_Reward/foot_clearance: -0.0043
+       Episode_Reward/foot_swing_height: -0.0071
+      Episode_Reward/head_pose_tracking: 1.3458
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.1104
+          Episode_Reward/dof_pos_limits: -0.0628
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 5.96s
+                           Time elapsed: 02:14:40
+                                    ETA: 00:00:00
+

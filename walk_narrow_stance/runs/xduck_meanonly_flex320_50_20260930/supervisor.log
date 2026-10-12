@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/xingchen/Xduck/xduck_meanonly_flex320_50_20260930/project/../supervisor.py", line 33, in <module>
+    run([str(R/'test_flex.py')],'flex_tests');assert json.loads((R/'flex_tests.json').read_text())['passed']
+  File "/home/xingchen/Xduck/xduck_meanonly_flex320_50_20260930/project/../supervisor.py", line 17, in run
+    if child.returncode:raise RuntimeError(f'{tag} exit {child.returncode}')
+RuntimeError: flex_tests exit 1

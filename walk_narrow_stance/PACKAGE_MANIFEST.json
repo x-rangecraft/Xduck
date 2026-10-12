@@ -1,0 +1,2337 @@
+{
+  "title": "缩小站距的走",
+  "archive_date": "2026-10-12",
+  "selected_actual_updates": 51,
+  "original_planned_flex_updates": 100,
+  "from_scratch": true,
+  "full_lineage": [
+    "00_model_199.pt",
+    "01_model_900.pt",
+    "02_model_1199.pt",
+    "03_model_1229.pt",
+    "04_model_1279.pt",
+    "05_clean_roll_seed.pt",
+    "05_clean_r3_80.pt",
+    "06_direction_150.pt",
+    "06_backward_bootstrap.pt",
+    "06_direction_r2_179.pt",
+    "07_flex_model_50.pt"
+  ],
+  "runtime_versions": 8,
+  "payload_bytes": 348268667,
+  "max_file_bytes": 58941921,
+  "exclusions": [
+    "installed .venv",
+    "Git metadata",
+    "Python caches",
+    "unselected checkpoint weights",
+    "unrelated branch raw trajectories"
+  ],
+  "files": [
+    {
+      "path": "CHECKPOINT_METADATA.json",
+      "size": 10041,
+      "sha256": "99067684f4217ad4fd3f17c2f0009d22d60212936791d4845c53378ab785081c"
+    },
+    {
+      "path": "README.md",
+      "size": 17606,
+      "sha256": "66726bc7746cfa9a06350a27eb1a3338033b3e6952dad0add323160b5b63deed"
+    },
+    {
+      "path": "checkpoint_sources.json",
+      "size": 2248,
+      "sha256": "be52671e231d1b23f7086493b4521f7f13928ec43bc579713171c0e95887ea83"
+    },
+    {
+      "path": "checkpoints/00_model_199.pt",
+      "size": 4843491,
+      "sha256": "9f16213e1aa6cfa91fdba65acde0a54d15a6604b8c1eefcbcee0765b2bf55804"
+    },
+    {
+      "path": "checkpoints/01_model_900.pt",
+      "size": 4843683,
+      "sha256": "0d25664bc6f16bc72abebbd40a653c4839086633e178818ec741cfd9e74a551d"
+    },
+    {
+      "path": "checkpoints/02_model_1199.pt",
+      "size": 4843765,
+      "sha256": "19bf326a578255478572846cba02417bc944ce9d58782c51650b96ee0200344f"
+    },
+    {
+      "path": "checkpoints/03_model_1229.pt",
+      "size": 4843765,
+      "sha256": "43f77956501c8cbcd03255e5884cd6e7cc49d78f85fa000e254c798b803ba1b0"
+    },
+    {
+      "path": "checkpoints/04_model_1279.pt",
+      "size": 4843765,
+      "sha256": "04595e1eb5736b6cac43f25613711156ed4ff02daf78684c860156aba3bbce41"
+    },
+    {
+      "path": "checkpoints/05_clean_r3_80.pt",
+      "size": 4842519,
+      "sha256": "ce31b923e435d2c86f04ac9b0607f1b242aafeacbf3dffca858e90a43fd08fd2"
+    },
+    {
+      "path": "checkpoints/05_clean_roll_seed.pt",
+      "size": 4843471,
+      "sha256": "ccd4ec409bf04fadcc50c6d5d80dc34393d33e41031179b4c5ad09368b89fb6b"
+    },
+    {
+      "path": "checkpoints/06_backward_bootstrap.pt",
+      "size": 1616749,
+      "sha256": "83e364a481958b4b200ffa63e468443db0a3d9bff84ade4c6bd1bc7370314d68"
+    },
+    {
+      "path": "checkpoints/06_direction_150.pt",
+      "size": 4842598,
+      "sha256": "4f037f58d175e06b824f8b8d603427fe540990e84dbcba2419b311918b4ad7d5"
+    },
+    {
+      "path": "checkpoints/06_direction_r2_179.pt",
+      "size": 4842598,
+      "sha256": "b89889b9c64366a9bbd7af51b130223bc805aebdc042a1c366320a74957631b4"
+    },
+    {
+      "path": "checkpoints/07_flex_model_50.pt",
+      "size": 4842519,
+      "sha256": "e959c81f9a362bc6c3c0a4f2cc626716c41d54fafad2ff74debe900e65458ad9"
+    },
+    {
+      "path": "docs/BASELINE_1200_TO_1279.md",
+      "size": 18738,
+      "sha256": "ae8cf79e9cc0de70aa9d7e9fad460e9d936e781afb0bf903fd615dec1f678f3c"
+    },
+    {
+      "path": "docs/ENGINEERING_HISTORY.md",
+      "size": 54130,
+      "sha256": "622f0ef33c5c615031851238af8c2f3f9fce6b4490f9f300ff5db6b1e5f96e3a"
+    },
+    {
+      "path": "docs/ORIGINAL_1200_ARCHIVE.md",
+      "size": 8392,
+      "sha256": "dd69cd10cf5f72801071244f65e7a3280e5eb34561be3a77d81d6a05d551b148"
+    },
+    {
+      "path": "evidence/final_flexible_8dr/FLEX50_CAPABILITY_AUDIT.json",
+      "size": 17959,
+      "sha256": "deeedc090fe6e02e11997f237e5ff9cff0bd8af656df737ec00d4c7e483fcc23"
+    },
+    {
+      "path": "evidence/final_flexible_8dr/adapt50_validation_results.json",
+      "size": 92754,
+      "sha256": "003b78fa84f07fc19cd3dbd5cc84a4115a5d33083e735022c2646efa70000b92"
+    },
+    {
+      "path": "evidence/final_flexible_8dr/flex51_forward_8dr_1x.mp4",
+      "size": 4523261,
+      "sha256": "9a1d1654392b965d155cbf7be9ebf88d84effe930746e3223cf2eaed7ecd5c9d"
+    },
+    {
+      "path": "evidence/final_flexible_8dr/flex51_forward_8dr_1x_preview.png",
+      "size": 406044,
+      "sha256": "b3e5db4f1bab7e41b2a37b9eea12a132020453b77c1fb120d12adafe94bfb738"
+    },
+    {
+      "path": "evidence/final_flexible_8dr/flex51_six_commands_1x.mp4",
+      "size": 3342935,
+      "sha256": "d0a0d030faf4706028a95c63b27c4e6219bcf8d1d61084d77e4434696863e4a3"
+    },
+    {
+      "path": "evidence/final_flexible_8dr/flex51_six_commands_1x_preview.png",
+      "size": 292249,
+      "sha256": "50a06ab605dc235f313f2270a2efdf0068e4d8d7aaaf6a3c10a0f45f43da2619"
+    },
+    {
+      "path": "evidence/final_flexible_8dr/flex_reset_verification.json",
+      "size": 463,
+      "sha256": "cfcba5f46d7b40b1235e72752da236cc86cd9600e567d8d3de4b4de03babf9c4"
+    },
+    {
+      "path": "evidence/final_flexible_8dr/validation_flex_bank_manifest.json",
+      "size": 600,
+      "sha256": "ad037d0ca7ad77f0b5b879c8163cd3309553412a6f649ba53db52dec68e8383a"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/DR_AUDIT_SUMMARY.json",
+      "size": 128827,
+      "sha256": "1492d04cde1970d409b6bff2abdfd6423838cb5edf311699178b9e1c34f0d3a6"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/audit_r2.py",
+      "size": 9044,
+      "sha256": "5a6ef1d3a3c315a54503757981833abca5332b3e72de63bf2bdd623a8e800d63"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/build_dr_bank.py",
+      "size": 4775,
+      "sha256": "0ed4aebab0afef9592ff0dc6c369b4cb2a950ff858788afe1b67877e5cfa5828"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/consumer_symmetric_backward_results.json",
+      "size": 160853,
+      "sha256": "f951caded0be303f3f4cada12f06f9a922a92fdc1dcad15a1fa302d4856650e0"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/consumer_symmetric_forward_results.json",
+      "size": 161137,
+      "sha256": "fbdf1e0a215e6047b64879e7ac2362a3b37971c8593ac4dd5cf2d8e1ad7dfa02"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/contact_friction_probe.json",
+      "size": 1767,
+      "sha256": "8702359653064493cdad0f1dcea4044c95b0c8a05eecd2ae3311d934e0a89723"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/dr_bank_manifest.json",
+      "size": 14571,
+      "sha256": "45880ceda94b39421002a7dad84b8f4a26005001d3be7e778eeaa82a3cd4f5b0"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/dr_speed_distribution.png",
+      "size": 125835,
+      "sha256": "2baf23fb1aa7fd7e8d8d765fc34e7111755f9f8825e38600a30958e748113f60"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/summarize_audit.py",
+      "size": 3631,
+      "sha256": "25019d8d43bfaf3dd2b23123b99dd694f681cdef281f6ccadc09349145774947"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/training_sensors_original_backward_results.json",
+      "size": 161317,
+      "sha256": "08dd6d98b37f45b9a2ace7ae8f933336b216195b98b990b22d88f0357ae01df0"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/training_sensors_original_forward_results.json",
+      "size": 161155,
+      "sha256": "fbd00e3264596917338812c70153f26ccc1559e5574a4759dde900856d0a4f29"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/training_sensors_symmetric_backward_results.json",
+      "size": 161342,
+      "sha256": "14bab52aad2311e65302a4a306ba50dc844cb05e41f0a44081da836784ab944b"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/training_sensors_symmetric_forward_left_results.json",
+      "size": 161308,
+      "sha256": "d086efdb18e486b42f742c8ab6cd366140a9267171e72458fa401d975eb2ccba"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/training_sensors_symmetric_forward_results.json",
+      "size": 161179,
+      "sha256": "b9d185c948b854924306007e8f6058c70a83338fb202046ada13d69e460798c0"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/training_sensors_symmetric_forward_right_results.json",
+      "size": 161406,
+      "sha256": "b5eb4e3a195739323c17cf44341795e05276204425e4568a5ab3def874e3edb8"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/training_sensors_symmetric_left_results.json",
+      "size": 158976,
+      "sha256": "1c9f774b7612a807c7ea99486faa85911d9e921ff03f3ce6bf4820aec2737197"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/training_sensors_symmetric_right_results.json",
+      "size": 159689,
+      "sha256": "dbe4c5e54bf3a3a4e75ecac8502f3ab064975c866dbb4fd9ac9d3eddeec2cfb4"
+    },
+    {
+      "path": "evidence/xduck_r2_dr_audit_20261010/training_sensors_symmetric_summary.json",
+      "size": 1354,
+      "sha256": "024a0a83d71f3024947d1b0077d5c531dab9899dc67a816248051ba947297569"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/DEFAULT_POSE_MOTOR_ID.csv",
+      "size": 451,
+      "sha256": "2ceecd0f052c5e236b67beea2c900231899d3af4adb2d04dc4bda7b25da201a2"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/SYMMETRIC_STANDING_TARGET.json",
+      "size": 2009,
+      "sha256": "da36581109091d692b286f165d4f54ced6dd407d2bf49ea13e1650d1bac9d043"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/foot_orientation_fk.json",
+      "size": 705,
+      "sha256": "00296573c4c1836ca99dbb798c81989beb589c6030f408735604f2778294ffee"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/pose_candidates.json",
+      "size": 5032,
+      "sha256": "dc63fe76b8abe7ae41df7dc2b4fa6425394fdc1303c980c6c6363ed41ce3216e"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/prepare_symmetric_pose.py",
+      "size": 2419,
+      "sha256": "67ca8867c2e8427c61d17af2581a2d0736b06834d20855008c0fbe4b1e1a2ef6"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/render_symmetric_pose.py",
+      "size": 1205,
+      "sha256": "0fdde209bcec3c79bb694b6217f48fe652802ad52dc22921f45c432250201ddd"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/stand_validation_results.json",
+      "size": 37236,
+      "sha256": "2c988da732b7f644520d49352811ad2dac44552e3dc2f6a7a17778935f045027"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/symmetric_default_pose.png",
+      "size": 216279,
+      "sha256": "bf1b463049d434cf2f6926cc1cf8a63917f4ea2b3c8b5adcbc68e35f60d25828"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/symmetric_r2_131_results.json",
+      "size": 57735,
+      "sha256": "95b6b24a1db5747aab35ac1edc7c54c551efa61e72194e7b42990449e73ca50d"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/validate_symmetric_stand.py",
+      "size": 4629,
+      "sha256": "2b3953c77e8bef2aaf6790bfa878632d4b3ffb0118865b8938753dba58b5f3e8"
+    },
+    {
+      "path": "evidence/xduck_symmetric_stand_20261010/validate_walk_compatibility.py",
+      "size": 7809,
+      "sha256": "dd6206631114104f3eee3d1b3178dbedea183b642aa8cb4dc65d5b1e5aad3583"
+    },
+    {
+      "path": "physics/flexible.tar.gz",
+      "size": 24953740,
+      "sha256": "b84c91a56e3be40b159e6300dab0c28b994c964fcd8c90d61b65ab9a32fdf186"
+    },
+    {
+      "path": "physics/reward_audit_rigid.tar.gz",
+      "size": 25030366,
+      "sha256": "b777d274d659bbfb271febcfb26a8101505b8d10b7fa4da5c09ed41523f84efa"
+    },
+    {
+      "path": "physics/rigid.tar.gz",
+      "size": 25044695,
+      "sha256": "604b11d69837541e842f3178f8f2503a2023f994558fa7a585af6cb8d0ecc334"
+    },
+    {
+      "path": "policy/DEFAULT_POSE_MOTOR_ID.csv",
+      "size": 451,
+      "sha256": "2ceecd0f052c5e236b67beea2c900231899d3af4adb2d04dc4bda7b25da201a2"
+    },
+    {
+      "path": "policy/FLEX_ADAPT_SELECTED.json",
+      "size": 1072,
+      "sha256": "4bf64977a282477890cde43de9fd489450d9a66fd5ec058dcac316a99f90a067"
+    },
+    {
+      "path": "policy/NEW_STANDING_TARGET.json",
+      "size": 1128,
+      "sha256": "1c8df439ecd07767772f8c8e75373fe727b17949ad12fbf551ac039d7b51f20d"
+    },
+    {
+      "path": "policy/adaptation_manifest.json",
+      "size": 1050,
+      "sha256": "504217fe3b8e262c214e89876e5a8b86291a54eaa4f068483729fc5b1f859454"
+    },
+    {
+      "path": "policy/clean_parent.onnx",
+      "size": 792867,
+      "sha256": "5b018d62ee0ac30f8709d1e476ca892cde4712959b5edce08cf0093a4227a0f6"
+    },
+    {
+      "path": "policy/clean_r3_80.onnx",
+      "size": 792867,
+      "sha256": "e2d7d17a570e6af866bef53c4ef100ed8f184aa57a9dd6d8555b0b1dc241de69"
+    },
+    {
+      "path": "policy/flex_adapt_50.onnx",
+      "size": 792867,
+      "sha256": "3db03a4558cb06033e9239af4c57bec5bff107bc9d2fed27df127221e564f85d"
+    },
+    {
+      "path": "policy/flex_adapt_export_validation.json",
+      "size": 260,
+      "sha256": "c50061f628a157d3c796fc4166788b45987bfb3380afd4dc109ca042a3247e4e"
+    },
+    {
+      "path": "policy/flex_reset_verification.json",
+      "size": 463,
+      "sha256": "cfcba5f46d7b40b1235e72752da236cc86cd9600e567d8d3de4b4de03babf9c4"
+    },
+    {
+      "path": "policy/parent_r2.onnx",
+      "size": 792867,
+      "sha256": "98f12f8229253dcaf0fd79ad48081518b89db45c3c80b4ca14b7765a76a30427"
+    },
+    {
+      "path": "policy/xc_walking_v3_policy.py",
+      "size": 5080,
+      "sha256": "462f18b195adb2f78f348433b2ec75a4e466f2bbab6a1af143db3fa05d62a0f6"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/NEW_STANDING_TARGET.json",
+      "size": 507,
+      "sha256": "e754322171bae62c8a8ae8eb906c0e31daf6fec26df030faaeccf5e82b8071b8"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/PPO_CLEAN_CONFIG.yaml",
+      "size": 9303,
+      "sha256": "c8f37341ff65d5ddf80fefd238e0462dd73aebee049ed6c3244197f919ac2764"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/PPO_CLEAN_R2_CONFIG.yaml",
+      "size": 9304,
+      "sha256": "b25b2e9f62dc67ed0e1cbbda9ee8f8026df134b686b8fef47434652a563306ea"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/PPO_CLEAN_R3_CONFIG.yaml",
+      "size": 9303,
+      "sha256": "2fdc89c93deb67f3a9b93dc65b44da5340992a0b1ae3b4ba43a2383371cf53e1"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/TRAINING_CONFIG.yaml",
+      "size": 9176,
+      "sha256": "081a5d3e009eeb1ea673939ca6d161d38293a8b7d6f078d83a4bd6a4d8314454"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/accepted_params.log",
+      "size": 5280,
+      "sha256": "d0c8e702d258f819f2e4e966a4588f6d86b188c752b5724b461efeec29322d10"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/capture_accepted_params.py",
+      "size": 765,
+      "sha256": "aff3c7bd35cd61e60928923a36f9a7e3f61b5986685412996332d402a50f3acc"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_baseline.log",
+      "size": 5348,
+      "sha256": "60b0d2dad1061b63f4b57cb556815087cbca04490ed8b378cb27ddf9d5c6d57f"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_baseline_results.json",
+      "size": 16315,
+      "sha256": "fc6918b110aadf6cf60e8459cc4f592c1f1a87c9bbbd1750c7b63dc5e8b6cf0d"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_bias_candidates.json",
+      "size": 818,
+      "sha256": "eb67469915c2e90bee63608426a2e099b4c4c7dd00d4ebc844050d251a7c8645"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_bias_eval.log",
+      "size": 6747,
+      "sha256": "ed6717cd80dd1d57addd9fb273f237faf0f19208f09fa6696903a59126dbd640"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_bias_export.log",
+      "size": 657,
+      "sha256": "1296fb7ba7020d275f4a8a4462eec203426ed5342f3ffc1927c86fcd592e0106"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_early_eval.log",
+      "size": 5358,
+      "sha256": "81d9b17af716facd059196a8aeb6a8b1d41203ca10cd716c11d60d3fbcfba607"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_early_eval_results.json",
+      "size": 12049,
+      "sha256": "407dbebdf942611d88ee8a219f11468842e46ff336b415e72b92c3f001a82ab6"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_export.log",
+      "size": 44,
+      "sha256": "1c59163e401d152555655fdb27bdf0a9a001ec80f69a20f283aae1d8f95f1e25"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_export_early.log",
+      "size": 241,
+      "sha256": "545923cbc24455f44c30b9e0a3b006cfa99c6efea5b9dee2e7ba74c277b26034"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_export_validation.json",
+      "size": 195,
+      "sha256": "0df9e922e92f0b919e5e6b83172623927d70c3913beffe04b9a057b6a238e63b"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_lineage_validation.json",
+      "size": 317,
+      "sha256": "e25d03f843c8afa2d1069e465c97a60d35cf5726a3e972842237168aa6f1238e"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_natural_export_validation.json",
+      "size": 263,
+      "sha256": "cf9f5c1978b6a5b9f6dd1ed5dc1c9f49768bd638db1fc68c2fb67b006bec4703"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_own_anchor.npz",
+      "size": 89627,
+      "sha256": "b4206569c9b5cf9dd522deb793732c085e206244f940bad85deb3d665284ca93"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_pose_comparison.log",
+      "size": 5407,
+      "sha256": "8263dd8fbf135201bf901c345dc916a18551af870ed936fbe5e00db0af3d7167"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_pose_comparison.py",
+      "size": 8645,
+      "sha256": "2ca8f259a40f1cdc7420d27e864e46dce9984d166c978b8c7f955a7396d3c403"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_pose_comparison_results.json",
+      "size": 27546,
+      "sha256": "8d265d7509729347252d3fc661de82a25acc2659f03b91096add6ab9794de466"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_protocol.json",
+      "size": 828,
+      "sha256": "dc06a99e7c4c6b2c31a6f81ef21fd0f9033ef84024f6b0a702b51e8a6888ce52"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_r2_smoke.log",
+      "size": 6561,
+      "sha256": "657a13d042e210c7606d8a34c9c2766befde6e815cf0fb3de6bc94097da9b77a"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_r3_eval.log",
+      "size": 5407,
+      "sha256": "d4a21eb952824f223e06d537957adc60bd4a28aa33592776410a4ccf9800e4a2"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_r3_eval_results.json",
+      "size": 42298,
+      "sha256": "c87a10dea79864c139a2cf45237cac0179ede63ccaa948fb7fe24e9ebbd98b7f"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_r3_export.log",
+      "size": 685,
+      "sha256": "e30687958e37f9d057bd967f0c5f7d04cc732ea21b97e3446696628ec91ed2d6"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_r3_export_validation.json",
+      "size": 767,
+      "sha256": "1172d6d3b6cfbcd5fb4b68a635589f2edcaf0bfdc3d24596caab6ea02f8615d9"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_roll_seed_export.log",
+      "size": 45,
+      "sha256": "d805efcf1c2a56dcb0f046f1aaf90c9e96d8fbe5bd5ec38093b682f407aa4fea"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_roll_seed_validation.json",
+      "size": 327,
+      "sha256": "de0674bb7b6567e0920a87b23c3134106c6899d4ab51829b9a31371ec109b8b4"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_seed_eval.log",
+      "size": 5796,
+      "sha256": "39ee20ee652d1ad6b568fc3a4899dd95fd9e71b029129a964034660ee8f356c1"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_seed_eval_results.json",
+      "size": 13677,
+      "sha256": "f3daba0b5c723109313358289ebfdbafa2663265eed387f1d301a23a5c0c4c77"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_seed_eval_trace.npz",
+      "size": 1064054,
+      "sha256": "040a1b5640939fc42d64d738b424b367dc5e13c648fc88a7c332f524d0b16c06"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_smoke.log",
+      "size": 6771,
+      "sha256": "40dddd57bd529fea84414c1259d2ab04b248f5dede45fa2ab9d7468ecbb82acc"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_training_manifest.json",
+      "size": 274,
+      "sha256": "c5b2af6a9fdc3daaab5539287fd49f218659f1e03bf79ebf4ceb972f21eaa32b"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_yaw_eval.log",
+      "size": 5416,
+      "sha256": "65c6bda2452e12ddebf634891a3e611ceaaeaa96576c63864af057608961131b"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/clean_yaw_eval_results.json",
+      "size": 42462,
+      "sha256": "d47cc2488d032ef9cd16e59b5fdbb490626f0e063f3ea4577ada397c227caab9"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/common.py",
+      "size": 4170,
+      "sha256": "d676cf6264d25f9776c1fbde27fd9dc553a77d6fe23e66d21f58b63cdaf75a31"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/directions_125.log",
+      "size": 5447,
+      "sha256": "e0f9c89252ccbdf5cba4d0172a60878277ea6e8e7da8cc1c375831fefc2c7a98"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/directions_125_results.json",
+      "size": 38237,
+      "sha256": "d4b00a5e57d4fdf5e1dc425af344ce85e5dea1581e7fac814698558eaca18e81"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/directions_switch_125.log",
+      "size": 5512,
+      "sha256": "66c9dbd7bc4fb71abdfffb09fea78bce14304a0c0f3a5f06eb853b7779849543"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/directions_switch_125_results.json",
+      "size": 43024,
+      "sha256": "13a4e5ff375b5f4ae97d481d29616324e65d01514578b8b7e87d4ae81e1bced4"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/directions_switch_125_trace.npz",
+      "size": 15253490,
+      "sha256": "56dc27b0ad3fd59460a16b5d2891d84081b7f8b870103bbecdbfe20b25093511"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/distill_startup.py",
+      "size": 4360,
+      "sha256": "914f347403e423ebc32dfd2da0b138c6c75406f0dd7ff1b009a0bb7cc46741f9"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/engine.py",
+      "size": 3395,
+      "sha256": "37d9e696d10f60e27f2c03a1232809c049b0e0dd8fbd790487c4bb4371d9ea31"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/evaluate_natural.py",
+      "size": 8973,
+      "sha256": "7a2f933a95b3047da065363ed4a09a1a4c0a03920cbf6fddf12a0336412d9b8d"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/export_clean_parent.py",
+      "size": 1480,
+      "sha256": "d6b05a6af3b70d6c32647c7c342f306a42f36e766094575e7b876980e052d85d"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/export_pose_subset.py",
+      "size": 802,
+      "sha256": "39ffcc9714f84f2f16efdbfade9657d7e3823a72fb907506d63874db9e1acca9"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/export_walk_models.py",
+      "size": 2194,
+      "sha256": "58d345e20ff7f47a219ec0e584c1a6b9896fe992ec0f788cb3e613f37dad1876"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/final_params.log",
+      "size": 5280,
+      "sha256": "8975a128accb84d9216cf4e74627ebfc26f675691934f6c37a8dbefaf19ce91a"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/gyro_export.log",
+      "size": 870,
+      "sha256": "8cb11ed3cfc64830297a52e1971973a59cd26d59515be3a64b70ab57d34c4fcc"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/gyro_export_validation.json",
+      "size": 1243,
+      "sha256": "3cbb273f2e8f436234c29ef20ff0e6df22eaccb23181020e534f50e830fb9916"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/landing_metrics.py",
+      "size": 2287,
+      "sha256": "d6bf86b8feebf09c3ea12886bea3edc17438d7dd6747db477411bea9a52c585c"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/make_clean_bias_candidates.py",
+      "size": 1658,
+      "sha256": "d4057bfddd8fde24452cd664f2b317872a92f9ebe0a357390178ba0d194b724d"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/make_clean_roll_seed.py",
+      "size": 1937,
+      "sha256": "78321da4d5f1a1a2fa25b6cbbf26fabba9da0b0ff24279ae15046a37297e77be"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/make_gyro_candidates.py",
+      "size": 1889,
+      "sha256": "098e05be2a579593a024d23f51c6f0fb271dca29a1ce0c0634005bd9fcf866b5"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/newstand_bank.npz",
+      "size": 235686,
+      "sha256": "835f976992421ebf60266f7c8e170c8f7f7cc561d13d9fc4d3a2fa9c4c63185f"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/ppo_clean_r2_train.log",
+      "size": 101473,
+      "sha256": "8cacad8212be96b34b49574ba93af4d5eb1b9d004e061ca1fcff96c362797bd3"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/ppo_clean_r3_train.log",
+      "size": 329600,
+      "sha256": "0d1ec9bfa68dcf3609793c763494b19c66d7d253027cfdbb174f1a85de738cc1"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/ppo_clean_run_completion.json",
+      "size": 166,
+      "sha256": "6fb0ca73b515bf6791ad0f9f6bd423b726d65fe60c9b581a5c6effc9345c7086"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/ppo_clean_train.log",
+      "size": 269164,
+      "sha256": "0b8463f3ee3b59bc23be3f8da3abc6125a3cfce0ec316f76c8b0137a126f3724"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/prepare_clean_training.py",
+      "size": 1826,
+      "sha256": "3c738b3c8cc2ffdeb6af8834e01b9b82f6bebd486ca81c8f066ac30a1ea4af83"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/run_walk_ppo.py",
+      "size": 4293,
+      "sha256": "e8ed26d6324a77a42bef56ac4e91a32ec38b8d342e58923d190407ecc4bdbddf"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/smoke_validation.json",
+      "size": 172,
+      "sha256": "5f0316c7a29587b48d85a8add26bc8e4875eeb5ab2851b60848625677fa931d9"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_brace_pd_probe.log",
+      "size": 5446,
+      "sha256": "70d24a6a470dfaa8458bab47b606486d03a2769c29adc52639cb59a96f04c92a"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_brace_pd_probe.py",
+      "size": 11152,
+      "sha256": "9b0e38e8dc5a3afe0eac52ac61dd9b09ac9ff00e06e67b15d5562d6d3c2ecb57"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_brace_pd_probe_results.json",
+      "size": 78553,
+      "sha256": "e97706c32f498566a3ff86a2118cc4e778864d4c5703b38bf050c5601b752344"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_connection_probe.log",
+      "size": 5483,
+      "sha256": "a4ec4ea1347c7f7f29e02fc0cb6d28532e7819c879ddf0ccc68f4eb70b6acf77"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_connection_probe.py",
+      "size": 10841,
+      "sha256": "eb6828ac285e7775f8a94764f39cd679fe2f3a02416d73cde32a84f8dac6b860"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_connection_probe_results.json",
+      "size": 81142,
+      "sha256": "8fed876599fe504c7da4edb76b13cc0ceaf129a11370fb9a72552482dfa4e1ba"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_distill.log",
+      "size": 744,
+      "sha256": "bc418095addc9790c6e78e988f9b23c669a7d1e429d2161f44fae4169710569e"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_distillation_manifest.json",
+      "size": 16048,
+      "sha256": "de6b3e42669812f0dc65b8a2b49f21ac701151d60e5e1614aaa8411df1b35441"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_distilled_eval.log",
+      "size": 5507,
+      "sha256": "26f9242c9813829ecaf65c8c4752aea74576e96601e6944f3149a7b2f692c8b2"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_distilled_eval_results.json",
+      "size": 72636,
+      "sha256": "3445fa6e917a0ada86b1fc348976ed563512fa3c80db60dbda10274c60d71135"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_fix_final.log",
+      "size": 5440,
+      "sha256": "5bafbdc1dbc50c708cb3d9216016251bbdfccb88469b78123be5338a75b884c0"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_fix_final_results.json",
+      "size": 32047,
+      "sha256": "00ceecf8c516463bd2f44f0065cab8e4687a04792ec515e0d352de93f2f8b8a4"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_neural_handoff.log",
+      "size": 5459,
+      "sha256": "fb1101b8a3a59bce664586fd5185e587176a3bc587fd2abe385d5e646be9275e"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_neural_handoff.py",
+      "size": 9899,
+      "sha256": "1eb09ac10b72862c199f764bd2c3c2f2e916f46e61362006bc65cc2e82b1427e"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_neural_handoff_results.json",
+      "size": 82231,
+      "sha256": "85fe5cdbc304c65f3cadf110666fe355036a6536df6bc1cab01a973fb6568cef"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_neural_handoff_trace.npz",
+      "size": 9279291,
+      "sha256": "f9007aaf862c575ecaf77e2130fb36e0504d8a20fcd99752dca1896103cab337"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_routing_validation.json",
+      "size": 125,
+      "sha256": "bae483d411f0bdbbeeaa8e709e0a1a0daaadf571b304efbe527240c778db11ba"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/startup_walk_policy.py",
+      "size": 1378,
+      "sha256": "5e709af4a84514cab8a27bd7115123915b3518cdf549fe6736eaf1f6f2d6b22e"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/test_direction_switching.py",
+      "size": 6671,
+      "sha256": "669fbf596280514d0e5e74715d6a3b516573a1a821a948c2cb274761ac3597fb"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/test_direction_tracking.py",
+      "size": 6137,
+      "sha256": "8c27199182c4b5a95bbdafe26199de76200b2d557c0c2a97e913fa41fb03bf17"
+    },
+    {
+      "path": "runs/xduck_clean_natural_gait_20261010/xc_walking_v3_policy.py",
+      "size": 5080,
+      "sha256": "462f18b195adb2f78f348433b2ec75a4e466f2bbab6a1af143db3fa05d62a0f6"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/NEW_STANDING_TARGET.json",
+      "size": 507,
+      "sha256": "e754322171bae62c8a8ae8eb906c0e31daf6fec26df030faaeccf5e82b8071b8"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/PPO_DIRECTION_CONFIG.yaml",
+      "size": 9318,
+      "sha256": "48097d3c09d9b07acae7106381c31d1a87e1a953230e88be7d6de5ff7d52de4d"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/PPO_DIRECTION_R2_CONFIG.yaml",
+      "size": 9347,
+      "sha256": "4c4cc88e4591fca6cca4d7d60216478eed74f95584bbf342e9b64186645a3519"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/PPO_DIRECTION_R3_CONFIG.yaml",
+      "size": 9348,
+      "sha256": "7c40e6ebaca31c7bcd68c6bfdfacc236fedc6526441e99982663740159499a92"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/PPO_DIRECTION_R4_CONFIG.yaml",
+      "size": 9348,
+      "sha256": "6cdc512d067d7f9308e0502cfdff42e947b633d028843389e831ad8091f68ef9"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/TRAINING_CONFIG.yaml",
+      "size": 9176,
+      "sha256": "081a5d3e009eeb1ea673939ca6d161d38293a8b7d6f078d83a4bd6a4d8314454"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/accepted_eval_params.npz",
+      "size": 7122,
+      "sha256": "0f097472ff866168c8888bcdd77c6092d458075d39c8a04514ea09521ae1821c"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/backward_bootstrap.log",
+      "size": 243,
+      "sha256": "82135d03bb7893a4e1d434a2eabbe908cb2a4f07a781db09c3af8b88d56901fe"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/backward_bootstrap_eval.log",
+      "size": 5481,
+      "sha256": "be7d4bb72847eef83ed88afb95d312710cc4a73c3b4c5b8a206a22961b45f440"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/backward_bootstrap_eval_results.json",
+      "size": 57582,
+      "sha256": "6ad4690dcc3d5724992f5541a94de8267f0eba5d9a8f1d6273b7b31f5af3a8e1"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/backward_bootstrap_manifest.json",
+      "size": 9024,
+      "sha256": "a0647e109428c47529d5739c888d22051cfee8b163f986d10290f07d63b8518d"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/backward_mix.log",
+      "size": 5391,
+      "sha256": "048ffdb26caae8954b7230a14f600066b392d73105550f682d1f3682f0393c87"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/backward_mix_results.json",
+      "size": 62255,
+      "sha256": "965223862b24219dbcd4c211ee3fbb62f0e72bc201b0211d9c7092b20dbba57f"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/backward_mix_trace.npz",
+      "size": 6924470,
+      "sha256": "40a85bb08e2b00159a732731d6c46ada6646db9399add04bff2374adf4dc300d"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/baseline_cold_131.log",
+      "size": 5456,
+      "sha256": "a0b1da73e680fe9bd4ac28354bda0f2e9c16c757a4ae683dd047d3565b6caa88"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/baseline_cold_131_results.json",
+      "size": 57198,
+      "sha256": "b006b1f2bfe6350b6283c9cbe1311f0be9db966dc77b287aa04b6d515a3fa178"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/bootstrap_backward.py",
+      "size": 4294,
+      "sha256": "e1980565bf78e00533e759b170265f365b113be167998ae0657e0b391c1923b0"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/bootstrap_turn.py",
+      "size": 4413,
+      "sha256": "cc2413278c15562f2d28c449285c208901c4c0cbec52d28c12bfd033f4e13976"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/build_reverse_cycle.py",
+      "size": 1452,
+      "sha256": "30b897e20d0b6ef68f9f47a336447a8ff09dbf5328c5ca6d52849ffc4037507e"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/capture_accepted_params.py",
+      "size": 765,
+      "sha256": "aff3c7bd35cd61e60928923a36f9a7e3f61b5986685412996332d402a50f3acc"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/clean_backward.log",
+      "size": 5336,
+      "sha256": "7ad13f91b58efe098ec3229929d6712731e392fa9962c987855ae9702b54bdcf"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/clean_backward_results.json",
+      "size": 7579,
+      "sha256": "fea077f75562888aa8c970687841268d3eb3ec4d2e88c1fe3f694322afeb8216"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/common.py",
+      "size": 4170,
+      "sha256": "d676cf6264d25f9776c1fbde27fd9dc553a77d6fe23e66d21f58b63cdaf75a31"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_anchor.npz",
+      "size": 1801071,
+      "sha256": "53717a46a790015a83689d376a9b4bee63f2477cbaae3d6ca66fe2edf4e97789"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_anchor_r2.npz",
+      "size": 5863278,
+      "sha256": "ed85385800f346010f611416af7501f7ee5b82710241264b7ffd6e360cc987af"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_mid_125.log",
+      "size": 5456,
+      "sha256": "27478b5f3049b0f202ae938eebb40ae6abb3e4d435be8ee81f9973971a6458b3"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_mid_125_results.json",
+      "size": 44228,
+      "sha256": "49668d119014d6bce9ca21a7452a22f4d8efcd5928e5304ab2949e069c47e33d"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_mid_125_trace.npz",
+      "size": 11302037,
+      "sha256": "e787e81e2865179af1e2df8e571e9128a922ceffe3ee5c3dee9e37f5a5c498fc"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_objective_checks.json",
+      "size": 157,
+      "sha256": "daaeb0db43cfd9d996d53eaf4f14eaed1e18775d484a6e7d9a6e92a07d05e392"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_ppo_export_validation.json",
+      "size": 266,
+      "sha256": "cac13bcf7b4e7f12c4b404137be71911800cdc1d8a64e4e5ab3433723f0eb7a6"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_r2_export.log",
+      "size": 244,
+      "sha256": "4aaa1f1ddbfaf3ffa739a28befebeb87815c7163011e647fdc6d8e43c21e125d"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_r2_export_validation.json",
+      "size": 266,
+      "sha256": "f646e3d6a348e2d2170e31d3272b36012c03756747a2da888a3e4892460ddc7a"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_r3_export.log",
+      "size": 244,
+      "sha256": "bdc1869cd24339519a51b71fd371e205addc448cf139cef2374abec9a8267ffb"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_r3_export_validation.json",
+      "size": 266,
+      "sha256": "71457524e55416e6aa496e32615cbe4166d3e34222caeb0aae2076cf66bf669a"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_smoke.log",
+      "size": 6557,
+      "sha256": "328d50e0bf06d2f5ac0a63da9f2bc84a91d46b40c9dade68b3b1592529c8b793"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_speed.py",
+      "size": 11978,
+      "sha256": "5609aac0d8abb1f37979c110dc83df8f262e88c1a1cccda2d2ac0c78c016196f"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/direction_speed_r2_restored.py",
+      "size": 11106,
+      "sha256": "d8dd1b1f251ade8e60e910656275ce48b407a70fbc8d4924838d0975a29080c5"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/engine.py",
+      "size": 3395,
+      "sha256": "37d9e696d10f60e27f2c03a1232809c049b0e0dd8fbd790487c4bb4371d9ea31"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/export_mid.log",
+      "size": 244,
+      "sha256": "8e4e0c15114328d5d2df7b83932fa830d9cf1ca21fe46a5709d4c4df41ea4b53"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/export_pose_subset.py",
+      "size": 802,
+      "sha256": "39ffcc9714f84f2f16efdbfade9657d7e3823a72fb907506d63874db9e1acca9"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/export_walk_models.py",
+      "size": 2194,
+      "sha256": "58d345e20ff7f47a219ec0e584c1a6b9896fe992ec0f788cb3e613f37dad1876"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/final_125_params.npz",
+      "size": 7125,
+      "sha256": "6268a0aef9c7a7d7529298c8d8a1cda2a86fda848e1d6b7ce702ef458e0df47d"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/landing_metrics.py",
+      "size": 2287,
+      "sha256": "d6bf86b8feebf09c3ea12886bea3edc17438d7dd6747db477411bea9a52c585c"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/masked_anchor.py",
+      "size": 2600,
+      "sha256": "926f87b2e389456e3c13f19ec87681f5aac574d3e742ad307ec976495fbada45"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/mirror_teacher.log",
+      "size": 5463,
+      "sha256": "5463158c8e468407f7152dd58c7919bee65f254c0586c30d7e49f113ac53c7d9"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/mirror_teacher_results.json",
+      "size": 94470,
+      "sha256": "a10917d6a00ebf0801931edb18a899d0082333b693ecd84f2a32b0edf9279b28"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/newstand_bank.npz",
+      "size": 235686,
+      "sha256": "835f976992421ebf60266f7c8e170c8f7f7cc561d13d9fc4d3a2fa9c4c63185f"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/objective_checks.log",
+      "size": 38,
+      "sha256": "5d4b4a0d4eebd3f2c067498cac3a9d03153d048c5f03ed28d4a79c7bdf1b80ab"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/params_131.log",
+      "size": 5280,
+      "sha256": "9e0faa256637fc743f51c7131d84288841f06a21f9ab911af238bf6b6d423f0a"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/params_131.npz",
+      "size": 7110,
+      "sha256": "8d553cffb1a60ef7c39d3f368ddc8376a35723ccb55028f28970aff84d561851"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/params_137.log",
+      "size": 5280,
+      "sha256": "76eb3b21438bd216644439c69b98de45a6daf1cdb23b1a7050bb38b3df4f98a4"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/params_137.npz",
+      "size": 7118,
+      "sha256": "5e87ca8dfcb22f70d6ac26ecdb2d0c1d29309eee88ae0e5e7f67a2804a05fd58"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/ppo_direction.log",
+      "size": 551994,
+      "sha256": "54361742af178767f816240ca0d79bb203ee7bc383504c1ba97c277814388e8a"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/ppo_direction_r2.log",
+      "size": 391091,
+      "sha256": "97c85ff9a14ba6fdc9eb774afef41be9ccd75ca540c5afff2726a5331273cd95"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/ppo_direction_r2_run_completion.json",
+      "size": 165,
+      "sha256": "54fe54f2635e7f67d154c25394af79027d6d0ebec68e9c0892e3be0ba396ed44"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/ppo_direction_r3.log",
+      "size": 191765,
+      "sha256": "6b9eacd814f7c7633f504b7d3b6f70e9029063f2f5454ef44f6609c0ac5cb94b"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/ppo_direction_r3b.log",
+      "size": 379420,
+      "sha256": "100843aaf514f05e99cf1d04d535362378138dc6362fedd3e7aec047e9be7b9c"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/ppo_direction_r3b_run_completion.json",
+      "size": 166,
+      "sha256": "5f509c5934e7b9054c5cc3b0e08567390ee51e14c9d7c891b5d4bba232ffd0bb"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/ppo_direction_r4.log",
+      "size": 287696,
+      "sha256": "a1a715663d57390ad70743fc13df1d22ac83039031d843a15d64a173c3eb373c"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/ppo_direction_r4_run_completion.json",
+      "size": 165,
+      "sha256": "5bf35e61d7806e5a7d3afdda2c735b8a2ba69e950d0613ecb525c26c99b63849"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/preparation.log",
+      "size": 23,
+      "sha256": "9228b399e81d9f638b9f9f19bcb12401f050375321161978fcfba991f32ded7c"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/prepare_direction_training.py",
+      "size": 2776,
+      "sha256": "581673f5a51dc4a057730141131fe0593815475725717a7e56f1974d25b7e110"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/protocol.json",
+      "size": 759,
+      "sha256": "3aafc603efe90c1c9074e80d0bcee00692ec548fdf7ca8629e27b2b295714c84"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r2_cold_131.log",
+      "size": 5438,
+      "sha256": "affbe3bab3444a6d7ab3cbb6efcc9b3808ca47fc52ec04d11e608031c8ce4b66"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r2_cold_131_results.json",
+      "size": 57766,
+      "sha256": "b14e9b2b7a1727f969ee757f520d0c2e96c94ce97dfc0598ea10f99448982550"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r2_cold_137.log",
+      "size": 5438,
+      "sha256": "328ce6a1d8484d130b831fcf732eb0f066aecdfd1161c405056945a67a49e815"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r2_cold_137_results.json",
+      "size": 57732,
+      "sha256": "d3afa126b0590c8b2226533e456ba26883f5b170f11baee11808c370cf188671"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r2_smoke.log",
+      "size": 6763,
+      "sha256": "885aa2063e97a0a625417cfc0be19652aba4a01c331b2677c4e16ba1d4d03213"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r2_switch_131.log",
+      "size": 5480,
+      "sha256": "cc9499ccc5846123b7c21ce9665393db9f6f03abc440a7cf59a3e356fb585468"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r2_switch_131_results.json",
+      "size": 48971,
+      "sha256": "9b6e4b943c3465f329a59b8377ecf794a28385eeb8b68a271f3894f3063ec14f"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r3_cold_137.log",
+      "size": 5438,
+      "sha256": "461a6d808fdca7a4de6fa04effd5ae5988a493c1517b6498ef499411747e4f1b"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r3_cold_137_results.json",
+      "size": 57839,
+      "sha256": "d5dff8d32b9a55a8cdfee47729d289f892a0ed80480bff5edc00d05375fa5b22"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r3_smoke.log",
+      "size": 6754,
+      "sha256": "8711d6054be07c90d51af23923bf9f53242fcd24cd73e223e9612f3ce5f20a6b"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r3_switch_137.log",
+      "size": 5480,
+      "sha256": "13eb0d63d946b0228e0ecb4292c98e82216cdf8bc2f3f9d0c411b8e29efd0e77"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r3_switch_137_results.json",
+      "size": 49005,
+      "sha256": "4c371b1973549dd0f25f014c6c6e0dc394968a430f7c507e12bd7026b74b43d8"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r3b_smoke.log",
+      "size": 6754,
+      "sha256": "acd94cd4f60cb63068c9aaa4c4e737af4132f22434d522008ade9c88b0adde17"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/r4_smoke.log",
+      "size": 6559,
+      "sha256": "a99c54979ff6d600703d258115968ec864dc59e8f476d26dbc7e99b58d67bec0"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/reverse_build.log",
+      "size": 23,
+      "sha256": "8a3fe7b1cf232344761087e2a93e62f75b95b7642ebf764c905e6e9bda3e9c05"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/reverse_cycle_manifest.json",
+      "size": 226,
+      "sha256": "bf6b666c124a5ed91c965199230ec036472a72fc3ec94601898ba5ac97f63884"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/reverse_teacher.log",
+      "size": 5448,
+      "sha256": "d0d1e28f60bf7a3fefa203b51c86af1773f20d16685f6dfcd2233eeab09f242b"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/reverse_teacher_results.json",
+      "size": 105713,
+      "sha256": "2585838b46b97d20dfe58b0278354c1b06c509fd5566effcec88655c451ca7b8"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/run_walk_ppo.py",
+      "size": 4708,
+      "sha256": "f0d1d0fd75d3ceed6f86303f24e1f155dac4453cc43d2098d676099b42be931e"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/smoke_validation.json",
+      "size": 172,
+      "sha256": "5f0316c7a29587b48d85a8add26bc8e4875eeb5ab2851b60848625677fa931d9"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/startup_walk_policy.py",
+      "size": 1378,
+      "sha256": "5e709af4a84514cab8a27bd7115123915b3518cdf549fe6736eaf1f6f2d6b22e"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/summarize_direction.py",
+      "size": 1314,
+      "sha256": "c79bea9145e853d492d6ca90d6cb5f5d1d285fcbf408e09c93dd5eea922af419"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/test_backward_mix.py",
+      "size": 9643,
+      "sha256": "0557891756c3f4050d39d903b236af541491b06470e8a9bc1057ee3418fda25b"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/test_clean_backward.py",
+      "size": 6517,
+      "sha256": "234445df92538bd177232a2df423beff596f739019f20141656470faf5128ae4"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/test_direction_switching.py",
+      "size": 7236,
+      "sha256": "6a12725679d0edc6eae4afdb03bee5b9f094bf3261d9d81a92e48e6e49a7de28"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/test_direction_tracking.py",
+      "size": 7652,
+      "sha256": "5c571874cfdb2099424eb91fcca7407eb59253f875b5e937368ce5de9290c71e"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/test_mirror_teacher.py",
+      "size": 10608,
+      "sha256": "6f739156f2845b0b0ebcd9061fbf1f8c76cef500fbdbcca715319e2ea09ffe59"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/test_reverse_teacher.py",
+      "size": 10291,
+      "sha256": "adffffed722fc8d2a5d9a8ff9612838c12251064fdb695c0e18654e8d5b9ced2"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/test_turn_teacher.py",
+      "size": 7731,
+      "sha256": "af86c81d79281a0f346d975914604792c36eff6058a4483ba58c000a157a902f"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/training_manifest.json",
+      "size": 449,
+      "sha256": "2795415c8c2303a62c56550b850f09f4a12e9240994468114ae5f535d66cb2a7"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/turn_bootstrap.log",
+      "size": 232,
+      "sha256": "161aa8ffefb221872407789f024681d8f2adcdd3cb355764eeca5c504ef3184e"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/turn_bootstrap_manifest.json",
+      "size": 42657,
+      "sha256": "9258fb357b269957d049bfa8c1d0b8c4cdd5210d4d9a84c814bd9e9ce35afc65"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/turn_teacher.log",
+      "size": 5353,
+      "sha256": "fe96f61c217d773f7be8f96ab7da54cb241fd17395d2aae0a517c4d5be8d61d6"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/turn_teacher_results.json",
+      "size": 19729,
+      "sha256": "5a800b7303ca6a154ff6340bce8a000bdfca406524db3abc4bc26bc051154460"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/verify_direction_objective.py",
+      "size": 967,
+      "sha256": "5e7501ac0a7cf9e8351269411d8571ddd12ad7a3f9c4a4d89fd05b3968560250"
+    },
+    {
+      "path": "runs/xduck_direction_speed_dr_20261010/xc_walking_v3_policy.py",
+      "size": 5080,
+      "sha256": "462f18b195adb2f78f348433b2ec75a4e466f2bbab6a1af143db3fa05d62a0f6"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/TRAINING_CONFIG.yaml",
+      "size": 8626,
+      "sha256": "511ca20c0d2119366772d4fe19d46a26a543c7e4b30f9926d27319f9e80e005e"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/add_eval_progress.py",
+      "size": 668,
+      "sha256": "4c6ef874c83ec719384b731986dc3bf97cfad2fc409a8ddd460d4ce706bda258"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/after_full_DR.json",
+      "size": 89552,
+      "sha256": "ebaf0db933f6bf407bb302b54b080b589d8fd87faa2c520a94e280eb7130ac75"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/after_full_DR.log",
+      "size": 7269,
+      "sha256": "3f7b99cdffb6ab0a1d7ec1147cb6dff8a542a4e996e4dc047f0a58bf8890ac8b"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/after_full_DR_config.yaml",
+      "size": 8564,
+      "sha256": "670d899a8dc750ead1c13c5390c93a79e2614bf7664bc0c34836cb142f133e3e"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/after_steady.json",
+      "size": 88577,
+      "sha256": "c51e6d8783077bad083a2df4a5836e19c306aba6603004a0331ccf96d64e56b6"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/after_steady.log",
+      "size": 7260,
+      "sha256": "ba3da18a4a602a7e8bb53a76de3d5db035acaa980c2d945e9cef532283cb52ed"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/after_steady_config.yaml",
+      "size": 8565,
+      "sha256": "f5530b08fbccc1723c56f6bae84b483cfa57a3c198deffe4a32cd599bf68e5c9"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/audit.json",
+      "size": 647,
+      "sha256": "a1a654ca048b38fbf6a8234532b3fd78161d8be18f188607d45053c07db60ef5"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/before_eval.log",
+      "size": 6813,
+      "sha256": "eec3f9b66ee9361aa8041bff63e36d94c21c54c605302f38cabf957b14eff0b5"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/before_steady.json",
+      "size": 88859,
+      "sha256": "dd329d01c18a59ea1dab8e44d9dd5e02f27849e2a1f589393183c0ce71471eb2"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/before_steady_config.yaml",
+      "size": 8565,
+      "sha256": "ef39984389dca61890c934d2fc56b55a82d47ad2642900e04ea7fd4a6cd990fa"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/eval_progress_change.json",
+      "size": 149,
+      "sha256": "f71945f691d7b6b998dc9ab916511da6006cd02bd81e48de7b6cc0802b7672fb"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/evaluate_directions.py",
+      "size": 8038,
+      "sha256": "1eff13cf32978e12b0a2cf5f96caf48c6ff76a2552b26fbf4079ec5f3774023c"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/fix_damping.py",
+      "size": 651,
+      "sha256": "8cf35c11c9951f8c7e77d1210c4eedc68e458b00403a2b02f8781a1ef7862b75"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/flex_tests.json",
+      "size": 537,
+      "sha256": "365420b6d03ba51f86a4eb4f2157e0996af371e13ad9259fb68fdbedc2100ef0"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/flex_tests.log",
+      "size": 11907,
+      "sha256": "f264c6ceab1a20789c9a992294a254f7543611971736d52f75fbd96c92fae70c"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/inputs_sha256.json",
+      "size": 31805,
+      "sha256": "c87f53caf813a78d55d50e3bf1277453b73697af5cc724e5fe65d7ee59b35fb0"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/meanonly_flex50/run_config.json",
+      "size": 14393,
+      "sha256": "0814647576889e39c0d1b006186df86d3e07675be16f5d0e602a33efa951b747"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/meanonly_flex50/run_summary.json",
+      "size": 1088,
+      "sha256": "9d4286a6ac6fb433431469db4fe881a6764e9526771f67f951a21c35ea913640"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/record_final.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/record_final.py",
+      "size": 3206,
+      "sha256": "fc6140f9d4246fa739897e8a5cbd0638c70ff548181313466ea263a1898fca3e"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/record_visual.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/record_visual.py",
+      "size": 3439,
+      "sha256": "bc22d7d2492815b1d5fd2cafb2a55b2b6294592bc42cddabe5ba58e5865919c8"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/setup.py",
+      "size": 6511,
+      "sha256": "35aa20df8f91a052fea9f37f3a4e176dd116df357a629cb379f5a67686da6d15"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/smoke4096.log",
+      "size": 9990,
+      "sha256": "059663841b5ed694d3af87271470a554d4569b11cc0c26e40e6ca1ee7c1f721d"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/status.json",
+      "size": 474,
+      "sha256": "0c9060e12aaa4ccdd2e95675039273f28dcb9a86a940f82c09f679eeee2cb47f"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/supervisor.log",
+      "size": 472,
+      "sha256": "b6a99e8d27b314e50eb61ce8a8e8a66378afbe3216da8ce1a79dc90dc7ce5c08"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/supervisor.py",
+      "size": 3104,
+      "sha256": "765c42b9c890af47afa6ffec72283db3440a5cd33f8ff8213dfb2c22ee5566e0"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/supervisor_retry.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/swing_reference.npz",
+      "size": 3113,
+      "sha256": "3f96656318aa2a0ce201fff6f83abf84a27118832b020383e62d7a1b33ebe633"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/test_flex.py",
+      "size": 2582,
+      "sha256": "ac8fe25f16e564f74c0af9dba044de5b89295134d572e2a0169859817e770f90"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/training.log",
+      "size": 108153,
+      "sha256": "83936f4f8e80d5032d2125d4bbee9f851225bf827b63332562a5ef18dffe9164"
+    },
+    {
+      "path": "runs/xduck_meanonly_flex320_50_20260930/video_selection.json",
+      "size": 382,
+      "sha256": "edfd374ce9287153248397e1d26699190441994fe0e1daf07bdca8aa08ebdadc"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/COLLECT_CONFIG.yaml",
+      "size": 9248,
+      "sha256": "a340d01b82f383d638c186b72dfc8135a42d7b78d9bbe4043bba886c3867f5e5"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/FLEX50_CAPABILITY_AUDIT.json",
+      "size": 17959,
+      "sha256": "deeedc090fe6e02e11997f237e5ff9cff0bd8af656df737ec00d4c7e483fcc23"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/FLEX_ADAPT_SELECTED.json",
+      "size": 1072,
+      "sha256": "4bf64977a282477890cde43de9fd489450d9a66fd5ec058dcac316a99f90a067"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/NEW_STANDING_TARGET.json",
+      "size": 1128,
+      "sha256": "1c8df439ecd07767772f8c8e75373fe727b17949ad12fbf551ac039d7b51f20d"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/PPO_FLEX100_CONFIG.yaml",
+      "size": 9249,
+      "sha256": "ecdb59d59e23f8718137f915cd229494098f38624b3a927cf69edc583cf6db47"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/TRAINING_CONFIG.yaml",
+      "size": 9249,
+      "sha256": "ecdb59d59e23f8718137f915cd229494098f38624b3a927cf69edc583cf6db47"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/adapt50_validation.log",
+      "size": 6992,
+      "sha256": "db6e683798fa19df4fd393617b53aaf755cd15c2ffb253576860083f2222a7ea"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/adapt50_validation_results.json",
+      "size": 92754,
+      "sha256": "003b78fa84f07fc19cd3dbd5cc84a4115a5d33083e735022c2646efa70000b92"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/adapt50_validation_trace.npz",
+      "size": 21728665,
+      "sha256": "e91b82defc2452653fbd7dd9fb2501e21f333daa200b822d0e1974d3a3afb302"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/adaptation_manifest.json",
+      "size": 1050,
+      "sha256": "504217fe3b8e262c214e89876e5a8b86291a54eaa4f068483729fc5b1f859454"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/collect_flex_stand.log",
+      "size": 5734,
+      "sha256": "98247fda234be6d2e837f26bbc8e50ab86e932967892878c17d1c03dd1b42aae"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/collect_flex_stand.py",
+      "size": 3138,
+      "sha256": "03824f279256a48482f1b80219c63c8ac8d9c6de78eb39cd6c887038750ab0f2"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/common.py",
+      "size": 4170,
+      "sha256": "d676cf6264d25f9776c1fbde27fd9dc553a77d6fe23e66d21f58b63cdaf75a31"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/direction_anchor.npz",
+      "size": 5861623,
+      "sha256": "b4621138f3f40fbcf2b2110052b2d4484e26a45fdaa5b32e74d6a2bf1084894e"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/direction_flex.py",
+      "size": 12593,
+      "sha256": "4f89086addf2d0ad83e3a236fa120379de1a2dd7e63f074cb373a2782f377966"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/direction_speed.py",
+      "size": 11106,
+      "sha256": "d8dd1b1f251ade8e60e910656275ce48b407a70fbc8d4924838d0975a29080c5"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/engine.py",
+      "size": 3395,
+      "sha256": "37d9e696d10f60e27f2c03a1232809c049b0e0dd8fbd790487c4bb4371d9ea31"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/evaluate_flex_adaptation.py",
+      "size": 8131,
+      "sha256": "64506465b221352f4b66ca719c607385cf5ee813c7e7776a0f482048d1b5b058"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/export_walk_models.py",
+      "size": 2194,
+      "sha256": "58d345e20ff7f47a219ec0e584c1a6b9896fe992ec0f788cb3e613f37dad1876"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/flex50_export.log",
+      "size": 238,
+      "sha256": "1194abb8cc736ba8568c79e726b4bbeff6eca81c86d644bc14bddbceca05ea74"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/flex_adapt_export_validation.json",
+      "size": 260,
+      "sha256": "c50061f628a157d3c796fc4166788b45987bfb3380afd4dc109ca042a3247e4e"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/flex_common.py",
+      "size": 1834,
+      "sha256": "1d46dc0cadcb99b133bdc2b9772f7f424017d9d94f34b3783925387c4d552fa9"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/flex_owner.log",
+      "size": 17,
+      "sha256": "61520ba791929b8519b48e640ebc575499c0f4f49cc824287c70a57b36bf457c"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/flex_reset_verification.json",
+      "size": 463,
+      "sha256": "cfcba5f46d7b40b1235e72752da236cc86cd9600e567d8d3de4b4de03babf9c4"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/flex_reset_verify.log",
+      "size": 5598,
+      "sha256": "e26bafb0addff9e37e874bdd44ec23e75db405778ac2c024c250481c76792ba5"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/flex_smoke.log",
+      "size": 6877,
+      "sha256": "7b38e68334beed9ac820f75ba5c141fb2c66357667bf8e1fcebd7ef7fcb703fd"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/landing_metrics.py",
+      "size": 2287,
+      "sha256": "d6bf86b8feebf09c3ea12886bea3edc17438d7dd6747db477411bea9a52c585c"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/masked_anchor.py",
+      "size": 2356,
+      "sha256": "e2f0050d6a89aa52095c0cb87701c124d8fbae2a2af5c96022365bc7be25e1c2"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/newstand_flex_bank.npz",
+      "size": 119065,
+      "sha256": "30667ccbdf5bfdf2233b7ef522e73c5f425e6fdbbac7f44e89ca30379af4b045"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/newstand_flex_bank_manifest.json",
+      "size": 603,
+      "sha256": "70625de400f2fd667ff3a6ee0dbb76a90ad93536a1afd2b0efda1cc2f239fab4"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/newstand_flex_bank_params.npz",
+      "size": 48226,
+      "sha256": "7c0f4711e773d6d594983a1eebf1bc5820ce00b2663393d064afd64e10c59acc"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/preparation.log",
+      "size": 25,
+      "sha256": "dd3c87b01e87401942dd41e7c385d780d2fcc9f6fce54dd76fbe8c9101554fb7"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/prepare_flex_owner.py",
+      "size": 2218,
+      "sha256": "c0de15d3b4d081b2cf3dfd38eff47947643903a7909fa0e406e53fa735daa785"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/preservation_relabel.json",
+      "size": 220,
+      "sha256": "5d49ca6e07324228aefa4c9c9bb17ae3267d740402144316319d8fc9c648a19b"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/preservation_relabel.log",
+      "size": 33,
+      "sha256": "8f0cfb84b0a061f7a6a42ca5fe93d5abe103fd4bd7bcf421f77213d83abdabef"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/relabel_preservation.py",
+      "size": 1146,
+      "sha256": "8e8bf2ce15338c006e3b4fa92f9f4d074351594433807a62412be542cd309040"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/render_flex_validation.py",
+      "size": 3225,
+      "sha256": "7dd17db2f1eb3fa1bf7010b51179a3f2e8d4fe6aca0756f2267b8f15dff5c807"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/run_walk_ppo.py",
+      "size": 5793,
+      "sha256": "719adf700d6974e59b49e1ec4c705771bf6dc68eb8c08b35721eb601ea8baa29"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/run_walk_ppo_training_used.py",
+      "size": 4708,
+      "sha256": "f0d1d0fd75d3ceed6f86303f24e1f155dac4453cc43d2098d676099b42be931e"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/setup_remote.py",
+      "size": 4108,
+      "sha256": "08e33ae54789f8098ffefa96430c72f67bc2e04e3780df57aa3c6fd11a9f4211"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/smoke_validation.json",
+      "size": 172,
+      "sha256": "5f0316c7a29587b48d85a8add26bc8e4875eeb5ab2851b60848625677fa931d9"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/summarize_flex_validation.py",
+      "size": 2316,
+      "sha256": "2005704cc7a7949f6f3d91aad605accb67e08d4a162f986061e7773127a2fa97"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/training100.log",
+      "size": 113754,
+      "sha256": "f4074d29f520e5608487b493df55f5d2d397a10fc6f725a671a29c3f97be09c5"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/validation_flex_bank.log",
+      "size": 5732,
+      "sha256": "50bfd0013e51a1b8ac370f7bad651b65cdedd7f006b398ca990c29dc95b9cee4"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/validation_flex_bank_manifest.json",
+      "size": 600,
+      "sha256": "ad037d0ca7ad77f0b5b879c8163cd3309553412a6f649ba53db52dec68e8383a"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/validation_flex_bank_params.npz",
+      "size": 10055,
+      "sha256": "9ab052a9a0808b810abfb05737ee9255cc589f5ea6a4f8357813aa40d9d52563"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/verify_flex_reset.py",
+      "size": 1716,
+      "sha256": "5e1500573bbc4d2714dd59e7c622cb0265afa127493c0e4404b5eb670338e85a"
+    },
+    {
+      "path": "runs/xduck_r2_flex_adapt100_20261010/xc_walking_v3_policy.py",
+      "size": 5080,
+      "sha256": "462f18b195adb2f78f348433b2ec75a4e466f2bbab6a1af143db3fa05d62a0f6"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/README.md",
+      "size": 1732,
+      "sha256": "8321154c10312e77cbe944da5556715292471d9a569333999e0c5a1df79d1025"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/SUCCESSFUL_1024_CONFIG.yaml",
+      "size": 9182,
+      "sha256": "175bc213e42e4d7e35fb57708226844041d240eba5d2d64ea7bd1c01e62d3660"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/TRAINING_CONFIG.yaml",
+      "size": 9212,
+      "sha256": "4efc26b77fbdd1477287f0a333000cf9589f3674eab1c8fcf457c3ecd92a5ce4"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/audit.json",
+      "size": 10554,
+      "sha256": "08a8255500895746e320f5aa93fbc733cb8e05ded418c9e094749a71476ec23b"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/diagnose_support_forces.py",
+      "size": 11891,
+      "sha256": "3282d2a684cf9bdca8864088c071507f53c58703daa336331f60aeda222ea940"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/eval_final200.log",
+      "size": 33140,
+      "sha256": "da84000473c8b30e3556eaa71b94b6c9abd632e1ee19267913033195bbfc59f5"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/eval_final200.yaml",
+      "size": 7925,
+      "sha256": "c35df4e8012ddd0c6e4ff420c54e26eefd31c5313045b97633a0ce97c5a43be6"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/inputs_sha256.json",
+      "size": 31155,
+      "sha256": "51e8ddd19961a4cd9035fe8d0dc10a2b2b59f6e0a5992c13cb873aca835b84c3"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/render_final200.log",
+      "size": 7606,
+      "sha256": "e033a69e868a88928922251668c7dd237980d38d0cf8f2a522715b209f6b774c"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/render_policy.py",
+      "size": 5599,
+      "sha256": "aedeec7edaa7174f1d67db4a7ffbe6c2fa5e2c7ef5ab8da963ccb01f510872df"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/rigid4096_100ms_200/run_config.json",
+      "size": 16503,
+      "sha256": "7fc2b07de0a8e7103035adb75e10e30a1c33a9f3f15cc68cf2ddae3010129388"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/rigid4096_100ms_200/run_summary.json",
+      "size": 1095,
+      "sha256": "07b3e3cf72ab267b7ba0c4069863191c3d2806ffff47e6f06174e527374b1b83"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/rigid4096_100ms_200.log",
+      "size": 394943,
+      "sha256": "713cae58542dd9365c300a91ed9185466636e188aff679ddedee312459a43573"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/setup.py",
+      "size": 3895,
+      "sha256": "87bb7b81ae039dd0e4b341b5ceec084bc916c8331666b21d1536ae1607a8f382"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/status.json",
+      "size": 642,
+      "sha256": "35c807135d9caa342a34eb9cdba718a7a9aa83065064758836396cae0bbc9089"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/supervisor.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/xduck_rigid4096_100ms_200_20260930/supervisor.py",
+      "size": 3452,
+      "sha256": "bc848e6727e9bea975cd0b4f6c920b77eafa2cb1bf13ed49865c99dc0f5eeb93"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/README.md",
+      "size": 1565,
+      "sha256": "56b3262a49a14e630c4cce140079936ca31de96e3128e768e267e1c914873293"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/RESULTS.md",
+      "size": 2067,
+      "sha256": "3e3d06f2b5f1e2d4fd346b90ac8957bccc11de74eedc3f1695c1046e00882bb4"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/TRAINING_BASELINE_20260930.md",
+      "size": 6062,
+      "sha256": "45030b851e53e629aa5339acdde697efef3e678d42ae35e531204248ad86b51b"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/TRAINING_CONFIG.yaml",
+      "size": 9602,
+      "sha256": "32426b4a11d0e63d69df8b45880e73b89a2d6253f07af23cb1796f905be6b648"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/audit.json",
+      "size": 2902,
+      "sha256": "db1a164e31df216e22411a3d0391422594eae9f320c76118dc9841d3410ba250"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/curriculum_tests.json",
+      "size": 2596,
+      "sha256": "361dc313090c2e2756c884503de8e5be89e9b873ea8d1837a936165e9c87b616"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/evaluate_directions.py",
+      "size": 7748,
+      "sha256": "99dde5b7bba8836cf4db94a86bc40a12f7a26d2e20ea6c04b4ac6ff80ae2a4c7"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/final1200_full_DR.json",
+      "size": 89664,
+      "sha256": "f40cf67f27af4894e7faa9607ec02d270521657201f4630d5981a4b8aa66a65a"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/final1200_full_DR.log",
+      "size": 6500,
+      "sha256": "8b8348844f93c383cc17817a786fb1a279c952e01dbba570c18e407022756498"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/final1200_full_DR_config.yaml",
+      "size": 8457,
+      "sha256": "42ef7bd0e7327d7ff61e4afe1b552c09a02ed610f25c9218f297efd565cfec2f"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/final1200_steady.json",
+      "size": 88743,
+      "sha256": "258da822a8754d9a5a7ca3a9055e1d6e3423b45d976ccefce9755af3e05ec9ff"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/final1200_steady.log",
+      "size": 6499,
+      "sha256": "620b595a56f62fc84b6ad01d623a1b8e496278f0ce8f219e8d22fdb703bc3c2e"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/final1200_steady_config.yaml",
+      "size": 8458,
+      "sha256": "6e6c45989afe10cb6281e8c28a82bc876e3f6a720c049910cc53f6277b8ca47f"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/inputs_sha256.json",
+      "size": 31671,
+      "sha256": "6b6290fa18eb3f1ccd2f2cd9261a0216cb3d65b46e4ba4ac19e86748a8518c07"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/record_cmd030.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/record_cmd030.py",
+      "size": 3178,
+      "sha256": "2d34042701bada1986fa0c32756e910f3da0f05d6c037676dd131ef2e4a5ff0e"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/record_final.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/record_final.py",
+      "size": 3228,
+      "sha256": "6747127858faf415752010f8caeb18b4869b24c823eac873546a640e8c5bf6ab"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/resume_smoke4096.log",
+      "size": 9411,
+      "sha256": "ed71d36686c6da4a2a68dcb7b7a4ff68a12cf2863aeaefce2b769999ab2a8585"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/rigid4096_220after900/run_config.json",
+      "size": 16856,
+      "sha256": "44832aa56ae185863e389831e7579351bb029ede5b246be41fd5f1aeb9e0f6dc"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/rigid4096_220after900/run_summary.json",
+      "size": 1105,
+      "sha256": "1c256222c953aec2bc33a1da98fe9de25217173a95e085506cc95b9955c17f4a"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/rigid4096_curriculum.log",
+      "size": 628062,
+      "sha256": "56088257284df74f9014743a15b0bb2c21e57a26a2f19689791f85f2da281c7b"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/setup.py",
+      "size": 3729,
+      "sha256": "a897edb4a28d426a75c61499f95d5faab3d91a6d1d33d4a5db86733bd7c63b58"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/status.json",
+      "size": 1007,
+      "sha256": "984d289398e3d2099aaaf6601518be9b94bf2b1f316c7fd4efd2a2c878d89fe4"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/supervisor.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/supervisor.py",
+      "size": 5313,
+      "sha256": "fefd34b57ec8bfe79c277d5c6b186ed34b4efd7c083673a0a9f6ac92bfe2cdc8"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/swing_reference.npz",
+      "size": 3113,
+      "sha256": "3f96656318aa2a0ce201fff6f83abf84a27118832b020383e62d7a1b33ebe633"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/test_curriculum.log",
+      "size": 7853,
+      "sha256": "5d8c2c14d3ce00d5605ca5de9730b7cd5813be55ea745efbeffe009164fe82b5"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/test_curriculum.py",
+      "size": 7241,
+      "sha256": "8e59233135c80f191a6a0a4c1cf23e3bd6e82dce221434224e0374a67ac35ccd"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/video_selection.json",
+      "size": 397,
+      "sha256": "1328666dcb783031ed9e0a51da4bde6a7a6466116a46b68ff03ea9b067d6c278"
+    },
+    {
+      "path": "runs/xduck_rigid4096_220after900_20260930/video_selection_cmd030.json",
+      "size": 389,
+      "sha256": "e662ed7653c8f40d530718f9f6f65b04b9eb42714100592c98638c5f058d3f87"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/README.md",
+      "size": 5578,
+      "sha256": "efa93335ce033d35f5de4cec82737ceaf58ceda21d2e65f76ecceb8daaec4e91"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/TRAINING_BASELINE_20260930.md",
+      "size": 5578,
+      "sha256": "efa93335ce033d35f5de4cec82737ceaf58ceda21d2e65f76ecceb8daaec4e91"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/TRAINING_CONFIG.yaml",
+      "size": 9594,
+      "sha256": "91b6b88cb9c261c59540fd85eb3e0130bd68378bef76c6b566a513a00887f246"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/add_cadence.py",
+      "size": 5572,
+      "sha256": "60df647b2a0b3ce48b572b0fcf3c8c2b66f8cf451109f0416c2d80727c2f4e44"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/audit.json",
+      "size": 2823,
+      "sha256": "2aa2e3317b2ed5ef837eef9f8ab39061a0be916a54390eaff4ac1fa6893cec59"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/checkpoint800_dr2_cmd03_config.yaml",
+      "size": 8447,
+      "sha256": "6b81691ba9d9660568dfb678a7485134b2259bb45f4e25e846bdf794cfdc5425"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/checkpoint800_dr2_config.yaml",
+      "size": 8449,
+      "sha256": "fc60f75e6b44f3f8a2a9da8079cf5de25a57df0d9bda1c375a5a7402e88cca58"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/curriculum_tests.json",
+      "size": 2596,
+      "sha256": "8736a1c6921624b4b6f1d5a85291d73519be41ee915219fdd36c50bcb1170a3e"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/curriculum_tests_before_cadence.json",
+      "size": 2463,
+      "sha256": "4f2b2fa8dcbac9c8b1231ba83ccddbcbe465a56421d29247648f028bdb7d246b"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/direction_smoke.log",
+      "size": 6507,
+      "sha256": "bdd661fdfc4f7d3d108fa6fb9150e2d03d79b27e07690d28ed3b8bac0f63bb52"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/direction_smoke_baseline200.json",
+      "size": 87493,
+      "sha256": "6ae5df5afa97d4b1a094906e9674b4d9f37a07e03e5248002d1bdddaa586a8a7"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/direction_smoke_baseline200_config.yaml",
+      "size": 8451,
+      "sha256": "33351d68e00d76b0368494fe9f79a6529100106fcc552990ade0e65721789b7a"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/direction_smoke_command_reset_failure.log",
+      "size": 7451,
+      "sha256": "80a8e3c5e89f97476be0fe9489455617c0292fa2809aaf8c72825b8f6352b513"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/evaluate_directions.py",
+      "size": 7748,
+      "sha256": "99dde5b7bba8836cf4db94a86bc40a12f7a26d2e20ea6c04b4ac6ff80ae2a4c7"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/evaluation_source_manifest.json",
+      "size": 447,
+      "sha256": "ccfd5585da9cb31b535145e8371ba6217c558744527c7524c39d5ea69b5b9eab"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/inputs_sha256.json",
+      "size": 31759,
+      "sha256": "e72e6231f97578d1d5093fa09b03f52e3205b8be3699f2a9402b0afd3d2bb44c"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/record_checkpoint800.log",
+      "size": 9557,
+      "sha256": "61ea15417a1fd336aa206aae0cde6cce98508e6804c1a600dc200dd9b4100528"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/record_checkpoint800.py",
+      "size": 6152,
+      "sha256": "7a2b3dbe30e837740bcd81e444ac30401006be12529804f5697ffeec0438eedc"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/record_checkpoint800_cmd03.log",
+      "size": 8440,
+      "sha256": "3e3d3c5b8d388029b5727782bce3bf37f993216366645c66f36ed093d3ee5bc8"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/record_checkpoint800_cmd03.py",
+      "size": 6198,
+      "sha256": "0489fcd517ff1082765bb98a321246ee967432f6113fca858873ecd56023fdf5"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/record_final.py",
+      "size": 3228,
+      "sha256": "6747127858faf415752010f8caeb18b4869b24c823eac873546a640e8c5bf6ab"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/render_saved800.log",
+      "size": 91,
+      "sha256": "c6cca6c60a1bd386a996ea695c3309b5cb23d0f16654733e79680564d80b666b"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/render_saved800.py",
+      "size": 612,
+      "sha256": "b09ca5760e1c27ca6596407a98d620fdd1e5bb5ab3fb7910d469c16d86880957"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/resume_smoke4096.log",
+      "size": 9306,
+      "sha256": "94b9414ae1a21412fb321495988c1d315c093787c72cb99a14647b05d0b3a32d"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/rigid4096_curriculum/run_config.json",
+      "size": 16845,
+      "sha256": "c713055963388700b0ac267430427eff8503d9fb7560ec7cb49a991b387ac61d"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/rigid4096_curriculum.log",
+      "size": 1597767,
+      "sha256": "35b38158c1a9a2f919a1d1c89c8b08d097c1943901d8fc2b1876cefb8d066d9c"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/setup.py",
+      "size": 10712,
+      "sha256": "aafc0264f5bfd950193883c6a865a1562b7331065e3d94232a0231dd6d39ded0"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/status.json",
+      "size": 1241,
+      "sha256": "2e4f71383636afdac19910a45f5ef7fd742048a6582f72db1b075a1b4eff2e58"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/supervisor.log",
+      "size": 544,
+      "sha256": "f0bd05ce49346f673f7ffcb7aa7ceef814d562ce09ca13285288a9044df82b8e"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/supervisor.py",
+      "size": 5332,
+      "sha256": "f77b900205362a31635d821681c557f34c922bc68025696ffedea9d58ef8b42b"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/swing_reference.npz",
+      "size": 3113,
+      "sha256": "3f96656318aa2a0ce201fff6f83abf84a27118832b020383e62d7a1b33ebe633"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/test_curriculum.log",
+      "size": 7851,
+      "sha256": "680778462a6aba05a0da7ff0575ecc5de4e79b70f66a55914157d1256b5ca164"
+    },
+    {
+      "path": "runs/xduck_rigid4096_curriculum_20260930/test_curriculum.py",
+      "size": 7241,
+      "sha256": "39c1292331793c4d6d7c031c2dea8fb700222d43b7333c185087a634e5881b35"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/TRAINING_CONFIG.yaml",
+      "size": 9581,
+      "sha256": "6d7afb68bde75696f1bd230f67839abdd8a8bfced34b3c3966a3ba21eae632b9"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/audit.json",
+      "size": 370,
+      "sha256": "841424211c79dd84245c87402b3e1cf3a2aa02e81b8ec5a9954dac79b063ec4b"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/control.log",
+      "size": 57169,
+      "sha256": "4e721f970ce38f8679bbcfa7966861394109642eea7fa4d2d9cc100fb10f0a1a"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/control_eval.log",
+      "size": 6482,
+      "sha256": "cf19f7f3b5892121a3fc527f301ebfa6049e91ea93ace6062b088815e3d548e4"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/control_steady.json",
+      "size": 88740,
+      "sha256": "9b453a762b3d21f4138813d32196f31be17d5040ed0009769290f5540e0c4048"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/control_steady_config.yaml",
+      "size": 8437,
+      "sha256": "b85d79ec998b07f3244c721381eb84db91b0c71cb982172e71ccc7325240e3d1"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/evaluate_directions.py",
+      "size": 7748,
+      "sha256": "99dde5b7bba8836cf4db94a86bc40a12f7a26d2e20ea6c04b4ac6ff80ae2a4c7"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/history_tests.json",
+      "size": 183,
+      "sha256": "505e3e37e65cfa2d2140b875bd09a304f4fffd729e79b834bc420fe528a2c10f"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/mean_only/run_config.json",
+      "size": 16818,
+      "sha256": "187d7d729654d6974ceac7f68529e77af38277f97feabda8e006eb02adb07bbd"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/mean_only/run_summary.json",
+      "size": 1071,
+      "sha256": "0e0015e89138020842ee5cd74d58db23d393ca6d87ca53b24e00ffdefb78a4b3"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/mean_only.log",
+      "size": 60753,
+      "sha256": "371cd767f8f649c585d55b24633c181d112e02cbc3a8b9eadaf5a5095e7dcc99"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/mean_only_eval.log",
+      "size": 6484,
+      "sha256": "816f2f3ce65e5f2cd282c87b8bec3038e42e47e8dd90044f577b977643173ec4"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/mean_only_steady.json",
+      "size": 88774,
+      "sha256": "f0e589cb0041bed9e43efafc0e53cc60aeee5072223b2ea29ac886eb4c733b09"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/mean_only_steady_config.yaml",
+      "size": 8437,
+      "sha256": "b85d79ec998b07f3244c721381eb84db91b0c71cb982172e71ccc7325240e3d1"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/mean_var.log",
+      "size": 62371,
+      "sha256": "7cf617e4987bd8a416c7d52a482d7bde4485c180c42c4a4355ad64036725905f"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/mean_var_eval.log",
+      "size": 6483,
+      "sha256": "bf5c644f19d178a08b621d5e1515ecd8f511fbe8417de6b8b0caa56583b5683d"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/mean_var_steady.json",
+      "size": 88885,
+      "sha256": "c30c24ebe02e58ab14bfc133a14bdbf80cff515b09574c80959c8f6442b4c3b8"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/mean_var_steady_config.yaml",
+      "size": 8437,
+      "sha256": "b85d79ec998b07f3244c721381eb84db91b0c71cb982172e71ccc7325240e3d1"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/run_trials.py",
+      "size": 2768,
+      "sha256": "a68fc310524f222620225252ba5973b0ced5fbc08624e64baf3a64bb21cb4aaf"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/setup.py",
+      "size": 3736,
+      "sha256": "b1b5eeb838b0dbbac2cb944b6a7f1cdac8f49e3230fea2934e801b6b69af4d18"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/smoke.log",
+      "size": 9668,
+      "sha256": "a5da3ead3c3142b9f0541a9a4b718e94eb810985707467a83cd88f708d915db6"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/speed_history.py",
+      "size": 1618,
+      "sha256": "9be88866005a79381b91c34151394f2d19eb7076dea1698fd98aebe108d85df4"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/status.json",
+      "size": 295,
+      "sha256": "8d0a003507c99660fb77beddeb770f9b936b13f5a9356774cf42f991e4ced8df"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/supervisor.log",
+      "size": 462,
+      "sha256": "0d7a31d52671f7a1a90137bb3bb17ee6915709414cb10b303517f905eb0e9cb2"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/supervisor_retry.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "runs/xduck_speed_correction_20260930/swing_reference.npz",
+      "size": 3113,
+      "sha256": "3f96656318aa2a0ce201fff6f83abf84a27118832b020383e62d7a1b33ebe633"
+    },
+    {
+      "path": "runtimes/00_fromzero200_overlay.tar.gz",
+      "size": 72,
+      "sha256": "0a2de85be10aca0aaf5b04756420f348c71b827426259ea8458368cee3101e4d"
+    },
+    {
+      "path": "runtimes/01_curriculum900_overlay.tar.gz",
+      "size": 8624,
+      "sha256": "2876f588c73844c1bc11e664dd24638c4287194d68ef634e4b5b622f2a71bc35"
+    },
+    {
+      "path": "runtimes/02_curriculum1200_overlay.tar.gz",
+      "size": 8613,
+      "sha256": "07907d72699a660b23b7b76302dcb088f475461ee9c5159c45572cf700a30d67"
+    },
+    {
+      "path": "runtimes/03_mean1230_overlay.tar.gz",
+      "size": 10380,
+      "sha256": "fa020acfa222e34bdcee06555f916e45e41145dd2955abd83311c0e7753cc14d"
+    },
+    {
+      "path": "runtimes/04_flex1279_overlay.tar.gz",
+      "size": 15366,
+      "sha256": "c8d5c7774c738ff813aaa9dc8fc9c52b19ec901e3918bfaa429e61f6a7e7d572"
+    },
+    {
+      "path": "runtimes/05_natural_stance_overlay.tar.gz",
+      "size": 27654,
+      "sha256": "3eee0a4af4e30f1b0c1b495add618a7cf030a02d3410683e23aba90c3013d959"
+    },
+    {
+      "path": "runtimes/06_direction_r2_overlay.tar.gz",
+      "size": 31050,
+      "sha256": "15783b6e29a19eb8c6a45e83b39c5a2ccadad545bb88227b3f057f0e48a0c763"
+    },
+    {
+      "path": "runtimes/07_flex_final_overlay.tar.gz",
+      "size": 31419,
+      "sha256": "4a8bbc9faca0b99d7d9826bdaf59f33221f0d97b19791731d59e444eb2894c5b"
+    },
+    {
+      "path": "runtimes/base_project.tar.gz",
+      "size": 58941921,
+      "sha256": "0f1e6261ad8741a512b93713a2bf02aed7ef5391ea9a6d88006445c8c61f1c97"
+    },
+    {
+      "path": "runtimes/snapshot_manifest.json",
+      "size": 1124549,
+      "sha256": "ad8db9aca4203e1ca98e4ecc7ad804d760176566fa7bf756a0627657659491c2"
+    },
+    {
+      "path": "support/xduck_reward_anchor10_20261009/startup_reset_bank.npz",
+      "size": 26888,
+      "sha256": "ffa8531394c173470389fbe76ea96f38a452afd6ed49dd8f6c0d69aab912cad7"
+    },
+    {
+      "path": "support/xduck_reward_anchor10_20261009/swing_reference.npz",
+      "size": 3113,
+      "sha256": "3f96656318aa2a0ce201fff6f83abf84a27118832b020383e62d7a1b33ebe633"
+    },
+    {
+      "path": "support/xduck_reward_audit_20261009/verified_rigid_model.mjb",
+      "size": 49469653,
+      "sha256": "d607ac076b215184b8f5e6b399cffeb69929a9633c6aea85a8a06dab8df4870d"
+    },
+    {
+      "path": "support/xduck_startup_demo_bc_20261009/dataset.npz",
+      "size": 10145471,
+      "sha256": "c8969e13bdd4b423ef3fce2dc2eea73c93046d849e1480fd5c8519930920a392"
+    },
+    {
+      "path": "support/xduck_walk_smooth_newstand_20261010/PPO_LOWNOISE_CONFIG.yaml",
+      "size": 9235,
+      "sha256": "e4bcf275c6933a1fc61243e89bbfbb353054d9d225d0f43ba40dd8f9e5459f8f"
+    },
+    {
+      "path": "support/xduck_walk_smooth_newstand_20261010/new_stand_smooth.py",
+      "size": 10206,
+      "sha256": "ba25ceeca707d41bac8d4865544c7c43bd4a6598d07f764a7caffd6816b42216"
+    },
+    {
+      "path": "tools/audit_checkpoints.py",
+      "size": 1217,
+      "sha256": "751a2c02b69c54459dc3a5c2b66bdb12e13686e8c365ec971e65f62c28d72dc8"
+    },
+    {
+      "path": "tools/restore_workspace.py",
+      "size": 5313,
+      "sha256": "432baab9fb5f637ddff149938689ff35c71f0e19f7041a01011e2491dc64a74a"
+    },
+    {
+      "path": "tools/verify_package.py",
+      "size": 1381,
+      "sha256": "364a9a4082947e8f1051a6ed5a869ab9f1700eb22f2036e43c579effb5d5f355"
+    }
+  ]
+}

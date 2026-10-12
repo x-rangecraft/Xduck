@@ -1,0 +1,3 @@
+from pathlib import Path
+import hashlib,json
+R=Path(__file__).resolve().parent;p=R/'evaluate_directions.py';s=p.read_text();old="  if not all(np.isfinite(v).all() for v in rows[-1].values()):raise RuntimeError(f'Nonfinite direction evaluation at{i}')";new=old+"\n  if (i+1)%100==0:print(f'Evaluation {a.tag}: {i+1}/{round(a.seconds/.02)} ticks; surviving {int(alive.sum())}/{N}',flush=True)";assert s.count(old)==1 and 'Evaluation {a.tag}' not in s;s=s.replace(old,new);p.write_text(s);(R/'eval_progress_change.json').write_text(json.dumps({'change':'Progress logging only, no physics or policy changes','sha256':hashlib.sha256(p.read_bytes()).hexdigest()},indent=2))

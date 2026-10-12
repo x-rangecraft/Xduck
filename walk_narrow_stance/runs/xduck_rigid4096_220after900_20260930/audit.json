@@ -1,0 +1,106 @@
+{
+  "passed": true,
+  "total_updates": 1200,
+  "additional_updates": 299,
+  "start_completed_updates": 901,
+  "source_checkpoint": "/home/xingchen/Xduck/xduck_rigid4096_curriculum_20260930/rigid4096_curriculum/model_900.pt",
+  "source_sha256": "0d25664bc6f16bc72abebbd40a653c4839086633e178818ec741cfd9e74a551d",
+  "model_sha256": "d607ac076b215184b8f5e6b399cffeb69929a9633c6aea85a8a06dab8df4870d",
+  "passive_coordinates": 0,
+  "mechanical_steps": 20,
+  "num_envs": 4096,
+  "stages": [
+    {
+      "iteration": 0,
+      "air_time_ms": 100,
+      "dr": 1,
+      "reference_weight": 0
+    },
+    {
+      "iteration": 300,
+      "air_time_ms": 140,
+      "dr": 1.5,
+      "reference_weight": 0.45
+    },
+    {
+      "iteration": 600,
+      "air_time_ms": 180,
+      "dr": 2,
+      "reference_weight": 0.45
+    },
+    {
+      "iteration": 900,
+      "air_time_ms": 220,
+      "dr": 2.5,
+      "reference_weight": 0.45
+    }
+  ],
+  "reference_height_all_moving_directions": true,
+  "reference_pitch_straight_forward_only": true,
+  "commands": {
+    "velocity_low": [
+      -0.5782732917920385,
+      -0.4337049688440288,
+      -0.6917144638660746
+    ],
+    "velocity_high": [
+      0.5782732917920385,
+      0.4337049688440288,
+      0.6917144638660746
+    ],
+    "resampling_time_range": [
+      4.337049688440288,
+      11.565465835840769
+    ],
+    "rel_forward_envs": 0.2,
+    "rel_turn_in_place_envs": 0.15,
+    "forward_min_speed": 0.4337049688440288,
+    "head_resampling_time_range": [
+      2.891366458960192,
+      7.22841614740048
+    ],
+    "body_resampling_time_range": [
+      2.891366458960192,
+      7.22841614740048
+    ]
+  },
+  "PPO": {
+    "class_name": "unilab.algos.torch.rsl_rl_ppo:FinalObservationAwarePPO",
+    "value_loss_coef": 1.0,
+    "use_clipped_value_loss": true,
+    "clip_param": 0.2,
+    "entropy_coef": 0.01,
+    "num_learning_epochs": 5,
+    "num_mini_batches": 16,
+    "learning_rate": 0.001,
+    "schedule": "adaptive",
+    "gamma": 0.99,
+    "lam": 0.95,
+    "desired_kl": 0.01,
+    "target_kl_stop": null,
+    "max_grad_norm": 1.0,
+    "adaptive_kl_beta": 0.9,
+    "adaptive_lr_growth": 1.1,
+    "adaptive_lr_decay": 1.2,
+    "adaptive_lr_update_interval": 5,
+    "metrics_interval": 8,
+    "finite_check_interval": 8,
+    "enable_compile": false,
+    "warmup_strict_iters": 10,
+    "warmup_metrics_interval": 2,
+    "warmup_finite_check_interval": 2,
+    "disable_finite_checks": true
+  },
+  "physics_stage_changes_next_reset": true,
+  "target_actual_forward_speed_m_s": [
+    0.15,
+    0.2
+  ],
+  "reference_steps_per_s": 3.55059599289891,
+  "cadence_weight_after300": 0.15,
+  "cadence_gate": "straight forward command0.10\u20130.25m/s with one foot in contact; not on other directions",
+  "target_velocity_training_fraction_after300": 0.15,
+  "broad_training_fraction_after300": 0.85,
+  "actual_first_new_update_index": 901,
+  "old_180ms_branch_preserved": true
+}

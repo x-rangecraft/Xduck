@@ -1,0 +1,2272 @@
+/home/xingchen/Xduck/xduck_r2_flex_adapt100_20261010/project/.venv/lib/python3.10/site-packages/gymnasium/spaces/box.py:226: RuntimeWarning: overflow encountered in cast
+  elif low.dtype != self.dtype and np.any(low < dtype_min):
+/home/xingchen/Xduck/xduck_r2_flex_adapt100_20261010/project/.venv/lib/python3.10/site-packages/gymnasium/spaces/box.py:296: RuntimeWarning: overflow encountered in cast
+  elif high.dtype != self.dtype and np.any(dtype_max < high):
+Warp 1.14.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.0
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 5090 D" (31 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /home/xingchen/.cache/warp/1.14.0
+Module mujoco_warp._src.smooth e597d07 load on device 'cuda:0' took 3.75 ms  (cached)
+Module _nxn_broadphase__locals__kernel_a09fd5ac a09fd5a load on device 'cuda:0' took 0.31 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_3ea99d4a 3ea99d4 load on device 'cuda:0' took 2.19 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_3ea99d4a 90186a8 load on device 'cuda:0' took 2.49 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_c894beba c894beb load on device 'cuda:0' took 0.56 ms  (cached)
+Module mujoco_warp._src.constraint 880bd7f load on device 'cuda:0' took 0.23 ms  (cached)
+Module _friction_dof__locals__kernel_4f1ff0d0 4f1ff0d load on device 'cuda:0' took 0.54 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_d30fc7c9 d30fc7c load on device 'cuda:0' took 0.33 ms  (cached)
+Module _efc_contact_init__locals__kernel_924f7ff6 924f7ff load on device 'cuda:0' took 0.30 ms  (cached)
+Module _efc_contact_jac_sparse__locals__kernel_e13cd9c8 e13cd9c load on device 'cuda:0' took 0.30 ms  (cached)
+Module _efc_contact_update__locals__kernel_710e1642 710e164 load on device 'cuda:0' took 0.31 ms  (cached)
+Module mujoco_warp._src.sensor 42e0a24 load on device 'cuda:0' took 1.97 ms  (cached)
+Module mujoco_warp._src.forward 687ddb7 load on device 'cuda:0' took 0.82 ms  (cached)
+Module mujoco_warp._src.passive 8ff6993 load on device 'cuda:0' took 1.18 ms  (cached)
+Module mujoco_warp._src.forward 2190340 load on device 'cuda:0' took 0.94 ms  (cached)
+Module _qfrc_smooth__locals__kernel_412ce125 412ce12 load on device 'cuda:0' took 0.80 ms  (cached)
+Module mujoco_warp._src.support d1e71d9 load on device 'cuda:0' took 0.26 ms  (cached)
+Module _solve_LD_sparse_fused__locals__kernel_55f374f0 1729464 load on device 'cuda:0' took 0.25 ms  (cached)
+Module _solve_init_dof__locals__kernel_7401b4da 7401b4d load on device 'cuda:0' took 0.26 ms  (cached)
+Module mujoco_warp._src.solver 245b5b3 load on device 'cuda:0' took 1.69 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_10482ff6 10482ff load on device 'cuda:0' took 0.26 ms  (cached)
+Module mul_m_kernel__locals___mul_m_60e7d061 60e7d06 load on device 'cuda:0' took 0.30 ms  (cached)
+Module _update_constraint_efc__locals__kernel_5d0c511e 5d0c511 load on device 'cuda:0' took 0.26 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_sparse__locals__kernel_c227470e c227470 load on device 'cuda:0' took 0.26 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_6b40d785 6b40d78 load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_grad__locals__kernel_9aa8c0ee 9aa8c0e load on device 'cuda:0' took 0.27 ms  (cached)
+Module _update_gradient_init_h_sparse__locals__kernel_03120698 0312069 load on device 'cuda:0' took 0.96 ms  (cached)
+Module _JTDAJ_sparse__locals__kernel_fcefa3df fcefa3d load on device 'cuda:0' took 0.25 ms  (cached)
+Module _JTDAJ_sparse__locals__kernel_fcefa3df 1026f6a load on device 'cuda:0' took 0.26 ms  (cached)
+Module _update_gradient_cholesky_blocked__locals__kernel_1b61780d 988849e load on device 'cuda:0' took 49.34 ms  (cached)
+Module _linesearch_jv_fused_kernel__locals__kernel_af84265d af84265 load on device 'cuda:0' took 0.80 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_e62fab60 44a0a3a load on device 'cuda:0' took 0.48 ms  (cached)
+Module _update_constraint_efc__locals__kernel_6a49458a 6a49458 load on device 'cuda:0' took 0.31 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_32b39599 32b3959 load on device 'cuda:0' took 0.25 ms  (cached)
+Module _update_gradient_grad__locals__kernel_00e53288 00e5328 load on device 'cuda:0' took 0.24 ms  (cached)
+Module _update_gradient_h_incremental_sparse__locals__kernel_a4c88f54 a4c88f5 load on device 'cuda:0' took 0.26 ms  (cached)
+Module _update_gradient_cholesky_blocked_skip_unchanged__locals__kernel_3ca223fc eadb7b4 load on device 'cuda:0' took 53.49 ms  (cached)
+Module _contact_sort__locals__contact_sort_7bada88e 026fd42 load on device 'cuda:0' took 0.33 ms  (cached)
+Module mujoco_warp._src.derivative e770e28 load on device 'cuda:0' took 0.72 ms  (cached)
+Module _next_time_builder__locals___next_time_1f10e805 1f10e80 load on device 'cuda:0' took 0.30 ms  (cached)
+Module reset_data__locals__reset_xfrc_applied_68cbd089 68cbd08 load on device 'cuda:0' took 0.35 ms  (cached)
+Module reset_data__locals__reset_M_e750f49f e750f49 load on device 'cuda:0' took 0.25 ms  (cached)
+Module reset_data__locals__reset_mocap_8d259ef0 8d259ef load on device 'cuda:0' took 0.26 ms  (cached)
+Module reset_data__locals__reset_contact_657e565e 657e565 load on device 'cuda:0' took 0.26 ms  (cached)
+Module reset_data__locals__reset_sleep_ef1daa14 ef1daa1 load on device 'cuda:0' took 0.24 ms  (cached)
+Module reset_data__locals__reset_nworld_3f93673c 3f93673 load on device 'cuda:0' took 0.34 ms  (cached)
+--------------------------------------------------------------------------------
+Resolved observation sets: 
+	 default :  ['policy']
+	 actor :  ['actor']
+	 critic :  ['critic']
+--------------------------------------------------------------------------------
+Actor Model: MLPModel(
+  (obs_normalizer): EmpiricalNormalization()
+  (distribution): GaussianDistribution()
+  (mlp): MLP(
+    (0): Linear(in_features=61, out_features=512, bias=True)
+    (1): ELU(alpha=1.0)
+    (2): Linear(in_features=512, out_features=256, bias=True)
+    (3): ELU(alpha=1.0)
+    (4): Linear(in_features=256, out_features=128, bias=True)
+    (5): ELU(alpha=1.0)
+    (6): Linear(in_features=128, out_features=14, bias=True)
+  )
+)
+Critic Model: MLPModel(
+  (obs_normalizer): EmpiricalNormalization()
+  (mlp): MLP(
+    (0): Linear(in_features=76, out_features=512, bias=True)
+    (1): ELU(alpha=1.0)
+    (2): Linear(in_features=512, out_features=256, bias=True)
+    (3): ELU(alpha=1.0)
+    (4): Linear(in_features=256, out_features=128, bias=True)
+    (5): ELU(alpha=1.0)
+    (6): Linear(in_features=128, out_features=1, bias=True)
+  )
+)
+FROZEN_EXPLORATION_STD [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+Could not find git repository in /home/xingchen/Xduck/xduck_r2_flex_adapt100_20261010/project/.venv/lib/python3.10/site-packages/rsl_rl/__init__.py. Skipping.
+################################################################################
+[1m                            Learning iteration 0/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 1536 
+                       Steps per second: 121 
+                        Collection time: 12.295s 
+                          Learning time: 0.316s 
+                        Mean value loss: 2.9695
+                    Mean surrogate loss: -0.0406
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0001
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.3480
+                   startup/reward_alpha: 0.2396
+                           direction/vx: 0.0315
+             direction/mean_speed_score: 0.4607
+                   direction/turn_score: 0.4910
+                     direction/width_mm: 206.2971
+          direction/dr_consistency_cost: 0.0000
+            direction/backward_fraction: 0.4062
+         direction/proper_step_fraction: 0.1719
+              curriculum/effective_step: 30743.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.1075
+--------------------------------------------------------------------------------
+                         Iteration time: 12.61s
+                           Time elapsed: 00:00:12
+                                    ETA: 00:20:48
+
+################################################################################
+[1m                            Learning iteration 1/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 3072 
+                       Steps per second: 123 
+                        Collection time: 12.218s 
+                          Learning time: 0.192s 
+                        Mean value loss: 2.6600
+                    Mean surrogate loss: -0.0353
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0002
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.0539
+                   startup/reward_alpha: 0.4896
+                           direction/vx: 0.0151
+             direction/mean_speed_score: 0.3368
+                   direction/turn_score: 0.4562
+                     direction/width_mm: 207.0034
+          direction/dr_consistency_cost: 0.0000
+            direction/backward_fraction: 0.4062
+         direction/proper_step_fraction: 0.0469
+              curriculum/effective_step: 30767.0000
+            audit/gf_peak_abs_torque_nm: 74.4150
+            audit/gf_mean_abs_torque_nm: 9.4433
+              audit/cadence_steps_per_s: 5.7397
+--------------------------------------------------------------------------------
+                         Iteration time: 12.41s
+                           Time elapsed: 00:00:25
+                                    ETA: 00:20:25
+
+################################################################################
+[1m                            Learning iteration 2/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 4608 
+                       Steps per second: 121 
+                        Collection time: 12.428s 
+                          Learning time: 0.171s 
+                        Mean value loss: 2.2428
+                    Mean surrogate loss: -0.0418
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0003
+                            Mean reward: 0.39
+                    Mean episode length: 61.00
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.7306
+                   startup/reward_alpha: 0.7396
+                           direction/vx: 0.0242
+             direction/mean_speed_score: 0.3428
+                   direction/turn_score: 0.4674
+                     direction/width_mm: 205.7391
+          direction/dr_consistency_cost: 0.0000
+            direction/backward_fraction: 0.3906
+         direction/proper_step_fraction: 0.0938
+              curriculum/effective_step: 30791.0000
+            audit/gf_peak_abs_torque_nm: 58.4205
+            audit/gf_mean_abs_torque_nm: 9.1858
+              audit/cadence_steps_per_s: 5.7356
+--------------------------------------------------------------------------------
+                         Iteration time: 12.60s
+                           Time elapsed: 00:00:37
+                                    ETA: 00:20:16
+
+################################################################################
+[1m                            Learning iteration 3/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 6144 
+                       Steps per second: 71 
+                        Collection time: 20.971s 
+                          Learning time: 0.530s 
+                        Mean value loss: 1.3748
+                    Mean surrogate loss: -0.0405
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0003
+                            Mean reward: 0.65
+                    Mean episode length: 69.00
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.5776
+                   startup/reward_alpha: 0.9896
+                           direction/vx: 0.0604
+             direction/mean_speed_score: 0.3650
+                   direction/turn_score: 0.4073
+                     direction/width_mm: 204.8123
+          direction/dr_consistency_cost: 0.0000
+            direction/backward_fraction: 0.3750
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 30815.0000
+            audit/gf_peak_abs_torque_nm: 49.8205
+            audit/gf_mean_abs_torque_nm: 8.9669
+              audit/cadence_steps_per_s: 5.6452
+--------------------------------------------------------------------------------
+                         Iteration time: 21.50s
+                           Time elapsed: 00:00:59
+                                    ETA: 00:23:38
+
+################################################################################
+[1m                            Learning iteration 4/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 7680 
+                       Steps per second: 63 
+                        Collection time: 23.770s 
+                          Learning time: 0.508s 
+                        Mean value loss: 1.5736
+                    Mean surrogate loss: -0.0403
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0003
+                            Mean reward: 0.65
+                    Mean episode length: 69.00
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.6983
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0163
+             direction/mean_speed_score: 0.3706
+                   direction/turn_score: 0.4222
+                     direction/width_mm: 205.7246
+          direction/dr_consistency_cost: 0.0918
+            direction/backward_fraction: 0.3750
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 30839.0000
+            audit/gf_peak_abs_torque_nm: 57.2125
+            audit/gf_mean_abs_torque_nm: 8.9800
+              audit/cadence_steps_per_s: 5.6536
+--------------------------------------------------------------------------------
+                         Iteration time: 24.28s
+                           Time elapsed: 00:01:23
+                                    ETA: 00:26:24
+
+################################################################################
+[1m                            Learning iteration 5/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 9216 
+                       Steps per second: 60 
+                        Collection time: 24.946s 
+                          Learning time: 0.628s 
+                        Mean value loss: 1.9676
+                    Mean surrogate loss: -0.0420
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0004
+                            Mean reward: 0.65
+                    Mean episode length: 69.00
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.7964
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0279
+             direction/mean_speed_score: 0.3765
+                   direction/turn_score: 0.4357
+                     direction/width_mm: 206.8031
+          direction/dr_consistency_cost: 0.0904
+            direction/backward_fraction: 0.3750
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 30863.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.0769
+              audit/cadence_steps_per_s: 5.7041
+--------------------------------------------------------------------------------
+                         Iteration time: 25.57s
+                           Time elapsed: 00:01:48
+                                    ETA: 00:28:27
+
+################################################################################
+[1m                            Learning iteration 6/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 10752 
+                       Steps per second: 55 
+                        Collection time: 27.158s 
+                          Learning time: 0.565s 
+                        Mean value loss: 8.2277
+                    Mean surrogate loss: -0.0316
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0004
+                            Mean reward: 13.59
+                    Mean episode length: 134.00
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 3.9666
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0316
+             direction/mean_speed_score: 0.3842
+                   direction/turn_score: 0.4747
+                     direction/width_mm: 206.8179
+          direction/dr_consistency_cost: 0.0795
+            direction/backward_fraction: 0.3594
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 30887.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.1425
+              audit/cadence_steps_per_s: 5.6893
+                    Episode_Reward/pose: 0.2817
+                 Episode_Reward/upright: 0.6127
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: -0.0020
+                Episode_Reward/air_time: 0.0000
+            Episode_Reward/body_ang_vel: -0.0299
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.0000
+  Episode_Reward/track_angular_velocity: 0.0000
+          Episode_Reward/action_rate_l2: -0.4218
+          Episode_Reward/foot_clearance: -0.0017
+       Episode_Reward/foot_swing_height: -0.0019
+      Episode_Reward/head_pose_tracking: 0.0638
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: 0.0000
+          Episode_Reward/dof_pos_limits: 0.0000
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 27.72s
+                           Time elapsed: 00:02:16
+                                    ETA: 00:30:16
+
+################################################################################
+[1m                            Learning iteration 7/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 12288 
+                       Steps per second: 56 
+                        Collection time: 26.756s 
+                          Learning time: 0.568s 
+                        Mean value loss: 10.0525
+                    Mean surrogate loss: -0.0315
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0004
+                            Mean reward: 21.54
+                    Mean episode length: 150.92
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.4176
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0048
+             direction/mean_speed_score: 0.4063
+                   direction/turn_score: 0.4807
+                     direction/width_mm: 206.1425
+          direction/dr_consistency_cost: 0.1319
+            direction/backward_fraction: 0.3906
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 30911.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.0717
+              audit/cadence_steps_per_s: 5.3632
+                    Episode_Reward/pose: 0.3254
+                 Episode_Reward/upright: 0.6912
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: -0.0040
+                Episode_Reward/air_time: 0.0060
+            Episode_Reward/body_ang_vel: -0.0373
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.0000
+  Episode_Reward/track_angular_velocity: 0.0000
+          Episode_Reward/action_rate_l2: -0.4659
+          Episode_Reward/foot_clearance: -0.0021
+       Episode_Reward/foot_swing_height: -0.0046
+      Episode_Reward/head_pose_tracking: 0.0738
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: 0.0000
+          Episode_Reward/dof_pos_limits: 0.0000
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 27.32s
+                           Time elapsed: 00:02:44
+                                    ETA: 00:31:26
+
+################################################################################
+[1m                            Learning iteration 8/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 13824 
+                       Steps per second: 93 
+                        Collection time: 16.217s 
+                          Learning time: 0.212s 
+                        Mean value loss: 3.1688
+                    Mean surrogate loss: -0.0324
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0005
+                            Mean reward: 21.54
+                    Mean episode length: 159.81
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.7316
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0040
+             direction/mean_speed_score: 0.4528
+                   direction/turn_score: 0.5898
+                     direction/width_mm: 205.1130
+          direction/dr_consistency_cost: 0.1322
+            direction/backward_fraction: 0.3906
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 30935.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.3326
+              audit/cadence_steps_per_s: 5.5394
+--------------------------------------------------------------------------------
+                         Iteration time: 16.43s
+                           Time elapsed: 00:03:00
+                                    ETA: 00:30:24
+
+################################################################################
+[1m                            Learning iteration 9/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 15360 
+                       Steps per second: 97 
+                        Collection time: 15.510s 
+                          Learning time: 0.221s 
+                        Mean value loss: 2.8057
+                    Mean surrogate loss: -0.0363
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0005
+                            Mean reward: 22.12
+                    Mean episode length: 163.94
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.9437
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0456
+             direction/mean_speed_score: 0.4058
+                   direction/turn_score: 0.4771
+                     direction/width_mm: 205.8416
+          direction/dr_consistency_cost: 0.0891
+            direction/backward_fraction: 0.2969
+         direction/proper_step_fraction: 0.0156
+              curriculum/effective_step: 30959.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.1638
+              audit/cadence_steps_per_s: 5.4639
+--------------------------------------------------------------------------------
+                         Iteration time: 15.73s
+                           Time elapsed: 00:03:16
+                                    ETA: 00:29:25
+
+################################################################################
+[1m                           Learning iteration 10/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 16896 
+                       Steps per second: 97 
+                        Collection time: 15.460s 
+                          Learning time: 0.225s 
+                        Mean value loss: 2.4335
+                    Mean surrogate loss: -0.0369
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0006
+                            Mean reward: 20.88
+                    Mean episode length: 168.33
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.4656
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0604
+             direction/mean_speed_score: 0.3679
+                   direction/turn_score: 0.6270
+                     direction/width_mm: 206.1596
+          direction/dr_consistency_cost: 0.0319
+            direction/backward_fraction: 0.2344
+         direction/proper_step_fraction: 0.0312
+              curriculum/effective_step: 30983.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.4404
+              audit/cadence_steps_per_s: 5.4790
+--------------------------------------------------------------------------------
+                         Iteration time: 15.68s
+                           Time elapsed: 00:03:31
+                                    ETA: 00:28:34
+
+################################################################################
+[1m                           Learning iteration 11/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 18432 
+                       Steps per second: 57 
+                        Collection time: 26.223s 
+                          Learning time: 0.568s 
+                        Mean value loss: 1.9855
+                    Mean surrogate loss: -0.0447
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0006
+                            Mean reward: 20.88
+                    Mean episode length: 168.33
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.9385
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0993
+             direction/mean_speed_score: 0.3560
+                   direction/turn_score: 0.4777
+                     direction/width_mm: 205.3075
+          direction/dr_consistency_cost: 0.0339
+            direction/backward_fraction: 0.1875
+         direction/proper_step_fraction: 0.0469
+              curriculum/effective_step: 31007.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.5242
+              audit/cadence_steps_per_s: 5.3602
+--------------------------------------------------------------------------------
+                         Iteration time: 26.79s
+                           Time elapsed: 00:03:58
+                                    ETA: 00:29:10
+
+################################################################################
+[1m                           Learning iteration 12/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 19968 
+                       Steps per second: 71 
+                        Collection time: 21.303s 
+                          Learning time: 0.284s 
+                        Mean value loss: 2.0003
+                    Mean surrogate loss: -0.0393
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0007
+                            Mean reward: 20.88
+                    Mean episode length: 168.33
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.5177
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.1003
+             direction/mean_speed_score: 0.4191
+                   direction/turn_score: 0.4676
+                     direction/width_mm: 206.4510
+          direction/dr_consistency_cost: 0.0367
+            direction/backward_fraction: 0.2188
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 31031.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.3669
+              audit/cadence_steps_per_s: 5.5586
+--------------------------------------------------------------------------------
+                         Iteration time: 21.59s
+                           Time elapsed: 00:04:20
+                                    ETA: 00:29:01
+
+################################################################################
+[1m                           Learning iteration 13/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 21504 
+                       Steps per second: 56 
+                        Collection time: 26.569s 
+                          Learning time: 0.600s 
+                        Mean value loss: 1.6400
+                    Mean surrogate loss: -0.0467
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0007
+                            Mean reward: 20.88
+                    Mean episode length: 168.33
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.2398
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.1236
+             direction/mean_speed_score: 0.3763
+                   direction/turn_score: 0.4096
+                     direction/width_mm: 206.7887
+          direction/dr_consistency_cost: 0.0595
+            direction/backward_fraction: 0.2188
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 31055.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.4390
+              audit/cadence_steps_per_s: 5.4956
+--------------------------------------------------------------------------------
+                         Iteration time: 27.17s
+                           Time elapsed: 00:04:47
+                                    ETA: 00:29:25
+
+################################################################################
+[1m                           Learning iteration 14/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 23040 
+                       Steps per second: 55 
+                        Collection time: 26.903s 
+                          Learning time: 0.563s 
+                        Mean value loss: 1.9666
+                    Mean surrogate loss: -0.0432
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0006
+                            Mean reward: 20.88
+                    Mean episode length: 168.33
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.2909
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0820
+             direction/mean_speed_score: 0.4398
+                   direction/turn_score: 0.4164
+                     direction/width_mm: 206.0277
+          direction/dr_consistency_cost: 0.0557
+            direction/backward_fraction: 0.2188
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 31079.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.6991
+              audit/cadence_steps_per_s: 5.4606
+--------------------------------------------------------------------------------
+                         Iteration time: 27.47s
+                           Time elapsed: 00:05:14
+                                    ETA: 00:29:44
+
+################################################################################
+[1m                           Learning iteration 15/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 24576 
+                       Steps per second: 58 
+                        Collection time: 25.646s 
+                          Learning time: 0.442s 
+                        Mean value loss: 1.3901
+                    Mean surrogate loss: -0.0412
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0006
+                            Mean reward: 20.88
+                    Mean episode length: 168.33
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.5854
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0828
+             direction/mean_speed_score: 0.4053
+                   direction/turn_score: 0.4698
+                     direction/width_mm: 207.1418
+          direction/dr_consistency_cost: 0.0669
+            direction/backward_fraction: 0.2188
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 31103.0000
+            audit/gf_peak_abs_torque_nm: 44.4143
+            audit/gf_mean_abs_torque_nm: 8.8827
+              audit/cadence_steps_per_s: 5.4743
+--------------------------------------------------------------------------------
+                         Iteration time: 26.09s
+                           Time elapsed: 00:05:40
+                                    ETA: 00:29:50
+
+################################################################################
+[1m                           Learning iteration 16/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 26112 
+                       Steps per second: 55 
+                        Collection time: 27.021s 
+                          Learning time: 0.524s 
+                        Mean value loss: 4.2777
+                    Mean surrogate loss: -0.0305
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0007
+                            Mean reward: 21.42
+                    Mean episode length: 179.70
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.6764
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.1122
+             direction/mean_speed_score: 0.3811
+                   direction/turn_score: 0.4603
+                     direction/width_mm: 206.7384
+          direction/dr_consistency_cost: 0.0638
+            direction/backward_fraction: 0.2500
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 31127.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.7562
+              audit/cadence_steps_per_s: 5.3968
+--------------------------------------------------------------------------------
+                         Iteration time: 27.55s
+                           Time elapsed: 00:06:08
+                                    ETA: 00:29:59
+
+################################################################################
+[1m                           Learning iteration 17/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 27648 
+                       Steps per second: 61 
+                        Collection time: 24.602s 
+                          Learning time: 0.527s 
+                        Mean value loss: 1.8785
+                    Mean surrogate loss: -0.0375
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0007
+                            Mean reward: 23.39
+                    Mean episode length: 190.62
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.2810
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0943
+             direction/mean_speed_score: 0.3533
+                   direction/turn_score: 0.5359
+                     direction/width_mm: 205.4104
+          direction/dr_consistency_cost: 0.0586
+            direction/backward_fraction: 0.2812
+         direction/proper_step_fraction: 0.0469
+              curriculum/effective_step: 31151.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.2127
+              audit/cadence_steps_per_s: 5.3578
+--------------------------------------------------------------------------------
+                         Iteration time: 25.13s
+                           Time elapsed: 00:06:33
+                                    ETA: 00:29:53
+
+################################################################################
+[1m                           Learning iteration 18/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 29184 
+                       Steps per second: 56 
+                        Collection time: 26.698s 
+                          Learning time: 0.625s 
+                        Mean value loss: 5.0282
+                    Mean surrogate loss: -0.0337
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0007
+                            Mean reward: 24.57
+                    Mean episode length: 214.21
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.3826
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.1043
+             direction/mean_speed_score: 0.3885
+                   direction/turn_score: 0.5195
+                     direction/width_mm: 207.6167
+          direction/dr_consistency_cost: 0.0492
+            direction/backward_fraction: 0.2500
+         direction/proper_step_fraction: 0.0156
+              curriculum/effective_step: 31175.0000
+            audit/gf_peak_abs_torque_nm: 41.9585
+            audit/gf_mean_abs_torque_nm: 8.5208
+              audit/cadence_steps_per_s: 5.4499
+--------------------------------------------------------------------------------
+                         Iteration time: 27.32s
+                           Time elapsed: 00:07:00
+                                    ETA: 00:29:54
+
+################################################################################
+[1m                           Learning iteration 19/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 30720 
+                       Steps per second: 59 
+                        Collection time: 25.451s 
+                          Learning time: 0.566s 
+                        Mean value loss: 4.2833
+                    Mean surrogate loss: -0.0325
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0007
+                            Mean reward: 27.34
+                    Mean episode length: 234.15
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.4536
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.1215
+             direction/mean_speed_score: 0.3928
+                   direction/turn_score: 0.5255
+                     direction/width_mm: 206.2035
+          direction/dr_consistency_cost: 0.0580
+            direction/backward_fraction: 0.2344
+         direction/proper_step_fraction: 0.0312
+              curriculum/effective_step: 31199.0000
+            audit/gf_peak_abs_torque_nm: 44.4809
+            audit/gf_mean_abs_torque_nm: 8.8928
+              audit/cadence_steps_per_s: 5.2992
+--------------------------------------------------------------------------------
+                         Iteration time: 26.02s
+                           Time elapsed: 00:07:26
+                                    ETA: 00:29:47
+
+################################################################################
+[1m                           Learning iteration 20/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 32256 
+                       Steps per second: 55 
+                        Collection time: 26.847s 
+                          Learning time: 0.663s 
+                        Mean value loss: 2.6290
+                    Mean surrogate loss: -0.0328
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0007
+                            Mean reward: 63.46
+                    Mean episode length: 392.33
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 3.5242
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.1232
+             direction/mean_speed_score: 0.6172
+                   direction/turn_score: 0.6734
+                     direction/width_mm: 217.4345
+          direction/dr_consistency_cost: 0.0043
+            direction/backward_fraction: 0.3281
+         direction/proper_step_fraction: 0.0312
+              curriculum/effective_step: 31223.0000
+            audit/gf_peak_abs_torque_nm: 45.2473
+            audit/gf_mean_abs_torque_nm: 8.6308
+              audit/cadence_steps_per_s: 5.4791
+--------------------------------------------------------------------------------
+                         Iteration time: 27.51s
+                           Time elapsed: 00:07:54
+                                    ETA: 00:29:44
+
+################################################################################
+[1m                           Learning iteration 21/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 33792 
+                       Steps per second: 60 
+                        Collection time: 24.981s 
+                          Learning time: 0.608s 
+                        Mean value loss: 1.7049
+                    Mean surrogate loss: -0.0396
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0008
+                            Mean reward: 63.46
+                    Mean episode length: 392.33
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.8979
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0570
+             direction/mean_speed_score: 0.3211
+                   direction/turn_score: 0.5717
+                     direction/width_mm: 205.6173
+          direction/dr_consistency_cost: 0.0231
+            direction/backward_fraction: 0.3438
+         direction/proper_step_fraction: 0.0156
+              curriculum/effective_step: 31247.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.2352
+              audit/cadence_steps_per_s: 5.6302
+--------------------------------------------------------------------------------
+                         Iteration time: 25.59s
+                           Time elapsed: 00:08:20
+                                    ETA: 00:29:33
+
+################################################################################
+[1m                           Learning iteration 22/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 35328 
+                       Steps per second: 97 
+                        Collection time: 15.461s 
+                          Learning time: 0.232s 
+                        Mean value loss: 1.6130
+                    Mean surrogate loss: -0.0421
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0008
+                            Mean reward: 63.46
+                    Mean episode length: 392.33
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 3.6070
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0454
+             direction/mean_speed_score: 0.3208
+                   direction/turn_score: 0.4872
+                     direction/width_mm: 206.7426
+          direction/dr_consistency_cost: 0.0269
+            direction/backward_fraction: 0.3438
+         direction/proper_step_fraction: 0.0469
+              curriculum/effective_step: 31271.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.4655
+              audit/cadence_steps_per_s: 5.3748
+--------------------------------------------------------------------------------
+                         Iteration time: 15.69s
+                           Time elapsed: 00:08:35
+                                    ETA: 00:28:46
+
+################################################################################
+[1m                           Learning iteration 23/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 36864 
+                       Steps per second: 67 
+                        Collection time: 22.467s 
+                          Learning time: 0.268s 
+                        Mean value loss: 1.3769
+                    Mean surrogate loss: -0.0377
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 64.19
+                    Mean episode length: 393.91
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 3.6172
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0820
+             direction/mean_speed_score: 0.3659
+                   direction/turn_score: 0.5297
+                     direction/width_mm: 206.2578
+          direction/dr_consistency_cost: 0.0776
+            direction/backward_fraction: 0.3438
+         direction/proper_step_fraction: 0.0312
+              curriculum/effective_step: 31295.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.5224
+              audit/cadence_steps_per_s: 5.2780
+--------------------------------------------------------------------------------
+                         Iteration time: 22.73s
+                           Time elapsed: 00:08:58
+                                    ETA: 00:28:25
+
+################################################################################
+[1m                           Learning iteration 24/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 38400 
+                       Steps per second: 101 
+                        Collection time: 14.999s 
+                          Learning time: 0.193s 
+                        Mean value loss: 1.4061
+                    Mean surrogate loss: -0.0402
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0008
+                            Mean reward: 64.90
+                    Mean episode length: 395.45
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 7.8975
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0450
+             direction/mean_speed_score: 0.3395
+                   direction/turn_score: 0.4125
+                     direction/width_mm: 206.4520
+          direction/dr_consistency_cost: 0.0568
+            direction/backward_fraction: 0.3750
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 31319.0000
+            audit/gf_peak_abs_torque_nm: 52.2587
+            audit/gf_mean_abs_torque_nm: 9.3926
+              audit/cadence_steps_per_s: 5.4326
+--------------------------------------------------------------------------------
+                         Iteration time: 15.19s
+                           Time elapsed: 00:09:13
+                                    ETA: 00:27:41
+
+################################################################################
+[1m                           Learning iteration 25/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 39936 
+                       Steps per second: 95 
+                        Collection time: 15.557s 
+                          Learning time: 0.586s 
+                        Mean value loss: 5.1982
+                    Mean surrogate loss: -0.0320
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0008
+                            Mean reward: 63.82
+                    Mean episode length: 394.07
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.7026
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0557
+             direction/mean_speed_score: 0.3565
+                   direction/turn_score: 0.5521
+                     direction/width_mm: 205.9293
+          direction/dr_consistency_cost: 0.0425
+            direction/backward_fraction: 0.3594
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 31343.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.7540
+              audit/cadence_steps_per_s: 5.3945
+                    Episode_Reward/pose: 0.7403
+                 Episode_Reward/upright: 1.5476
+               Episode_Reward/foot_slip: -0.0041
+         Episode_Reward/self_collisions: 0.0000
+                Episode_Reward/air_time: 0.0000
+            Episode_Reward/body_ang_vel: -0.1705
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.0000
+  Episode_Reward/track_angular_velocity: 0.0000
+          Episode_Reward/action_rate_l2: -1.3059
+          Episode_Reward/foot_clearance: -0.0102
+       Episode_Reward/foot_swing_height: -0.0635
+      Episode_Reward/head_pose_tracking: 0.1641
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: 0.0000
+          Episode_Reward/dof_pos_limits: -0.0004
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 16.14s
+                           Time elapsed: 00:09:29
+                                    ETA: 00:27:01
+
+################################################################################
+[1m                           Learning iteration 26/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 41472 
+                       Steps per second: 57 
+                        Collection time: 26.074s 
+                          Learning time: 0.680s 
+                        Mean value loss: 1.1698
+                    Mean surrogate loss: -0.0387
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 64.46
+                    Mean episode length: 395.52
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 6.8517
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0774
+             direction/mean_speed_score: 0.3007
+                   direction/turn_score: 0.5232
+                     direction/width_mm: 206.0635
+          direction/dr_consistency_cost: 0.0817
+            direction/backward_fraction: 0.3438
+         direction/proper_step_fraction: 0.1250
+              curriculum/effective_step: 31367.0000
+            audit/gf_peak_abs_torque_nm: 42.4435
+            audit/gf_mean_abs_torque_nm: 8.7652
+              audit/cadence_steps_per_s: 5.2356
+--------------------------------------------------------------------------------
+                         Iteration time: 26.75s
+                           Time elapsed: 00:09:56
+                                    ETA: 00:26:53
+
+################################################################################
+[1m                           Learning iteration 27/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 43008 
+                       Steps per second: 68 
+                        Collection time: 21.759s 
+                          Learning time: 0.642s 
+                        Mean value loss: 7.8061
+                    Mean surrogate loss: -0.0294
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0008
+                            Mean reward: 64.31
+                    Mean episode length: 397.75
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.4964
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0679
+             direction/mean_speed_score: 0.4477
+                   direction/turn_score: 0.5213
+                     direction/width_mm: 207.1880
+          direction/dr_consistency_cost: 0.0628
+            direction/backward_fraction: 0.3281
+         direction/proper_step_fraction: 0.0469
+              curriculum/effective_step: 31391.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.8930
+              audit/cadence_steps_per_s: 5.2811
+                    Episode_Reward/pose: 0.8487
+                 Episode_Reward/upright: 1.8248
+               Episode_Reward/foot_slip: -0.0007
+         Episode_Reward/self_collisions: 0.0000
+                Episode_Reward/air_time: 0.0420
+            Episode_Reward/body_ang_vel: -0.0893
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.0000
+  Episode_Reward/track_angular_velocity: 0.0000
+          Episode_Reward/action_rate_l2: -1.1412
+          Episode_Reward/foot_clearance: -0.0051
+       Episode_Reward/foot_swing_height: -0.0069
+      Episode_Reward/head_pose_tracking: 0.1910
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: 0.0000
+          Episode_Reward/dof_pos_limits: 0.0000
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 22.40s
+                           Time elapsed: 00:10:18
+                                    ETA: 00:26:31
+
+################################################################################
+[1m                           Learning iteration 28/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 44544 
+                       Steps per second: 55 
+                        Collection time: 27.037s 
+                          Learning time: 0.633s 
+                        Mean value loss: 5.0019
+                    Mean surrogate loss: -0.0357
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 61.34
+                    Mean episode length: 384.57
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.0865
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0796
+             direction/mean_speed_score: 0.3908
+                   direction/turn_score: 0.4894
+                     direction/width_mm: 206.0697
+          direction/dr_consistency_cost: 0.0308
+            direction/backward_fraction: 0.2812
+         direction/proper_step_fraction: 0.1094
+              curriculum/effective_step: 31415.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.1040
+              audit/cadence_steps_per_s: 5.3365
+--------------------------------------------------------------------------------
+                         Iteration time: 27.67s
+                           Time elapsed: 00:10:46
+                                    ETA: 00:26:23
+
+################################################################################
+[1m                           Learning iteration 29/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 46080 
+                       Steps per second: 58 
+                        Collection time: 25.523s 
+                          Learning time: 0.640s 
+                        Mean value loss: 5.8190
+                    Mean surrogate loss: -0.0328
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 60.01
+                    Mean episode length: 376.88
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 3.5038
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0992
+             direction/mean_speed_score: 0.3401
+                   direction/turn_score: 0.5069
+                     direction/width_mm: 205.5589
+          direction/dr_consistency_cost: 0.0699
+            direction/backward_fraction: 0.2969
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 31439.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.0778
+              audit/cadence_steps_per_s: 5.1980
+--------------------------------------------------------------------------------
+                         Iteration time: 26.16s
+                           Time elapsed: 00:11:12
+                                    ETA: 00:26:09
+
+################################################################################
+[1m                           Learning iteration 30/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 47616 
+                       Steps per second: 57 
+                        Collection time: 26.068s 
+                          Learning time: 0.669s 
+                        Mean value loss: 3.6867
+                    Mean surrogate loss: -0.0306
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 60.27
+                    Mean episode length: 376.62
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.2354
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0695
+             direction/mean_speed_score: 0.3405
+                   direction/turn_score: 0.5239
+                     direction/width_mm: 205.5059
+          direction/dr_consistency_cost: 0.0257
+            direction/backward_fraction: 0.3438
+         direction/proper_step_fraction: 0.1094
+              curriculum/effective_step: 31463.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.5867
+              audit/cadence_steps_per_s: 5.3291
+--------------------------------------------------------------------------------
+                         Iteration time: 26.74s
+                           Time elapsed: 00:11:39
+                                    ETA: 00:25:57
+
+################################################################################
+[1m                           Learning iteration 31/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 49152 
+                       Steps per second: 56 
+                        Collection time: 26.477s 
+                          Learning time: 0.580s 
+                        Mean value loss: 5.0453
+                    Mean surrogate loss: -0.0345
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 60.31
+                    Mean episode length: 375.96
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.7967
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0532
+             direction/mean_speed_score: 0.3035
+                   direction/turn_score: 0.6201
+                     direction/width_mm: 205.6498
+          direction/dr_consistency_cost: 0.0264
+            direction/backward_fraction: 0.3281
+         direction/proper_step_fraction: 0.0156
+              curriculum/effective_step: 31487.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.7908
+              audit/cadence_steps_per_s: 5.4765
+--------------------------------------------------------------------------------
+                         Iteration time: 27.06s
+                           Time elapsed: 00:12:06
+                                    ETA: 00:25:44
+
+################################################################################
+[1m                           Learning iteration 32/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 50688 
+                       Steps per second: 59 
+                        Collection time: 25.217s 
+                          Learning time: 0.675s 
+                        Mean value loss: 2.9061
+                    Mean surrogate loss: -0.0368
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0010
+                            Mean reward: 60.31
+                    Mean episode length: 375.96
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.7890
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0656
+             direction/mean_speed_score: 0.3557
+                   direction/turn_score: 0.5535
+                     direction/width_mm: 207.1260
+          direction/dr_consistency_cost: 0.0407
+            direction/backward_fraction: 0.3750
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 31511.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.7457
+              audit/cadence_steps_per_s: 5.5577
+--------------------------------------------------------------------------------
+                         Iteration time: 25.89s
+                           Time elapsed: 00:12:32
+                                    ETA: 00:25:27
+
+################################################################################
+[1m                           Learning iteration 33/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 52224 
+                       Steps per second: 55 
+                        Collection time: 26.849s 
+                          Learning time: 0.682s 
+                        Mean value loss: 1.8954
+                    Mean surrogate loss: -0.0357
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 59.72
+                    Mean episode length: 373.61
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.7707
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0404
+             direction/mean_speed_score: 0.3472
+                   direction/turn_score: 0.5352
+                     direction/width_mm: 206.4878
+          direction/dr_consistency_cost: 0.0342
+            direction/backward_fraction: 0.3594
+         direction/proper_step_fraction: 0.0469
+              curriculum/effective_step: 31535.0000
+            audit/gf_peak_abs_torque_nm: 78.3410
+            audit/gf_mean_abs_torque_nm: 9.2314
+              audit/cadence_steps_per_s: 5.4579
+--------------------------------------------------------------------------------
+                         Iteration time: 27.53s
+                           Time elapsed: 00:13:00
+                                    ETA: 00:25:14
+
+################################################################################
+[1m                           Learning iteration 34/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 53760 
+                       Steps per second: 61 
+                        Collection time: 24.284s 
+                          Learning time: 0.611s 
+                        Mean value loss: 1.0202
+                    Mean surrogate loss: -0.0369
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 59.72
+                    Mean episode length: 373.61
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.5058
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0424
+             direction/mean_speed_score: 0.3429
+                   direction/turn_score: 0.5139
+                     direction/width_mm: 206.2474
+          direction/dr_consistency_cost: 0.0570
+            direction/backward_fraction: 0.3594
+         direction/proper_step_fraction: 0.0469
+              curriculum/effective_step: 31559.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.4921
+              audit/cadence_steps_per_s: 5.5321
+--------------------------------------------------------------------------------
+                         Iteration time: 24.89s
+                           Time elapsed: 00:13:24
+                                    ETA: 00:24:54
+
+################################################################################
+[1m                           Learning iteration 35/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 55296 
+                       Steps per second: 55 
+                        Collection time: 27.154s 
+                          Learning time: 0.444s 
+                        Mean value loss: 5.9418
+                    Mean surrogate loss: -0.0291
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 60.33
+                    Mean episode length: 374.86
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.1759
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0350
+             direction/mean_speed_score: 0.4190
+                   direction/turn_score: 0.5324
+                     direction/width_mm: 208.1219
+          direction/dr_consistency_cost: 0.0535
+            direction/backward_fraction: 0.3594
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 31583.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.8619
+              audit/cadence_steps_per_s: 5.5866
+--------------------------------------------------------------------------------
+                         Iteration time: 27.60s
+                           Time elapsed: 00:13:52
+                                    ETA: 00:24:40
+
+################################################################################
+[1m                           Learning iteration 36/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 56832 
+                       Steps per second: 59 
+                        Collection time: 25.552s 
+                          Learning time: 0.479s 
+                        Mean value loss: 4.8801
+                    Mean surrogate loss: -0.0304
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0010
+                            Mean reward: 61.40
+                    Mean episode length: 379.65
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.8347
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0614
+             direction/mean_speed_score: 0.3599
+                   direction/turn_score: 0.5111
+                     direction/width_mm: 206.8235
+          direction/dr_consistency_cost: 0.0359
+            direction/backward_fraction: 0.3594
+         direction/proper_step_fraction: 0.0938
+              curriculum/effective_step: 31607.0000
+            audit/gf_peak_abs_torque_nm: 58.5781
+            audit/gf_mean_abs_torque_nm: 8.9497
+              audit/cadence_steps_per_s: 5.5452
+--------------------------------------------------------------------------------
+                         Iteration time: 26.03s
+                           Time elapsed: 00:14:18
+                                    ETA: 00:24:21
+
+################################################################################
+[1m                           Learning iteration 37/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 58368 
+                       Steps per second: 56 
+                        Collection time: 26.835s 
+                          Learning time: 0.580s 
+                        Mean value loss: 4.9278
+                    Mean surrogate loss: -0.0321
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0010
+                            Mean reward: 61.77
+                    Mean episode length: 384.13
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.1226
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0865
+             direction/mean_speed_score: 0.3344
+                   direction/turn_score: 0.4523
+                     direction/width_mm: 207.1295
+          direction/dr_consistency_cost: 0.0648
+            direction/backward_fraction: 0.2969
+         direction/proper_step_fraction: 0.0156
+              curriculum/effective_step: 31631.0000
+            audit/gf_peak_abs_torque_nm: 50.7796
+            audit/gf_mean_abs_torque_nm: 8.9893
+              audit/cadence_steps_per_s: 5.5138
+--------------------------------------------------------------------------------
+                         Iteration time: 27.41s
+                           Time elapsed: 00:14:45
+                                    ETA: 00:24:05
+
+################################################################################
+[1m                           Learning iteration 38/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 59904 
+                       Steps per second: 60 
+                        Collection time: 24.935s 
+                          Learning time: 0.569s 
+                        Mean value loss: 8.9465
+                    Mean surrogate loss: -0.0320
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0010
+                            Mean reward: 62.35
+                    Mean episode length: 389.72
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.3708
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0694
+             direction/mean_speed_score: 0.3203
+                   direction/turn_score: 0.5403
+                     direction/width_mm: 206.5161
+          direction/dr_consistency_cost: 0.0265
+            direction/backward_fraction: 0.3281
+         direction/proper_step_fraction: 0.0469
+              curriculum/effective_step: 31655.0000
+            audit/gf_peak_abs_torque_nm: 47.7294
+            audit/gf_mean_abs_torque_nm: 9.2529
+              audit/cadence_steps_per_s: 5.5122
+--------------------------------------------------------------------------------
+                         Iteration time: 25.50s
+                           Time elapsed: 00:15:11
+                                    ETA: 00:23:45
+
+################################################################################
+[1m                           Learning iteration 39/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 61440 
+                       Steps per second: 56 
+                        Collection time: 26.767s 
+                          Learning time: 0.570s 
+                        Mean value loss: 2.4261
+                    Mean surrogate loss: -0.0339
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 64.52
+                    Mean episode length: 398.45
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.8249
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0942
+             direction/mean_speed_score: 0.2858
+                   direction/turn_score: 0.5134
+                     direction/width_mm: 205.3728
+          direction/dr_consistency_cost: 0.0405
+            direction/backward_fraction: 0.3438
+         direction/proper_step_fraction: 0.1094
+              curriculum/effective_step: 31679.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.7702
+              audit/cadence_steps_per_s: 5.3680
+--------------------------------------------------------------------------------
+                         Iteration time: 27.34s
+                           Time elapsed: 00:15:38
+                                    ETA: 00:23:28
+
+################################################################################
+[1m                           Learning iteration 40/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 62976 
+                       Steps per second: 55 
+                        Collection time: 27.158s 
+                          Learning time: 0.272s 
+                        Mean value loss: 3.1763
+                    Mean surrogate loss: -0.0352
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 67.54
+                    Mean episode length: 408.14
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.9051
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0999
+             direction/mean_speed_score: 0.3577
+                   direction/turn_score: 0.5027
+                     direction/width_mm: 205.8218
+          direction/dr_consistency_cost: 0.0460
+            direction/backward_fraction: 0.3438
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 31703.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.2184
+              audit/cadence_steps_per_s: 5.2049
+                    Episode_Reward/pose: 0.8029
+                 Episode_Reward/upright: 1.7412
+               Episode_Reward/foot_slip: -0.0009
+         Episode_Reward/self_collisions: -0.0020
+                Episode_Reward/air_time: 0.0060
+            Episode_Reward/body_ang_vel: -0.1119
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.0000
+  Episode_Reward/track_angular_velocity: 0.0000
+          Episode_Reward/action_rate_l2: -1.3586
+          Episode_Reward/foot_clearance: -0.0055
+       Episode_Reward/foot_swing_height: -0.0052
+      Episode_Reward/head_pose_tracking: 0.1850
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: 0.0000
+          Episode_Reward/dof_pos_limits: -0.0012
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 27.43s
+                           Time elapsed: 00:16:06
+                                    ETA: 00:23:10
+
+################################################################################
+[1m                           Learning iteration 41/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 64512 
+                       Steps per second: 55 
+                        Collection time: 27.018s 
+                          Learning time: 0.519s 
+                        Mean value loss: 2.7765
+                    Mean surrogate loss: -0.0263
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 71.31
+                    Mean episode length: 408.92
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.4980
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0744
+             direction/mean_speed_score: 0.4407
+                   direction/turn_score: 0.5132
+                     direction/width_mm: 209.8811
+          direction/dr_consistency_cost: 0.0087
+            direction/backward_fraction: 0.3750
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 31727.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.5466
+              audit/cadence_steps_per_s: 5.2682
+--------------------------------------------------------------------------------
+                         Iteration time: 27.54s
+                           Time elapsed: 00:16:33
+                                    ETA: 00:22:52
+
+################################################################################
+[1m                           Learning iteration 42/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 66048 
+                       Steps per second: 56 
+                        Collection time: 26.782s 
+                          Learning time: 0.523s 
+                        Mean value loss: 2.2943
+                    Mean surrogate loss: -0.0339
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0008
+                            Mean reward: 71.38
+                    Mean episode length: 407.49
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.3019
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0550
+             direction/mean_speed_score: 0.3212
+                   direction/turn_score: 0.4970
+                     direction/width_mm: 206.4120
+          direction/dr_consistency_cost: 0.0080
+            direction/backward_fraction: 0.3594
+         direction/proper_step_fraction: 0.0312
+              curriculum/effective_step: 31751.0000
+            audit/gf_peak_abs_torque_nm: 40.4161
+            audit/gf_mean_abs_torque_nm: 9.0826
+              audit/cadence_steps_per_s: 5.3566
+                    Episode_Reward/pose: 0.6026
+                 Episode_Reward/upright: 1.3006
+               Episode_Reward/foot_slip: -0.0005
+         Episode_Reward/self_collisions: -0.0100
+                Episode_Reward/air_time: 0.0060
+            Episode_Reward/body_ang_vel: -0.0675
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.0000
+  Episode_Reward/track_angular_velocity: 0.0000
+          Episode_Reward/action_rate_l2: -0.9545
+          Episode_Reward/foot_clearance: -0.0034
+       Episode_Reward/foot_swing_height: -0.0025
+      Episode_Reward/head_pose_tracking: 0.1384
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: 0.0000
+          Episode_Reward/dof_pos_limits: 0.0000
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 27.31s
+                           Time elapsed: 00:17:01
+                                    ETA: 00:22:33
+
+################################################################################
+[1m                           Learning iteration 43/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 67584 
+                       Steps per second: 60 
+                        Collection time: 24.800s 
+                          Learning time: 0.526s 
+                        Mean value loss: 0.8047
+                    Mean surrogate loss: -0.0401
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0008
+                            Mean reward: 71.38
+                    Mean episode length: 407.49
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.8642
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0793
+             direction/mean_speed_score: 0.3382
+                   direction/turn_score: 0.5775
+                     direction/width_mm: 206.1272
+          direction/dr_consistency_cost: 0.0138
+            direction/backward_fraction: 0.3438
+         direction/proper_step_fraction: 0.1562
+              curriculum/effective_step: 31775.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.9585
+              audit/cadence_steps_per_s: 5.3593
+--------------------------------------------------------------------------------
+                         Iteration time: 25.33s
+                           Time elapsed: 00:17:26
+                                    ETA: 00:22:11
+
+################################################################################
+[1m                           Learning iteration 44/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 69120 
+                       Steps per second: 55 
+                        Collection time: 26.928s 
+                          Learning time: 0.667s 
+                        Mean value loss: 4.0147
+                    Mean surrogate loss: -0.0316
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 69.67
+                    Mean episode length: 401.43
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.8947
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0713
+             direction/mean_speed_score: 0.3437
+                   direction/turn_score: 0.5256
+                     direction/width_mm: 205.4113
+          direction/dr_consistency_cost: 0.0163
+            direction/backward_fraction: 0.3281
+         direction/proper_step_fraction: 0.0312
+              curriculum/effective_step: 31799.0000
+            audit/gf_peak_abs_torque_nm: 37.2948
+            audit/gf_mean_abs_torque_nm: 9.1042
+              audit/cadence_steps_per_s: 5.3961
+--------------------------------------------------------------------------------
+                         Iteration time: 27.60s
+                           Time elapsed: 00:17:54
+                                    ETA: 00:21:52
+
+################################################################################
+[1m                           Learning iteration 45/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 70656 
+                       Steps per second: 59 
+                        Collection time: 25.025s 
+                          Learning time: 0.601s 
+                        Mean value loss: 5.0297
+                    Mean surrogate loss: -0.0310
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 68.07
+                    Mean episode length: 393.69
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.3916
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0671
+             direction/mean_speed_score: 0.3956
+                   direction/turn_score: 0.5278
+                     direction/width_mm: 206.5493
+          direction/dr_consistency_cost: 0.0395
+            direction/backward_fraction: 0.3125
+         direction/proper_step_fraction: 0.1094
+              curriculum/effective_step: 31823.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.0789
+              audit/cadence_steps_per_s: 5.3853
+--------------------------------------------------------------------------------
+                         Iteration time: 25.63s
+                           Time elapsed: 00:18:19
+                                    ETA: 00:21:30
+
+################################################################################
+[1m                           Learning iteration 46/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 72192 
+                       Steps per second: 54 
+                        Collection time: 27.684s 
+                          Learning time: 0.695s 
+                        Mean value loss: 0.8756
+                    Mean surrogate loss: -0.0359
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 67.89
+                    Mean episode length: 393.69
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.1753
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0835
+             direction/mean_speed_score: 0.3164
+                   direction/turn_score: 0.5719
+                     direction/width_mm: 207.2388
+          direction/dr_consistency_cost: 0.0387
+            direction/backward_fraction: 0.3125
+         direction/proper_step_fraction: 0.0938
+              curriculum/effective_step: 31847.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.9252
+              audit/cadence_steps_per_s: 5.4475
+--------------------------------------------------------------------------------
+                         Iteration time: 28.38s
+                           Time elapsed: 00:18:48
+                                    ETA: 00:21:12
+
+################################################################################
+[1m                           Learning iteration 47/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 73728 
+                       Steps per second: 59 
+                        Collection time: 25.219s 
+                          Learning time: 0.598s 
+                        Mean value loss: 5.3943
+                    Mean surrogate loss: -0.0328
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 66.74
+                    Mean episode length: 387.41
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.2751
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0784
+             direction/mean_speed_score: 0.3887
+                   direction/turn_score: 0.5295
+                     direction/width_mm: 205.6247
+          direction/dr_consistency_cost: 0.0739
+            direction/backward_fraction: 0.3125
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 31871.0000
+            audit/gf_peak_abs_torque_nm: 47.1764
+            audit/gf_mean_abs_torque_nm: 9.1337
+              audit/cadence_steps_per_s: 5.3398
+--------------------------------------------------------------------------------
+                         Iteration time: 25.82s
+                           Time elapsed: 00:19:13
+                                    ETA: 00:20:49
+
+################################################################################
+[1m                           Learning iteration 48/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 75264 
+                       Steps per second: 52 
+                        Collection time: 28.489s 
+                          Learning time: 0.685s 
+                        Mean value loss: 7.1337
+                    Mean surrogate loss: -0.0330
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 66.26
+                    Mean episode length: 381.21
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.2929
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0522
+             direction/mean_speed_score: 0.3863
+                   direction/turn_score: 0.5266
+                     direction/width_mm: 207.5293
+          direction/dr_consistency_cost: 0.0492
+            direction/backward_fraction: 0.4375
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 31895.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.8246
+              audit/cadence_steps_per_s: 5.3395
+                    Episode_Reward/pose: 0.8521
+                 Episode_Reward/upright: 1.8521
+               Episode_Reward/foot_slip: -0.0006
+         Episode_Reward/self_collisions: -0.0020
+                Episode_Reward/air_time: 0.0060
+            Episode_Reward/body_ang_vel: -0.0910
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.0000
+  Episode_Reward/track_angular_velocity: 0.0000
+          Episode_Reward/action_rate_l2: -1.2412
+          Episode_Reward/foot_clearance: -0.0052
+       Episode_Reward/foot_swing_height: -0.0031
+      Episode_Reward/head_pose_tracking: 0.1918
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: 0.0000
+          Episode_Reward/dof_pos_limits: 0.0000
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 29.17s
+                           Time elapsed: 00:19:43
+                                    ETA: 00:20:31
+
+################################################################################
+[1m                           Learning iteration 49/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 76800 
+                       Steps per second: 58 
+                        Collection time: 25.804s 
+                          Learning time: 0.641s 
+                        Mean value loss: 2.6178
+                    Mean surrogate loss: -0.0305
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0010
+                            Mean reward: 66.10
+                    Mean episode length: 380.96
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.1455
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0392
+             direction/mean_speed_score: 0.4104
+                   direction/turn_score: 0.4871
+                     direction/width_mm: 206.0505
+          direction/dr_consistency_cost: 0.0382
+            direction/backward_fraction: 0.4531
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 31919.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.8473
+              audit/cadence_steps_per_s: 5.4112
+--------------------------------------------------------------------------------
+                         Iteration time: 26.45s
+                           Time elapsed: 00:20:09
+                                    ETA: 00:20:09
+
+################################################################################
+[1m                           Learning iteration 50/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 78336 
+                       Steps per second: 52 
+                        Collection time: 28.608s 
+                          Learning time: 0.478s 
+                        Mean value loss: 3.6956
+                    Mean surrogate loss: -0.0337
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 65.12
+                    Mean episode length: 376.51
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.2356
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0387
+             direction/mean_speed_score: 0.3937
+                   direction/turn_score: 0.5042
+                     direction/width_mm: 207.8589
+          direction/dr_consistency_cost: 0.0448
+            direction/backward_fraction: 0.3906
+         direction/proper_step_fraction: 0.0312
+              curriculum/effective_step: 31943.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.1696
+              audit/cadence_steps_per_s: 5.4432
+--------------------------------------------------------------------------------
+                         Iteration time: 29.09s
+                           Time elapsed: 00:20:38
+                                    ETA: 00:19:49
+
+################################################################################
+[1m                           Learning iteration 51/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 79872 
+                       Steps per second: 55 
+                        Collection time: 27.149s 
+                          Learning time: 0.686s 
+                        Mean value loss: 2.7976
+                    Mean surrogate loss: -0.0366
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 64.20
+                    Mean episode length: 373.32
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.0159
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0433
+             direction/mean_speed_score: 0.3866
+                   direction/turn_score: 0.5209
+                     direction/width_mm: 206.4107
+          direction/dr_consistency_cost: 0.0325
+            direction/backward_fraction: 0.3438
+         direction/proper_step_fraction: 0.0938
+              curriculum/effective_step: 31967.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.9023
+              audit/cadence_steps_per_s: 5.4270
+--------------------------------------------------------------------------------
+                         Iteration time: 27.83s
+                           Time elapsed: 00:21:06
+                                    ETA: 00:19:28
+
+################################################################################
+[1m                           Learning iteration 52/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 81408 
+                       Steps per second: 53 
+                        Collection time: 28.069s 
+                          Learning time: 0.634s 
+                        Mean value loss: 1.9290
+                    Mean surrogate loss: -0.0332
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 64.38
+                    Mean episode length: 374.01
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.2610
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0618
+             direction/mean_speed_score: 0.3976
+                   direction/turn_score: 0.4705
+                     direction/width_mm: 206.9496
+          direction/dr_consistency_cost: 0.0447
+            direction/backward_fraction: 0.3281
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 31991.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.3520
+              audit/cadence_steps_per_s: 5.4889
+--------------------------------------------------------------------------------
+                         Iteration time: 28.70s
+                           Time elapsed: 00:21:35
+                                    ETA: 00:19:08
+
+################################################################################
+[1m                           Learning iteration 53/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 82944 
+                       Steps per second: 53 
+                        Collection time: 27.942s 
+                          Learning time: 0.632s 
+                        Mean value loss: 1.6198
+                    Mean surrogate loss: -0.0416
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 64.38
+                    Mean episode length: 374.01
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.1764
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0383
+             direction/mean_speed_score: 0.4118
+                   direction/turn_score: 0.4994
+                     direction/width_mm: 207.0730
+          direction/dr_consistency_cost: 0.0739
+            direction/backward_fraction: 0.3438
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 32015.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.4161
+              audit/cadence_steps_per_s: 5.5095
+--------------------------------------------------------------------------------
+                         Iteration time: 28.57s
+                           Time elapsed: 00:22:03
+                                    ETA: 00:18:47
+
+################################################################################
+[1m                           Learning iteration 54/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 84480 
+                       Steps per second: 56 
+                        Collection time: 26.764s 
+                          Learning time: 0.584s 
+                        Mean value loss: 3.1353
+                    Mean surrogate loss: -0.0289
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 64.92
+                    Mean episode length: 371.79
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 4.4932
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0658
+             direction/mean_speed_score: 0.3911
+                   direction/turn_score: 0.4447
+                     direction/width_mm: 205.1260
+          direction/dr_consistency_cost: 0.0687
+            direction/backward_fraction: 0.3281
+         direction/proper_step_fraction: 0.0625
+              curriculum/effective_step: 32039.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 8.8521
+              audit/cadence_steps_per_s: 5.5497
+--------------------------------------------------------------------------------
+                         Iteration time: 27.35s
+                           Time elapsed: 00:22:31
+                                    ETA: 00:18:25
+
+################################################################################
+[1m                           Learning iteration 55/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 86016 
+                       Steps per second: 52 
+                        Collection time: 28.444s 
+                          Learning time: 0.687s 
+                        Mean value loss: 2.9545
+                    Mean surrogate loss: -0.0342
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0008
+                            Mean reward: 64.77
+                    Mean episode length: 371.69
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 6.2795
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0436
+             direction/mean_speed_score: 0.4761
+                   direction/turn_score: 0.4766
+                     direction/width_mm: 205.6680
+          direction/dr_consistency_cost: 0.0908
+            direction/backward_fraction: 0.3281
+         direction/proper_step_fraction: 0.0469
+              curriculum/effective_step: 32063.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.4456
+              audit/cadence_steps_per_s: 5.3579
+--------------------------------------------------------------------------------
+                         Iteration time: 29.13s
+                           Time elapsed: 00:23:00
+                                    ETA: 00:18:04
+
+################################################################################
+[1m                           Learning iteration 56/100                            [0m 
+
+                               Run name: yaw_soft
+                            Total steps: 87552 
+                       Steps per second: 58 
+                        Collection time: 25.606s 
+                          Learning time: 0.747s 
+                        Mean value loss: 1.2153
+                    Mean surrogate loss: -0.0375
+                      Mean entropy loss: 0.4570
+             Mean direction_anchor loss: 0.0009
+                            Mean reward: 65.43
+                    Mean episode length: 371.69
+                        Mean action std: 0.25
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+            startup/toe_heading_abs_deg: 5.6106
+                   startup/reward_alpha: 1.0000
+                           direction/vx: 0.0300
+             direction/mean_speed_score: 0.3568
+                   direction/turn_score: 0.4013
+                     direction/width_mm: 206.1103
+          direction/dr_consistency_cost: 0.1175
+            direction/backward_fraction: 0.3281
+         direction/proper_step_fraction: 0.0781
+              curriculum/effective_step: 32087.0000
+            audit/gf_peak_abs_torque_nm: 47.2329
+            audit/gf_mean_abs_torque_nm: 9.1915
+              audit/cadence_steps_per_s: 5.4719
+--------------------------------------------------------------------------------
+                         Iteration time: 26.35s
+                           Time elapsed: 00:23:26
+                                    ETA: 00:17:41
+
+Traceback (most recent call last):
+  File "/home/xingchen/Xduck/xduck_r2_flex_adapt100_20261010/run_walk_ppo.py", line 75, in <module>
+    assert action.shape==(16,14)
+  File "/home/xingchen/Xduck/xduck_r2_flex_adapt100_20261010/project/.venv/lib/python3.10/site-packages/rsl_rl/runners/on_policy_runner.py", line 87, in learn
+    obs, rewards, dones, extras = self.env.step(actions.to(self.env.device))
+  File "/home/xingchen/Xduck/xduck_r2_flex_adapt100_20261010/project/src/unilab/training/rsl_rl.py", line 325, in step
+    state = self.env.step(actions_np)
+  File "/home/xingchen/Xduck/xduck_r2_flex_adapt100_20261010/project/src/unilab/base/np_env.py", line 199, in step
+    backend_result = self._backend.step(ctrl, self._cfg.sim_substeps)
+  File "/home/xingchen/Xduck/xduck_r2_flex_adapt100_20261010/project/src/unilab/base/backend/mjwarp/xduck_gf.py", line 81, in step
+    self._synchronize()
+  File "/home/xingchen/Xduck/xduck_r2_flex_adapt100_20261010/project/src/unilab/base/backend/mjwarp/backend.py", line 314, in _synchronize
+    self._warp.synchronize_device()
+  File "/home/xingchen/Xduck/xduck_r2_flex_adapt100_20261010/project/.venv/lib/python3.10/site-packages/warp/_src/context.py", line 9178, in synchronize_device
+    runtime.core.wp_cuda_context_synchronize(device.context)
+KeyboardInterrupt

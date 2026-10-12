@@ -1,0 +1,3300 @@
+{
+  "standing_policy_inference_calls": 0,
+  "walk_is_single_unassisted_neural_actor": false,
+  "prototype_startup_correction": true,
+  "teacher_is_time_reversed_joint_cycle_with_damping_compensation": true,
+  "world_roll_feedback_teacher_only": true,
+  "variants": [
+    {
+      "damping": 0.0,
+      "lean": 0.0
+    },
+    {
+      "damping": 1.0,
+      "lean": 0.0
+    },
+    {
+      "damping": 2.0,
+      "lean": 0.0
+    },
+    {
+      "damping": 0.0,
+      "lean": 0.03
+    },
+    {
+      "damping": 1.0,
+      "lean": 0.03
+    },
+    {
+      "damping": 2.0,
+      "lean": 0.03
+    }
+  ],
+  "prescribed_step_or_height_feedback": false,
+  "records": [
+    {
+      "model": "rev0",
+      "case": 0,
+      "trace_index": 0,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.22814121842384338,
+      "tilt_max_deg": 79.51679992675781,
+      "min_height": 0.09116429835557938,
+      "velocity_mean": 0.015854457393288612,
+      "min1s_velocity": 0.013217114470899105,
+      "steady_width_mm": 207.67704824232206,
+      "steady_width_p95_mm": 212.96378499361683,
+      "foot_heading_abs_deg": 17.015488897896848,
+      "startup_yaw_span_deg": 69.30970001220703,
+      "startup_right_roll_max_deg": 18.238300323486328,
+      "startup_width_min_mm": 201.01939337530482,
+      "side_peak_median_mm": [
+        2.188831102102995,
+        37.79933787882328
+      ],
+      "full_swing_fraction": 0.4186046511627907,
+      "startup_width_max_mm": 213.37389435153918,
+      "peak_swing_height_mm": 2.698037074878812,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 243.73963928222656,
+      "startup_2p5_drop_mm": 228.51583862304688,
+      "startup_2p5_vertical_speed_max": 1.735496163368225,
+      "startup_2p5_acceleration_max": 66.97272491455078,
+      "startup_min_velocity": -0.43928927183151245,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 5,
+      "first_landings": [
+        {
+          "time_s": 1.4000000000000001,
+          "side": 0,
+          "peak_mm": 89.84150737524033,
+          "width_mm": 207.79802451365558
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 65.9334734082222,
+          "width_mm": 212.07633020172716
+        },
+        {
+          "time_s": 2.14,
+          "side": 1,
+          "peak_mm": 37.23543509840965,
+          "width_mm": 212.5417838756995
+        },
+        {
+          "time_s": 2.64,
+          "side": 1,
+          "peak_mm": 36.722876131534576,
+          "width_mm": 212.58091536587153
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 93.20658874511719,
+      "yaw_change_deg": 25.872270584106445,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0",
+      "case": 1,
+      "trace_index": 1,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4319015741348267,
+      "tilt_max_deg": 79.5316162109375,
+      "min_height": 0.09438228607177734,
+      "velocity_mean": 0.02103828266263008,
+      "min1s_velocity": 0.01911958124488592,
+      "steady_width_mm": 207.70741133491708,
+      "steady_width_p95_mm": 212.964717037097,
+      "foot_heading_abs_deg": 16.698223806137108,
+      "startup_yaw_span_deg": 96.017578125,
+      "startup_right_roll_max_deg": 55.580482482910156,
+      "startup_width_min_mm": 200.96550282631503,
+      "side_peak_median_mm": [
+        2.6565250009298325,
+        31.821398064494133
+      ],
+      "full_swing_fraction": 0.42857142857142855,
+      "startup_width_max_mm": 213.52990165562346,
+      "peak_swing_height_mm": 3.664480405859649,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 227.81224060058594,
+      "startup_2p5_drop_mm": 223.96786499023438,
+      "startup_2p5_vertical_speed_max": 1.5012741088867188,
+      "startup_2p5_acceleration_max": 62.04573059082031,
+      "startup_min_velocity": -0.5928305387496948,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 4,
+      "first_landings": [
+        {
+          "time_s": 0.9,
+          "side": 1,
+          "peak_mm": 19.48859542608261,
+          "width_mm": 208.31892097235485
+        },
+        {
+          "time_s": 1.3800000000000001,
+          "side": 0,
+          "peak_mm": 86.72299236059189,
+          "width_mm": 205.3842524958791
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 46.6574989259243,
+          "width_mm": 212.20644503047484
+        },
+        {
+          "time_s": 2.14,
+          "side": 1,
+          "peak_mm": 32.181065529584885,
+          "width_mm": 212.6802129961502
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 96.017578125,
+      "yaw_change_deg": 10.19562816619873,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0",
+      "case": 2,
+      "trace_index": 2,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4473975896835327,
+      "tilt_max_deg": 78.96920013427734,
+      "min_height": 0.09508232772350311,
+      "velocity_mean": 0.006963853724300861,
+      "min1s_velocity": 0.0037398882582783703,
+      "steady_width_mm": 207.7384631987568,
+      "steady_width_p95_mm": 213.15927764056826,
+      "foot_heading_abs_deg": 16.707707824482934,
+      "startup_yaw_span_deg": 47.26057434082031,
+      "startup_right_roll_max_deg": 10.13235092163086,
+      "startup_width_min_mm": 200.91017034265124,
+      "side_peak_median_mm": [
+        3.091746591962874,
+        36.16942651569843
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 213.88266862723472,
+      "peak_swing_height_mm": 19.20034526847303,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 227.25917053222656,
+      "startup_2p5_drop_mm": 224.10816955566406,
+      "startup_2p5_vertical_speed_max": 1.4810856580734253,
+      "startup_2p5_acceleration_max": 72.29415893554688,
+      "startup_min_velocity": -1.081575870513916,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 5,
+      "first_landings": [
+        {
+          "time_s": 1.28,
+          "side": 1,
+          "peak_mm": 17.418082803487778,
+          "width_mm": 205.65011897717932
+        },
+        {
+          "time_s": 1.7,
+          "side": 1,
+          "peak_mm": 44.63844373822212,
+          "width_mm": 211.2619084770053
+        },
+        {
+          "time_s": 2.16,
+          "side": 1,
+          "peak_mm": 40.18007218837738,
+          "width_mm": 212.1915432838022
+        },
+        {
+          "time_s": 2.66,
+          "side": 1,
+          "peak_mm": 38.78186643123627,
+          "width_mm": 212.2818787052998
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 82.81266021728516,
+      "yaw_change_deg": 7.586044788360596,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0",
+      "case": 3,
+      "trace_index": 3,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.3951526880264282,
+      "tilt_max_deg": 77.8645248413086,
+      "min_height": 0.09336583316326141,
+      "velocity_mean": 0.0213494710624218,
+      "min1s_velocity": 0.017981924060732124,
+      "steady_width_mm": 207.75470505334744,
+      "steady_width_p95_mm": 213.0100868346565,
+      "foot_heading_abs_deg": 16.778347158039214,
+      "startup_yaw_span_deg": 75.2766342163086,
+      "startup_right_roll_max_deg": 25.539684295654297,
+      "startup_width_min_mm": 199.56084736078958,
+      "side_peak_median_mm": [
+        2.6990982005372643,
+        36.150721833109856
+      ],
+      "full_swing_fraction": 0.47368421052631576,
+      "startup_width_max_mm": 212.98281154943814,
+      "peak_swing_height_mm": 4.372086143121123,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 233.75180053710938,
+      "startup_2p5_drop_mm": 224.0808563232422,
+      "startup_2p5_vertical_speed_max": 1.3640482425689697,
+      "startup_2p5_acceleration_max": 55.250823974609375,
+      "startup_min_velocity": -0.47641274333000183,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 6,
+      "first_landings": [
+        {
+          "time_s": 1.32,
+          "side": 0,
+          "peak_mm": 77.10456103086472,
+          "width_mm": 200.3305334038719
+        },
+        {
+          "time_s": 1.56,
+          "side": 1,
+          "peak_mm": 24.156762287020683,
+          "width_mm": 210.3791464597985
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 32.773688435554504,
+          "width_mm": 212.14903368526436
+        },
+        {
+          "time_s": 2.62,
+          "side": 1,
+          "peak_mm": 33.9311882853508,
+          "width_mm": 212.3248318365183
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 95.29435729980469,
+      "yaw_change_deg": 16.275501251220703,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0",
+      "case": 4,
+      "trace_index": 4,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.21028928458690643,
+      "tilt_max_deg": 79.17766571044922,
+      "min_height": 0.0946546271443367,
+      "velocity_mean": 0.013037013821303844,
+      "min1s_velocity": 0.011184853482991457,
+      "steady_width_mm": 207.72453946813212,
+      "steady_width_p95_mm": 213.22959943190222,
+      "foot_heading_abs_deg": 17.189643428466344,
+      "startup_yaw_span_deg": 98.5419921875,
+      "startup_right_roll_max_deg": 54.27187728881836,
+      "startup_width_min_mm": 200.94072226072745,
+      "side_peak_median_mm": [
+        2.476447494700551,
+        34.455420449376106
+      ],
+      "full_swing_fraction": 0.4186046511627907,
+      "startup_width_max_mm": 213.43216317136245,
+      "peak_swing_height_mm": 4.006227012723684,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 227.8234100341797,
+      "startup_2p5_drop_mm": 224.82284545898438,
+      "startup_2p5_vertical_speed_max": 1.5462629795074463,
+      "startup_2p5_acceleration_max": 69.77140808105469,
+      "startup_min_velocity": -0.594130277633667,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 0.88,
+          "side": 1,
+          "peak_mm": 17.982011660933495,
+          "width_mm": 206.63309717192428
+        },
+        {
+          "time_s": 1.36,
+          "side": 0,
+          "peak_mm": 86.09765768051147,
+          "width_mm": 204.06660967667636
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 54.05009910464287,
+          "width_mm": 212.42605880332778
+        },
+        {
+          "time_s": 2.16,
+          "side": 1,
+          "peak_mm": 34.945253282785416,
+          "width_mm": 212.40746735209672
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 98.5419921875,
+      "yaw_change_deg": 9.958511352539062,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0",
+      "case": 5,
+      "trace_index": 5,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.8824873566627502,
+      "tilt_max_deg": 79.40078735351562,
+      "min_height": 0.09041274338960648,
+      "velocity_mean": 0.02017357386648655,
+      "min1s_velocity": 0.01669414851814508,
+      "steady_width_mm": 207.64628161969816,
+      "steady_width_p95_mm": 212.73383691832404,
+      "foot_heading_abs_deg": 17.802941658673152,
+      "startup_yaw_span_deg": 81.14717864990234,
+      "startup_right_roll_max_deg": 22.873382568359375,
+      "startup_width_min_mm": 199.9907712708402,
+      "side_peak_median_mm": [
+        8.411969058215618,
+        37.243613973259926
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 213.20520082571275,
+      "peak_swing_height_mm": 22.5923047401011,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 230.8797607421875,
+      "startup_2p5_drop_mm": 228.13111877441406,
+      "startup_2p5_vertical_speed_max": 1.5672292709350586,
+      "startup_2p5_acceleration_max": 38.981346130371094,
+      "startup_min_velocity": -0.5519996285438538,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.32,
+          "side": 0,
+          "peak_mm": 74.73539561033249,
+          "width_mm": 202.1772144221372
+        },
+        {
+          "time_s": 1.62,
+          "side": 1,
+          "peak_mm": 76.84473693370819,
+          "width_mm": 213.20520082571275
+        },
+        {
+          "time_s": 2.18,
+          "side": 1,
+          "peak_mm": 38.00315409898758,
+          "width_mm": 211.8116198131582
+        },
+        {
+          "time_s": 2.68,
+          "side": 1,
+          "peak_mm": 36.76331788301468,
+          "width_mm": 211.83275624554193
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 86.28767395019531,
+      "yaw_change_deg": 12.276458740234375,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0",
+      "case": 6,
+      "trace_index": 6,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.6032831072807312,
+      "tilt_max_deg": 79.12025451660156,
+      "min_height": 0.09441530704498291,
+      "velocity_mean": 0.021367305889725685,
+      "min1s_velocity": 0.018185346350073815,
+      "steady_width_mm": 208.09438361241834,
+      "steady_width_p95_mm": 212.74149479928175,
+      "foot_heading_abs_deg": 16.011944887436023,
+      "startup_yaw_span_deg": 97.22088623046875,
+      "startup_right_roll_max_deg": 53.775177001953125,
+      "startup_width_min_mm": 201.11902032845768,
+      "side_peak_median_mm": [
+        4.8512902576476336,
+        28.90439983457327
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 213.68575414490022,
+      "peak_swing_height_mm": 16.63212012499571,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 230.42657470703125,
+      "startup_2p5_drop_mm": 224.9687042236328,
+      "startup_2p5_vertical_speed_max": 1.5390464067459106,
+      "startup_2p5_acceleration_max": 53.366573333740234,
+      "startup_min_velocity": -0.5536766648292542,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 2,
+      "first_landings": [
+        {
+          "time_s": 0.9,
+          "side": 1,
+          "peak_mm": 21.855123341083527,
+          "width_mm": 208.55553269351878
+        },
+        {
+          "time_s": 1.3800000000000001,
+          "side": 0,
+          "peak_mm": 85.25366336107254,
+          "width_mm": 205.15316452978053
+        },
+        {
+          "time_s": 1.6400000000000001,
+          "side": 1,
+          "peak_mm": 51.64128914475441,
+          "width_mm": 212.42237971900997
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 28.627943247556686,
+          "width_mm": 211.72826263485152
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 101.2322998046875,
+      "yaw_change_deg": 31.237213134765625,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0",
+      "case": 7,
+      "trace_index": 7,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.9419075846672058,
+      "tilt_max_deg": 79.23931121826172,
+      "min_height": 0.09395681321620941,
+      "velocity_mean": 0.00421170936897397,
+      "min1s_velocity": 0.0019900895841419705,
+      "steady_width_mm": 207.91686506323478,
+      "steady_width_p95_mm": 212.7664918178026,
+      "foot_heading_abs_deg": 18.41348864807347,
+      "startup_yaw_span_deg": 61.94178009033203,
+      "startup_right_roll_max_deg": 20.402193069458008,
+      "startup_width_min_mm": 201.63380620561236,
+      "side_peak_median_mm": [
+        6.257152417674661,
+        43.729351833462715
+      ],
+      "full_swing_fraction": 0.47368421052631576,
+      "startup_width_max_mm": 214.98268983253615,
+      "peak_swing_height_mm": 8.756808005273342,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 230.10255432128906,
+      "startup_2p5_drop_mm": 227.4619140625,
+      "startup_2p5_vertical_speed_max": 1.4194951057434082,
+      "startup_2p5_acceleration_max": 39.28706359863281,
+      "startup_min_velocity": -1.0057047605514526,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 6,
+      "first_landings": [
+        {
+          "time_s": 1.7,
+          "side": 1,
+          "peak_mm": 38.733337074518204,
+          "width_mm": 211.39137271269232
+        },
+        {
+          "time_s": 2.2,
+          "side": 1,
+          "peak_mm": 42.18846186995506,
+          "width_mm": 211.31860987173187
+        },
+        {
+          "time_s": 2.7,
+          "side": 1,
+          "peak_mm": 40.79463332891464,
+          "width_mm": 211.34754462949596
+        },
+        {
+          "time_s": 3.2,
+          "side": 1,
+          "peak_mm": 41.200846433639526,
+          "width_mm": 211.30594743279312
+        }
+      ],
+      "proper_steps": 21,
+      "yaw_span_deg": 96.92106628417969,
+      "yaw_change_deg": -86.63316345214844,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1",
+      "case": 0,
+      "trace_index": 8,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.22814121842384338,
+      "tilt_max_deg": 78.5134506225586,
+      "min_height": 0.08647556602954865,
+      "velocity_mean": 0.010622236877679825,
+      "min1s_velocity": 0.00842214297503233,
+      "steady_width_mm": 207.89785366218996,
+      "steady_width_p95_mm": 212.63814153421853,
+      "foot_heading_abs_deg": 17.162854875364708,
+      "startup_yaw_span_deg": 53.020652770996094,
+      "startup_right_roll_max_deg": 10.590020179748535,
+      "startup_width_min_mm": 201.77482118965,
+      "side_peak_median_mm": [
+        1.6463444335386157,
+        30.680752359330654
+      ],
+      "full_swing_fraction": 0.9473684210526315,
+      "startup_width_max_mm": 213.93258551168952,
+      "peak_swing_height_mm": 30.550165101885796,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 235.83135986328125,
+      "startup_2p5_drop_mm": 233.20455932617188,
+      "startup_2p5_vertical_speed_max": 1.438730239868164,
+      "startup_2p5_acceleration_max": 69.4869155883789,
+      "startup_min_velocity": -0.7191228866577148,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 2,
+      "first_landings": [
+        {
+          "time_s": 1.08,
+          "side": 0,
+          "peak_mm": 24.167194962501526,
+          "width_mm": 211.9856302531165
+        },
+        {
+          "time_s": 1.24,
+          "side": 1,
+          "peak_mm": 13.930791057646275,
+          "width_mm": 207.30102892245569
+        },
+        {
+          "time_s": 1.6400000000000001,
+          "side": 1,
+          "peak_mm": 45.48671841621399,
+          "width_mm": 211.93069172741136
+        },
+        {
+          "time_s": 2.1,
+          "side": 1,
+          "peak_mm": 30.999191105365753,
+          "width_mm": 212.10290694961392
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 83.5800552368164,
+      "yaw_change_deg": 6.08617639541626,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1",
+      "case": 1,
+      "trace_index": 9,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4301238059997559,
+      "tilt_max_deg": 78.07469177246094,
+      "min_height": 0.09282806515693665,
+      "velocity_mean": 0.018042488023638725,
+      "min1s_velocity": 0.016778023652732375,
+      "steady_width_mm": 208.04849602966735,
+      "steady_width_p95_mm": 212.64318812644487,
+      "foot_heading_abs_deg": 17.711694599387833,
+      "startup_yaw_span_deg": 47.69240951538086,
+      "startup_right_roll_max_deg": 11.150398254394531,
+      "startup_width_min_mm": 202.03321551989126,
+      "side_peak_median_mm": [
+        3.2872778829187155,
+        28.780153952538967
+      ],
+      "full_swing_fraction": 0.33962264150943394,
+      "startup_width_max_mm": 215.49182816189116,
+      "peak_swing_height_mm": 3.9844089187681675,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 228.66783142089844,
+      "startup_2p5_drop_mm": 225.84652709960938,
+      "startup_2p5_vertical_speed_max": 1.418782114982605,
+      "startup_2p5_acceleration_max": 47.371437072753906,
+      "startup_min_velocity": -1.1346099376678467,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 6,
+      "first_landings": [
+        {
+          "time_s": 1.02,
+          "side": 0,
+          "peak_mm": 12.818766757845879,
+          "width_mm": 210.3644287254346
+        },
+        {
+          "time_s": 1.24,
+          "side": 1,
+          "peak_mm": 20.61111479997635,
+          "width_mm": 206.7125582562802
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 32.1495346724987,
+          "width_mm": 211.42569934847793
+        },
+        {
+          "time_s": 2.1,
+          "side": 1,
+          "peak_mm": 27.342787012457848,
+          "width_mm": 212.3470851259599
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 66.56778717041016,
+      "yaw_change_deg": -8.234394073486328,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1",
+      "case": 2,
+      "trace_index": 10,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4473975896835327,
+      "tilt_max_deg": 77.30802154541016,
+      "min_height": 0.0950237587094307,
+      "velocity_mean": 0.005580878350883722,
+      "min1s_velocity": 0.002838303223252294,
+      "steady_width_mm": 207.77013629154723,
+      "steady_width_p95_mm": 212.56425209254067,
+      "foot_heading_abs_deg": 17.349574853862933,
+      "startup_yaw_span_deg": 54.543701171875,
+      "startup_right_roll_max_deg": 21.295812606811523,
+      "startup_width_min_mm": 201.89092208880143,
+      "side_peak_median_mm": [
+        2.1049031638540328,
+        30.965331010520458
+      ],
+      "full_swing_fraction": 0.9,
+      "startup_width_max_mm": 213.989285283524,
+      "peak_swing_height_mm": 30.369018204510212,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 225.95620727539062,
+      "startup_2p5_drop_mm": 224.16680908203125,
+      "startup_2p5_vertical_speed_max": 1.4801353216171265,
+      "startup_2p5_acceleration_max": 77.83025360107422,
+      "startup_min_velocity": -1.4746899604797363,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.62,
+          "side": 1,
+          "peak_mm": 32.31646120548248,
+          "width_mm": 212.20379262896773
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 32.970961183309555,
+          "width_mm": 212.28556721300802
+        },
+        {
+          "time_s": 2.62,
+          "side": 1,
+          "peak_mm": 33.498313277959824,
+          "width_mm": 212.354815679987
+        },
+        {
+          "time_s": 3.12,
+          "side": 1,
+          "peak_mm": 33.072806894779205,
+          "width_mm": 212.28941436793406
+        }
+      ],
+      "proper_steps": 21,
+      "yaw_span_deg": 65.34325408935547,
+      "yaw_change_deg": -0.10708370059728622,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1",
+      "case": 3,
+      "trace_index": 11,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.3951526880264282,
+      "tilt_max_deg": 78.58972930908203,
+      "min_height": 0.0919627845287323,
+      "velocity_mean": 0.02031802013516426,
+      "min1s_velocity": 0.01829920507967472,
+      "steady_width_mm": 208.06640075863373,
+      "steady_width_p95_mm": 212.62418118799198,
+      "foot_heading_abs_deg": 17.749884676729376,
+      "startup_yaw_span_deg": 55.61226272583008,
+      "startup_right_roll_max_deg": 11.01369571685791,
+      "startup_width_min_mm": 201.53584460859113,
+      "side_peak_median_mm": [
+        3.1913387356325984,
+        32.38265961408615
+      ],
+      "full_swing_fraction": 0.3333333333333333,
+      "startup_width_max_mm": 213.98582695329677,
+      "peak_swing_height_mm": 3.884729230776429,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 229.21734619140625,
+      "startup_2p5_drop_mm": 226.99021911621094,
+      "startup_2p5_vertical_speed_max": 1.360815405845642,
+      "startup_2p5_acceleration_max": 57.68366622924805,
+      "startup_min_velocity": -0.9378432631492615,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 4,
+      "first_landings": [
+        {
+          "time_s": 1.06,
+          "side": 0,
+          "peak_mm": 18.16631481051445,
+          "width_mm": 211.3799461030965
+        },
+        {
+          "time_s": 1.2,
+          "side": 1,
+          "peak_mm": 16.388652846217155,
+          "width_mm": 210.8686189069486
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 44.040583074092865,
+          "width_mm": 211.6882001603169
+        },
+        {
+          "time_s": 2.1,
+          "side": 1,
+          "peak_mm": 32.146137207746506,
+          "width_mm": 212.15408960531863
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 76.4737548828125,
+      "yaw_change_deg": -5.315860271453857,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1",
+      "case": 4,
+      "trace_index": 12,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.21028928458690643,
+      "tilt_max_deg": 77.8826904296875,
+      "min_height": 0.09301265329122543,
+      "velocity_mean": 0.008399785496294498,
+      "min1s_velocity": 0.006209349185228349,
+      "steady_width_mm": 208.03677755034178,
+      "steady_width_p95_mm": 212.96851706864567,
+      "foot_heading_abs_deg": 18.339755808145217,
+      "startup_yaw_span_deg": 50.486541748046875,
+      "startup_right_roll_max_deg": 10.002163887023926,
+      "startup_width_min_mm": 202.09445260785304,
+      "side_peak_median_mm": [
+        2.293522236868739,
+        31.96871466934681
+      ],
+      "full_swing_fraction": 0.36,
+      "startup_width_max_mm": 214.5401618667666,
+      "peak_swing_height_mm": 2.8892330592498183,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 229.17359924316406,
+      "startup_2p5_drop_mm": 226.9956512451172,
+      "startup_2p5_vertical_speed_max": 1.5354775190353394,
+      "startup_2p5_acceleration_max": 72.57305908203125,
+      "startup_min_velocity": -1.2006819248199463,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 4,
+      "first_landings": [
+        {
+          "time_s": 1.24,
+          "side": 1,
+          "peak_mm": 20.63407190144062,
+          "width_mm": 206.4410488759574
+        },
+        {
+          "time_s": 1.68,
+          "side": 1,
+          "peak_mm": 34.89949181675911,
+          "width_mm": 211.0447372503012
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 28.848368674516678,
+          "width_mm": 212.58300738466514
+        },
+        {
+          "time_s": 2.62,
+          "side": 1,
+          "peak_mm": 28.741972520947456,
+          "width_mm": 212.60579700981884
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 56.39143371582031,
+      "yaw_change_deg": -16.842248916625977,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1",
+      "case": 5,
+      "trace_index": 13,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.8824873566627502,
+      "tilt_max_deg": 78.37847137451172,
+      "min_height": 0.0923864096403122,
+      "velocity_mean": 0.01629984937608242,
+      "min1s_velocity": 0.014142199903726574,
+      "steady_width_mm": 207.93966216699647,
+      "steady_width_p95_mm": 212.33577880275664,
+      "foot_heading_abs_deg": 18.768214671469323,
+      "startup_yaw_span_deg": 43.82150650024414,
+      "startup_right_roll_max_deg": 11.38084602355957,
+      "startup_width_min_mm": 202.1020214458601,
+      "side_peak_median_mm": [
+        4.194273613393307,
+        35.16663797199726
+      ],
+      "full_swing_fraction": 0.4186046511627907,
+      "startup_width_max_mm": 214.1987405442375,
+      "peak_swing_height_mm": 5.0538331270217896,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 227.75308227539062,
+      "startup_2p5_drop_mm": 226.157470703125,
+      "startup_2p5_vertical_speed_max": 1.3841071128845215,
+      "startup_2p5_acceleration_max": 48.56243896484375,
+      "startup_min_velocity": -1.0619722604751587,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 6,
+      "first_landings": [
+        {
+          "time_s": 1.04,
+          "side": 0,
+          "peak_mm": 16.799263656139374,
+          "width_mm": 210.45403502074768
+        },
+        {
+          "time_s": 1.24,
+          "side": 1,
+          "peak_mm": 18.799414858222008,
+          "width_mm": 206.48018808862827
+        },
+        {
+          "time_s": 1.68,
+          "side": 1,
+          "peak_mm": 39.57030177116394,
+          "width_mm": 210.87547106377673
+        },
+        {
+          "time_s": 2.14,
+          "side": 1,
+          "peak_mm": 32.50066190958023,
+          "width_mm": 211.9080163468027
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 49.701263427734375,
+      "yaw_change_deg": -17.28384780883789,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1",
+      "case": 6,
+      "trace_index": 14,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.6045790910720825,
+      "tilt_max_deg": 78.29285430908203,
+      "min_height": 0.09190910309553146,
+      "velocity_mean": 0.018016371876001358,
+      "min1s_velocity": 0.016706978846341373,
+      "steady_width_mm": 208.01549418748314,
+      "steady_width_p95_mm": 212.48992037609736,
+      "foot_heading_abs_deg": 17.92113679767555,
+      "startup_yaw_span_deg": 54.78745651245117,
+      "startup_right_roll_max_deg": 12.609153747558594,
+      "startup_width_min_mm": 202.00408449666486,
+      "side_peak_median_mm": [
+        3.4089612308889627,
+        29.45978194475174
+      ],
+      "full_swing_fraction": 0.33962264150943394,
+      "startup_width_max_mm": 216.0076821709949,
+      "peak_swing_height_mm": 3.9340294897556305,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 229.88864135742188,
+      "startup_2p5_drop_mm": 227.47215270996094,
+      "startup_2p5_vertical_speed_max": 1.4261287450790405,
+      "startup_2p5_acceleration_max": 64.73722839355469,
+      "startup_min_velocity": -1.0131205320358276,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 5,
+      "first_landings": [
+        {
+          "time_s": 1.06,
+          "side": 0,
+          "peak_mm": 20.381934940814972,
+          "width_mm": 211.1597783153768
+        },
+        {
+          "time_s": 1.22,
+          "side": 1,
+          "peak_mm": 14.974556863307953,
+          "width_mm": 207.39926366258064
+        },
+        {
+          "time_s": 1.34,
+          "side": 0,
+          "peak_mm": 12.461604550480843,
+          "width_mm": 204.73900436148168
+        },
+        {
+          "time_s": 1.6400000000000001,
+          "side": 1,
+          "peak_mm": 40.47567397356033,
+          "width_mm": 211.87799114545257
+        }
+      ],
+      "proper_steps": 24,
+      "yaw_span_deg": 59.90098190307617,
+      "yaw_change_deg": -44.289852142333984,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1",
+      "case": 7,
+      "trace_index": 15,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.9419075846672058,
+      "tilt_max_deg": 77.78792572021484,
+      "min_height": 0.09229987859725952,
+      "velocity_mean": 0.0022984659299254417,
+      "min1s_velocity": 0.0011306209955364464,
+      "steady_width_mm": 208.25064632300726,
+      "steady_width_p95_mm": 212.79645255010414,
+      "foot_heading_abs_deg": 18.47256316322244,
+      "startup_yaw_span_deg": 46.39472579956055,
+      "startup_right_roll_max_deg": 7.307462692260742,
+      "startup_width_min_mm": 203.3362996851606,
+      "side_peak_median_mm": [
+        0.0,
+        32.4102733284235
+      ],
+      "full_swing_fraction": 1.0,
+      "startup_width_max_mm": 214.72223686538817,
+      "peak_swing_height_mm": 32.4102733284235,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 231.22608947753906,
+      "startup_2p5_drop_mm": 229.11888122558594,
+      "startup_2p5_vertical_speed_max": 1.411365032196045,
+      "startup_2p5_acceleration_max": 41.632713317871094,
+      "startup_min_velocity": -0.7627962827682495,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 1,
+      "first_landings": [
+        {
+          "time_s": 1.68,
+          "side": 1,
+          "peak_mm": 33.74103456735611,
+          "width_mm": 210.96847501538048
+        },
+        {
+          "time_s": 2.18,
+          "side": 1,
+          "peak_mm": 33.35179388523102,
+          "width_mm": 211.0316003187688
+        },
+        {
+          "time_s": 2.68,
+          "side": 1,
+          "peak_mm": 32.440733164548874,
+          "width_mm": 210.8969140563551
+        },
+        {
+          "time_s": 3.18,
+          "side": 1,
+          "peak_mm": 33.58885645866394,
+          "width_mm": 211.0052868393547
+        }
+      ],
+      "proper_steps": 21,
+      "yaw_span_deg": 64.99690246582031,
+      "yaw_change_deg": -55.75946044921875,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2",
+      "case": 0,
+      "trace_index": 16,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.20463022589683533,
+      "tilt_max_deg": 80.63871002197266,
+      "min_height": 0.08728306740522385,
+      "velocity_mean": 0.014458448626101017,
+      "min1s_velocity": 0.012585658095777035,
+      "steady_width_mm": 207.6029540387914,
+      "steady_width_p95_mm": 213.21078752107562,
+      "foot_heading_abs_deg": 18.066221316630035,
+      "startup_yaw_span_deg": 86.0477066040039,
+      "startup_right_roll_max_deg": 18.465576171875,
+      "startup_width_min_mm": 201.20936498605957,
+      "side_peak_median_mm": [
+        7.341237273067236,
+        39.26736116409302
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 213.81006699770478,
+      "peak_swing_height_mm": 22.884225007146597,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 253.1964111328125,
+      "startup_2p5_drop_mm": 232.43051147460938,
+      "startup_2p5_vertical_speed_max": 1.7069623470306396,
+      "startup_2p5_acceleration_max": 64.85303497314453,
+      "startup_min_velocity": -0.437488853931427,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 4,
+      "first_landings": [
+        {
+          "time_s": 1.36,
+          "side": 0,
+          "peak_mm": 96.58034145832062,
+          "width_mm": 207.58978886906948
+        },
+        {
+          "time_s": 1.72,
+          "side": 1,
+          "peak_mm": 87.18335628509521,
+          "width_mm": 205.81991849715874
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 44.30652782320976,
+          "width_mm": 211.9531288204035
+        },
+        {
+          "time_s": 2.58,
+          "side": 1,
+          "peak_mm": 37.002626806497574,
+          "width_mm": 212.18040310817264
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 106.19078826904297,
+      "yaw_change_deg": 13.84729290008545,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2",
+      "case": 1,
+      "trace_index": 17,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4329943656921387,
+      "tilt_max_deg": 78.01323699951172,
+      "min_height": 0.0909857228398323,
+      "velocity_mean": 0.018694445490837097,
+      "min1s_velocity": 0.015905189868062736,
+      "steady_width_mm": 207.76556284544677,
+      "steady_width_p95_mm": 213.23482493020836,
+      "foot_heading_abs_deg": 17.707444228238153,
+      "startup_yaw_span_deg": 53.65676498413086,
+      "startup_right_roll_max_deg": 16.452747344970703,
+      "startup_width_min_mm": 201.82481708418632,
+      "side_peak_median_mm": [
+        6.748557090759277,
+        32.5135700404644
+      ],
+      "full_swing_fraction": 0.45,
+      "startup_width_max_mm": 215.55607092726044,
+      "peak_swing_height_mm": 9.522853884845972,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 230.5723419189453,
+      "startup_2p5_drop_mm": 227.68502807617188,
+      "startup_2p5_vertical_speed_max": 1.5427407026290894,
+      "startup_2p5_acceleration_max": 47.32994842529297,
+      "startup_min_velocity": -1.0938794612884521,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 4,
+      "first_landings": [
+        {
+          "time_s": 1.08,
+          "side": 0,
+          "peak_mm": 32.818932086229324,
+          "width_mm": 211.07208614423706
+        },
+        {
+          "time_s": 1.2,
+          "side": 1,
+          "peak_mm": 13.683414086699486,
+          "width_mm": 207.66158874967414
+        },
+        {
+          "time_s": 1.62,
+          "side": 1,
+          "peak_mm": 32.828278839588165,
+          "width_mm": 211.82021059043572
+        },
+        {
+          "time_s": 2.08,
+          "side": 1,
+          "peak_mm": 30.423259362578392,
+          "width_mm": 212.04094903740446
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 71.66957092285156,
+      "yaw_change_deg": -2.2761261463165283,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2",
+      "case": 2,
+      "trace_index": 18,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4473975896835327,
+      "tilt_max_deg": 78.43873596191406,
+      "min_height": 0.09188242256641388,
+      "velocity_mean": 0.00845128484070301,
+      "min1s_velocity": 0.005114769116044044,
+      "steady_width_mm": 207.78066974759022,
+      "steady_width_p95_mm": 213.3043579330036,
+      "foot_heading_abs_deg": 17.70189964211994,
+      "startup_yaw_span_deg": 54.82887649536133,
+      "startup_right_roll_max_deg": 15.111310958862305,
+      "startup_width_min_mm": 201.1799927989898,
+      "side_peak_median_mm": [
+        2.1531801903620362,
+        36.18927858769894
+      ],
+      "full_swing_fraction": 0.5294117647058824,
+      "startup_width_max_mm": 213.40190266360852,
+      "peak_swing_height_mm": 34.260669723153114,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 229.6626434326172,
+      "startup_2p5_drop_mm": 227.30810546875,
+      "startup_2p5_vertical_speed_max": 1.5434645414352417,
+      "startup_2p5_acceleration_max": 45.53135299682617,
+      "startup_min_velocity": -1.083721399307251,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 6,
+      "first_landings": [
+        {
+          "time_s": 1.1,
+          "side": 0,
+          "peak_mm": 33.112578094005585,
+          "width_mm": 210.74822784706237
+        },
+        {
+          "time_s": 1.22,
+          "side": 1,
+          "peak_mm": 13.775914907455444,
+          "width_mm": 205.19452959683665
+        },
+        {
+          "time_s": 1.6400000000000001,
+          "side": 1,
+          "peak_mm": 38.19108381867409,
+          "width_mm": 211.42351985080526
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 38.79915922880173,
+          "width_mm": 211.77044337993416
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 80.07266235351562,
+      "yaw_change_deg": 13.989784240722656,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2",
+      "case": 3,
+      "trace_index": 19,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.3951526880264282,
+      "tilt_max_deg": 79.71170043945312,
+      "min_height": 0.09270127862691879,
+      "velocity_mean": 0.021734436973929405,
+      "min1s_velocity": 0.019747018553316596,
+      "steady_width_mm": 207.68874344697207,
+      "steady_width_p95_mm": 213.3114632949323,
+      "foot_heading_abs_deg": 17.717224122054773,
+      "startup_yaw_span_deg": 82.26676177978516,
+      "startup_right_roll_max_deg": 20.805360794067383,
+      "startup_width_min_mm": 200.00979224480093,
+      "side_peak_median_mm": [
+        4.750831052660942,
+        37.3439509421587
+      ],
+      "full_swing_fraction": 0.43902439024390244,
+      "startup_width_max_mm": 214.08054983806556,
+      "peak_swing_height_mm": 9.570034220814705,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 243.64381408691406,
+      "startup_2p5_drop_mm": 226.25169372558594,
+      "startup_2p5_vertical_speed_max": 1.6235072612762451,
+      "startup_2p5_acceleration_max": 42.1522331237793,
+      "startup_min_velocity": -0.445209801197052,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.34,
+          "side": 0,
+          "peak_mm": 98.16853702068329,
+          "width_mm": 209.3454554784268
+        },
+        {
+          "time_s": 1.62,
+          "side": 1,
+          "peak_mm": 72.43477553129196,
+          "width_mm": 211.76669725362217
+        },
+        {
+          "time_s": 1.78,
+          "side": 0,
+          "peak_mm": 23.617412894964218,
+          "width_mm": 203.17207712323668
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 41.014429181814194,
+          "width_mm": 211.92874834299627
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 103.8189697265625,
+      "yaw_change_deg": 10.99891471862793,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2",
+      "case": 4,
+      "trace_index": 20,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.21028928458690643,
+      "tilt_max_deg": 78.19168090820312,
+      "min_height": 0.09350740909576416,
+      "velocity_mean": 0.009768372401595116,
+      "min1s_velocity": 0.008152658194303513,
+      "steady_width_mm": 207.76465634807653,
+      "steady_width_p95_mm": 213.29139901561547,
+      "foot_heading_abs_deg": 18.319733823171553,
+      "startup_yaw_span_deg": 51.2853889465332,
+      "startup_right_roll_max_deg": 14.31997013092041,
+      "startup_width_min_mm": 202.13152872363855,
+      "side_peak_median_mm": [
+        5.791287170723081,
+        34.13764387369156
+      ],
+      "full_swing_fraction": 0.47368421052631576,
+      "startup_width_max_mm": 214.85037551515305,
+      "peak_swing_height_mm": 7.323049008846283,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 229.0148162841797,
+      "startup_2p5_drop_mm": 226.50161743164062,
+      "startup_2p5_vertical_speed_max": 1.4384613037109375,
+      "startup_2p5_acceleration_max": 68.89302825927734,
+      "startup_min_velocity": -1.163114070892334,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.04,
+          "side": 0,
+          "peak_mm": 22.784695029258728,
+          "width_mm": 211.61087914399937
+        },
+        {
+          "time_s": 1.22,
+          "side": 1,
+          "peak_mm": 22.21551537513733,
+          "width_mm": 205.54321947324334
+        },
+        {
+          "time_s": 1.6400000000000001,
+          "side": 1,
+          "peak_mm": 34.2557393014431,
+          "width_mm": 211.6659236755005
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 32.105714082717896,
+          "width_mm": 212.18891857707393
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 62.47725296020508,
+      "yaw_change_deg": -8.439764022827148,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2",
+      "case": 5,
+      "trace_index": 21,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.8824873566627502,
+      "tilt_max_deg": 78.43987274169922,
+      "min_height": 0.08735141158103943,
+      "velocity_mean": 0.019885703921318054,
+      "min1s_velocity": 0.018589778151363135,
+      "steady_width_mm": 207.64688350407815,
+      "steady_width_p95_mm": 212.78859349302,
+      "foot_heading_abs_deg": 18.71386894029241,
+      "startup_yaw_span_deg": 53.52452850341797,
+      "startup_right_roll_max_deg": 13.890462875366211,
+      "startup_width_min_mm": 200.78850495838873,
+      "side_peak_median_mm": [
+        9.096743073314428,
+        37.05182857811451
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 214.35706956632083,
+      "peak_swing_height_mm": 22.877170704305172,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 233.3522186279297,
+      "startup_2p5_drop_mm": 231.19247436523438,
+      "startup_2p5_vertical_speed_max": 1.3704627752304077,
+      "startup_2p5_acceleration_max": 56.407440185546875,
+      "startup_min_velocity": -0.7766513824462891,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 6,
+      "first_landings": [
+        {
+          "time_s": 1.12,
+          "side": 0,
+          "peak_mm": 41.618529707193375,
+          "width_mm": 211.1030629866243
+        },
+        {
+          "time_s": 1.6,
+          "side": 1,
+          "peak_mm": 33.99822115898132,
+          "width_mm": 211.82818548526828
+        },
+        {
+          "time_s": 2.1,
+          "side": 1,
+          "peak_mm": 34.23379734158516,
+          "width_mm": 211.83492492637052
+        },
+        {
+          "time_s": 2.62,
+          "side": 1,
+          "peak_mm": 35.10195389389992,
+          "width_mm": 211.8132005210604
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 69.65874481201172,
+      "yaw_change_deg": 1.3266959190368652,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2",
+      "case": 6,
+      "trace_index": 22,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.6045790910720825,
+      "tilt_max_deg": 78.52204132080078,
+      "min_height": 0.0916164293885231,
+      "velocity_mean": 0.02146133780479431,
+      "min1s_velocity": 0.01888365972787142,
+      "steady_width_mm": 207.82817172422722,
+      "steady_width_p95_mm": 213.1894450107833,
+      "foot_heading_abs_deg": 17.103222465255325,
+      "startup_yaw_span_deg": 56.83784484863281,
+      "startup_right_roll_max_deg": 15.86447811126709,
+      "startup_width_min_mm": 201.47015530633414,
+      "side_peak_median_mm": [
+        3.008083440363407,
+        30.188068747520447
+      ],
+      "full_swing_fraction": 0.42857142857142855,
+      "startup_width_max_mm": 216.10552094828307,
+      "peak_swing_height_mm": 3.7572653964161873,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 230.01959228515625,
+      "startup_2p5_drop_mm": 227.76756286621094,
+      "startup_2p5_vertical_speed_max": 1.4922157526016235,
+      "startup_2p5_acceleration_max": 47.07883071899414,
+      "startup_min_velocity": -1.1778743267059326,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 6,
+      "first_landings": [
+        {
+          "time_s": 1.08,
+          "side": 0,
+          "peak_mm": 27.344124391674995,
+          "width_mm": 210.92354674279352
+        },
+        {
+          "time_s": 1.22,
+          "side": 1,
+          "peak_mm": 13.243298977613449,
+          "width_mm": 205.74625122245908
+        },
+        {
+          "time_s": 1.6,
+          "side": 1,
+          "peak_mm": 39.19307887554169,
+          "width_mm": 212.03893917848865
+        },
+        {
+          "time_s": 2.1,
+          "side": 1,
+          "peak_mm": 31.833697110414505,
+          "width_mm": 211.82189017940544
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 77.90687561035156,
+      "yaw_change_deg": 10.208168029785156,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2",
+      "case": 7,
+      "trace_index": 23,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.9419075846672058,
+      "tilt_max_deg": 78.83462524414062,
+      "min_height": 0.09405940771102905,
+      "velocity_mean": 0.002026633359491825,
+      "min1s_velocity": 0.00042092088609933754,
+      "steady_width_mm": 208.0178899715458,
+      "steady_width_p95_mm": 212.79562475642877,
+      "foot_heading_abs_deg": 18.434790069260035,
+      "startup_yaw_span_deg": 54.33866500854492,
+      "startup_right_roll_max_deg": 17.45659065246582,
+      "startup_width_min_mm": 202.4940950860862,
+      "side_peak_median_mm": [
+        1.7243921756744385,
+        41.063932701945305
+      ],
+      "full_swing_fraction": 0.3333333333333333,
+      "startup_width_max_mm": 215.1192032309712,
+      "peak_swing_height_mm": 2.034695411566645,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 230.2166290283203,
+      "startup_2p5_drop_mm": 227.3593292236328,
+      "startup_2p5_vertical_speed_max": 1.4799007177352905,
+      "startup_2p5_acceleration_max": 66.15287780761719,
+      "startup_min_velocity": -1.4510314464569092,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 4,
+      "first_landings": [
+        {
+          "time_s": 1.6400000000000001,
+          "side": 1,
+          "peak_mm": 37.33685985207558,
+          "width_mm": 211.73301928036352
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 40.865108370780945,
+          "width_mm": 212.1580872770747
+        },
+        {
+          "time_s": 2.64,
+          "side": 1,
+          "peak_mm": 38.86369988322258,
+          "width_mm": 211.69906938862997
+        },
+        {
+          "time_s": 3.12,
+          "side": 1,
+          "peak_mm": 40.03753140568733,
+          "width_mm": 212.178219466436
+        }
+      ],
+      "proper_steps": 21,
+      "yaw_span_deg": 77.38944244384766,
+      "yaw_change_deg": -11.58747673034668,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0_lean",
+      "case": 0,
+      "trace_index": 24,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.22814121842384338,
+      "tilt_max_deg": 81.29243469238281,
+      "min_height": 0.0889815017580986,
+      "velocity_mean": 0.01496206410229206,
+      "min1s_velocity": 0.013548653610050677,
+      "steady_width_mm": 208.31259245045703,
+      "steady_width_p95_mm": 213.52405420706344,
+      "foot_heading_abs_deg": 17.434963698908337,
+      "startup_yaw_span_deg": 80.41272735595703,
+      "startup_right_roll_max_deg": 17.24818992614746,
+      "startup_width_min_mm": 201.90328307414129,
+      "side_peak_median_mm": [
+        2.3232237435877323,
+        38.351379334926605
+      ],
+      "full_swing_fraction": 0.46153846153846156,
+      "startup_width_max_mm": 213.550556523367,
+      "peak_swing_height_mm": 3.064484801143408,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 255.56764221191406,
+      "startup_2p5_drop_mm": 230.69863891601562,
+      "startup_2p5_vertical_speed_max": 1.5221927165985107,
+      "startup_2p5_acceleration_max": 58.40543746948242,
+      "startup_min_velocity": -0.39893990755081177,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.4000000000000001,
+          "side": 0,
+          "peak_mm": 94.12867575883865,
+          "width_mm": 209.2751806512828
+        },
+        {
+          "time_s": 1.76,
+          "side": 1,
+          "peak_mm": 86.16946637630463,
+          "width_mm": 207.44818395681892
+        },
+        {
+          "time_s": 2.2,
+          "side": 1,
+          "peak_mm": 43.78752037882805,
+          "width_mm": 211.55633885955987
+        },
+        {
+          "time_s": 2.64,
+          "side": 1,
+          "peak_mm": 37.89418190717697,
+          "width_mm": 212.82614370125313
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 111.04890441894531,
+      "yaw_change_deg": 21.755504608154297,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0_lean",
+      "case": 1,
+      "trace_index": 25,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4325847625732422,
+      "tilt_max_deg": 79.49097442626953,
+      "min_height": 0.09599336981773376,
+      "velocity_mean": 0.019727446138858795,
+      "min1s_velocity": 0.016908520497381684,
+      "steady_width_mm": 208.3172208409407,
+      "steady_width_p95_mm": 213.5785906115326,
+      "foot_heading_abs_deg": 17.271234439932755,
+      "startup_yaw_span_deg": 79.05006408691406,
+      "startup_right_roll_max_deg": 37.99217224121094,
+      "startup_width_min_mm": 201.5153659040808,
+      "side_peak_median_mm": [
+        3.1572149600833654,
+        32.41435997188091
+      ],
+      "full_swing_fraction": 0.46153846153846156,
+      "startup_width_max_mm": 213.67528623295516,
+      "peak_swing_height_mm": 4.4503845274448395,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 230.76370239257812,
+      "startup_2p5_drop_mm": 222.205078125,
+      "startup_2p5_vertical_speed_max": 1.4725178480148315,
+      "startup_2p5_acceleration_max": 51.123714447021484,
+      "startup_min_velocity": -0.5046176910400391,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 4,
+      "first_landings": [
+        {
+          "time_s": 0.9,
+          "side": 1,
+          "peak_mm": 21.039778366684914,
+          "width_mm": 209.4866752411817
+        },
+        {
+          "time_s": 1.4000000000000001,
+          "side": 0,
+          "peak_mm": 88.97792547941208,
+          "width_mm": 207.49275643826704
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 48.71496930718422,
+          "width_mm": 212.53104054044135
+        },
+        {
+          "time_s": 2.14,
+          "side": 1,
+          "peak_mm": 31.877506524324417,
+          "width_mm": 213.05175017289784
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 79.05006408691406,
+      "yaw_change_deg": 10.724366188049316,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0_lean",
+      "case": 2,
+      "trace_index": 26,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4473975896835327,
+      "tilt_max_deg": 79.87168884277344,
+      "min_height": 0.0941719189286232,
+      "velocity_mean": 0.007058192044496536,
+      "min1s_velocity": 0.0033186531439423576,
+      "steady_width_mm": 208.29513132513424,
+      "steady_width_p95_mm": 213.560086979803,
+      "foot_heading_abs_deg": 17.250450679807436,
+      "startup_yaw_span_deg": 57.47206497192383,
+      "startup_right_roll_max_deg": 12.199153900146484,
+      "startup_width_min_mm": 201.45949551134063,
+      "side_peak_median_mm": [
+        3.19250812754035,
+        37.32801601290703
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 213.55391167066432,
+      "peak_swing_height_mm": 19.53152974601835,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 228.856689453125,
+      "startup_2p5_drop_mm": 225.01861572265625,
+      "startup_2p5_vertical_speed_max": 1.4320683479309082,
+      "startup_2p5_acceleration_max": 69.7905044555664,
+      "startup_min_velocity": -0.8872735500335693,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 4,
+      "first_landings": [
+        {
+          "time_s": 1.1,
+          "side": 0,
+          "peak_mm": 24.170897901058197,
+          "width_mm": 212.34670373219794
+        },
+        {
+          "time_s": 1.24,
+          "side": 1,
+          "peak_mm": 14.82271309942007,
+          "width_mm": 209.95117700555159
+        },
+        {
+          "time_s": 1.68,
+          "side": 1,
+          "peak_mm": 50.493523478507996,
+          "width_mm": 211.94153372066432
+        },
+        {
+          "time_s": 2.16,
+          "side": 1,
+          "peak_mm": 40.16900435090065,
+          "width_mm": 212.33730335617167
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 85.50048065185547,
+      "yaw_change_deg": 0.9038662314414978,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0_lean",
+      "case": 3,
+      "trace_index": 27,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.3951526880264282,
+      "tilt_max_deg": 78.4356460571289,
+      "min_height": 0.09419763833284378,
+      "velocity_mean": 0.01982749253511429,
+      "min1s_velocity": 0.01797951441258192,
+      "steady_width_mm": 208.44984295483638,
+      "steady_width_p95_mm": 213.56160343286874,
+      "foot_heading_abs_deg": 17.05652603737679,
+      "startup_yaw_span_deg": 63.98330307006836,
+      "startup_right_roll_max_deg": 21.171615600585938,
+      "startup_width_min_mm": 201.61295149517423,
+      "side_peak_median_mm": [
+        2.859184634871781,
+        35.71609780192375
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 213.69273234670445,
+      "peak_swing_height_mm": 19.392609130591154,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 228.92910766601562,
+      "startup_2p5_drop_mm": 224.75537109375,
+      "startup_2p5_vertical_speed_max": 1.2991328239440918,
+      "startup_2p5_acceleration_max": 56.53302764892578,
+      "startup_min_velocity": -0.48561927676200867,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 6,
+      "first_landings": [
+        {
+          "time_s": 1.24,
+          "side": 0,
+          "peak_mm": 64.55355137586594,
+          "width_mm": 208.8647345445972
+        },
+        {
+          "time_s": 1.58,
+          "side": 1,
+          "peak_mm": 21.46291173994541,
+          "width_mm": 211.83715812458465
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 33.94986316561699,
+          "width_mm": 212.6715575338378
+        },
+        {
+          "time_s": 2.62,
+          "side": 1,
+          "peak_mm": 34.165866672992706,
+          "width_mm": 212.74952204020198
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 92.97219848632812,
+      "yaw_change_deg": 6.710807800292969,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0_lean",
+      "case": 4,
+      "trace_index": 28,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.2112177014350891,
+      "tilt_max_deg": 79.19732666015625,
+      "min_height": 0.09633398056030273,
+      "velocity_mean": 0.012479109689593315,
+      "min1s_velocity": 0.00943679191172123,
+      "steady_width_mm": 208.31402258695377,
+      "steady_width_p95_mm": 213.7025172717219,
+      "foot_heading_abs_deg": 17.86054162654306,
+      "startup_yaw_span_deg": 80.93070220947266,
+      "startup_right_roll_max_deg": 38.46485137939453,
+      "startup_width_min_mm": 201.358653458998,
+      "side_peak_median_mm": [
+        3.466722439043224,
+        35.36737151443958
+      ],
+      "full_swing_fraction": 0.4090909090909091,
+      "startup_width_max_mm": 213.891040962615,
+      "peak_swing_height_mm": 5.02139562740922,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 232.54803466796875,
+      "startup_2p5_drop_mm": 223.1589813232422,
+      "startup_2p5_vertical_speed_max": 1.5616346597671509,
+      "startup_2p5_acceleration_max": 61.5292854309082,
+      "startup_min_velocity": -0.5431203842163086,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 0.9,
+          "side": 1,
+          "peak_mm": 22.20567688345909,
+          "width_mm": 208.65172850360142
+        },
+        {
+          "time_s": 1.3800000000000001,
+          "side": 0,
+          "peak_mm": 86.69807761907578,
+          "width_mm": 207.0483970156944
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 50.153568387031555,
+          "width_mm": 212.6313290302471
+        },
+        {
+          "time_s": 2.16,
+          "side": 1,
+          "peak_mm": 34.51995179057121,
+          "width_mm": 212.61174195314618
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 80.93070220947266,
+      "yaw_change_deg": 6.738377571105957,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0_lean",
+      "case": 5,
+      "trace_index": 29,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.8824873566627502,
+      "tilt_max_deg": 79.57048797607422,
+      "min_height": 0.09545773267745972,
+      "velocity_mean": 0.020499909296631813,
+      "min1s_velocity": 0.014923570454120638,
+      "steady_width_mm": 208.23864331221642,
+      "steady_width_p95_mm": 213.28554155445792,
+      "foot_heading_abs_deg": 18.254126931879064,
+      "startup_yaw_span_deg": 75.55358123779297,
+      "startup_right_roll_max_deg": 26.344867706298828,
+      "startup_width_min_mm": 201.7894970611609,
+      "side_peak_median_mm": [
+        8.989703375846148,
+        38.40036503970623
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 213.35402187240808,
+      "peak_swing_height_mm": 22.897249553352594,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 229.33468627929688,
+      "startup_2p5_drop_mm": 223.08615112304688,
+      "startup_2p5_vertical_speed_max": 1.5919309854507446,
+      "startup_2p5_acceleration_max": 70.56297302246094,
+      "startup_min_velocity": -0.49404066801071167,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.3800000000000001,
+          "side": 0,
+          "peak_mm": 90.01398086547852,
+          "width_mm": 208.40998029390462
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 60.53731590509415,
+          "width_mm": 212.6628965767989
+        },
+        {
+          "time_s": 2.18,
+          "side": 1,
+          "peak_mm": 38.15722465515137,
+          "width_mm": 211.8639606685243
+        },
+        {
+          "time_s": 2.68,
+          "side": 1,
+          "peak_mm": 38.28350827097893,
+          "width_mm": 211.82883535091622
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 77.12867736816406,
+      "yaw_change_deg": 13.670745849609375,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0_lean",
+      "case": 6,
+      "trace_index": 30,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.6045790910720825,
+      "tilt_max_deg": 79.37610626220703,
+      "min_height": 0.09580320864915848,
+      "velocity_mean": 0.01945960521697998,
+      "min1s_velocity": 0.016545076258480552,
+      "steady_width_mm": 208.70562834059237,
+      "steady_width_p95_mm": 213.25359146416173,
+      "foot_heading_abs_deg": 16.465748923461824,
+      "startup_yaw_span_deg": 79.77442169189453,
+      "startup_right_roll_max_deg": 34.381370544433594,
+      "startup_width_min_mm": 201.42931294306354,
+      "side_peak_median_mm": [
+        4.441879689693451,
+        29.763896018266678
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 213.78898736090414,
+      "peak_swing_height_mm": 16.703458968549967,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 233.6988525390625,
+      "startup_2p5_drop_mm": 223.57958984375,
+      "startup_2p5_vertical_speed_max": 1.5234969854354858,
+      "startup_2p5_acceleration_max": 60.14335250854492,
+      "startup_min_velocity": -0.4851202666759491,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 0.9,
+          "side": 1,
+          "peak_mm": 25.003984570503235,
+          "width_mm": 209.67908272365182
+        },
+        {
+          "time_s": 1.3800000000000001,
+          "side": 0,
+          "peak_mm": 85.44567227363586,
+          "width_mm": 208.36003585643118
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 53.700435906648636,
+          "width_mm": 212.46674463478388
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 30.51118552684784,
+          "width_mm": 212.38588209757208
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 102.97843170166016,
+      "yaw_change_deg": 31.444604873657227,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev0_lean",
+      "case": 7,
+      "trace_index": 31,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.9419075846672058,
+      "tilt_max_deg": 79.73918914794922,
+      "min_height": 0.09206460416316986,
+      "velocity_mean": 0.00451436685398221,
+      "min1s_velocity": 0.001341020595282317,
+      "steady_width_mm": 208.54412851799984,
+      "steady_width_p95_mm": 213.2768634196994,
+      "foot_heading_abs_deg": 18.928865086507308,
+      "startup_yaw_span_deg": 60.59218978881836,
+      "startup_right_roll_max_deg": 8.814050674438477,
+      "startup_width_min_mm": 202.21209601124514,
+      "side_peak_median_mm": [
+        7.645632140338421,
+        45.40036432445049
+      ],
+      "full_swing_fraction": 0.46153846153846156,
+      "startup_width_max_mm": 215.31615051565782,
+      "peak_swing_height_mm": 9.0787960216403,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 232.4868621826172,
+      "startup_2p5_drop_mm": 229.3541259765625,
+      "startup_2p5_vertical_speed_max": 1.5324962139129639,
+      "startup_2p5_acceleration_max": 65.14239501953125,
+      "startup_min_velocity": -0.4192204475402832,
+      "initial_target_jump_rad": 0.001119408756494522,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.6400000000000001,
+          "side": 1,
+          "peak_mm": 32.22644701600075,
+          "width_mm": 212.13469153827336
+        },
+        {
+          "time_s": 2.22,
+          "side": 1,
+          "peak_mm": 37.367671728134155,
+          "width_mm": 210.61150739329054
+        },
+        {
+          "time_s": 2.7,
+          "side": 1,
+          "peak_mm": 43.604183942079544,
+          "width_mm": 211.32624131147688
+        },
+        {
+          "time_s": 3.18,
+          "side": 1,
+          "peak_mm": 44.792573899030685,
+          "width_mm": 211.92246934057027
+        }
+      ],
+      "proper_steps": 21,
+      "yaw_span_deg": 97.3340835571289,
+      "yaw_change_deg": -86.64476776123047,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1_lean",
+      "case": 0,
+      "trace_index": 32,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.20463022589683533,
+      "tilt_max_deg": 77.58684539794922,
+      "min_height": 0.09270094335079193,
+      "velocity_mean": 0.01034692581743002,
+      "min1s_velocity": 0.00757889684289694,
+      "steady_width_mm": 208.51262360755257,
+      "steady_width_p95_mm": 213.21576270953466,
+      "foot_heading_abs_deg": 17.696936340890808,
+      "startup_yaw_span_deg": 55.850364685058594,
+      "startup_right_roll_max_deg": 18.661636352539062,
+      "startup_width_min_mm": 202.55718329767575,
+      "side_peak_median_mm": [
+        0.0,
+        31.504586338996887
+      ],
+      "full_swing_fraction": 1.0,
+      "startup_width_max_mm": 214.01742534045098,
+      "peak_swing_height_mm": 31.504586338996887,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 230.60618591308594,
+      "startup_2p5_drop_mm": 227.0126190185547,
+      "startup_2p5_vertical_speed_max": 1.4196527004241943,
+      "startup_2p5_acceleration_max": 66.0472183227539,
+      "startup_min_velocity": -0.46967053413391113,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 2,
+      "first_landings": [
+        {
+          "time_s": 1.18,
+          "side": 0,
+          "peak_mm": 54.75638434290886,
+          "width_mm": 210.81749679424126
+        },
+        {
+          "time_s": 1.54,
+          "side": 1,
+          "peak_mm": 19.240684807300568,
+          "width_mm": 211.6802512779854
+        },
+        {
+          "time_s": 2.1,
+          "side": 1,
+          "peak_mm": 29.72576580941677,
+          "width_mm": 212.20143271784136
+        },
+        {
+          "time_s": 2.58,
+          "side": 1,
+          "peak_mm": 29.57937680184841,
+          "width_mm": 212.72297809785042
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 83.18115997314453,
+      "yaw_change_deg": 2.2190327644348145,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1_lean",
+      "case": 1,
+      "trace_index": 33,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4323115348815918,
+      "tilt_max_deg": 79.01593780517578,
+      "min_height": 0.09359955042600632,
+      "velocity_mean": 0.01752859726548195,
+      "min1s_velocity": 0.014607642367482188,
+      "steady_width_mm": 208.6823156016081,
+      "steady_width_p95_mm": 213.1758010390929,
+      "foot_heading_abs_deg": 18.134772855250052,
+      "startup_yaw_span_deg": 59.488101959228516,
+      "startup_right_roll_max_deg": 12.137039184570312,
+      "startup_width_min_mm": 202.64023905965166,
+      "side_peak_median_mm": [
+        3.284340025857091,
+        28.83592527359724
+      ],
+      "full_swing_fraction": 0.34615384615384615,
+      "startup_width_max_mm": 215.56335931877067,
+      "peak_swing_height_mm": 3.751379204913974,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 228.9026641845703,
+      "startup_2p5_drop_mm": 225.0718231201172,
+      "startup_2p5_vertical_speed_max": 1.4151800870895386,
+      "startup_2p5_acceleration_max": 60.77891159057617,
+      "startup_min_velocity": -0.9815943837165833,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 6,
+      "first_landings": [
+        {
+          "time_s": 1.06,
+          "side": 0,
+          "peak_mm": 18.915584310889244,
+          "width_mm": 211.90467003390597
+        },
+        {
+          "time_s": 1.2,
+          "side": 1,
+          "peak_mm": 17.59706810116768,
+          "width_mm": 210.84409293560412
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 41.71397536993027,
+          "width_mm": 212.0320545367518
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 28.99104170501232,
+          "width_mm": 212.56895881187398
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 76.55473327636719,
+      "yaw_change_deg": -11.816985130310059,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1_lean",
+      "case": 2,
+      "trace_index": 34,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4473975896835327,
+      "tilt_max_deg": 79.18283081054688,
+      "min_height": 0.09673824161291122,
+      "velocity_mean": 0.004656096920371056,
+      "min1s_velocity": 0.002845602221786975,
+      "steady_width_mm": 208.39789773589743,
+      "steady_width_p95_mm": 212.9936129372242,
+      "foot_heading_abs_deg": 17.785477064956947,
+      "startup_yaw_span_deg": 46.87533950805664,
+      "startup_right_roll_max_deg": 12.229776382446289,
+      "startup_width_min_mm": 202.61981010935546,
+      "side_peak_median_mm": [
+        1.8671942525543272,
+        31.03292267769575
+      ],
+      "full_swing_fraction": 0.8181818181818182,
+      "startup_width_max_mm": 214.74596962814746,
+      "peak_swing_height_mm": 29.347512871026993,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 224.84291076660156,
+      "startup_2p5_drop_mm": 222.45228576660156,
+      "startup_2p5_vertical_speed_max": 1.498865008354187,
+      "startup_2p5_acceleration_max": 72.58384704589844,
+      "startup_min_velocity": -1.1706831455230713,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 5,
+      "first_landings": [
+        {
+          "time_s": 1.68,
+          "side": 1,
+          "peak_mm": 42.061060667037964,
+          "width_mm": 210.62932868708856
+        },
+        {
+          "time_s": 2.14,
+          "side": 1,
+          "peak_mm": 35.19320487976074,
+          "width_mm": 212.30013327033387
+        },
+        {
+          "time_s": 2.62,
+          "side": 1,
+          "peak_mm": 33.705566078424454,
+          "width_mm": 212.59898773669335
+        },
+        {
+          "time_s": 3.12,
+          "side": 1,
+          "peak_mm": 32.389406114816666,
+          "width_mm": 212.4976435016246
+        }
+      ],
+      "proper_steps": 21,
+      "yaw_span_deg": 69.13143157958984,
+      "yaw_change_deg": 3.345959186553955,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1_lean",
+      "case": 3,
+      "trace_index": 35,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.3951526880264282,
+      "tilt_max_deg": 79.12886047363281,
+      "min_height": 0.08848655968904495,
+      "velocity_mean": 0.01965329609811306,
+      "min1s_velocity": 0.018112235814332966,
+      "steady_width_mm": 208.67242192563768,
+      "steady_width_p95_mm": 213.09047858545398,
+      "foot_heading_abs_deg": 18.27592850945421,
+      "startup_yaw_span_deg": 57.033592224121094,
+      "startup_right_roll_max_deg": 11.663898468017578,
+      "startup_width_min_mm": 200.9880027622234,
+      "side_peak_median_mm": [
+        3.10870842076838,
+        32.82960690557957
+      ],
+      "full_swing_fraction": 0.33962264150943394,
+      "startup_width_max_mm": 214.03362579715295,
+      "peak_swing_height_mm": 3.5717380233108997,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 233.6815948486328,
+      "startup_2p5_drop_mm": 230.46649169921875,
+      "startup_2p5_vertical_speed_max": 1.3830591440200806,
+      "startup_2p5_acceleration_max": 59.60294723510742,
+      "startup_min_velocity": -0.6982646584510803,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.1,
+          "side": 0,
+          "peak_mm": 29.151296243071556,
+          "width_mm": 212.68058916845567
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 44.410619884729385,
+          "width_mm": 211.8245602537744
+        },
+        {
+          "time_s": 2.1,
+          "side": 1,
+          "peak_mm": 31.155318021774292,
+          "width_mm": 212.2672254781509
+        },
+        {
+          "time_s": 2.62,
+          "side": 1,
+          "peak_mm": 32.893482595682144,
+          "width_mm": 212.36380226497096
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 79.47390747070312,
+      "yaw_change_deg": -4.895825386047363,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1_lean",
+      "case": 4,
+      "trace_index": 36,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.2112177014350891,
+      "tilt_max_deg": 79.05810546875,
+      "min_height": 0.09443716704845428,
+      "velocity_mean": 0.007675096858292818,
+      "min1s_velocity": 0.006000291183590889,
+      "steady_width_mm": 208.6523607960773,
+      "steady_width_p95_mm": 213.27492814151438,
+      "foot_heading_abs_deg": 18.851478515483592,
+      "startup_yaw_span_deg": 58.65060043334961,
+      "startup_right_roll_max_deg": 11.107145309448242,
+      "startup_width_min_mm": 202.54841447293586,
+      "side_peak_median_mm": [
+        2.130541019141674,
+        32.68698416650295
+      ],
+      "full_swing_fraction": 0.42857142857142855,
+      "startup_width_max_mm": 214.62355171241583,
+      "peak_swing_height_mm": 3.2201119465753436,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 228.57554626464844,
+      "startup_2p5_drop_mm": 225.57107543945312,
+      "startup_2p5_vertical_speed_max": 1.4845494031906128,
+      "startup_2p5_acceleration_max": 76.80802154541016,
+      "startup_min_velocity": -1.037719488143921,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.04,
+          "side": 0,
+          "peak_mm": 14.596913941204548,
+          "width_mm": 211.48982323542964
+        },
+        {
+          "time_s": 1.24,
+          "side": 1,
+          "peak_mm": 18.77623051404953,
+          "width_mm": 206.2411489365382
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 43.27874630689621,
+          "width_mm": 211.83737902284295
+        },
+        {
+          "time_s": 2.1,
+          "side": 1,
+          "peak_mm": 27.595827355980873,
+          "width_mm": 213.1322408475526
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 58.65060043334961,
+      "yaw_change_deg": -21.614665985107422,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1_lean",
+      "case": 5,
+      "trace_index": 37,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.8824873566627502,
+      "tilt_max_deg": 79.06268310546875,
+      "min_height": 0.09297043085098267,
+      "velocity_mean": 0.016774291172623634,
+      "min1s_velocity": 0.013397067263722423,
+      "steady_width_mm": 208.62173577121476,
+      "steady_width_p95_mm": 212.87167930759082,
+      "foot_heading_abs_deg": 19.21958113872396,
+      "startup_yaw_span_deg": 53.413238525390625,
+      "startup_right_roll_max_deg": 12.04185962677002,
+      "startup_width_min_mm": 203.04521837794073,
+      "side_peak_median_mm": [
+        4.040774190798402,
+        34.15842168033123
+      ],
+      "full_swing_fraction": 0.4090909090909091,
+      "startup_width_max_mm": 214.86893679721797,
+      "peak_swing_height_mm": 4.631229909136891,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 227.9399871826172,
+      "startup_2p5_drop_mm": 225.57345581054688,
+      "startup_2p5_vertical_speed_max": 1.3195470571517944,
+      "startup_2p5_acceleration_max": 41.94501876831055,
+      "startup_min_velocity": -0.905376136302948,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 5,
+      "first_landings": [
+        {
+          "time_s": 1.08,
+          "side": 0,
+          "peak_mm": 23.862231522798538,
+          "width_mm": 211.64286040276957
+        },
+        {
+          "time_s": 1.2,
+          "side": 1,
+          "peak_mm": 16.043225303292274,
+          "width_mm": 211.197733205911
+        },
+        {
+          "time_s": 1.6600000000000001,
+          "side": 1,
+          "peak_mm": 42.45516657829285,
+          "width_mm": 211.5841203025512
+        },
+        {
+          "time_s": 2.16,
+          "side": 1,
+          "peak_mm": 34.36557203531265,
+          "width_mm": 211.47694921592998
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 59.09221267700195,
+      "yaw_change_deg": -20.613126754760742,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1_lean",
+      "case": 6,
+      "trace_index": 38,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.6042553186416626,
+      "tilt_max_deg": 78.81739807128906,
+      "min_height": 0.09065090119838715,
+      "velocity_mean": 0.017338210716843605,
+      "min1s_velocity": 0.016201515179127456,
+      "steady_width_mm": 208.65870449908138,
+      "steady_width_p95_mm": 212.95401440633697,
+      "foot_heading_abs_deg": 18.400394629357315,
+      "startup_yaw_span_deg": 58.806983947753906,
+      "startup_right_roll_max_deg": 12.80113410949707,
+      "startup_width_min_mm": 202.14962626587112,
+      "side_peak_median_mm": [
+        3.257871139794588,
+        29.929607175290585
+      ],
+      "full_swing_fraction": 0.3333333333333333,
+      "startup_width_max_mm": 216.04497891745075,
+      "peak_swing_height_mm": 3.5017405170947313,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 232.0986785888672,
+      "startup_2p5_drop_mm": 228.73147583007812,
+      "startup_2p5_vertical_speed_max": 1.3874698877334595,
+      "startup_2p5_acceleration_max": 58.80728530883789,
+      "startup_min_velocity": -0.8656517267227173,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 5,
+      "first_landings": [
+        {
+          "time_s": 1.08,
+          "side": 0,
+          "peak_mm": 24.62059259414673,
+          "width_mm": 212.27690283165248
+        },
+        {
+          "time_s": 1.2,
+          "side": 1,
+          "peak_mm": 12.149812653660774,
+          "width_mm": 210.5449071821871
+        },
+        {
+          "time_s": 1.34,
+          "side": 0,
+          "peak_mm": 15.264618210494518,
+          "width_mm": 205.39497091117659
+        },
+        {
+          "time_s": 1.6400000000000001,
+          "side": 1,
+          "peak_mm": 40.631648153066635,
+          "width_mm": 211.9872496016968
+        }
+      ],
+      "proper_steps": 24,
+      "yaw_span_deg": 59.92374801635742,
+      "yaw_change_deg": -47.72184753417969,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev1_lean",
+      "case": 7,
+      "trace_index": 39,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.9419075846672058,
+      "tilt_max_deg": 78.49427032470703,
+      "min_height": 0.0856868177652359,
+      "velocity_mean": 0.0019039722392335534,
+      "min1s_velocity": 0.0012013993132859477,
+      "steady_width_mm": 208.8983141435333,
+      "steady_width_p95_mm": 213.20711763731006,
+      "foot_heading_abs_deg": 19.181777254303743,
+      "startup_yaw_span_deg": 41.273502349853516,
+      "startup_right_roll_max_deg": 7.880063056945801,
+      "startup_width_min_mm": 203.84518939466605,
+      "side_peak_median_mm": [
+        1.5124553465284407,
+        33.03297236561775
+      ],
+      "full_swing_fraction": 0.9,
+      "startup_width_max_mm": 215.18042967241934,
+      "peak_swing_height_mm": 32.95373171567917,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 238.18753051757812,
+      "startup_2p5_drop_mm": 235.73191833496094,
+      "startup_2p5_vertical_speed_max": 1.5670337677001953,
+      "startup_2p5_acceleration_max": 76.9777603149414,
+      "startup_min_velocity": -0.551853597164154,
+      "initial_target_jump_rad": 0.00099235400557518,
+      "shallow_startup_landings": 2,
+      "first_landings": [
+        {
+          "time_s": 1.68,
+          "side": 1,
+          "peak_mm": 35.717468708753586,
+          "width_mm": 210.9824851637278
+        },
+        {
+          "time_s": 2.18,
+          "side": 1,
+          "peak_mm": 32.88181871175766,
+          "width_mm": 211.13237080335446
+        },
+        {
+          "time_s": 2.68,
+          "side": 1,
+          "peak_mm": 33.86935219168663,
+          "width_mm": 211.05347283248403
+        },
+        {
+          "time_s": 3.18,
+          "side": 1,
+          "peak_mm": 34.019481390714645,
+          "width_mm": 211.07581822813978
+        }
+      ],
+      "proper_steps": 21,
+      "yaw_span_deg": 55.167236328125,
+      "yaw_change_deg": -44.056922912597656,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2_lean",
+      "case": 0,
+      "trace_index": 40,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.22814121842384338,
+      "tilt_max_deg": 80.44853210449219,
+      "min_height": 0.08985722810029984,
+      "velocity_mean": 0.014102119952440262,
+      "min1s_velocity": 0.01254167679697275,
+      "steady_width_mm": 208.20794948851153,
+      "steady_width_p95_mm": 213.8658022577392,
+      "foot_heading_abs_deg": 18.605038114605836,
+      "startup_yaw_span_deg": 80.65524291992188,
+      "startup_right_roll_max_deg": 19.93227767944336,
+      "startup_width_min_mm": 201.84736447885837,
+      "side_peak_median_mm": [
+        7.92251480743289,
+        39.90004025399685
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 214.17632223309292,
+      "peak_swing_height_mm": 23.234176449477673,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 256.19671630859375,
+      "startup_2p5_drop_mm": 229.82293701171875,
+      "startup_2p5_vertical_speed_max": 1.7240718603134155,
+      "startup_2p5_acceleration_max": 78.3490219116211,
+      "startup_min_velocity": -0.41570305824279785,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 4,
+      "first_landings": [
+        {
+          "time_s": 1.3800000000000001,
+          "side": 0,
+          "peak_mm": 102.35027223825455,
+          "width_mm": 209.41324099794855
+        },
+        {
+          "time_s": 1.72,
+          "side": 1,
+          "peak_mm": 71.09173387289047,
+          "width_mm": 205.6592417270543
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 46.95504158735275,
+          "width_mm": 212.10670789045406
+        },
+        {
+          "time_s": 2.58,
+          "side": 1,
+          "peak_mm": 37.59878873825073,
+          "width_mm": 212.41491553107022
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 102.04527282714844,
+      "yaw_change_deg": 9.664396286010742,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2_lean",
+      "case": 1,
+      "trace_index": 41,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4325847625732422,
+      "tilt_max_deg": 78.74227905273438,
+      "min_height": 0.09097332507371902,
+      "velocity_mean": 0.018598360940814018,
+      "min1s_velocity": 0.01623267110437155,
+      "steady_width_mm": 208.3855080339632,
+      "steady_width_p95_mm": 213.84579380132666,
+      "foot_heading_abs_deg": 18.19517699682401,
+      "startup_yaw_span_deg": 58.27360153198242,
+      "startup_right_roll_max_deg": 17.0281925201416,
+      "startup_width_min_mm": 202.435127758681,
+      "side_peak_median_mm": [
+        8.120710961520672,
+        33.12153182923794
+      ],
+      "full_swing_fraction": 0.4864864864864865,
+      "startup_width_max_mm": 215.52739720623592,
+      "peak_swing_height_mm": 9.682660922408104,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 231.24295043945312,
+      "startup_2p5_drop_mm": 227.69862365722656,
+      "startup_2p5_vertical_speed_max": 1.6203862428665161,
+      "startup_2p5_acceleration_max": 76.16838073730469,
+      "startup_min_velocity": -0.9299370050430298,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 5,
+      "first_landings": [
+        {
+          "time_s": 1.12,
+          "side": 0,
+          "peak_mm": 43.449752032756805,
+          "width_mm": 211.08585823394125
+        },
+        {
+          "time_s": 1.62,
+          "side": 1,
+          "peak_mm": 33.168867230415344,
+          "width_mm": 211.93535888271137
+        },
+        {
+          "time_s": 2.08,
+          "side": 1,
+          "peak_mm": 30.71821853518486,
+          "width_mm": 212.29066640109278
+        },
+        {
+          "time_s": 2.58,
+          "side": 1,
+          "peak_mm": 29.35449779033661,
+          "width_mm": 212.19972491434382
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 75.67860412597656,
+      "yaw_change_deg": -3.5530710220336914,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2_lean",
+      "case": 2,
+      "trace_index": 42,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 1.4473975896835327,
+      "tilt_max_deg": 79.39827728271484,
+      "min_height": 0.09036388993263245,
+      "velocity_mean": 0.007601732853800058,
+      "min1s_velocity": 0.004458982758224013,
+      "steady_width_mm": 208.37394794222604,
+      "steady_width_p95_mm": 213.9289447467952,
+      "foot_heading_abs_deg": 18.299293849110665,
+      "startup_yaw_span_deg": 54.99818420410156,
+      "startup_right_roll_max_deg": 14.47388744354248,
+      "startup_width_min_mm": 201.7762951530338,
+      "side_peak_median_mm": [
+        2.0516412332654,
+        37.390211597085
+      ],
+      "full_swing_fraction": 0.4864864864864865,
+      "startup_width_max_mm": 213.9456583048754,
+      "peak_swing_height_mm": 7.98195693641901,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 231.44114685058594,
+      "startup_2p5_drop_mm": 228.82664489746094,
+      "startup_2p5_vertical_speed_max": 1.4022432565689087,
+      "startup_2p5_acceleration_max": 57.41756820678711,
+      "startup_min_velocity": -0.8500416874885559,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 5,
+      "first_landings": [
+        {
+          "time_s": 1.12,
+          "side": 0,
+          "peak_mm": 42.576879262924194,
+          "width_mm": 211.05872591712364
+        },
+        {
+          "time_s": 1.62,
+          "side": 1,
+          "peak_mm": 43.34992542862892,
+          "width_mm": 211.97032163678975
+        },
+        {
+          "time_s": 2.14,
+          "side": 1,
+          "peak_mm": 39.134494960308075,
+          "width_mm": 211.53076604398962
+        },
+        {
+          "time_s": 2.64,
+          "side": 1,
+          "peak_mm": 39.84871879220009,
+          "width_mm": 211.53821638652036
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 78.3382339477539,
+      "yaw_change_deg": 11.41712474822998,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2_lean",
+      "case": 3,
+      "trace_index": 43,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.3951526880264282,
+      "tilt_max_deg": 80.53309631347656,
+      "min_height": 0.0913514643907547,
+      "velocity_mean": 0.020660709589719772,
+      "min1s_velocity": 0.017932293489575386,
+      "steady_width_mm": 208.26312547507516,
+      "steady_width_p95_mm": 213.89288909605776,
+      "foot_heading_abs_deg": 18.23906347597594,
+      "startup_yaw_span_deg": 83.20784759521484,
+      "startup_right_roll_max_deg": 20.69302749633789,
+      "startup_width_min_mm": 201.8440222903274,
+      "side_peak_median_mm": [
+        7.842170540243387,
+        37.894295528531075
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 214.1369441794768,
+      "peak_swing_height_mm": 22.740366403013468,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 253.1731719970703,
+      "startup_2p5_drop_mm": 227.6015167236328,
+      "startup_2p5_vertical_speed_max": 1.6707032918930054,
+      "startup_2p5_acceleration_max": 60.73517990112305,
+      "startup_min_velocity": -0.43510007858276367,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.3800000000000001,
+          "side": 0,
+          "peak_mm": 102.90852189064026,
+          "width_mm": 209.77338642138145
+        },
+        {
+          "time_s": 1.7,
+          "side": 1,
+          "peak_mm": 71.88510149717331,
+          "width_mm": 208.14301925901202
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 42.646121233701706,
+          "width_mm": 211.7399374352605
+        },
+        {
+          "time_s": 2.58,
+          "side": 1,
+          "peak_mm": 37.718553096055984,
+          "width_mm": 212.31440684840504
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 105.72171783447266,
+      "yaw_change_deg": 9.528980255126953,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2_lean",
+      "case": 4,
+      "trace_index": 44,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.2112177014350891,
+      "tilt_max_deg": 78.85089111328125,
+      "min_height": 0.09477904438972473,
+      "velocity_mean": 0.009023831225931644,
+      "min1s_velocity": 0.007623762525618076,
+      "steady_width_mm": 208.38137989400911,
+      "steady_width_p95_mm": 213.74803694519204,
+      "foot_heading_abs_deg": 18.92636551156831,
+      "startup_yaw_span_deg": 54.97445297241211,
+      "startup_right_roll_max_deg": 14.559121131896973,
+      "startup_width_min_mm": 202.96927626403084,
+      "side_peak_median_mm": [
+        5.734625738114119,
+        35.186758264899254
+      ],
+      "full_swing_fraction": 0.43902439024390244,
+      "startup_width_max_mm": 214.87155169186235,
+      "peak_swing_height_mm": 8.0417450517416,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 228.01170349121094,
+      "startup_2p5_drop_mm": 225.2290496826172,
+      "startup_2p5_vertical_speed_max": 1.3694729804992676,
+      "startup_2p5_acceleration_max": 46.9735107421875,
+      "startup_min_velocity": -1.018839955329895,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 3,
+      "first_landings": [
+        {
+          "time_s": 1.08,
+          "side": 0,
+          "peak_mm": 29.81649525463581,
+          "width_mm": 211.32935500041168
+        },
+        {
+          "time_s": 1.2,
+          "side": 1,
+          "peak_mm": 16.822386533021927,
+          "width_mm": 207.96512318480768
+        },
+        {
+          "time_s": 1.6400000000000001,
+          "side": 1,
+          "peak_mm": 33.87507051229477,
+          "width_mm": 211.75019244380226
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 33.37196633219719,
+          "width_mm": 212.15747561209926
+        }
+      ],
+      "proper_steps": 23,
+      "yaw_span_deg": 64.68293762207031,
+      "yaw_change_deg": -13.221783638000488,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2_lean",
+      "case": 5,
+      "trace_index": 45,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.8824873566627502,
+      "tilt_max_deg": 78.96924591064453,
+      "min_height": 0.08818953484296799,
+      "velocity_mean": 0.01910441555082798,
+      "min1s_velocity": 0.017807269748300315,
+      "steady_width_mm": 208.30450768484104,
+      "steady_width_p95_mm": 213.41157614226915,
+      "foot_heading_abs_deg": 19.21046742964724,
+      "startup_yaw_span_deg": 58.32522201538086,
+      "startup_right_roll_max_deg": 15.820940017700195,
+      "startup_width_min_mm": 202.0244894167012,
+      "side_peak_median_mm": [
+        8.346552960574627,
+        37.398021668195724
+      ],
+      "full_swing_fraction": 0.5,
+      "startup_width_max_mm": 214.37611479965074,
+      "peak_swing_height_mm": 22.636243607848883,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 233.22364807128906,
+      "startup_2p5_drop_mm": 230.35433959960938,
+      "startup_2p5_vertical_speed_max": 1.5135198831558228,
+      "startup_2p5_acceleration_max": 74.07329559326172,
+      "startup_min_velocity": -0.7740219235420227,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 5,
+      "first_landings": [
+        {
+          "time_s": 1.1400000000000001,
+          "side": 0,
+          "peak_mm": 50.91176554560661,
+          "width_mm": 210.61161863118562
+        },
+        {
+          "time_s": 1.62,
+          "side": 1,
+          "peak_mm": 34.691255539655685,
+          "width_mm": 211.97368673069013
+        },
+        {
+          "time_s": 2.12,
+          "side": 1,
+          "peak_mm": 35.46549379825592,
+          "width_mm": 211.88933703101154
+        },
+        {
+          "time_s": 2.62,
+          "side": 1,
+          "peak_mm": 35.627856850624084,
+          "width_mm": 211.82866977881844
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 75.09210968017578,
+      "yaw_change_deg": -8.252042770385742,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2_lean",
+      "case": 6,
+      "trace_index": 46,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.6042553186416626,
+      "tilt_max_deg": 78.91327667236328,
+      "min_height": 0.09169910103082657,
+      "velocity_mean": 0.019840499386191368,
+      "min1s_velocity": 0.01771149870939553,
+      "steady_width_mm": 208.37808928541978,
+      "steady_width_p95_mm": 213.65788154214368,
+      "foot_heading_abs_deg": 17.671238389799832,
+      "startup_yaw_span_deg": 59.78089904785156,
+      "startup_right_roll_max_deg": 16.3358097076416,
+      "startup_width_min_mm": 201.83947564433507,
+      "side_peak_median_mm": [
+        3.206407534889877,
+        31.558368355035782
+      ],
+      "full_swing_fraction": 0.42857142857142855,
+      "startup_width_max_mm": 216.0663751643091,
+      "peak_swing_height_mm": 5.640077404677868,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 230.66270446777344,
+      "startup_2p5_drop_mm": 227.6826171875,
+      "startup_2p5_vertical_speed_max": 1.6135615110397339,
+      "startup_2p5_acceleration_max": 60.17085266113281,
+      "startup_min_velocity": -0.9918564558029175,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 7,
+      "first_landings": [
+        {
+          "time_s": 1.1,
+          "side": 0,
+          "peak_mm": 38.587287068367004,
+          "width_mm": 211.04559550675455
+        },
+        {
+          "time_s": 1.62,
+          "side": 1,
+          "peak_mm": 37.165287882089615,
+          "width_mm": 211.96961208898574
+        },
+        {
+          "time_s": 2.1,
+          "side": 1,
+          "peak_mm": 32.40327164530754,
+          "width_mm": 212.0680233092992
+        },
+        {
+          "time_s": 2.6,
+          "side": 1,
+          "peak_mm": 32.7887088060379,
+          "width_mm": 211.97913726932356
+        }
+      ],
+      "proper_steps": 22,
+      "yaw_span_deg": 77.42476654052734,
+      "yaw_change_deg": 4.951600074768066,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    },
+    {
+      "model": "rev2_lean",
+      "case": 7,
+      "trace_index": 47,
+      "seed": 1160091,
+      "standing_tilt_max_deg": 0.9419075846672058,
+      "tilt_max_deg": 79.33690643310547,
+      "min_height": 0.09480483084917068,
+      "velocity_mean": 0.0017895870842039585,
+      "min1s_velocity": 0.0005029282346367849,
+      "steady_width_mm": 208.65512025804586,
+      "steady_width_p95_mm": 213.36192242009412,
+      "foot_heading_abs_deg": 18.997289353244422,
+      "startup_yaw_span_deg": 53.440155029296875,
+      "startup_right_roll_max_deg": 9.832160949707031,
+      "startup_width_min_mm": 202.99904884325397,
+      "side_peak_median_mm": [
+        1.8496435368433595,
+        40.14247842133045
+      ],
+      "full_swing_fraction": 0.3673469387755102,
+      "startup_width_max_mm": 215.90940650026695,
+      "peak_swing_height_mm": 2.25263275206089,
+      "cycle_seconds": 0.5,
+      "startup_2p5_z_span_mm": 229.68533325195312,
+      "startup_2p5_drop_mm": 226.6139373779297,
+      "startup_2p5_vertical_speed_max": 1.4824234247207642,
+      "startup_2p5_acceleration_max": 51.15143585205078,
+      "startup_min_velocity": -1.0837953090667725,
+      "initial_target_jump_rad": 0.0013576224446296692,
+      "shallow_startup_landings": 6,
+      "first_landings": [
+        {
+          "time_s": 1.6400000000000001,
+          "side": 1,
+          "peak_mm": 38.27374428510666,
+          "width_mm": 211.76872450153326
+        },
+        {
+          "time_s": 2.14,
+          "side": 1,
+          "peak_mm": 37.15959191322327,
+          "width_mm": 211.81999913756002
+        },
+        {
+          "time_s": 2.62,
+          "side": 1,
+          "peak_mm": 40.56069999933243,
+          "width_mm": 212.2882577867218
+        },
+        {
+          "time_s": 3.14,
+          "side": 1,
+          "peak_mm": 37.82987967133522,
+          "width_mm": 211.7894899283505
+        }
+      ],
+      "proper_steps": 21,
+      "yaw_span_deg": 72.9722900390625,
+      "yaw_change_deg": -18.850488662719727,
+      "healthy": false,
+      "narrow": false,
+      "natural_width": false,
+      "original_style": false,
+      "straight": false,
+      "smooth_start": false,
+      "user_goal_gate": false
+    }
+  ]
+}

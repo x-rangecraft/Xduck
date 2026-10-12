@@ -1,0 +1,1119 @@
+[2026-09-30 16:34:26,932][OpenGL.acceleratesupport][INFO] - No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
+[rank 0/1] Using device: cuda
+Warp 1.14.0 initialized:
+   CUDA Toolkit 12.9, Driver 13.0
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA GeForce RTX 5090 D" (31 GiB, sm_120, mempool enabled)
+   Kernel cache:
+     /home/xingchen/.cache/warp/1.14.0
+Module mujoco_warp._src.smooth e597d07 load on device 'cuda:0' took 3.34 ms  (cached)
+Module _nxn_broadphase__locals__kernel_a09fd5ac a09fd5a load on device 'cuda:0' took 0.26 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_3ea99d4a 3ea99d4 load on device 'cuda:0' took 1.51 ms  (cached)
+Module ccd_kernel_builder__locals__ccd_kernel_3ea99d4a 90186a8 load on device 'cuda:0' took 1.46 ms  (cached)
+Module _primitive_narrowphase__locals__primitive_narrowphase_c894beba c894beb load on device 'cuda:0' took 0.43 ms  (cached)
+Module mujoco_warp._src.constraint 880bd7f load on device 'cuda:0' took 0.20 ms  (cached)
+Module _friction_dof__locals__kernel_7f5fef1d 7f5fef1 load on device 'cuda:0' took 0.27 ms  (cached)
+Module _limit_slide_hinge__locals__kernel_2e45505b 2e45505 load on device 'cuda:0' took 0.28 ms  (cached)
+Module _efc_contact_init__locals__kernel_0171803d 0171803 load on device 'cuda:0' took 0.25 ms  (cached)
+Module _efc_contact_jac_dense__locals__kernel_24b53e9d a78316d load on device 'cuda:0' took 0.29 ms  (cached)
+Module _efc_contact_update__locals__kernel_710e1642 710e164 load on device 'cuda:0' took 0.27 ms  (cached)
+Module mujoco_warp._src.sensor 42e0a24 load on device 'cuda:0' took 1.33 ms  (cached)
+Module mujoco_warp._src.forward 687ddb7 load on device 'cuda:0' took 0.68 ms  (cached)
+Module mujoco_warp._src.passive 8ff6993 load on device 'cuda:0' took 0.81 ms  (cached)
+Module mujoco_warp._src.forward 2190340 load on device 'cuda:0' took 0.72 ms  (cached)
+Module _qfrc_smooth__locals__kernel_412ce125 412ce12 load on device 'cuda:0' took 0.22 ms  (cached)
+Module mujoco_warp._src.support d1e71d9 load on device 'cuda:0' took 0.25 ms  (cached)
+Module _tile_cholesky_factorize_solve_block__locals__kernel_98d0fb03 c208c6c load on device 'cuda:0' took 17.58 ms  (cached)
+Module _solve_init_dof__locals__kernel_61467459 6146745 load on device 'cuda:0' took 0.23 ms  (cached)
+Module mujoco_warp._src.solver 245b5b3 load on device 'cuda:0' took 1.11 ms  (cached)
+Module _solve_init_jaref_kernel__locals__kernel_ad4c3bd6 ad4c3bd load on device 'cuda:0' took 0.24 ms  (cached)
+Module mul_m_kernel__locals___mul_m_60e7d061 60e7d06 load on device 'cuda:0' took 0.30 ms  (cached)
+Module _update_constraint_efc__locals__kernel_5d0c511e 5d0c511 load on device 'cuda:0' took 0.25 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_15dd8e78 15dd8e7 load on device 'cuda:0' took 0.35 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_6b40d785 6b40d78 load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_grad__locals__kernel_9aa8c0ee 9aa8c0e load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_JTDAJ_dense_tiled__locals__kernel_3a1a2d02 43866fe load on device 'cuda:0' took 0.52 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_f56de101 a6b1ba8 load on device 'cuda:0' took 22.71 ms  (cached)
+Module _linesearch_iterative_kernel__locals__kernel_9e301f59 176d4e7 load on device 'cuda:0' took 0.40 ms  (cached)
+Module _update_constraint_efc__locals__kernel_6a49458a 6a49458 load on device 'cuda:0' took 0.27 ms  (cached)
+Module _update_constraint_init_qfrc_constraint_dense__locals__kernel_ecad82c3 ecad82c load on device 'cuda:0' took 0.26 ms  (cached)
+Module _update_gradient_zero_grad_dot__locals__kernel_32b39599 32b3959 load on device 'cuda:0' took 0.23 ms  (cached)
+Module _update_gradient_grad__locals__kernel_00e53288 00e5328 load on device 'cuda:0' took 0.24 ms  (cached)
+Module _update_gradient_cholesky__locals__kernel_3993fc14 a6a7304 load on device 'cuda:0' took 22.70 ms  (cached)
+Module _contact_sort__locals__contact_sort_7bada88e 026fd42 load on device 'cuda:0' took 0.28 ms  (cached)
+Module mujoco_warp._src.derivative e770e28 load on device 'cuda:0' took 0.62 ms  (cached)
+Module _next_time_builder__locals___next_time_1f10e805 1f10e80 load on device 'cuda:0' took 0.27 ms  (cached)
+/home/xingchen/Xduck/xduck_speed_correction_20260930/project/.venv/lib/python3.10/site-packages/gymnasium/spaces/box.py:226: RuntimeWarning: overflow encountered in cast
+  elif low.dtype != self.dtype and np.any(low < dtype_min):
+/home/xingchen/Xduck/xduck_speed_correction_20260930/project/.venv/lib/python3.10/site-packages/gymnasium/spaces/box.py:296: RuntimeWarning: overflow encountered in cast
+  elif high.dtype != self.dtype and np.any(dtype_max < high):
+Module reset_data__locals__reset_xfrc_applied_68cbd089 68cbd08 load on device 'cuda:0' took 0.31 ms  (cached)
+Module reset_data__locals__reset_M_e750f49f e750f49 load on device 'cuda:0' took 0.21 ms  (cached)
+Module reset_data__locals__reset_mocap_8d259ef0 8d259ef load on device 'cuda:0' took 0.20 ms  (cached)
+Module reset_data__locals__reset_contact_657e565e 657e565 load on device 'cuda:0' took 0.21 ms  (cached)
+Module reset_data__locals__reset_sleep_ef1daa14 ef1daa1 load on device 'cuda:0' took 0.20 ms  (cached)
+Module reset_data__locals__reset_nworld_3f93673c 3f93673 load on device 'cuda:0' took 0.26 ms  (cached)
+--------------------------------------------------------------------------------
+Resolved observation sets: 
+	 default :  ['policy']
+	 actor :  ['actor']
+	 critic :  ['critic']
+--------------------------------------------------------------------------------
+Actor Model: MLPModel(
+  (obs_normalizer): EmpiricalNormalization()
+  (distribution): GaussianDistribution()
+  (mlp): MLP(
+    (0): Linear(in_features=61, out_features=512, bias=True)
+    (1): ELU(alpha=1.0)
+    (2): Linear(in_features=512, out_features=256, bias=True)
+    (3): ELU(alpha=1.0)
+    (4): Linear(in_features=256, out_features=128, bias=True)
+    (5): ELU(alpha=1.0)
+    (6): Linear(in_features=128, out_features=14, bias=True)
+  )
+)
+Critic Model: MLPModel(
+  (obs_normalizer): EmpiricalNormalization()
+  (mlp): MLP(
+    (0): Linear(in_features=76, out_features=512, bias=True)
+    (1): ELU(alpha=1.0)
+    (2): Linear(in_features=512, out_features=256, bias=True)
+    (3): ELU(alpha=1.0)
+    (4): Linear(in_features=256, out_features=128, bias=True)
+    (5): ELU(alpha=1.0)
+    (6): Linear(in_features=128, out_features=1, bias=True)
+  )
+)
+Resuming from /home/xingchen/Xduck/xduck_rigid4096_220after900_20260930/rigid4096_220after900/model_1199.pt
+Restored environment progress to step 28800
+Could not find git repository in /home/xingchen/Xduck/xduck_speed_correction_20260930/project/.venv/lib/python3.10/site-packages/rsl_rl/__init__.py. Skipping.
+################################################################################
+[1m                          Learning iteration 1200/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 118063104 
+                       Steps per second: 18548 
+                        Collection time: 4.975s 
+                          Learning time: 0.325s 
+                        Mean value loss: 0.0647
+                    Mean surrogate loss: 0.0061
+                      Mean entropy loss: 7.5589
+                        Mean action std: 0.47
+                    audit/cadence_score: 0.0000
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3417
+              curriculum/effective_step: 28823.0000
+            audit/gf_peak_abs_torque_nm: 61.6156
+            audit/gf_mean_abs_torque_nm: 10.5121
+              audit/cadence_steps_per_s: 6.9424
+--------------------------------------------------------------------------------
+                         Iteration time: 5.30s
+                           Time elapsed: 02:11:56
+                                    ETA: 15:46:27
+
+################################################################################
+[1m                          Learning iteration 1201/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 118161408 
+                       Steps per second: 18696 
+                        Collection time: 5.058s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.0122
+                    Mean surrogate loss: -0.0131
+                      Mean entropy loss: 7.4061
+                            Mean reward: -0.06
+                    Mean episode length: 37.40
+                        Mean action std: 0.47
+                    audit/cadence_score: 0.0537
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3812
+              curriculum/effective_step: 28847.0000
+            audit/gf_peak_abs_torque_nm: 56.2567
+            audit/gf_mean_abs_torque_nm: 10.3348
+              audit/cadence_steps_per_s: 4.2007
+--------------------------------------------------------------------------------
+                         Iteration time: 5.26s
+                           Time elapsed: 02:12:02
+                                    ETA: 06:48:29
+
+################################################################################
+[1m                          Learning iteration 1202/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 118259712 
+                       Steps per second: 19656 
+                        Collection time: 4.801s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.0105
+                    Mean surrogate loss: -0.0114
+                      Mean entropy loss: 7.2254
+                            Mean reward: -0.11
+                    Mean episode length: 36.17
+                        Mean action std: 0.46
+                    audit/cadence_score: 0.0767
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3874
+              curriculum/effective_step: 28871.0000
+            audit/gf_peak_abs_torque_nm: 68.6088
+            audit/gf_mean_abs_torque_nm: 10.2264
+              audit/cadence_steps_per_s: 3.6933
+--------------------------------------------------------------------------------
+                         Iteration time: 5.00s
+                           Time elapsed: 02:12:07
+                                    ETA: 19:49:03
+
+################################################################################
+[1m                          Learning iteration 1203/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 118358016 
+                       Steps per second: 20150 
+                        Collection time: 4.683s 
+                          Learning time: 0.196s 
+                        Mean value loss: 0.0087
+                    Mean surrogate loss: -0.0134
+                      Mean entropy loss: 6.9700
+                            Mean reward: -0.11
+                    Mean episode length: 36.17
+                        Mean action std: 0.46
+                    audit/cadence_score: 0.0757
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3877
+              curriculum/effective_step: 28895.0000
+            audit/gf_peak_abs_torque_nm: 51.9468
+            audit/gf_mean_abs_torque_nm: 10.0454
+              audit/cadence_steps_per_s: 3.6227
+--------------------------------------------------------------------------------
+                         Iteration time: 4.88s
+                           Time elapsed: 02:12:11
+                                    ETA: 14:19:17
+
+################################################################################
+[1m                          Learning iteration 1204/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 118456320 
+                       Steps per second: 19805 
+                        Collection time: 4.765s 
+                          Learning time: 0.198s 
+                        Mean value loss: 0.0092
+                    Mean surrogate loss: -0.0137
+                      Mean entropy loss: 6.7444
+                            Mean reward: -0.11
+                    Mean episode length: 36.17
+                        Mean action std: 0.45
+                    audit/cadence_score: 0.0749
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3929
+              curriculum/effective_step: 28919.0000
+            audit/gf_peak_abs_torque_nm: 61.7201
+            audit/gf_mean_abs_torque_nm: 9.8953
+              audit/cadence_steps_per_s: 3.6078
+--------------------------------------------------------------------------------
+                         Iteration time: 4.96s
+                           Time elapsed: 02:12:16
+                                    ETA: 11:01:24
+
+################################################################################
+[1m                          Learning iteration 1205/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 118554624 
+                       Steps per second: 20034 
+                        Collection time: 4.708s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.0080
+                    Mean surrogate loss: -0.0127
+                      Mean entropy loss: 6.5516
+                            Mean reward: -0.11
+                    Mean episode length: 36.17
+                        Mean action std: 0.45
+                    audit/cadence_score: 0.0770
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3977
+              curriculum/effective_step: 28943.0000
+            audit/gf_peak_abs_torque_nm: 48.0990
+            audit/gf_mean_abs_torque_nm: 9.6285
+              audit/cadence_steps_per_s: 3.6006
+--------------------------------------------------------------------------------
+                         Iteration time: 4.91s
+                           Time elapsed: 02:12:21
+                                    ETA: 08:49:27
+
+################################################################################
+[1m                          Learning iteration 1206/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 118652928 
+                       Steps per second: 19896 
+                        Collection time: 4.740s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.0090
+                    Mean surrogate loss: -0.0102
+                      Mean entropy loss: 6.3915
+                            Mean reward: -0.11
+                    Mean episode length: 36.17
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0755
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3945
+              curriculum/effective_step: 28967.0000
+            audit/gf_peak_abs_torque_nm: 61.4282
+            audit/gf_mean_abs_torque_nm: 9.5250
+              audit/cadence_steps_per_s: 3.5919
+--------------------------------------------------------------------------------
+                         Iteration time: 4.94s
+                           Time elapsed: 02:12:26
+                                    ETA: 07:15:10
+
+################################################################################
+[1m                          Learning iteration 1207/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 118751232 
+                       Steps per second: 19990 
+                        Collection time: 4.718s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.0085
+                    Mean surrogate loss: -0.0100
+                      Mean entropy loss: 6.1609
+                            Mean reward: -0.11
+                    Mean episode length: 36.17
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0733
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3998
+              curriculum/effective_step: 28991.0000
+            audit/gf_peak_abs_torque_nm: 50.1178
+            audit/gf_mean_abs_torque_nm: 9.3589
+              audit/cadence_steps_per_s: 3.5846
+--------------------------------------------------------------------------------
+                         Iteration time: 4.92s
+                           Time elapsed: 02:12:31
+                                    ETA: 06:04:27
+
+################################################################################
+[1m                          Learning iteration 1208/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 118849536 
+                       Steps per second: 20009 
+                        Collection time: 4.713s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.0107
+                    Mean surrogate loss: -0.0112
+                      Mean entropy loss: 5.9690
+                            Mean reward: -0.11
+                    Mean episode length: 36.17
+                        Mean action std: 0.43
+                    audit/cadence_score: 0.0744
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.4021
+              curriculum/effective_step: 29015.0000
+            audit/gf_peak_abs_torque_nm: 81.3349
+            audit/gf_mean_abs_torque_nm: 9.2568
+              audit/cadence_steps_per_s: 3.5720
+--------------------------------------------------------------------------------
+                         Iteration time: 4.91s
+                           Time elapsed: 02:12:36
+                                    ETA: 05:09:25
+
+################################################################################
+[1m                          Learning iteration 1209/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 118947840 
+                       Steps per second: 20038 
+                        Collection time: 4.706s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.3167
+                    Mean surrogate loss: -0.0027
+                      Mean entropy loss: 5.9332
+                            Mean reward: -0.11
+                    Mean episode length: 36.17
+                        Mean action std: 0.43
+                    audit/cadence_score: 0.0746
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3824
+              curriculum/effective_step: 29039.0000
+            audit/gf_peak_abs_torque_nm: 71.6899
+            audit/gf_mean_abs_torque_nm: 9.3519
+              audit/cadence_steps_per_s: 3.5628
+--------------------------------------------------------------------------------
+                         Iteration time: 4.91s
+                           Time elapsed: 02:12:41
+                                    ETA: 04:25:23
+
+################################################################################
+[1m                          Learning iteration 1210/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 119046144 
+                       Steps per second: 16090 
+                        Collection time: 5.910s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.3469
+                    Mean surrogate loss: -0.0074
+                      Mean entropy loss: 5.9496
+                            Mean reward: 18.46
+                    Mean episode length: 223.70
+                        Mean action std: 0.43
+                    audit/cadence_score: 0.0709
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3744
+              curriculum/effective_step: 29063.0000
+            audit/gf_peak_abs_torque_nm: 75.0710
+            audit/gf_mean_abs_torque_nm: 9.3637
+              audit/cadence_steps_per_s: 3.6046
+                    Episode_Reward/pose: 0.2143
+                 Episode_Reward/upright: 0.4308
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: -0.0027
+                Episode_Reward/air_time: 0.1402
+            Episode_Reward/body_ang_vel: -0.0493
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.2495
+  Episode_Reward/track_angular_velocity: 0.0500
+          Episode_Reward/action_rate_l2: -0.3845
+          Episode_Reward/foot_clearance: -0.0025
+       Episode_Reward/foot_swing_height: -0.0053
+      Episode_Reward/head_pose_tracking: 0.4874
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0409
+          Episode_Reward/dof_pos_limits: -0.0203
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.11s
+                           Time elapsed: 02:12:47
+                                    ETA: 03:49:22
+
+################################################################################
+[1m                          Learning iteration 1211/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 119144448 
+                       Steps per second: 16332 
+                        Collection time: 5.819s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.3186
+                    Mean surrogate loss: -0.0073
+                      Mean entropy loss: 5.9790
+                            Mean reward: 21.03
+                    Mean episode length: 249.96
+                        Mean action std: 0.43
+                    audit/cadence_score: 0.0688
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3694
+              curriculum/effective_step: 29087.0000
+            audit/gf_peak_abs_torque_nm: 76.4406
+            audit/gf_mean_abs_torque_nm: 9.3871
+              audit/cadence_steps_per_s: 3.6487
+                    Episode_Reward/pose: 0.1822
+                 Episode_Reward/upright: 0.4714
+               Episode_Reward/foot_slip: -0.0001
+         Episode_Reward/self_collisions: -0.0023
+                Episode_Reward/air_time: 0.1230
+            Episode_Reward/body_ang_vel: -0.0437
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.3307
+  Episode_Reward/track_angular_velocity: 0.0587
+          Episode_Reward/action_rate_l2: -0.3811
+          Episode_Reward/foot_clearance: -0.0022
+       Episode_Reward/foot_swing_height: -0.0030
+      Episode_Reward/head_pose_tracking: 0.5403
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0346
+          Episode_Reward/dof_pos_limits: -0.0218
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.02s
+                           Time elapsed: 02:12:53
+                                    ETA: 03:19:20
+
+################################################################################
+[1m                          Learning iteration 1212/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 119242752 
+                       Steps per second: 16313 
+                        Collection time: 5.825s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.2932
+                    Mean surrogate loss: -0.0070
+                      Mean entropy loss: 6.0074
+                            Mean reward: 23.87
+                    Mean episode length: 281.57
+                        Mean action std: 0.43
+                    audit/cadence_score: 0.0670
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3659
+              curriculum/effective_step: 29111.0000
+            audit/gf_peak_abs_torque_nm: 85.1070
+            audit/gf_mean_abs_torque_nm: 9.4557
+              audit/cadence_steps_per_s: 3.6730
+                    Episode_Reward/pose: 0.2472
+                 Episode_Reward/upright: 0.4930
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: -0.0037
+                Episode_Reward/air_time: 0.1995
+            Episode_Reward/body_ang_vel: -0.0511
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.3103
+  Episode_Reward/track_angular_velocity: 0.0533
+          Episode_Reward/action_rate_l2: -0.4312
+          Episode_Reward/foot_clearance: -0.0029
+       Episode_Reward/foot_swing_height: -0.0039
+      Episode_Reward/head_pose_tracking: 0.5750
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0458
+          Episode_Reward/dof_pos_limits: -0.0252
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.03s
+                           Time elapsed: 02:12:59
+                                    ETA: 02:53:54
+
+################################################################################
+[1m                          Learning iteration 1213/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 119341056 
+                       Steps per second: 16008 
+                        Collection time: 5.940s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.2434
+                    Mean surrogate loss: -0.0073
+                      Mean entropy loss: 6.0451
+                            Mean reward: 26.51
+                    Mean episode length: 309.87
+                        Mean action std: 0.43
+                    audit/cadence_score: 0.0687
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3696
+              curriculum/effective_step: 29135.0000
+            audit/gf_peak_abs_torque_nm: 55.7943
+            audit/gf_mean_abs_torque_nm: 9.4589
+              audit/cadence_steps_per_s: 3.6765
+--------------------------------------------------------------------------------
+                         Iteration time: 6.14s
+                           Time elapsed: 02:13:05
+                                    ETA: 02:32:06
+
+################################################################################
+[1m                          Learning iteration 1214/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 119439360 
+                       Steps per second: 16622 
+                        Collection time: 5.714s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.2895
+                    Mean surrogate loss: -0.0055
+                      Mean entropy loss: 6.0634
+                            Mean reward: 27.94
+                    Mean episode length: 326.44
+                        Mean action std: 0.43
+                    audit/cadence_score: 0.0715
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3713
+              curriculum/effective_step: 29159.0000
+            audit/gf_peak_abs_torque_nm: 92.4932
+            audit/gf_mean_abs_torque_nm: 9.4468
+              audit/cadence_steps_per_s: 3.6941
+                    Episode_Reward/pose: 0.2773
+                 Episode_Reward/upright: 0.5077
+               Episode_Reward/foot_slip: -0.0001
+         Episode_Reward/self_collisions: -0.0040
+                Episode_Reward/air_time: 0.2820
+            Episode_Reward/body_ang_vel: -0.0537
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.3111
+  Episode_Reward/track_angular_velocity: 0.0590
+          Episode_Reward/action_rate_l2: -0.4691
+          Episode_Reward/foot_clearance: -0.0043
+       Episode_Reward/foot_swing_height: -0.0029
+      Episode_Reward/head_pose_tracking: 0.6785
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0502
+          Episode_Reward/dof_pos_limits: -0.0317
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 5.91s
+                           Time elapsed: 02:13:11
+                                    ETA: 02:13:11
+
+################################################################################
+[1m                          Learning iteration 1215/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 119537664 
+                       Steps per second: 15653 
+                        Collection time: 6.081s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.3054
+                    Mean surrogate loss: -0.0074
+                      Mean entropy loss: 6.0872
+                            Mean reward: 29.78
+                    Mean episode length: 347.94
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0702
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3612
+              curriculum/effective_step: 29183.0000
+            audit/gf_peak_abs_torque_nm: 92.8731
+            audit/gf_mean_abs_torque_nm: 9.4974
+              audit/cadence_steps_per_s: 3.7178
+                    Episode_Reward/pose: 0.3021
+                 Episode_Reward/upright: 0.5982
+               Episode_Reward/foot_slip: -0.0003
+         Episode_Reward/self_collisions: -0.0050
+                Episode_Reward/air_time: 0.2820
+            Episode_Reward/body_ang_vel: -0.0703
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.3218
+  Episode_Reward/track_angular_velocity: 0.0683
+          Episode_Reward/action_rate_l2: -0.5677
+          Episode_Reward/foot_clearance: -0.0036
+       Episode_Reward/foot_swing_height: -0.0034
+      Episode_Reward/head_pose_tracking: 0.7363
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0293
+          Episode_Reward/dof_pos_limits: -0.0320
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.28s
+                           Time elapsed: 02:13:17
+                                    ETA: 01:56:38
+
+################################################################################
+[1m                          Learning iteration 1216/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 119635968 
+                       Steps per second: 15825 
+                        Collection time: 6.021s 
+                          Learning time: 0.191s 
+                        Mean value loss: 0.3410
+                    Mean surrogate loss: -0.0069
+                      Mean entropy loss: 6.1277
+                            Mean reward: 33.00
+                    Mean episode length: 374.37
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0681
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3646
+              curriculum/effective_step: 29207.0000
+            audit/gf_peak_abs_torque_nm: 72.7987
+            audit/gf_mean_abs_torque_nm: 9.5006
+              audit/cadence_steps_per_s: 3.7397
+                    Episode_Reward/pose: 0.2446
+                 Episode_Reward/upright: 0.6493
+               Episode_Reward/foot_slip: -0.0004
+         Episode_Reward/self_collisions: -0.0110
+                Episode_Reward/air_time: 0.1245
+            Episode_Reward/body_ang_vel: -0.0628
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.4071
+  Episode_Reward/track_angular_velocity: 0.0747
+          Episode_Reward/action_rate_l2: -0.5586
+          Episode_Reward/foot_clearance: -0.0028
+       Episode_Reward/foot_swing_height: -0.0046
+      Episode_Reward/head_pose_tracking: 0.7579
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0658
+          Episode_Reward/dof_pos_limits: -0.0327
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.21s
+                           Time elapsed: 02:13:24
+                                    ETA: 01:42:00
+
+################################################################################
+[1m                          Learning iteration 1217/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 119734272 
+                       Steps per second: 15967 
+                        Collection time: 5.956s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.3004
+                    Mean surrogate loss: -0.0069
+                      Mean entropy loss: 6.1610
+                            Mean reward: 35.95
+                    Mean episode length: 398.57
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0687
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3672
+              curriculum/effective_step: 29231.0000
+            audit/gf_peak_abs_torque_nm: 63.4849
+            audit/gf_mean_abs_torque_nm: 9.4626
+              audit/cadence_steps_per_s: 3.7400
+--------------------------------------------------------------------------------
+                         Iteration time: 6.16s
+                           Time elapsed: 02:13:30
+                                    ETA: 01:29:00
+
+################################################################################
+[1m                          Learning iteration 1218/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 119832576 
+                       Steps per second: 16068 
+                        Collection time: 5.922s 
+                          Learning time: 0.196s 
+                        Mean value loss: 0.0813
+                    Mean surrogate loss: -0.0064
+                      Mean entropy loss: 6.1722
+                            Mean reward: 37.93
+                    Mean episode length: 421.52
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0699
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3805
+              curriculum/effective_step: 29255.0000
+            audit/gf_peak_abs_torque_nm: 73.1622
+            audit/gf_mean_abs_torque_nm: 9.4026
+              audit/cadence_steps_per_s: 3.7252
+--------------------------------------------------------------------------------
+                         Iteration time: 6.12s
+                           Time elapsed: 02:13:36
+                                    ETA: 01:17:21
+
+################################################################################
+[1m                          Learning iteration 1219/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 119930880 
+                       Steps per second: 17362 
+                        Collection time: 5.462s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.0867
+                    Mean surrogate loss: -0.0065
+                      Mean entropy loss: 6.1514
+                            Mean reward: 38.77
+                    Mean episode length: 433.49
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0741
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3863
+              curriculum/effective_step: 29279.0000
+            audit/gf_peak_abs_torque_nm: 51.2808
+            audit/gf_mean_abs_torque_nm: 9.3255
+              audit/cadence_steps_per_s: 3.6704
+                    Episode_Reward/pose: 0.3739
+                 Episode_Reward/upright: 0.7356
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: -0.0035
+                Episode_Reward/air_time: 0.3015
+            Episode_Reward/body_ang_vel: -0.0599
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.5054
+  Episode_Reward/track_angular_velocity: 0.0960
+          Episode_Reward/action_rate_l2: -0.6273
+          Episode_Reward/foot_clearance: -0.0041
+       Episode_Reward/foot_swing_height: -0.0083
+      Episode_Reward/head_pose_tracking: 0.8810
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0751
+          Episode_Reward/dof_pos_limits: -0.0403
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 5.66s
+                           Time elapsed: 02:13:42
+                                    ETA: 01:06:51
+
+################################################################################
+[1m                          Learning iteration 1220/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 120029184 
+                       Steps per second: 18231 
+                        Collection time: 5.191s 
+                          Learning time: 0.201s 
+                        Mean value loss: 0.1025
+                    Mean surrogate loss: -0.0064
+                      Mean entropy loss: 6.1411
+                            Mean reward: 38.76
+                    Mean episode length: 434.62
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0765
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3837
+              curriculum/effective_step: 29303.0000
+            audit/gf_peak_abs_torque_nm: 52.2796
+            audit/gf_mean_abs_torque_nm: 9.3081
+              audit/cadence_steps_per_s: 3.6769
+--------------------------------------------------------------------------------
+                         Iteration time: 5.39s
+                           Time elapsed: 02:13:47
+                                    ETA: 00:57:20
+
+################################################################################
+[1m                          Learning iteration 1221/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 120127488 
+                       Steps per second: 17579 
+                        Collection time: 5.393s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.1722
+                    Mean surrogate loss: -0.0045
+                      Mean entropy loss: 6.1358
+                            Mean reward: 39.24
+                    Mean episode length: 440.63
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0763
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3809
+              curriculum/effective_step: 29327.0000
+            audit/gf_peak_abs_torque_nm: 79.5189
+            audit/gf_mean_abs_torque_nm: 9.3585
+              audit/cadence_steps_per_s: 3.6731
+                    Episode_Reward/pose: 0.1216
+                 Episode_Reward/upright: 0.9327
+               Episode_Reward/foot_slip: 0.0000
+         Episode_Reward/self_collisions: 0.0000
+                Episode_Reward/air_time: 0.0000
+            Episode_Reward/body_ang_vel: -0.0663
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.6517
+  Episode_Reward/track_angular_velocity: 0.1267
+          Episode_Reward/action_rate_l2: -0.6848
+          Episode_Reward/foot_clearance: 0.0000
+       Episode_Reward/foot_swing_height: 0.0000
+      Episode_Reward/head_pose_tracking: 1.0159
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0428
+          Episode_Reward/dof_pos_limits: -0.0441
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 5.59s
+                           Time elapsed: 02:13:53
+                                    ETA: 00:48:41
+
+################################################################################
+[1m                          Learning iteration 1222/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 120225792 
+                       Steps per second: 16834 
+                        Collection time: 5.617s 
+                          Learning time: 0.222s 
+                        Mean value loss: 0.2176
+                    Mean surrogate loss: -0.0066
+                      Mean entropy loss: 6.1461
+                            Mean reward: 41.27
+                    Mean episode length: 463.74
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0728
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3744
+              curriculum/effective_step: 29351.0000
+            audit/gf_peak_abs_torque_nm: 85.9338
+            audit/gf_mean_abs_torque_nm: 9.4212
+              audit/cadence_steps_per_s: 3.6843
+--------------------------------------------------------------------------------
+                         Iteration time: 5.84s
+                           Time elapsed: 02:13:58
+                                    ETA: 00:40:46
+
+################################################################################
+[1m                          Learning iteration 1223/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 120324096 
+                       Steps per second: 16773 
+                        Collection time: 5.662s 
+                          Learning time: 0.199s 
+                        Mean value loss: 0.1954
+                    Mean surrogate loss: -0.0070
+                      Mean entropy loss: 6.1589
+                            Mean reward: 43.77
+                    Mean episode length: 490.17
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0724
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3742
+              curriculum/effective_step: 29375.0000
+            audit/gf_peak_abs_torque_nm: 78.6650
+            audit/gf_mean_abs_torque_nm: 9.3858
+              audit/cadence_steps_per_s: 3.6991
+--------------------------------------------------------------------------------
+                         Iteration time: 5.86s
+                           Time elapsed: 02:14:04
+                                    ETA: 00:33:31
+
+################################################################################
+[1m                          Learning iteration 1224/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 120422400 
+                       Steps per second: 16576 
+                        Collection time: 5.730s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.2086
+                    Mean surrogate loss: -0.0058
+                      Mean entropy loss: 6.1685
+                            Mean reward: 45.54
+                    Mean episode length: 504.66
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0683
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3722
+              curriculum/effective_step: 29399.0000
+            audit/gf_peak_abs_torque_nm: 67.8060
+            audit/gf_mean_abs_torque_nm: 9.4771
+              audit/cadence_steps_per_s: 3.7237
+                    Episode_Reward/pose: 0.3847
+                 Episode_Reward/upright: 1.0316
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: 0.0000
+                Episode_Reward/air_time: 0.1470
+            Episode_Reward/body_ang_vel: -0.0897
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.7723
+  Episode_Reward/track_angular_velocity: 0.1246
+          Episode_Reward/action_rate_l2: -0.7800
+          Episode_Reward/foot_clearance: -0.0029
+       Episode_Reward/foot_swing_height: -0.0053
+      Episode_Reward/head_pose_tracking: 1.1196
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.1009
+          Episode_Reward/dof_pos_limits: -0.0426
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 5.93s
+                           Time elapsed: 02:14:10
+                                    ETA: 00:26:50
+
+################################################################################
+[1m                          Learning iteration 1225/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 120520704 
+                       Steps per second: 17233 
+                        Collection time: 5.504s 
+                          Learning time: 0.200s 
+                        Mean value loss: 0.3150
+                    Mean surrogate loss: -0.0072
+                      Mean entropy loss: 6.1914
+                            Mean reward: 48.97
+                    Mean episode length: 538.56
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0657
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3671
+              curriculum/effective_step: 29423.0000
+            audit/gf_peak_abs_torque_nm: 81.1803
+            audit/gf_mean_abs_torque_nm: 9.4356
+              audit/cadence_steps_per_s: 3.7317
+                    Episode_Reward/pose: 0.2082
+                 Episode_Reward/upright: 1.1044
+               Episode_Reward/foot_slip: -0.0000
+         Episode_Reward/self_collisions: -0.0040
+                Episode_Reward/air_time: 0.0510
+            Episode_Reward/body_ang_vel: -0.0561
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.8367
+  Episode_Reward/track_angular_velocity: 0.1652
+          Episode_Reward/action_rate_l2: -0.7459
+          Episode_Reward/foot_clearance: -0.0023
+       Episode_Reward/foot_swing_height: -0.0007
+      Episode_Reward/head_pose_tracking: 1.1952
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0646
+          Episode_Reward/dof_pos_limits: -0.0463
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 5.70s
+                           Time elapsed: 02:14:16
+                                    ETA: 00:20:39
+
+################################################################################
+[1m                          Learning iteration 1226/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 120619008 
+                       Steps per second: 15175 
+                        Collection time: 6.282s 
+                          Learning time: 0.196s 
+                        Mean value loss: 0.2556
+                    Mean surrogate loss: -0.0072
+                      Mean entropy loss: 6.2275
+                            Mean reward: 52.10
+                    Mean episode length: 565.67
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0630
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3619
+              curriculum/effective_step: 29447.0000
+            audit/gf_peak_abs_torque_nm: 61.1829
+            audit/gf_mean_abs_torque_nm: 9.6007
+              audit/cadence_steps_per_s: 3.7443
+                    Episode_Reward/pose: 0.5274
+                 Episode_Reward/upright: 1.1182
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: -0.0080
+                Episode_Reward/air_time: 0.4590
+            Episode_Reward/body_ang_vel: -0.0699
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.7120
+  Episode_Reward/track_angular_velocity: 0.1272
+          Episode_Reward/action_rate_l2: -0.7897
+          Episode_Reward/foot_clearance: -0.0048
+       Episode_Reward/foot_swing_height: -0.0041
+      Episode_Reward/head_pose_tracking: 1.2036
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.1098
+          Episode_Reward/dof_pos_limits: -0.0516
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.48s
+                           Time elapsed: 02:14:22
+                                    ETA: 00:14:55
+
+################################################################################
+[1m                          Learning iteration 1227/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 120717312 
+                       Steps per second: 15661 
+                        Collection time: 6.089s 
+                          Learning time: 0.188s 
+                        Mean value loss: 0.2393
+                    Mean surrogate loss: -0.0075
+                      Mean entropy loss: 6.2516
+                            Mean reward: 56.17
+                    Mean episode length: 613.48
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0652
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3598
+              curriculum/effective_step: 29471.0000
+            audit/gf_peak_abs_torque_nm: 92.1630
+            audit/gf_mean_abs_torque_nm: 9.5880
+              audit/cadence_steps_per_s: 3.7534
+--------------------------------------------------------------------------------
+                         Iteration time: 6.28s
+                           Time elapsed: 02:14:29
+                                    ETA: 00:09:36
+
+################################################################################
+[1m                          Learning iteration 1228/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 120815616 
+                       Steps per second: 15721 
+                        Collection time: 6.065s 
+                          Learning time: 0.187s 
+                        Mean value loss: 0.2097
+                    Mean surrogate loss: -0.0051
+                      Mean entropy loss: 6.2655
+                            Mean reward: 58.79
+                    Mean episode length: 637.97
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0633
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3582
+              curriculum/effective_step: 29495.0000
+            audit/gf_peak_abs_torque_nm: 65.9221
+            audit/gf_mean_abs_torque_nm: 9.5760
+              audit/cadence_steps_per_s: 3.7750
+                    Episode_Reward/pose: 0.5686
+                 Episode_Reward/upright: 1.1833
+               Episode_Reward/foot_slip: -0.0002
+         Episode_Reward/self_collisions: -0.0020
+                Episode_Reward/air_time: 0.3840
+            Episode_Reward/body_ang_vel: -0.0606
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.7767
+  Episode_Reward/track_angular_velocity: 0.1404
+          Episode_Reward/action_rate_l2: -0.8336
+          Episode_Reward/foot_clearance: -0.0052
+       Episode_Reward/foot_swing_height: -0.0049
+      Episode_Reward/head_pose_tracking: 1.3224
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.0851
+          Episode_Reward/dof_pos_limits: -0.0563
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.25s
+                           Time elapsed: 02:14:35
+                                    ETA: 00:04:38
+
+################################################################################
+[1m                          Learning iteration 1229/1230                          [0m 
+
+                               Run name: control
+                            Total steps: 120913920 
+                       Steps per second: 15384 
+                        Collection time: 6.161s 
+                          Learning time: 0.229s 
+                        Mean value loss: 0.1706
+                    Mean surrogate loss: -0.0076
+                      Mean entropy loss: 6.2782
+                            Mean reward: 58.60
+                    Mean episode length: 646.16
+                        Mean action std: 0.44
+                    audit/cadence_score: 0.0664
+           curriculum/standing_fraction: 0.1500
+          curriculum/action_rate_weight: -0.6000
+                  audit/reference_score: 0.3607
+              curriculum/effective_step: 29519.0000
+            audit/gf_peak_abs_torque_nm: 92.1479
+            audit/gf_mean_abs_torque_nm: 9.5625
+              audit/cadence_steps_per_s: 3.7759
+                    Episode_Reward/pose: 0.4469
+                 Episode_Reward/upright: 1.2168
+               Episode_Reward/foot_slip: -0.0004
+         Episode_Reward/self_collisions: -0.0120
+                Episode_Reward/air_time: 0.2700
+            Episode_Reward/body_ang_vel: -0.1014
+        Episode_Reward/angular_momentum: -0.0000
+   Episode_Reward/track_linear_velocity: 0.8650
+  Episode_Reward/track_angular_velocity: 0.1352
+          Episode_Reward/action_rate_l2: -0.9948
+          Episode_Reward/foot_clearance: -0.0040
+       Episode_Reward/foot_swing_height: -0.0061
+      Episode_Reward/head_pose_tracking: 1.3198
+      Episode_Reward/body_pose_tracking: 0.0000
+          Episode_Reward/head_pose_bias: -0.1316
+          Episode_Reward/dof_pos_limits: -0.0556
+        Episode_Reward/command_progress: 0.0000
+--------------------------------------------------------------------------------
+                         Iteration time: 6.39s
+                           Time elapsed: 02:14:41
+                                    ETA: 00:00:00
+

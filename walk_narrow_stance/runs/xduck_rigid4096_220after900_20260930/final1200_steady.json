@@ -1,0 +1,2865 @@
+{
+  "checkpoint": "/home/xingchen/Xduck/xduck_rigid4096_220after900_20260930/rigid4096_220after900/model_1199.pt",
+  "completed_updates": 1200,
+  "envs": 72,
+  "seconds": 16.0,
+  "control_sample_dt": 0.02,
+  "DR_multiplier": 2.5,
+  "air_time_threshold_ms": 220.0,
+  "external_velocity_pushes": false,
+  "reference_target_speed": [
+    0.15,
+    0.2
+  ],
+  "reference_cadence_steps_per_s": 3.55059599289891,
+  "reference_nominal_speed_statistics": {
+    "raw_std": 0.029172702025688425,
+    "moving05_std": 0.005181630445264303
+  },
+  "directions": [
+    {
+      "name": "forward010",
+      "command": [
+        0.1,
+        0,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.012981509789824486,
+            0.03200090304017067,
+            -0.04804028198122978
+          ],
+          "raw_velocity_std": [
+            0.04069066047668457,
+            0.24658790230751038,
+            0.2216673493385315
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04069066047668457,
+            0.24658790230751038,
+            0.2216673493385315
+          ],
+          "moving_mean05_vx_std": 0.008432189961968529,
+          "moving_mean05_vx_p05_p95": [
+            -0.0009425700088031594,
+            0.026428086558356878
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.0960622080730564,
+            0.24865563599307983,
+            0.22681331875720925
+          ],
+          "cadence_steps_per_s": 3.3333333333333304,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9885714285714285,
+          "tilt_p95_deg": 7.844143390655518,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.12785491347312927,
+            0.04167187213897705,
+            0.17869941890239716
+          ],
+          "raw_velocity_std": [
+            0.06198634207248688,
+            0.25848957896232605,
+            0.32732290029525757
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06198634207248688,
+            0.25848957896232605,
+            0.32732290029525757
+          ],
+          "moving_mean05_vx_std": 0.023787941589616383,
+          "moving_mean05_vx_p05_p95": [
+            0.08874215653538704,
+            0.16726802277565003
+          ],
+          "moving_mean05_fraction_in015_020": 0.19,
+          "velocity_tracking_rmse": [
+            0.06795736722786767,
+            0.26182707138161715,
+            0.3729260133540805
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9957142857142857,
+          "tilt_p95_deg": 5.961559772491455,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.07207439094781876,
+            0.042974695563316345,
+            0.15482564270496368
+          ],
+          "raw_velocity_std": [
+            0.05841027945280075,
+            0.2626683712005615,
+            0.23608915507793427
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05841027945280075,
+            0.2626683712005615,
+            0.23608915507793427
+          ],
+          "moving_mean05_vx_std": 0.023347228749117654,
+          "moving_mean05_vx_p05_p95": [
+            0.036821594161912795,
+            0.11664062923192979
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.06474254863967392,
+            0.26616062674896995,
+            0.2823279067504541
+          ],
+          "cadence_steps_per_s": 3.2258064516129075,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9957142857142857,
+          "tilt_p95_deg": 6.2490553855896,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.007843135856091976,
+            0.0297649335116148,
+            -0.08019977807998657
+          ],
+          "raw_velocity_std": [
+            0.03576793149113655,
+            0.24456529319286346,
+            0.2523233890533447
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.03576793149113655,
+            0.24456529319286346,
+            0.2523233890533447
+          ],
+          "moving_mean05_vx_std": 0.007306691305802216,
+          "moving_mean05_vx_p05_p95": [
+            -0.0034858129769563687,
+            0.019389173038303852
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.09885459910722681,
+            0.24636987792452178,
+            0.2647623222675421
+          ],
+          "cadence_steps_per_s": 3.2258064516129075,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9971428571428571,
+          "tilt_p95_deg": 5.901365280151367,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "forward0125",
+      "command": [
+        0.125,
+        0,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.03142077475786209,
+            0.033979691565036774,
+            -0.022517511621117592
+          ],
+          "raw_velocity_std": [
+            0.050186287611722946,
+            0.24765074253082275,
+            0.19324526190757751
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.050186287611722946,
+            0.24765074253082275,
+            0.19324526190757751
+          ],
+          "moving_mean05_vx_std": 0.012564379696189634,
+          "moving_mean05_vx_p05_p95": [
+            0.01143585497047752,
+            0.05487234520912169
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.1061872768687473,
+            0.2499709473509919,
+            0.19455269758208812
+          ],
+          "cadence_steps_per_s": 3.3333333333333304,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 0.9857142857142858,
+          "tilt_p95_deg": 8.1766357421875,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.07685627043247223,
+            0.0462215356528759,
+            0.15364208817481995
+          ],
+          "raw_velocity_std": [
+            0.05150754749774933,
+            0.24814321100711823,
+            0.2010183334350586
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05150754749774933,
+            0.24814321100711823,
+            0.2010183334350586
+          ],
+          "moving_mean05_vx_std": 0.01616170860109692,
+          "moving_mean05_vx_p05_p95": [
+            0.05224460291862488,
+            0.10344276677630841
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.07050421262206973,
+            0.2524113374779133,
+            0.2530103953752486
+          ],
+          "cadence_steps_per_s": 3.3333333333333317,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9971428571428571,
+          "tilt_p95_deg": 5.943964004516602,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.04732338339090347,
+            0.03856268152594566,
+            0.013329715467989445
+          ],
+          "raw_velocity_std": [
+            0.03905392810702324,
+            0.25180137157440186,
+            0.22082829475402832
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.03905392810702324,
+            0.25180137157440186,
+            0.22082829475402832
+          ],
+          "moving_mean05_vx_std": 0.01122953517798273,
+          "moving_mean05_vx_p05_p95": [
+            0.031764432460069665,
+            0.06568206341564656
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.0869417202511809,
+            0.25473708631636377,
+            0.22123021735853898
+          ],
+          "cadence_steps_per_s": 3.225806451612904,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9985714285714286,
+          "tilt_p95_deg": 6.310017108917236,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.009152737446129322,
+            0.027780581265687943,
+            -0.04389749467372894
+          ],
+          "raw_velocity_std": [
+            0.03753017261624336,
+            0.24138973653316498,
+            0.27892157435417175
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.03753017261624336,
+            0.24138973653316498,
+            0.27892157435417175
+          ],
+          "moving_mean05_vx_std": 0.009722467081850565,
+          "moving_mean05_vx_p05_p95": [
+            -0.0064100218615494664,
+            0.026680076718330368
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.12177480186169051,
+            0.24298304009619173,
+            0.2823548720254175
+          ],
+          "cadence_steps_per_s": 3.4482758620689653,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 0.9928571428571429,
+          "tilt_p95_deg": 4.89262580871582,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "forward015",
+      "command": [
+        0.15,
+        0,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.12617604434490204,
+            0.05940763279795647,
+            0.22099144756793976
+          ],
+          "raw_velocity_std": [
+            0.06815371662378311,
+            0.24528701603412628,
+            0.3132214844226837
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06815371662378311,
+            0.24528701603412628,
+            0.3132214844226837
+          ],
+          "moving_mean05_vx_std": 0.01962580601251827,
+          "moving_mean05_vx_p05_p95": [
+            0.10067680442705751,
+            0.1654737979024648
+          ],
+          "moving_mean05_fraction_in015_020": 0.11571428571428571,
+          "velocity_tracking_rmse": [
+            0.07219772518772567,
+            0.252378670486869,
+            0.3833339809647278
+          ],
+          "cadence_steps_per_s": 3.4482758620689653,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 0.9728571428571429,
+          "tilt_p95_deg": 5.522988796234131,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.09777433425188065,
+            0.049643658101558685,
+            0.16838443279266357
+          ],
+          "raw_velocity_std": [
+            0.05268239602446556,
+            0.2488846331834793,
+            0.20180991291999817
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05268239602446556,
+            0.2488846331834793,
+            0.20180991291999817
+          ],
+          "moving_mean05_vx_std": 0.017550882716894693,
+          "moving_mean05_vx_p05_p95": [
+            0.0710979005843401,
+            0.1282748556360602
+          ],
+          "moving_mean05_fraction_in015_020": 0.005714285714285714,
+          "velocity_tracking_rmse": [
+            0.07418191746896685,
+            0.2537874571404072,
+            0.26283172149370165
+          ],
+          "cadence_steps_per_s": 3.333333333333333,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 5.727495193481445,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.10797639191150665,
+            0.05320592224597931,
+            0.21043993532657623
+          ],
+          "raw_velocity_std": [
+            0.05552379786968231,
+            0.2536330819129944,
+            0.21195711195468903
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05552379786968231,
+            0.2536330819129944,
+            0.21195711195468903
+          ],
+          "moving_mean05_vx_std": 0.013915967136775629,
+          "moving_mean05_vx_p05_p95": [
+            0.08724765688180926,
+            0.13132667031884193
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.06963385391748833,
+            0.2591537014540451,
+            0.29868164331074226
+          ],
+          "cadence_steps_per_s": 3.2258064516129075,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9971428571428571,
+          "tilt_p95_deg": 5.504931449890137,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.03067048452794552,
+            0.03749075531959534,
+            -0.019460706040263176
+          ],
+          "raw_velocity_std": [
+            0.05716736987233162,
+            0.2476826012134552,
+            0.2757056951522827
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05716736987233162,
+            0.2476826012134552,
+            0.2757056951522827
+          ],
+          "moving_mean05_vx_std": 0.011532784817032665,
+          "moving_mean05_vx_p05_p95": [
+            0.013193378673866392,
+            0.05246043304353952
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.1323164465985086,
+            0.2505039288589868,
+            0.27639165967778645
+          ],
+          "cadence_steps_per_s": 3.4482758620689666,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 0.9928571428571429,
+          "tilt_p95_deg": 6.865231513977051,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "forward0175",
+      "command": [
+        0.175,
+        0,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.0992649644613266,
+            0.04169480875134468,
+            0.06543315201997757
+          ],
+          "raw_velocity_std": [
+            0.04761052131652832,
+            0.2540793716907501,
+            0.19027340412139893
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04761052131652832,
+            0.2540793716907501,
+            0.19027340412139893
+          ],
+          "moving_mean05_vx_std": 0.019059100345073257,
+          "moving_mean05_vx_p05_p95": [
+            0.0730044179558754,
+            0.1331802575290203
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.08945699147511689,
+            0.2574777635589143,
+            0.2012100047663341
+          ],
+          "cadence_steps_per_s": 3.2258064516129075,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9728571428571429,
+          "tilt_p95_deg": 6.028910160064697,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.12171559035778046,
+            0.04743940010666847,
+            0.13314226269721985
+          ],
+          "raw_velocity_std": [
+            0.05327267944812775,
+            0.2618875801563263,
+            0.20051757991313934
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05327267944812775,
+            0.2618875801563263,
+            0.20051757991313934
+          ],
+          "moving_mean05_vx_std": 0.01926579819593637,
+          "moving_mean05_vx_p05_p95": [
+            0.09097253847122193,
+            0.1557011918723583
+          ],
+          "moving_mean05_fraction_in015_020": 0.07857142857142857,
+          "velocity_tracking_rmse": [
+            0.07534718420403247,
+            0.2661495794789613,
+            0.24069508712081186
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9985714285714286,
+          "tilt_p95_deg": 6.544707298278809,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.11959751695394516,
+            0.05505036562681198,
+            0.15234671533107758
+          ],
+          "raw_velocity_std": [
+            0.05396755784749985,
+            0.2667098343372345,
+            0.2191908061504364
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05396755784749985,
+            0.2667098343372345,
+            0.2191908061504364
+          ],
+          "moving_mean05_vx_std": 0.018908358976078177,
+          "moving_mean05_vx_p05_p95": [
+            0.09223580614849923,
+            0.1539215423390269
+          ],
+          "moving_mean05_fraction_in015_020": 0.08142857142857143,
+          "velocity_tracking_rmse": [
+            0.07734294986132127,
+            0.27233194130384225,
+            0.2669346427280946
+          ],
+          "cadence_steps_per_s": 3.2258064516129075,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9942857142857143,
+          "tilt_p95_deg": 6.978177070617676,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.06168798357248306,
+            0.04259049519896507,
+            -0.041453149169683456
+          ],
+          "raw_velocity_std": [
+            0.04987436905503273,
+            0.2563309967517853,
+            0.286953866481781
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04987436905503273,
+            0.2563309967517853,
+            0.286953866481781
+          ],
+          "moving_mean05_vx_std": 0.017664490062838788,
+          "moving_mean05_vx_p05_p95": [
+            0.034492117401212455,
+            0.09267665967345239
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.12380254279174221,
+            0.2598451977690136,
+            0.2899325960435612
+          ],
+          "cadence_steps_per_s": 3.225806451612898,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9928571428571429,
+          "tilt_p95_deg": 6.012147903442383,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "forward020",
+      "command": [
+        0.2,
+        0,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.1358250379562378,
+            0.04135344550013542,
+            0.0545743890106678
+          ],
+          "raw_velocity_std": [
+            0.048859693109989166,
+            0.2724662125110626,
+            0.1861811727285385
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.048859693109989166,
+            0.2724662125110626,
+            0.1861811727285385
+          ],
+          "moving_mean05_vx_std": 0.01628854085517139,
+          "moving_mean05_vx_p05_p95": [
+            0.11335421899706126,
+            0.1662081928253174
+          ],
+          "moving_mean05_fraction_in015_020": 0.2057142857142857,
+          "velocity_tracking_rmse": [
+            0.08065796556071947,
+            0.2755864611694451,
+            0.19401492774041249
+          ],
+          "cadence_steps_per_s": 3.1250000000000058,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9785714285714285,
+          "tilt_p95_deg": 6.6533894538879395,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.13895073533058167,
+            0.05478639900684357,
+            0.15393364429473877
+          ],
+          "raw_velocity_std": [
+            0.054272715002298355,
+            0.26405957341194153,
+            0.18974241614341736
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.054272715002298355,
+            0.26405957341194153,
+            0.18974241614341736
+          ],
+          "moving_mean05_vx_std": 0.02297080373087749,
+          "moving_mean05_vx_p05_p95": [
+            0.10861254988610747,
+            0.19012622750550504
+          ],
+          "moving_mean05_fraction_in015_020": 0.22428571428571428,
+          "velocity_tracking_rmse": [
+            0.08168560921358582,
+            0.2696832091236712,
+            0.24433120674521835
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9985714285714286,
+          "tilt_p95_deg": 6.581882953643799,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.15173065662384033,
+            0.05222780629992485,
+            0.19671441614627838
+          ],
+          "raw_velocity_std": [
+            0.0750645101070404,
+            0.2545202076435089,
+            0.34170037508010864
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.0750645101070404,
+            0.2545202076435089,
+            0.34170037508010864
+          ],
+          "moving_mean05_vx_std": 0.019893455407004476,
+          "moving_mean05_vx_p05_p95": [
+            0.12005050179362296,
+            0.18745888100564484
+          ],
+          "moving_mean05_fraction_in015_020": 0.5428571428571428,
+          "velocity_tracking_rmse": [
+            0.08924464138037523,
+            0.2598234472754039,
+            0.3942787813752273
+          ],
+          "cadence_steps_per_s": 3.333333333333334,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 0.9985714285714286,
+          "tilt_p95_deg": 5.919569492340088,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.061431169509887695,
+            0.038692012429237366,
+            -0.06261321157217026
+          ],
+          "raw_velocity_std": [
+            0.0548020601272583,
+            0.253879576921463,
+            0.4142531454563141
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.0548020601272583,
+            0.253879576921463,
+            0.4142531454563141
+          ],
+          "moving_mean05_vx_std": 0.015880612660509424,
+          "moving_mean05_vx_p05_p95": [
+            0.035974745064973834,
+            0.08652314038574693
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.14901200856395047,
+            0.2568110609295928,
+            0.41895834202518467
+          ],
+          "cadence_steps_per_s": 3.2258064516129075,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9942857142857143,
+          "tilt_p95_deg": 7.715173244476318,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "forward0225",
+      "command": [
+        0.225,
+        0,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.14762374758720398,
+            0.036265064030885696,
+            0.020467763766646385
+          ],
+          "raw_velocity_std": [
+            0.05542370676994324,
+            0.26858434081077576,
+            0.22780944406986237
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05542370676994324,
+            0.26858434081077576,
+            0.22780944406986237
+          ],
+          "moving_mean05_vx_std": 0.019854464089124384,
+          "moving_mean05_vx_p05_p95": [
+            0.1197216569632292,
+            0.18248528088629246
+          ],
+          "moving_mean05_fraction_in015_020": 0.4157142857142857,
+          "velocity_tracking_rmse": [
+            0.0951780745767236,
+            0.27102164384843014,
+            0.22872704945775418
+          ],
+          "cadence_steps_per_s": 3.1746031746031753,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9785714285714285,
+          "tilt_p95_deg": 6.642426490783691,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.1267443150281906,
+            0.05123384669423103,
+            0.10155446827411652
+          ],
+          "raw_velocity_std": [
+            0.048089686781167984,
+            0.2554902732372284,
+            0.2566765248775482
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.048089686781167984,
+            0.2554902732372284,
+            0.2566765248775482
+          ],
+          "moving_mean05_vx_std": 0.02112940110131851,
+          "moving_mean05_vx_p05_p95": [
+            0.10232094877958299,
+            0.1747306265234947
+          ],
+          "moving_mean05_fraction_in015_020": 0.15,
+          "velocity_tracking_rmse": [
+            0.10939282766909887,
+            0.2605765481763345,
+            0.2760364784348121
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 7.724381923675537,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.14608365297317505,
+            0.06536292284727097,
+            0.211151584982872
+          ],
+          "raw_velocity_std": [
+            0.07465902715921402,
+            0.24944651126861572,
+            0.25530436635017395
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.07465902715921402,
+            0.24944651126861572,
+            0.25530436635017395
+          ],
+          "moving_mean05_vx_std": 0.01864391790826695,
+          "moving_mean05_vx_p05_p95": [
+            0.11888693939894439,
+            0.17680038198828696
+          ],
+          "moving_mean05_fraction_in015_020": 0.41285714285714287,
+          "velocity_tracking_rmse": [
+            0.10863586412193195,
+            0.2578680130358213,
+            0.33130839665837514
+          ],
+          "cadence_steps_per_s": 3.2258064516129075,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.219737529754639,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.08195926249027252,
+            0.03179099038243294,
+            -0.06262177228927612
+          ],
+          "raw_velocity_std": [
+            0.04941185191273689,
+            0.2672027349472046,
+            0.40347427129745483
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04941185191273689,
+            0.2672027349472046,
+            0.40347427129745483
+          ],
+          "moving_mean05_vx_std": 0.019535124995271786,
+          "moving_mean05_vx_p05_p95": [
+            0.04843924370408059,
+            0.11178371828794476
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.1513346542248445,
+            0.2690873324433161,
+            0.4083049268501309
+          ],
+          "cadence_steps_per_s": 3.225806451612898,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9957142857142857,
+          "tilt_p95_deg": 7.582060813903809,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "forward030",
+      "command": [
+        0.3,
+        0,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.2270813137292862,
+            0.03805214911699295,
+            0.008968318812549114
+          ],
+          "raw_velocity_std": [
+            0.053431905806064606,
+            0.29504263401031494,
+            0.2648617923259735
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.053431905806064606,
+            0.29504263401031494,
+            0.2648617923259735
+          ],
+          "moving_mean05_vx_std": 0.029689974281255027,
+          "moving_mean05_vx_p05_p95": [
+            0.17739299115538598,
+            0.26809630393981937
+          ],
+          "moving_mean05_fraction_in015_020": 0.24571428571428572,
+          "velocity_tracking_rmse": [
+            0.09039978249767286,
+            0.29748634205023616,
+            0.2650135874138151
+          ],
+          "cadence_steps_per_s": 3.1249999999999973,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9742857142857143,
+          "tilt_p95_deg": 6.99233865737915,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.1957663595676422,
+            0.0518934540450573,
+            0.20191563665866852
+          ],
+          "raw_velocity_std": [
+            0.06338424235582352,
+            0.2639036774635315,
+            0.2788689434528351
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06338424235582352,
+            0.2639036774635315,
+            0.2788689434528351
+          ],
+          "moving_mean05_vx_std": 0.023616175000556402,
+          "moving_mean05_vx_p05_p95": [
+            0.15859341879189018,
+            0.2419756879508495
+          ],
+          "moving_mean05_fraction_in015_020": 0.5828571428571429,
+          "velocity_tracking_rmse": [
+            0.12199266468144933,
+            0.2689573727822473,
+            0.3442931853175466
+          ],
+          "cadence_steps_per_s": 3.3333333333333304,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.831020355224609,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.2513792812824249,
+            0.057025376707315445,
+            -0.034570179879665375
+          ],
+          "raw_velocity_std": [
+            0.06258489191532135,
+            0.31493842601776123,
+            0.25476810336112976
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06258489191532135,
+            0.31493842601776123,
+            0.25476810336112976
+          ],
+          "moving_mean05_vx_std": 0.025957048534347348,
+          "moving_mean05_vx_p05_p95": [
+            0.2052394999861717,
+            0.2946045047938823
+          ],
+          "moving_mean05_fraction_in015_020": 0.012857142857142857,
+          "velocity_tracking_rmse": [
+            0.07925181619255374,
+            0.3200595074493626,
+            0.2571029328149715
+          ],
+          "cadence_steps_per_s": 3.1249999999999973,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 320.0,
+          "single_support_fraction": 0.9985714285714286,
+          "tilt_p95_deg": 7.868957042694092,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.12912791967391968,
+            0.03182128816843033,
+            0.031383126974105835
+          ],
+          "raw_velocity_std": [
+            0.06019291654229164,
+            0.2620767056941986,
+            0.32650771737098694
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06019291654229164,
+            0.2620767056941986,
+            0.32650771737098694
+          ],
+          "moving_mean05_vx_std": 0.018156291927919916,
+          "moving_mean05_vx_p05_p95": [
+            0.10251284962892535,
+            0.16206960107386115
+          ],
+          "moving_mean05_fraction_in015_020": 0.15,
+          "velocity_tracking_rmse": [
+            0.18116422027954535,
+            0.2640013415853422,
+            0.32801257800600536
+          ],
+          "cadence_steps_per_s": 3.1250000000000058,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 320.0,
+          "single_support_fraction": 0.9942857142857143,
+          "tilt_p95_deg": 6.457093238830566,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "backward",
+      "command": [
+        -0.2,
+        0,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.05860603228211403,
+            0.0369991697371006,
+            0.04601161554455757
+          ],
+          "raw_velocity_std": [
+            0.06130177155137062,
+            0.2847006320953369,
+            0.6437672972679138
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06130177155137062,
+            0.2847006320953369,
+            0.6437672972679138
+          ],
+          "moving_mean05_vx_std": 0.014171978536678427,
+          "moving_mean05_vx_p05_p95": [
+            -0.08071685922145845,
+            -0.036048837870359444
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.15411085432160687,
+            0.2870946582073472,
+            0.6454095579958472
+          ],
+          "cadence_steps_per_s": 3.1249999999999973,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 310.0,
+          "single_support_fraction": 0.9928571428571429,
+          "tilt_p95_deg": 6.55578088760376,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.028727436438202858,
+            0.04553462564945221,
+            -0.1905784010887146
+          ],
+          "raw_velocity_std": [
+            0.05836905166506767,
+            0.28183841705322266,
+            0.29573506116867065
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05836905166506767,
+            0.28183841705322266,
+            0.29573506116867065
+          ],
+          "moving_mean05_vx_std": 0.018743384319962877,
+          "moving_mean05_vx_p05_p95": [
+            -0.058212690223008394,
+            0.005929460350424045
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.18094538273507882,
+            0.28549302863068465,
+            0.351822860577058
+          ],
+          "cadence_steps_per_s": 3.225806451612898,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 310.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 7.311554908752441,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.042321912944316864,
+            0.04164770245552063,
+            0.14020617306232452
+          ],
+          "raw_velocity_std": [
+            0.07476289570331573,
+            0.275082528591156,
+            0.3642352521419525
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.07476289570331573,
+            0.275082528591156,
+            0.3642352521419525
+          ],
+          "moving_mean05_vx_std": 0.04576246164322137,
+          "moving_mean05_vx_p05_p95": [
+            -0.10728117662668227,
+            0.056269620724022265
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.17450463974796812,
+            0.2782174708138353,
+            0.39028840169483936
+          ],
+          "cadence_steps_per_s": 3.1250000000000018,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 320.0,
+          "single_support_fraction": 0.9985714285714286,
+          "tilt_p95_deg": 7.938999176025391,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.14854948222637177,
+            0.02946302480995655,
+            -0.18735875189304352
+          ],
+          "raw_velocity_std": [
+            0.03863053768873215,
+            0.31762948632240295,
+            0.2778931260108948
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.03863053768873215,
+            0.31762948632240295,
+            0.2778931260108948
+          ],
+          "moving_mean05_vx_std": 0.01933628034870159,
+          "moving_mean05_vx_p05_p95": [
+            -0.17798115822672841,
+            -0.11502188056707381
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.06433882172773012,
+            0.3189929997100082,
+            0.33515352452465086
+          ],
+          "cadence_steps_per_s": 3.1249999999999973,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 320.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 8.463713645935059,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "left",
+      "command": [
+        0,
+        0.2,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.0188739076256752,
+            0.03606828302145004,
+            0.009662609547376633
+          ],
+          "raw_velocity_std": [
+            0.05080188438296318,
+            0.24963173270225525,
+            0.33587610721588135
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05080188438296318,
+            0.24963173270225525,
+            0.33587610721588135
+          ],
+          "moving_mean05_vx_std": 0.010451043940754348,
+          "moving_mean05_vx_p05_p95": [
+            -0.0356989967674017,
+            -0.00020350382663310998
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.054194599085090084,
+            0.2986462842999892,
+            0.336015084230519
+          ],
+          "cadence_steps_per_s": 3.4482758620689653,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 0.9842857142857143,
+          "tilt_p95_deg": 5.395749092102051,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.020269572734832764,
+            0.04077235609292984,
+            0.02393146976828575
+          ],
+          "raw_velocity_std": [
+            0.05205225571990013,
+            0.25873932242393494,
+            0.34152302145957947
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05205225571990013,
+            0.25873932242393494,
+            0.34152302145957947
+          ],
+          "moving_mean05_vx_std": 0.013745700821730674,
+          "moving_mean05_vx_p05_p95": [
+            -0.00028444138355552916,
+            0.042530450595542786
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.05585958116455996,
+            0.30380827882668676,
+            0.3423604830055358
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.566800594329834,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.03405039384961128,
+            0.043589137494564056,
+            0.10384256392717361
+          ],
+          "raw_velocity_std": [
+            0.05989175662398338,
+            0.27035239338874817,
+            0.407710999250412
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05989175662398338,
+            0.27035239338874817,
+            0.407710999250412
+          ],
+          "moving_mean05_vx_std": 0.014390617914857615,
+          "moving_mean05_vx_p05_p95": [
+            0.008485014602541923,
+            0.0564875006424263
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.06889449381257817,
+            0.31233758531838607,
+            0.4207274119933276
+          ],
+          "cadence_steps_per_s": 3.1746031746031753,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 310.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.473171234130859,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.03756866976618767,
+            0.035945743322372437,
+            0.009762980975210667
+          ],
+          "raw_velocity_std": [
+            0.04355565831065178,
+            0.27247005701065063,
+            0.2972662150859833
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04355565831065178,
+            0.27247005701065063,
+            0.2972662150859833
+          ],
+          "moving_mean05_vx_std": 0.01047979355820373,
+          "moving_mean05_vx_p05_p95": [
+            -0.05611127164214849,
+            -0.0220683055073023
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.05751956988098942,
+            0.3180467261957101,
+            0.29742647670282263
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.830892086029053,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "right",
+      "command": [
+        0,
+        -0.2,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.010037291795015335,
+            0.030131805688142776,
+            0.05446270480751991
+          ],
+          "raw_velocity_std": [
+            0.061132922768592834,
+            0.27334895730018616,
+            0.4422307014465332
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.061132922768592834,
+            0.27334895730018616,
+            0.4422307014465332
+          ],
+          "moving_mean05_vx_std": 0.0142056918263566,
+          "moving_mean05_vx_p05_p95": [
+            -0.035216958817094565,
+            0.011103964408859595
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.06195144794963406,
+            0.35732377054338954,
+            0.4455717214692795
+          ],
+          "cadence_steps_per_s": 3.1250000000000018,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.99,
+          "tilt_p95_deg": 6.032306671142578,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.0004221361014060676,
+            0.034976936876773834,
+            0.026758825406432152
+          ],
+          "raw_velocity_std": [
+            0.05321317911148071,
+            0.2493697702884674,
+            0.3254733383655548
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05321317911148071,
+            0.2493697702884674,
+            0.3254733383655548
+          ],
+          "moving_mean05_vx_std": 0.013245991709578483,
+          "moving_mean05_vx_p05_p95": [
+            -0.020361164666712287,
+            0.022928878359496595
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.05321483432061937,
+            0.34263605186668383,
+            0.3265713244656946
+          ],
+          "cadence_steps_per_s": 3.3333333333333353,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.224991798400879,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.0766831710934639,
+            0.03037082590162754,
+            0.16516804695129395
+          ],
+          "raw_velocity_std": [
+            0.09721872210502625,
+            0.2750903367996216,
+            0.37138697504997253
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.09721872210502625,
+            0.2750903367996216,
+            0.37138697504997253
+          ],
+          "moving_mean05_vx_std": 0.03928740683666937,
+          "moving_mean05_vx_p05_p95": [
+            0.023916964821517468,
+            0.15984229915589088
+          ],
+          "moving_mean05_fraction_in015_020": 0.05714285714285714,
+          "velocity_tracking_rmse": [
+            0.12382161526797021,
+            0.35881117426611103,
+            0.4064587528029256
+          ],
+          "cadence_steps_per_s": 3.2258064516129075,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9985714285714286,
+          "tilt_p95_deg": 6.356391906738281,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.058152422308921814,
+            0.02453942969441414,
+            0.061764590442180634
+          ],
+          "raw_velocity_std": [
+            0.04458783566951752,
+            0.25559359788894653,
+            0.3363071084022522
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04458783566951752,
+            0.25559359788894653,
+            0.3363071084022522
+          ],
+          "moving_mean05_vx_std": 0.01127082267348728,
+          "moving_mean05_vx_p05_p95": [
+            -0.07574913301318886,
+            -0.03838315094634891
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.07327876367401652,
+            0.3402147810809072,
+            0.3419317974112518
+          ],
+          "cadence_steps_per_s": 3.44827586206897,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 0.9928571428571429,
+          "tilt_p95_deg": 5.072514057159424,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "forward_left",
+      "command": [
+        0.15,
+        0.15,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.11361934244632721,
+            0.04313040152192116,
+            0.012456381693482399
+          ],
+          "raw_velocity_std": [
+            0.057147253304719925,
+            0.25913816690444946,
+            0.25622183084487915
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.057147253304719925,
+            0.25913816690444946,
+            0.25622183084487915
+          ],
+          "moving_mean05_vx_std": 0.01942065229823717,
+          "moving_mean05_vx_p05_p95": [
+            0.08312997854873538,
+            0.1475968633145094
+          ],
+          "moving_mean05_fraction_in015_020": 0.032857142857142856,
+          "velocity_tracking_rmse": [
+            0.06774480030465055,
+            0.28030993376009805,
+            0.2565244122375539
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9857142857142858,
+          "tilt_p95_deg": 6.318845272064209,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.10765592008829117,
+            0.04948250204324722,
+            0.08939080685377121
+          ],
+          "raw_velocity_std": [
+            0.05564379319548607,
+            0.2621895670890808,
+            0.21740064024925232
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05564379319548607,
+            0.2621895670890808,
+            0.21740064024925232
+          ],
+          "moving_mean05_vx_std": 0.021499870480970396,
+          "moving_mean05_vx_p05_p95": [
+            0.07121727827563884,
+            0.14135288782417774
+          ],
+          "moving_mean05_fraction_in015_020": 0.014285714285714285,
+          "velocity_tracking_rmse": [
+            0.06992318526249575,
+            0.2807973699720422,
+            0.23506120578253523
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.912680149078369,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.12390899658203125,
+            0.05637902766466141,
+            0.1469181329011917
+          ],
+          "raw_velocity_std": [
+            0.05315891653299332,
+            0.2621358633041382,
+            0.24705781042575836
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05315891653299332,
+            0.2621358633041382,
+            0.24705781042575836
+          ],
+          "moving_mean05_vx_std": 0.020992258979273988,
+          "moving_mean05_vx_p05_p95": [
+            0.09333296436816454,
+            0.163678871512413
+          ],
+          "moving_mean05_fraction_in015_020": 0.11,
+          "velocity_tracking_rmse": [
+            0.059216628913627264,
+            0.2783523281701233,
+            0.2874412065860451
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9971428571428571,
+          "tilt_p95_deg": 6.220734596252441,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.05170655995607376,
+            0.04635682329535484,
+            0.05316198244690895
+          ],
+          "raw_velocity_std": [
+            0.0490226224064827,
+            0.23819687962532043,
+            0.25265082716941833
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.0490226224064827,
+            0.23819687962532043,
+            0.25265082716941833
+          ],
+          "moving_mean05_vx_std": 0.014041809295717293,
+          "moving_mean05_vx_p05_p95": [
+            0.029910187311470507,
+            0.07721000224351882
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.10983996673764554,
+            0.25976855088662076,
+            0.2581832285859034
+          ],
+          "cadence_steps_per_s": 3.4482758620689653,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 0.9928571428571429,
+          "tilt_p95_deg": 5.682711601257324,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "forward_right",
+      "command": [
+        0.15,
+        -0.15,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.07302184402942657,
+            0.025184867903590202,
+            0.06472858041524887
+          ],
+          "raw_velocity_std": [
+            0.04431379213929176,
+            0.2693164050579071,
+            0.23224258422851562
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04431379213929176,
+            0.2693164050579071,
+            0.23224258422851562
+          ],
+          "moving_mean05_vx_std": 0.014216788945808405,
+          "moving_mean05_vx_p05_p95": [
+            0.04923058973066509,
+            0.096418095394969
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.08882198483383423,
+            0.3212803625461959,
+            0.2410941980978157
+          ],
+          "cadence_steps_per_s": 3.1249999999999996,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.97,
+          "tilt_p95_deg": 6.891000270843506,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.0953434631228447,
+            0.03252364695072174,
+            0.10982464253902435
+          ],
+          "raw_velocity_std": [
+            0.04614932835102081,
+            0.26218125224113464,
+            0.25435298681259155
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04614932835102081,
+            0.26218125224113464,
+            0.25435298681259155
+          ],
+          "moving_mean05_vx_std": 0.014685100220119436,
+          "moving_mean05_vx_p05_p95": [
+            0.07257752395421267,
+            0.11869461734592918
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.0715338669196473,
+            0.31945879859008053,
+            0.2770503883328147
+          ],
+          "cadence_steps_per_s": 3.1250000000000018,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9957142857142857,
+          "tilt_p95_deg": 6.250253677368164,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.1399082988500595,
+            0.031733255833387375,
+            0.09807395935058594
+          ],
+          "raw_velocity_std": [
+            0.05349075794219971,
+            0.27827349305152893,
+            0.2759656310081482
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05349075794219971,
+            0.27827349305152893,
+            0.2759656310081482
+          ],
+          "moving_mean05_vx_std": 0.020995251451670617,
+          "moving_mean05_vx_p05_p95": [
+            0.10989285037666557,
+            0.18056249232590196
+          ],
+          "moving_mean05_fraction_in015_020": 0.26285714285714284,
+          "velocity_tracking_rmse": [
+            0.05443440005556669,
+            0.3323598859451797,
+            0.29287456746615487
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.99,
+          "tilt_p95_deg": 5.845154762268066,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.0164224524050951,
+            0.025602692738175392,
+            -0.10187564045190811
+          ],
+          "raw_velocity_std": [
+            0.03897426649928093,
+            0.2605850398540497,
+            0.46055275201797485
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.03897426649928093,
+            0.2605850398540497,
+            0.46055275201797485
+          ],
+          "moving_mean05_vx_std": 0.0075623020198448175,
+          "moving_mean05_vx_p05_p95": [
+            0.004535020921379328,
+            0.028616175573319195
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.1391472459137808,
+            0.31423058096776846,
+            0.4716857495658521
+          ],
+          "cadence_steps_per_s": 3.1250000000000058,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9942857142857143,
+          "tilt_p95_deg": 7.596706867218018,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "backward_left",
+      "command": [
+        -0.15,
+        0.15,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.04174217954277992,
+            0.03351099044084549,
+            0.059533510357141495
+          ],
+          "raw_velocity_std": [
+            0.06048929691314697,
+            0.27408185601234436,
+            0.5420467853546143
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06048929691314697,
+            0.27408185601234436,
+            0.5420467853546143
+          ],
+          "moving_mean05_vx_std": 0.02566665712235605,
+          "moving_mean05_vx_p05_p95": [
+            -0.07539563401043414,
+            0.011946581382770088
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.12401093975495275,
+            0.2978095807645239,
+            0.5453063526693802
+          ],
+          "cadence_steps_per_s": 3.1249999999999996,
+          "alternation_fraction": 0.975609756097561,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9071428571428571,
+          "tilt_p95_deg": 6.849868297576904,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.039105065166950226,
+            0.054838407784700394,
+            0.03880663588643074
+          ],
+          "raw_velocity_std": [
+            0.05424243211746216,
+            0.2648998200893402,
+            0.28824087977409363
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05424243211746216,
+            0.2648998200893402,
+            0.28824087977409363
+          ],
+          "moving_mean05_vx_std": 0.02022059047927387,
+          "moving_mean05_vx_p05_p95": [
+            -0.07260873077064753,
+            -0.008341249860823179
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.12345010602814369,
+            0.2814740674279179,
+            0.2908414236131248
+          ],
+          "cadence_steps_per_s": 3.3333333333333353,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 7.493270397186279,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.025792434811592102,
+            0.04339124262332916,
+            -0.0653001219034195
+          ],
+          "raw_velocity_std": [
+            0.056710004806518555,
+            0.2705000340938568,
+            0.3138565421104431
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.056710004806518555,
+            0.2705000340938568,
+            0.3138565421104431
+          ],
+          "moving_mean05_vx_std": 0.018674038195914962,
+          "moving_mean05_vx_p05_p95": [
+            -0.05366434990242124,
+            0.007549470596015445
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.13654136555771793,
+            0.29075021348309765,
+            0.32057777981147706
+          ],
+          "cadence_steps_per_s": 3.225806451612898,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 7.457618236541748,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.15740887820720673,
+            0.028333034366369247,
+            -0.14717058837413788
+          ],
+          "raw_velocity_std": [
+            0.04785766080021858,
+            0.3019697070121765,
+            0.3190910518169403
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04785766080021858,
+            0.3019697070121765,
+            0.3190910518169403
+          ],
+          "moving_mean05_vx_std": 0.014226917772570439,
+          "moving_mean05_vx_p05_p95": [
+            -0.1797641335427761,
+            -0.1338538055717945
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.0484277650678388,
+            0.3255588649838769,
+            0.3513947468612965
+          ],
+          "cadence_steps_per_s": 3.1249999999999973,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 320.0,
+          "single_support_fraction": 0.9971428571428571,
+          "tilt_p95_deg": 7.346039772033691,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "backward_right",
+      "command": [
+        -0.15,
+        -0.15,
+        0
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.047886162996292114,
+            0.028931329026818275,
+            -0.049032941460609436
+          ],
+          "raw_velocity_std": [
+            0.06842470914125443,
+            0.26962506771087646,
+            0.5431309342384338
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06842470914125443,
+            0.26962506771087646,
+            0.5431309342384338
+          ],
+          "moving_mean05_vx_std": 0.017796178673332257,
+          "moving_mean05_vx_p05_p95": [
+            -0.0790510079227388,
+            -0.02186842742003502
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.12291937186793356,
+            0.3235954821828478,
+            0.5453399015880089
+          ],
+          "cadence_steps_per_s": 3.1250000000000018,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9957142857142857,
+          "tilt_p95_deg": 5.704082012176514,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.014308270998299122,
+            0.03221912309527397,
+            -0.2155296802520752
+          ],
+          "raw_velocity_std": [
+            0.06254961341619492,
+            0.2796480357646942,
+            0.3115088641643524
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06254961341619492,
+            0.2796480357646942,
+            0.3115088641643524
+          ],
+          "moving_mean05_vx_std": 0.02218458667014784,
+          "moving_mean05_vx_p05_p95": [
+            -0.046593997873365885,
+            0.028031876057386395
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.14941451824354815,
+            0.33377663574510896,
+            0.3788017725300707
+          ],
+          "cadence_steps_per_s": 3.1249999999999973,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 320.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.792689323425293,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.04373357072472572,
+            0.028249764814972878,
+            -0.04758219048380852
+          ],
+          "raw_velocity_std": [
+            0.05626446008682251,
+            0.24582259356975555,
+            0.3253248929977417
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05626446008682251,
+            0.24582259356975555,
+            0.3253248929977417
+          ],
+          "moving_mean05_vx_std": 0.016884176781163746,
+          "moving_mean05_vx_p05_p95": [
+            -0.06653695628419518,
+            -0.0055420359596610215
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.12024243162800295,
+            0.3036473881554641,
+            0.3287861616708312
+          ],
+          "cadence_steps_per_s": 3.571428571428568,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.058910369873047,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.1322353184223175,
+            0.03175840526819229,
+            -0.1845237910747528
+          ],
+          "raw_velocity_std": [
+            0.04128501936793327,
+            0.29423636198043823,
+            0.3720788359642029
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04128501936793327,
+            0.29423636198043823,
+            0.3720788359642029
+          ],
+          "moving_mean05_vx_std": 0.010942266103560121,
+          "moving_mean05_vx_p05_p95": [
+            -0.14946729035675524,
+            -0.11394920605421067
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.044944824899626444,
+            0.3458484590006447,
+            0.4153211426306784
+          ],
+          "cadence_steps_per_s": 3.1250000000000058,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9985714285714286,
+          "tilt_p95_deg": 7.017313480377197,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "turn_left",
+      "command": [
+        0,
+        0,
+        0.5
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.006234405562281609,
+            0.037836186587810516,
+            0.24871712923049927
+          ],
+          "raw_velocity_std": [
+            0.04744059592485428,
+            0.2495664656162262,
+            0.4662799835205078
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04744059592485428,
+            0.2495664656162262,
+            0.4662799835205078
+          ],
+          "moving_mean05_vx_std": 0.009347267763063102,
+          "moving_mean05_vx_p05_p95": [
+            -0.009837644666433335,
+            0.021754563401453195
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.04784848186916669,
+            0.25241826536138434,
+            0.5296792001698819
+          ],
+          "cadence_steps_per_s": 3.4482758620689653,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 280.0,
+          "single_support_fraction": 0.9714285714285714,
+          "tilt_p95_deg": 4.458219528198242,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.0014726041117683053,
+            0.054358743131160736,
+            0.31375205516815186
+          ],
+          "raw_velocity_std": [
+            0.05997069925069809,
+            0.24939845502376556,
+            0.31947800517082214
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05997069925069809,
+            0.24939845502376556,
+            0.31947800517082214
+          ],
+          "moving_mean05_vx_std": 0.015793408102680945,
+          "moving_mean05_vx_p05_p95": [
+            -0.020059052512049674,
+            0.031557782106101495
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.05998878620643811,
+            0.2552536496256169,
+            0.36980339001772866
+          ],
+          "cadence_steps_per_s": 3.3333333333333353,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 290.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.477632522583008,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.03177928179502487,
+            0.04582225903868675,
+            0.28770482540130615
+          ],
+          "raw_velocity_std": [
+            0.0755472183227539,
+            0.263810396194458,
+            0.40818312764167786
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.0755472183227539,
+            0.263810396194458,
+            0.40818312764167786
+          ],
+          "moving_mean05_vx_std": 0.025202821240429045,
+          "moving_mean05_vx_p05_p95": [
+            -0.007447490498423575,
+            0.07958554676920176
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.08195916355734574,
+            0.267760378670459,
+            0.4600897890036212
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9971428571428571,
+          "tilt_p95_deg": 6.36051607131958,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.03357917442917824,
+            0.05015946924686432,
+            0.22441528737545013
+          ],
+          "raw_velocity_std": [
+            0.054764989763498306,
+            0.27458497881889343,
+            0.3423623740673065
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.054764989763498306,
+            0.27458497881889343,
+            0.3423623740673065
+          ],
+          "moving_mean05_vx_std": 0.01289204823170321,
+          "moving_mean05_vx_p05_p95": [
+            -0.05492898255586624,
+            -0.010915934899821879
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.06423992016202257,
+            0.2791288126037936,
+            0.4394984967501964
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9914285714285714,
+          "tilt_p95_deg": 7.014482021331787,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "turn_right",
+      "command": [
+        0,
+        0,
+        -0.5
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.013406836427748203,
+            0.024410637095570564,
+            -0.09972546249628067
+          ],
+          "raw_velocity_std": [
+            0.05191230773925781,
+            0.2573906481266022,
+            0.3549727201461792
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05191230773925781,
+            0.2573906481266022,
+            0.3549727201461792
+          ],
+          "moving_mean05_vx_std": 0.010493656770031171,
+          "moving_mean05_vx_p05_p95": [
+            -0.029055857613682744,
+            0.004597725849598647
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.05361559837103365,
+            0.25854564465447777,
+            0.5350003967326463
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9885714285714285,
+          "tilt_p95_deg": 5.943042755126953,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.0125295240432024,
+            0.01684432104229927,
+            -0.37475359439849854
+          ],
+          "raw_velocity_std": [
+            0.058956943452358246,
+            0.26789936423301697,
+            0.3402586281299591
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.058956943452358246,
+            0.26789936423301697,
+            0.3402586281299591
+          ],
+          "moving_mean05_vx_std": 0.018099129722002325,
+          "moving_mean05_vx_p05_p95": [
+            -0.03983639522641897,
+            0.021709601979702703
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.060273618876299895,
+            0.2684283580775521,
+            0.3625776841067584
+          ],
+          "cadence_steps_per_s": 3.225806451612898,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 320.0,
+          "single_support_fraction": 0.9957142857142857,
+          "tilt_p95_deg": 8.482414245605469,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.009205425158143044,
+            0.030394025146961212,
+            -0.11569324880838394
+          ],
+          "raw_velocity_std": [
+            0.05625966191291809,
+            0.2620553970336914,
+            0.34975746273994446
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05625966191291809,
+            0.2620553970336914,
+            0.34975746273994446
+          ],
+          "moving_mean05_vx_std": 0.013519791487016779,
+          "moving_mean05_vx_p05_p95": [
+            -0.013220213495194911,
+            0.03155592473968863
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.05700781859469294,
+            0.26381209292909497,
+            0.519636360118277
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9985714285714286,
+          "tilt_p95_deg": 6.571434497833252,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            -0.06685452908277512,
+            0.009621066972613335,
+            -0.4739091396331787
+          ],
+          "raw_velocity_std": [
+            0.0640275701880455,
+            0.2793393135070801,
+            0.3882238268852234
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.0640275701880455,
+            0.2793393135070801,
+            0.3882238268852234
+          ],
+          "moving_mean05_vx_std": 0.01540496112244447,
+          "moving_mean05_vx_p05_p95": [
+            -0.09406454971432686,
+            -0.04563635040819645
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.09256918539763488,
+            0.27950492075200917,
+            0.38909950194795984
+          ],
+          "cadence_steps_per_s": 3.1249999999999973,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 320.0,
+          "single_support_fraction": 0.9957142857142857,
+          "tilt_p95_deg": 6.9771013259887695,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "walk_turn_left",
+      "command": [
+        0.2,
+        0,
+        0.4
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.1420014202594757,
+            0.038308270275592804,
+            0.3447819650173187
+          ],
+          "raw_velocity_std": [
+            0.05084576457738876,
+            0.28625962138175964,
+            0.21993239223957062
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05084576457738876,
+            0.28625962138175964,
+            0.21993239223957062
+          ],
+          "moving_mean05_vx_std": 0.019582260528102177,
+          "moving_mean05_vx_p05_p95": [
+            0.1098588094562292,
+            0.17299668335914611
+          ],
+          "moving_mean05_fraction_in015_020": 0.36714285714285716,
+          "velocity_tracking_rmse": [
+            0.07713054197679692,
+            0.28881151988086673,
+            0.22675821245263345
+          ],
+          "cadence_steps_per_s": 3.1250000000000058,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9714285714285714,
+          "tilt_p95_deg": 7.619376182556152,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.18901953101158142,
+            0.04350294917821884,
+            0.5394067764282227
+          ],
+          "raw_velocity_std": [
+            0.059707820415496826,
+            0.2868221700191498,
+            0.24746382236480713
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.059707820415496826,
+            0.2868221700191498,
+            0.24746382236480713
+          ],
+          "moving_mean05_vx_std": 0.026755944902903086,
+          "moving_mean05_vx_p05_p95": [
+            0.14753594990074637,
+            0.22908223766088479
+          ],
+          "moving_mean05_fraction_in015_020": 0.5885714285714285,
+          "velocity_tracking_rmse": [
+            0.060709101416408354,
+            0.2901024681496968,
+            0.2840293492342179
+          ],
+          "cadence_steps_per_s": 3.3333333333333255,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 1.0,
+          "tilt_p95_deg": 6.853175163269043,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.12366551905870438,
+            0.048664987087249756,
+            0.34209808707237244
+          ],
+          "raw_velocity_std": [
+            0.04282789304852486,
+            0.26052722334861755,
+            0.28682079911231995
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.04282789304852486,
+            0.26052722334861755,
+            0.28682079911231995
+          ],
+          "moving_mean05_vx_std": 0.017221225886358518,
+          "moving_mean05_vx_p05_p95": [
+            0.09706691855192184,
+            0.1515623251199721
+          ],
+          "moving_mean05_fraction_in015_020": 0.06,
+          "velocity_tracking_rmse": [
+            0.08752811809569432,
+            0.265033428392221,
+            0.29260688971021404
+          ],
+          "cadence_steps_per_s": 3.225806451612898,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9985714285714286,
+          "tilt_p95_deg": 6.863950252532959,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.10761670023202896,
+            0.033506352454423904,
+            0.18344604969024658
+          ],
+          "raw_velocity_std": [
+            0.05704030767083168,
+            0.28695324063301086,
+            0.3182142972946167
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.05704030767083168,
+            0.28695324063301086,
+            0.3182142972946167
+          ],
+          "moving_mean05_vx_std": 0.015489908358822696,
+          "moving_mean05_vx_p05_p95": [
+            0.0850468201637268,
+            0.13504600016027687
+          ],
+          "moving_mean05_fraction_in015_020": 0.0014285714285714286,
+          "velocity_tracking_rmse": [
+            0.10857380528635792,
+            0.28890274947170314,
+            0.38491037746709117
+          ],
+          "cadence_steps_per_s": 3.225806451612898,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9914285714285714,
+          "tilt_p95_deg": 7.683436870574951,
+          "push_count": 0
+        }
+      ]
+    },
+    {
+      "name": "walk_turn_right",
+      "command": [
+        0.2,
+        0,
+        -0.4
+      ],
+      "cases": [
+        {
+          "case": 0,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.15524281561374664,
+            0.04816184937953949,
+            -0.15460054576396942
+          ],
+          "raw_velocity_std": [
+            0.06255979835987091,
+            0.25969812273979187,
+            0.4355235695838928
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06255979835987091,
+            0.25969812273979187,
+            0.4355235695838928
+          ],
+          "moving_mean05_vx_std": 0.023695484263468437,
+          "moving_mean05_vx_p05_p95": [
+            0.11424576085805893,
+            0.19279475864768034
+          ],
+          "moving_mean05_fraction_in015_020": 0.58,
+          "velocity_tracking_rmse": [
+            0.0769216270174213,
+            0.2641262318922913,
+            0.49990154864835157
+          ],
+          "cadence_steps_per_s": 3.3333333333333353,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9714285714285714,
+          "tilt_p95_deg": 6.031102657318115,
+          "push_count": 0
+        },
+        {
+          "case": 1,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.1825328767299652,
+            0.03662391006946564,
+            -0.2461366206407547
+          ],
+          "raw_velocity_std": [
+            0.056725189089775085,
+            0.27371057868003845,
+            0.3276809751987457
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.056725189089775085,
+            0.27371057868003845,
+            0.3276809751987457
+          ],
+          "moving_mean05_vx_std": 0.022845090950899163,
+          "moving_mean05_vx_p05_p95": [
+            0.13838370738923547,
+            0.21945646847784517
+          ],
+          "moving_mean05_fraction_in015_020": 0.7057142857142857,
+          "velocity_tracking_rmse": [
+            0.05935362358000111,
+            0.2761498655501997,
+            0.362006574456897
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.99,
+          "tilt_p95_deg": 6.684931755065918,
+          "push_count": 0
+        },
+        {
+          "case": 2,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.17604318261146545,
+            0.06524430960416794,
+            -0.08776293694972992
+          ],
+          "raw_velocity_std": [
+            0.07382097095251083,
+            0.2728135585784912,
+            0.36203712224960327
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.07382097095251083,
+            0.2728135585784912,
+            0.36203712224960327
+          ],
+          "moving_mean05_vx_std": 0.028381601619593914,
+          "moving_mean05_vx_p05_p95": [
+            0.12965825221687552,
+            0.22233679853379723
+          ],
+          "moving_mean05_fraction_in015_020": 0.59,
+          "velocity_tracking_rmse": [
+            0.07761096658157879,
+            0.2805067475045738,
+            0.4780825125356959
+          ],
+          "cadence_steps_per_s": 3.225806451612898,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9971428571428571,
+          "tilt_p95_deg": 5.972013473510742,
+          "push_count": 0
+        },
+        {
+          "case": 3,
+          "failure_s": null,
+          "valid_seconds_after2s": 14.0,
+          "mean_velocity": [
+            0.07813084870576859,
+            0.04437384381890297,
+            -0.11213914304971695
+          ],
+          "raw_velocity_std": [
+            0.06336626410484314,
+            0.25354862213134766,
+            0.32380712032318115
+          ],
+          "steady_velocity_std_excluding1s_after_push": [
+            0.06336626410484314,
+            0.25354862213134766,
+            0.32380712032318115
+          ],
+          "moving_mean05_vx_std": 0.0156637457977034,
+          "moving_mean05_vx_p05_p95": [
+            0.056097041353583336,
+            0.10594005680084227
+          ],
+          "moving_mean05_fraction_in015_020": 0.0,
+          "velocity_tracking_rmse": [
+            0.13735854826616245,
+            0.257402291093878,
+            0.4332608229824245
+          ],
+          "cadence_steps_per_s": 3.2258064516129026,
+          "alternation_fraction": 1.0,
+          "swing_median_ms": 300.0,
+          "single_support_fraction": 0.9871428571428571,
+          "tilt_p95_deg": 5.850615978240967,
+          "push_count": 0
+        }
+      ]
+    }
+  ]
+}

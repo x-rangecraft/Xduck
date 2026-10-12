@@ -1,0 +1,138 @@
+{
+  "passed": true,
+  "boundaries": [
+    {
+      "step": 0,
+      "ms": 100,
+      "dr": 1,
+      "reference": 0
+    },
+    {
+      "step": 4800,
+      "ms": 100,
+      "dr": 1,
+      "reference": 0
+    },
+    {
+      "step": 7199,
+      "ms": 100,
+      "dr": 1,
+      "reference": 0
+    },
+    {
+      "step": 7200,
+      "ms": 140,
+      "dr": 1.5,
+      "reference": 0.45
+    },
+    {
+      "step": 14399,
+      "ms": 140,
+      "dr": 1.5,
+      "reference": 0.45
+    },
+    {
+      "step": 14400,
+      "ms": 180,
+      "dr": 2,
+      "reference": 0.45
+    },
+    {
+      "step": 21599,
+      "ms": 180,
+      "dr": 2,
+      "reference": 0.45
+    },
+    {
+      "step": 21600,
+      "ms": 180,
+      "dr": 2.5,
+      "reference": 0.45
+    },
+    {
+      "step": 120000,
+      "ms": 180,
+      "dr": 2.5,
+      "reference": 0.45
+    }
+  ],
+  "gpu_stages": [
+    {
+      "iteration": 200,
+      "dr": 1,
+      "sole_minmax_deg": [
+        -2.9484524517135644,
+        2.9957708084294503
+      ],
+      "mass_minmax": [
+        0.9577420353889465,
+        1.0496561527252197
+      ],
+      "friction_minmax": [
+        0.7130689024925232,
+        1.2988994121551514
+      ],
+      "constraints": 0
+    },
+    {
+      "iteration": 300,
+      "dr": 1.5,
+      "sole_minmax_deg": [
+        -4.484827697871925,
+        4.428943788391414
+      ],
+      "mass_minmax": [
+        0.9366130232810974,
+        1.0744843482971191
+      ],
+      "friction_minmax": [
+        0.5696033239364624,
+        1.4483492374420166
+      ],
+      "constraints": 0
+    },
+    {
+      "iteration": 600,
+      "dr": 2,
+      "sole_minmax_deg": [
+        -5.88096721108427,
+        5.926727245875253
+      ],
+      "mass_minmax": [
+        0.9154840707778931,
+        1.0993125438690186
+      ],
+      "friction_minmax": [
+        0.4261377453804016,
+        1.5977989435195923
+      ],
+      "constraints": 0
+    },
+    {
+      "iteration": 900,
+      "dr": 2.5,
+      "sole_minmax_deg": [
+        -7.374614983688133,
+        7.470477948483845
+      ],
+      "mass_minmax": [
+        0.8943549990653992,
+        1.1241406202316284
+      ],
+      "friction_minmax": [
+        0.2826721966266632,
+        1.747248649597168
+      ],
+      "constraints": 0
+    }
+  ],
+  "reference_direction_and_contact_tests": true,
+  "reference_zero_before300": true,
+  "cadence_direction_contact_stale_history_tests": true,
+  "target_command_bucket_fraction": 0.1452,
+  "wide_input_preserved": true,
+  "direction_audit_commands_tested": true,
+  "no_mid_episode_geometry_jump": true,
+  "partial_reset_isolated": true,
+  "finite": true
+}

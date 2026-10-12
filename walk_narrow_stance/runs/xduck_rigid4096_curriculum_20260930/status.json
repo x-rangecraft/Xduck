@@ -1,0 +1,23 @@
+{
+  "target_total_updates": 1200,
+  "start_completed_updates": 200,
+  "completed_total_updates": 1055,
+  "additional_completed": 855,
+  "num_envs": 4096,
+  "mechanical_steps": 20,
+  "passive_coordinates": 0,
+  "phase": "failed_or_stopped",
+  "supervisor_pid": 2054044,
+  "started_unix": 1790745697.2334056,
+  "updated_unix": 1790751433.6035943,
+  "child_pid": null,
+  "resume_validation_passed": true,
+  "air_time_threshold_ms": 180,
+  "dr_target_multiplier": 2.5,
+  "reference_weight": 0.45,
+  "cadence_weight": 0.15,
+  "last20_mean_seconds_per_update": 9.4135,
+  "estimated_remaining_training_s": 1364.9575000000002,
+  "error": "RuntimeError('STOP requested')",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/xingchen/Xduck/xduck_rigid4096_curriculum_20260930/supervisor.py\", line 61, in <module>\n    try:main()\n  File \"/home/xingchen/Xduck/xduck_rigid4096_curriculum_20260930/supervisor.py\", line 40, in main\n    run(['scripts/train_rsl_rl.py','--config-name','rigid4096_curriculum'],'rigid4096_curriculum',True)\n  File \"/home/xingchen/Xduck/xduck_rigid4096_curriculum_20260930/supervisor.py\", line 13, in run\n    if (R/'STOP').exists():raise RuntimeError('STOP requested')\nRuntimeError: STOP requested\n"
+}

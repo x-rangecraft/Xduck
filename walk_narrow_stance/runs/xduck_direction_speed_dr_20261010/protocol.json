@@ -1,0 +1,20 @@
+{
+  "request": "rough correct forward/back/left/right direction; stable speed across DR; small heading deviation allowed",
+  "parent": "accepted clean-lineage PPO clean_r3 model80",
+  "forward_command_mps": 0.3,
+  "accepted_actual_speed_mps": 0.19,
+  "target_translation_gain": 0.65,
+  "backward_target_mps": -0.195,
+  "turn_command_rad_s": 0.4,
+  "stand599_training": false,
+  "stand599_inference": false,
+  "actor_dimensions": [
+    61,
+    14
+  ],
+  "control_hz": 50,
+  "current_pose_preserved": true,
+  "world_heading_perfect_tracking_required": false,
+  "training": "multi-direction PPO, command-aligned progress/stall, filtered speed tracking and across-DR consistency; anchored accepted forward and walking-turn motion",
+  "production_changed": false
+}

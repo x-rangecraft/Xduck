@@ -1,0 +1,583 @@
+{
+  "passed": true,
+  "from_scratch": true,
+  "num_envs": 4096,
+  "updates": 200,
+  "final_checkpoint": "model_199.pt",
+  "air_time_threshold_ms": 100,
+  "mechanical_steps": 20,
+  "nq": 21,
+  "nv": 20,
+  "passive_coordinates": 0,
+  "model_and_source_identical_to_successful_baseline": true,
+  "wide_commands_restored": true,
+  "no_reference_reward": true,
+  "source_baseline": "/home/xingchen/Xduck/xduck_rigid_airtime_ab_20260929/project/conf/ppo/air100.yaml",
+  "source_baseline_sha256": "175bc213e42e4d7e35fb57708226844041d240eba5d2d64ea7bd1c01e62d3660",
+  "minibatches": 16,
+  "minibatch_samples": 6144,
+  "initial_learning_rate": 0.001,
+  "learning_epochs": 5,
+  "curriculum_conversions": {
+    "action_rate_stages": {
+      "old_env_steps": [
+        0,
+        48004,
+        72004,
+        96004,
+        120004,
+        144004
+      ],
+      "new_env_steps": [
+        0,
+        12001,
+        18001,
+        24001,
+        30001,
+        36001
+      ]
+    },
+    "standing_stages": {
+      "old_env_steps": [
+        0,
+        48004,
+        72004,
+        96004,
+        144004,
+        192004
+      ],
+      "new_env_steps": [
+        0,
+        12001,
+        18001,
+        24001,
+        36001,
+        48001
+      ]
+    },
+    "head_range_stages": {
+      "old_env_steps": [
+        0,
+        48000,
+        96000,
+        144000,
+        192000
+      ],
+      "new_env_steps": [
+        0,
+        12000,
+        24000,
+        36000,
+        48000
+      ]
+    },
+    "head_bias_stages": {
+      "old_env_steps": [
+        0,
+        57604,
+        96004,
+        144004
+      ],
+      "new_env_steps": [
+        0,
+        14401,
+        24001,
+        36001
+      ]
+    },
+    "com_range_stages": {
+      "old_env_steps": [
+        0,
+        48004,
+        96004,
+        144004
+      ],
+      "new_env_steps": [
+        0,
+        12001,
+        24001,
+        36001
+      ]
+    },
+    "head_com_range_stages": {
+      "old_env_steps": [
+        0,
+        48004,
+        96004
+      ],
+      "new_env_steps": [
+        0,
+        12001,
+        24001
+      ]
+    }
+  },
+  "changes": {
+    "training.log_dir": [
+      "/home/xingchen/Xduck/xduck_rigid_airtime_ab_20260929/air100",
+      "/home/xingchen/Xduck/xduck_rigid4096_100ms_200_20260930/rigid4096_100ms_200"
+    ],
+    "algo.algorithm.num_mini_batches": [
+      4,
+      16
+    ],
+    "algo.run_name": [
+      "air100",
+      "rigid4096_100ms_200"
+    ],
+    "algo.max_iterations": [
+      501,
+      200
+    ],
+    "algo.save_interval": [
+      100,
+      50
+    ],
+    "algo.num_envs": [
+      1024,
+      4096
+    ],
+    "env.warp_compiled_model_file": [
+      "/home/xingchen/Xduck/xduck_rigid_airtime_ab_20260929/physics/effective_training.mjb",
+      "/home/xingchen/Xduck/xduck_rigid4096_100ms_200_20260930/physics/effective_training.mjb"
+    ],
+    "env.scene.model_file": [
+      "/home/xingchen/Xduck/xduck_rigid_airtime_ab_20260929/physics/scene.xml",
+      "/home/xingchen/Xduck/xduck_rigid4096_100ms_200_20260930/physics/scene.xml"
+    ],
+    "env.scene.visual_model_file": [
+      "/home/xingchen/Xduck/xduck_rigid_airtime_ab_20260929/physics/scene.xml",
+      "/home/xingchen/Xduck/xduck_rigid4096_100ms_200_20260930/physics/scene.xml"
+    ],
+    "env.curriculum.head_range_stages": [
+      [
+        {
+          "step": 0,
+          "ranges": [
+            [
+              -0.05,
+              0.05
+            ],
+            [
+              -0.05,
+              0.05
+            ],
+            [
+              -0.07,
+              0.07
+            ],
+            [
+              -0.015,
+              0.015
+            ]
+          ]
+        },
+        {
+          "step": 48000,
+          "ranges": [
+            [
+              -0.17,
+              0.17
+            ],
+            [
+              -0.17,
+              0.17
+            ],
+            [
+              -0.21,
+              0.21
+            ],
+            [
+              -0.047,
+              0.047
+            ]
+          ]
+        },
+        {
+          "step": 96000,
+          "ranges": [
+            [
+              -0.39,
+              0.39
+            ],
+            [
+              -0.39,
+              0.39
+            ],
+            [
+              -0.49,
+              0.49
+            ],
+            [
+              -0.11,
+              0.11
+            ]
+          ]
+        },
+        {
+          "step": 144000,
+          "ranges": [
+            [
+              -0.72,
+              0.72
+            ],
+            [
+              -0.72,
+              0.72
+            ],
+            [
+              -0.91,
+              0.91
+            ],
+            [
+              -0.2,
+              0.2
+            ]
+          ]
+        },
+        {
+          "step": 192000,
+          "ranges": [
+            [
+              -1.1,
+              1.1
+            ],
+            [
+              -1.1,
+              1.1
+            ],
+            [
+              -1.4,
+              1.4
+            ],
+            [
+              -0.31,
+              0.31
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "step": 0,
+          "ranges": [
+            [
+              -0.05,
+              0.05
+            ],
+            [
+              -0.05,
+              0.05
+            ],
+            [
+              -0.07,
+              0.07
+            ],
+            [
+              -0.015,
+              0.015
+            ]
+          ]
+        },
+        {
+          "step": 12000,
+          "ranges": [
+            [
+              -0.17,
+              0.17
+            ],
+            [
+              -0.17,
+              0.17
+            ],
+            [
+              -0.21,
+              0.21
+            ],
+            [
+              -0.047,
+              0.047
+            ]
+          ]
+        },
+        {
+          "step": 24000,
+          "ranges": [
+            [
+              -0.39,
+              0.39
+            ],
+            [
+              -0.39,
+              0.39
+            ],
+            [
+              -0.49,
+              0.49
+            ],
+            [
+              -0.11,
+              0.11
+            ]
+          ]
+        },
+        {
+          "step": 36000,
+          "ranges": [
+            [
+              -0.72,
+              0.72
+            ],
+            [
+              -0.72,
+              0.72
+            ],
+            [
+              -0.91,
+              0.91
+            ],
+            [
+              -0.2,
+              0.2
+            ]
+          ]
+        },
+        {
+          "step": 48000,
+          "ranges": [
+            [
+              -1.1,
+              1.1
+            ],
+            [
+              -1.1,
+              1.1
+            ],
+            [
+              -1.4,
+              1.4
+            ],
+            [
+              -0.31,
+              0.31
+            ]
+          ]
+        }
+      ]
+    ],
+    "env.curriculum.com_range_stages": [
+      [
+        {
+          "step": 0,
+          "value": 0.0062699999999999995
+        },
+        {
+          "step": 48004,
+          "value": 0.01045
+        },
+        {
+          "step": 96004,
+          "value": 0.0209
+        },
+        {
+          "step": 144004,
+          "value": 0.031349999999999996
+        }
+      ],
+      [
+        {
+          "step": 0,
+          "value": 0.0062699999999999995
+        },
+        {
+          "step": 12001,
+          "value": 0.01045
+        },
+        {
+          "step": 24001,
+          "value": 0.0209
+        },
+        {
+          "step": 36001,
+          "value": 0.031349999999999996
+        }
+      ]
+    ],
+    "env.curriculum.action_rate_stages": [
+      [
+        {
+          "step": 0,
+          "value": -0.1
+        },
+        {
+          "step": 48004,
+          "value": -0.2
+        },
+        {
+          "step": 72004,
+          "value": -0.4
+        },
+        {
+          "step": 96004,
+          "value": -0.6
+        },
+        {
+          "step": 120004,
+          "value": -0.8
+        },
+        {
+          "step": 144004,
+          "value": -1.0
+        }
+      ],
+      [
+        {
+          "step": 0,
+          "value": -0.1
+        },
+        {
+          "step": 12001,
+          "value": -0.2
+        },
+        {
+          "step": 18001,
+          "value": -0.4
+        },
+        {
+          "step": 24001,
+          "value": -0.6
+        },
+        {
+          "step": 30001,
+          "value": -0.8
+        },
+        {
+          "step": 36001,
+          "value": -1.0
+        }
+      ]
+    ],
+    "env.curriculum.standing_stages": [
+      [
+        {
+          "step": 0,
+          "value": 0.02
+        },
+        {
+          "step": 48004,
+          "value": 0.05
+        },
+        {
+          "step": 72004,
+          "value": 0.1
+        },
+        {
+          "step": 96004,
+          "value": 0.15
+        },
+        {
+          "step": 144004,
+          "value": 0.2
+        },
+        {
+          "step": 192004,
+          "value": 0.25
+        }
+      ],
+      [
+        {
+          "step": 0,
+          "value": 0.02
+        },
+        {
+          "step": 12001,
+          "value": 0.05
+        },
+        {
+          "step": 18001,
+          "value": 0.1
+        },
+        {
+          "step": 24001,
+          "value": 0.15
+        },
+        {
+          "step": 36001,
+          "value": 0.2
+        },
+        {
+          "step": 48001,
+          "value": 0.25
+        }
+      ]
+    ],
+    "env.curriculum.head_bias_stages": [
+      [
+        {
+          "step": 0,
+          "value": 0.0
+        },
+        {
+          "step": 57604,
+          "value": 1.0
+        },
+        {
+          "step": 96004,
+          "value": 2.0
+        },
+        {
+          "step": 144004,
+          "value": 3.0
+        }
+      ],
+      [
+        {
+          "step": 0,
+          "value": 0.0
+        },
+        {
+          "step": 14401,
+          "value": 1.0
+        },
+        {
+          "step": 24001,
+          "value": 2.0
+        },
+        {
+          "step": 36001,
+          "value": 3.0
+        }
+      ]
+    ],
+    "env.curriculum.head_com_range_stages": [
+      [
+        {
+          "step": 0,
+          "value": 0.0062699999999999995
+        },
+        {
+          "step": 48004,
+          "value": 0.01045
+        },
+        {
+          "step": 96004,
+          "value": 0.0209
+        }
+      ],
+      [
+        {
+          "step": 0,
+          "value": 0.0062699999999999995
+        },
+        {
+          "step": 12001,
+          "value": 0.01045
+        },
+        {
+          "step": 24001,
+          "value": 0.0209
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/xingchen/Xduck/xduck_speed_correction_20260930/project/../run_trials.py", line 32, in <module>
+    run(['scripts/train_rsl_rl.py','--config-name','speed_smoke'],'smoke');verify('smoke',1201,28848)
+  File "/home/xingchen/Xduck/xduck_speed_correction_20260930/project/../run_trials.py", line 24, in verify
+    assert all(torch.isfinite(t).all() for t in d['model_state_dict'].values())
+KeyError: 'model_state_dict'

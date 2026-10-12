@@ -1,0 +1,5433 @@
+{
+  "mode": "training_sensors",
+  "pose": "original",
+  "model_sha256": "b89889b9c64366a9bbd7af51b130223bc805aebdc042a1c366320a74957631b4",
+  "command": [
+    0.3,
+    0.0,
+    0.0
+  ],
+  "conditions": 159,
+  "random_conditions": 128,
+  "endpoint_conditions": 30,
+  "nominal_conditions": 1,
+  "stand599_calls": 0,
+  "seconds": 12,
+  "physical_hold_before_command_s": 4,
+  "root_free": true,
+  "no_runtime_helper": true,
+  "actor_dim": 61,
+  "action_dim": 14,
+  "batched_torch_onnx_parity_max_error": 9.5367431640625e-07,
+  "uses_actual_training_sensor_pipeline": true,
+  "noise_level": 2.5,
+  "active_signed_speed_median": 0.20782015541361437,
+  "records": [
+    {
+      "case": 0,
+      "label": "nominal",
+      "group": "nominal",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6339647173881531,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.128398895263672,
+      "min_height_m": 0.31671249866485596,
+      "signed_speed_or_turn_rate": 0.20557613285051451,
+      "body_vx_mean_mps": 0.2055761218070984,
+      "body_vy_mean_mps": 0.03217121958732605,
+      "min1s_signed_progress": 0.1835619214177132,
+      "yaw_change_deg": 16.80461311340332,
+      "initial_direction_angle_deg": 18.538352493048905,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        17
+      ],
+      "foot_peak_median_mm": [
+        38.83598744869232,
+        32.484471797943115
+      ],
+      "width_mean_mm": 208.66844356850956,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 1,
+      "label": "friction_0.25",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6884182095527649,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 5.858525276184082,
+      "min_height_m": 0.31979215145111084,
+      "signed_speed_or_turn_rate": 0.2665121425191561,
+      "body_vx_mean_mps": 0.2665121555328369,
+      "body_vy_mean_mps": 0.04693468660116196,
+      "min1s_signed_progress": 0.23932738900184633,
+      "yaw_change_deg": -40.8345832824707,
+      "initial_direction_angle_deg": 26.35207488787492,
+      "rough_translation_direction": true,
+      "early_full_steps": 4,
+      "late_full_steps_by_side": [
+        31,
+        32
+      ],
+      "foot_peak_median_mm": [
+        25.845928117632866,
+        17.19273440539837
+      ],
+      "width_mean_mm": 209.54476589413224,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 2,
+      "label": "friction_1.75",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.4784723222255707,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.582633018493652,
+      "min_height_m": 0.3176415264606476,
+      "signed_speed_or_turn_rate": 0.20511405777600075,
+      "body_vx_mean_mps": 0.20511406660079956,
+      "body_vy_mean_mps": 0.03819216787815094,
+      "min1s_signed_progress": 0.1863000997900963,
+      "yaw_change_deg": 33.184268951416016,
+      "initial_direction_angle_deg": 24.268348327908686,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        33.89142453670502,
+        28.942449018359184
+      ],
+      "width_mean_mm": 208.5867917390483,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 3,
+      "label": "armature_0.75",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6339647173881531,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.371187210083008,
+      "min_height_m": 0.3182676136493683,
+      "signed_speed_or_turn_rate": 0.20878092577060064,
+      "body_vx_mean_mps": 0.2087809294462204,
+      "body_vy_mean_mps": 0.0324660986661911,
+      "min1s_signed_progress": 0.19153900772333143,
+      "yaw_change_deg": -23.14628028869629,
+      "initial_direction_angle_deg": 0.21832321758122536,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        34.67843681573868,
+        29.149572364985943
+      ],
+      "width_mean_mm": 208.80742053656897,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 4,
+      "label": "armature_1.25",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6339647173881531,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.927881240844727,
+      "min_height_m": 0.31790149211883545,
+      "signed_speed_or_turn_rate": 0.201606451753113,
+      "body_vx_mean_mps": 0.20160646736621857,
+      "body_vy_mean_mps": 0.02304540015757084,
+      "min1s_signed_progress": 0.17957858175039293,
+      "yaw_change_deg": 19.633487701416016,
+      "initial_direction_angle_deg": 15.001778291594293,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        19
+      ],
+      "foot_peak_median_mm": [
+        38.99621218442917,
+        32.02233836054802
+      ],
+      "width_mean_mm": 208.8666332493979,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 5,
+      "label": "trunk_mass_0.875",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6376577615737915,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.403099060058594,
+      "min_height_m": 0.31860780715942383,
+      "signed_speed_or_turn_rate": 0.19901628197895155,
+      "body_vx_mean_mps": 0.1990162879228592,
+      "body_vy_mean_mps": 0.0348711833357811,
+      "min1s_signed_progress": 0.18062477573752403,
+      "yaw_change_deg": 3.7631335258483887,
+      "initial_direction_angle_deg": 10.21205011381387,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        37.043701857328415,
+        30.580928549170494
+      ],
+      "width_mean_mm": 208.63439289865698,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 6,
+      "label": "trunk_mass_1.125",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6305603981018066,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.353787422180176,
+      "min_height_m": 0.3189293146133423,
+      "signed_speed_or_turn_rate": 0.21293733712699678,
+      "body_vx_mean_mps": 0.2129373401403427,
+      "body_vy_mean_mps": 0.02269878424704075,
+      "min1s_signed_progress": 0.1911468333005905,
+      "yaw_change_deg": 17.78915786743164,
+      "initial_direction_angle_deg": 11.089026907610348,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        17,
+        17
+      ],
+      "foot_peak_median_mm": [
+        42.26589575409889,
+        33.93429145216942
+      ],
+      "width_mean_mm": 208.81764798562705,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 7,
+      "label": "trunk_com_0_-1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6180230975151062,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.371726989746094,
+      "min_height_m": 0.3184071481227875,
+      "signed_speed_or_turn_rate": 0.19952435615989897,
+      "body_vx_mean_mps": 0.19952437281608582,
+      "body_vy_mean_mps": 0.032338570803403854,
+      "min1s_signed_progress": 0.17443613037467,
+      "yaw_change_deg": 1.782447099685669,
+      "initial_direction_angle_deg": 8.839079141457228,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        37.826087325811386,
+        31.196897849440575
+      ],
+      "width_mean_mm": 208.50333239203403,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 8,
+      "label": "trunk_com_0_1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6501175165176392,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.911008834838867,
+      "min_height_m": 0.31812992691993713,
+      "signed_speed_or_turn_rate": 0.20285835239622327,
+      "body_vx_mean_mps": 0.2028583586215973,
+      "body_vy_mean_mps": 0.029152879491448402,
+      "min1s_signed_progress": 0.1742337660491467,
+      "yaw_change_deg": 31.316402435302734,
+      "initial_direction_angle_deg": 30.38043305726018,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        41.14632494747639,
+        32.91128948330879
+      ],
+      "width_mean_mm": 208.5935355442524,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 9,
+      "label": "trunk_com_1_-1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6358139514923096,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.048910140991211,
+      "min_height_m": 0.3187676668167114,
+      "signed_speed_or_turn_rate": 0.20305340786774953,
+      "body_vx_mean_mps": 0.20305341482162476,
+      "body_vy_mean_mps": 0.03157921880483627,
+      "min1s_signed_progress": 0.1891612634062767,
+      "yaw_change_deg": -12.35949993133545,
+      "initial_direction_angle_deg": 1.1743026506045242,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        35.88516637682915,
+        29.02422472834587
+      ],
+      "width_mean_mm": 208.7001413847021,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 10,
+      "label": "trunk_com_1_1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6321101188659668,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.59123420715332,
+      "min_height_m": 0.318008691072464,
+      "signed_speed_or_turn_rate": 0.211857324226035,
+      "body_vx_mean_mps": 0.21185733377933502,
+      "body_vy_mean_mps": 0.028059346601366997,
+      "min1s_signed_progress": 0.18117286682128905,
+      "yaw_change_deg": 9.130036354064941,
+      "initial_direction_angle_deg": 7.797434355888645,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        17,
+        17
+      ],
+      "foot_peak_median_mm": [
+        38.49264606833458,
+        33.45087543129921
+      ],
+      "width_mean_mm": 208.7273227169181,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 11,
+      "label": "trunk_com_2_-1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6339647173881531,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.16029167175293,
+      "min_height_m": 0.3189607262611389,
+      "signed_speed_or_turn_rate": 0.2067096066640483,
+      "body_vx_mean_mps": 0.2067095935344696,
+      "body_vy_mean_mps": 0.02690494991838932,
+      "min1s_signed_progress": 0.18616220265626907,
+      "yaw_change_deg": 7.660343647003174,
+      "initial_direction_angle_deg": 12.773134052571372,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        37.37456351518631,
+        31.00778255611658
+      ],
+      "width_mean_mm": 208.63252913305394,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 12,
+      "label": "trunk_com_2_1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6342732906341553,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.767617225646973,
+      "min_height_m": 0.3189294934272766,
+      "signed_speed_or_turn_rate": 0.20088273210657967,
+      "body_vx_mean_mps": 0.20088273286819458,
+      "body_vy_mean_mps": 0.028748834505677223,
+      "min1s_signed_progress": 0.18146381229162217,
+      "yaw_change_deg": 16.487228393554688,
+      "initial_direction_angle_deg": 16.215571014669887,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        37.59896568953991,
+        30.44594917446375
+      ],
+      "width_mean_mm": 208.73715931672265,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 13,
+      "label": "head_com_0_-1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6743466854095459,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.129678726196289,
+      "min_height_m": 0.31841549277305603,
+      "signed_speed_or_turn_rate": 0.20520989519026545,
+      "body_vx_mean_mps": 0.2052098959684372,
+      "body_vy_mean_mps": 0.027851033955812454,
+      "min1s_signed_progress": 0.1841306659579277,
+      "yaw_change_deg": 17.905012130737305,
+      "initial_direction_angle_deg": 16.378628574550685,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        40.15755094587803,
+        32.60321356356144
+      ],
+      "width_mean_mm": 208.63245980381691,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 14,
+      "label": "head_com_0_1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.5938024520874023,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.855255126953125,
+      "min_height_m": 0.3183515965938568,
+      "signed_speed_or_turn_rate": 0.20662106669611402,
+      "body_vx_mean_mps": 0.20662108063697815,
+      "body_vy_mean_mps": 0.0210303645581007,
+      "min1s_signed_progress": 0.17305625349283218,
+      "yaw_change_deg": 22.75937843322754,
+      "initial_direction_angle_deg": 21.719847863636094,
+      "rough_translation_direction": true,
+      "early_full_steps": 4,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        38.57231140136719,
+        31.632822938263416
+      ],
+      "width_mean_mm": 208.6875657701239,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 15,
+      "label": "head_com_1_-1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6543177366256714,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.4745402336120605,
+      "min_height_m": 0.31869250535964966,
+      "signed_speed_or_turn_rate": 0.2066769071088897,
+      "body_vx_mean_mps": 0.2066769003868103,
+      "body_vy_mean_mps": 0.031019730493426323,
+      "min1s_signed_progress": 0.19024994164705275,
+      "yaw_change_deg": -12.66135311126709,
+      "initial_direction_angle_deg": 3.2050028026011104,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        34.91520509123802,
+        28.7550650537014
+      ],
+      "width_mean_mm": 208.58802828134512,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 16,
+      "label": "head_com_1_1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6135744452476501,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.190766334533691,
+      "min_height_m": 0.31709596514701843,
+      "signed_speed_or_turn_rate": 0.1868401242709822,
+      "body_vx_mean_mps": 0.18684013187885284,
+      "body_vy_mean_mps": 0.029987508431077003,
+      "min1s_signed_progress": 0.15899709396064282,
+      "yaw_change_deg": 36.92597961425781,
+      "initial_direction_angle_deg": 28.51308819885965,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        37.96510025858879,
+        30.757266096770763
+      ],
+      "width_mean_mm": 208.54935356214872,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 17,
+      "label": "head_com_2_-1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6065179109573364,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.094344139099121,
+      "min_height_m": 0.3175060749053955,
+      "signed_speed_or_turn_rate": 0.18893149003386497,
+      "body_vx_mean_mps": 0.18893149495124817,
+      "body_vy_mean_mps": 0.02519398182630539,
+      "min1s_signed_progress": 0.1682700827717781,
+      "yaw_change_deg": 8.961453437805176,
+      "initial_direction_angle_deg": 17.57815976903721,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        18,
+        19
+      ],
+      "foot_peak_median_mm": [
+        37.128930911421776,
+        29.336437582969666
+      ],
+      "width_mean_mm": 208.61161497741494,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 18,
+      "label": "head_com_2_1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6617517471313477,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.000791549682617,
+      "min_height_m": 0.3194015920162201,
+      "signed_speed_or_turn_rate": 0.21168050350414383,
+      "body_vx_mean_mps": 0.21168050169944763,
+      "body_vy_mean_mps": 0.03869011625647545,
+      "min1s_signed_progress": 0.19246133029460907,
+      "yaw_change_deg": 18.518869400024414,
+      "initial_direction_angle_deg": 21.735530067414405,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        34.9496565759182,
+        29.995562508702278
+      ],
+      "width_mean_mm": 208.63984177632304,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 19,
+      "label": "sole_(-3, -3)",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 2.3401718139648438,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.31368350982666,
+      "min_height_m": 0.3188825249671936,
+      "signed_speed_or_turn_rate": 0.23984727183977764,
+      "body_vx_mean_mps": 0.23984727263450623,
+      "body_vy_mean_mps": 0.03977680951356888,
+      "min1s_signed_progress": 0.21967932015657426,
+      "yaw_change_deg": -70.71749114990234,
+      "initial_direction_angle_deg": 28.987567392658566,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        33.14593434333801,
+        29.131241142749786
+      ],
+      "width_mean_mm": 208.45682942933965,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 20,
+      "label": "sole_(-3, 3)",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.080827236175537,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.734052658081055,
+      "min_height_m": 0.318147212266922,
+      "signed_speed_or_turn_rate": 0.15520739537146355,
+      "body_vx_mean_mps": 0.15520738065242767,
+      "body_vy_mean_mps": 0.004171382635831833,
+      "min1s_signed_progress": 0.12422581031918525,
+      "yaw_change_deg": -106.62702178955078,
+      "initial_direction_angle_deg": 38.750968478710895,
+      "rough_translation_direction": false,
+      "early_full_steps": 5,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        36.164261400699615,
+        36.43740341067314
+      ],
+      "width_mean_mm": 209.31938022002456,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 21,
+      "label": "sole_(3, -3)",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.7828986644744873,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.965673446655273,
+      "min_height_m": 0.31941285729408264,
+      "signed_speed_or_turn_rate": 0.193059113646547,
+      "body_vx_mean_mps": 0.19305911660194397,
+      "body_vy_mean_mps": 0.0002228834928246215,
+      "min1s_signed_progress": 0.13727711334824563,
+      "yaw_change_deg": -54.419044494628906,
+      "initial_direction_angle_deg": 23.830829003483647,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        45.37494666874409,
+        35.697780549526215
+      ],
+      "width_mean_mm": 209.12565595112008,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 22,
+      "label": "sole_(3, 3)",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 2.1857903003692627,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.221044540405273,
+      "min_height_m": 0.31710800528526306,
+      "signed_speed_or_turn_rate": 0.14650675137009886,
+      "body_vx_mean_mps": 0.14650675654411316,
+      "body_vy_mean_mps": 0.011888280510902405,
+      "min1s_signed_progress": 0.10692312508821489,
+      "yaw_change_deg": 21.9384708404541,
+      "initial_direction_angle_deg": 10.950638136282501,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        17,
+        17
+      ],
+      "foot_peak_median_mm": [
+        44.308897107839584,
+        37.73185983300209
+      ],
+      "width_mean_mm": 209.02577998150355,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 23,
+      "label": "imu_0_-1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6339647173881531,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.709258079528809,
+      "min_height_m": 0.3145076632499695,
+      "signed_speed_or_turn_rate": 0.186952066131764,
+      "body_vx_mean_mps": 0.18695206940174103,
+      "body_vy_mean_mps": 0.04356547072529793,
+      "min1s_signed_progress": 0.15215026587247849,
+      "yaw_change_deg": 149.29833984375,
+      "initial_direction_angle_deg": 84.71277358012992,
+      "rough_translation_direction": false,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        20
+      ],
+      "foot_peak_median_mm": [
+        31.50945156812668,
+        35.36754846572876
+      ],
+      "width_mean_mm": 209.3291669967004,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 24,
+      "label": "imu_0_1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6339647173881531,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.031096935272217,
+      "min_height_m": 0.31960412859916687,
+      "signed_speed_or_turn_rate": 0.21208025003472963,
+      "body_vx_mean_mps": 0.21208027005195618,
+      "body_vy_mean_mps": 0.014851901680231094,
+      "min1s_signed_progress": 0.1865844912827015,
+      "yaw_change_deg": -87.92456817626953,
+      "initial_direction_angle_deg": 51.48703766826414,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        24,
+        24
+      ],
+      "foot_peak_median_mm": [
+        36.88748553395271,
+        17.205308191478252
+      ],
+      "width_mean_mm": 207.43389818276134,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 25,
+      "label": "imu_1_-1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6339647173881531,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 11.177727699279785,
+      "min_height_m": 0.31961309909820557,
+      "signed_speed_or_turn_rate": 0.22869272210531766,
+      "body_vx_mean_mps": 0.22869271039962769,
+      "body_vy_mean_mps": 0.01548871211707592,
+      "min1s_signed_progress": 0.20730245038866996,
+      "yaw_change_deg": -38.05799102783203,
+      "initial_direction_angle_deg": 15.714150500369968,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        33.722756430506706,
+        26.199876330792904
+      ],
+      "width_mean_mm": 208.51105017537415,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 26,
+      "label": "imu_1_1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6339647173881531,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 10.1432466506958,
+      "min_height_m": 0.3081236779689789,
+      "signed_speed_or_turn_rate": 0.11036003591492773,
+      "body_vx_mean_mps": 0.1103600412607193,
+      "body_vy_mean_mps": 0.01019614189863205,
+      "min1s_signed_progress": 0.06644636772572994,
+      "yaw_change_deg": -166.42030334472656,
+      "initial_direction_angle_deg": 57.46370562652077,
+      "rough_translation_direction": false,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        34.565962851047516,
+        27.67136786133051
+      ],
+      "width_mean_mm": 209.31306174857698,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 27,
+      "label": "imu_2_-1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6339647173881531,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.030792236328125,
+      "min_height_m": 0.31935855746269226,
+      "signed_speed_or_turn_rate": 0.21198385591308275,
+      "body_vx_mean_mps": 0.2119838446378708,
+      "body_vy_mean_mps": 0.011702327989041805,
+      "min1s_signed_progress": 0.18839418083429338,
+      "yaw_change_deg": 8.922575950622559,
+      "initial_direction_angle_deg": 12.006735095191944,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        36.32579743862152,
+        32.541435211896896
+      ],
+      "width_mean_mm": 208.88464599840057,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 28,
+      "label": "imu_2_1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6339647173881531,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.80089282989502,
+      "min_height_m": 0.31714728474617004,
+      "signed_speed_or_turn_rate": 0.19572869014408853,
+      "body_vx_mean_mps": 0.19572868943214417,
+      "body_vy_mean_mps": 0.03454592823982239,
+      "min1s_signed_progress": 0.1779571267962456,
+      "yaw_change_deg": 30.03272247314453,
+      "initial_direction_angle_deg": 28.07958110350191,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        34.01751443743706,
+        29.41674366593361
+      ],
+      "width_mean_mm": 208.7574958203914,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 29,
+      "label": "combined_-1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": false,
+      "standing_tilt_deg": 1.1655004024505615,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 11.326946258544922,
+      "min_height_m": 0.322662353515625,
+      "signed_speed_or_turn_rate": 0.15194921808627745,
+      "body_vx_mean_mps": 0.1519492268562317,
+      "body_vy_mean_mps": 0.07991008460521698,
+      "min1s_signed_progress": -0.028075905097648506,
+      "yaw_change_deg": -28.80276870727539,
+      "initial_direction_angle_deg": 0.6211090223779865,
+      "rough_translation_direction": false,
+      "early_full_steps": 6,
+      "late_full_steps_by_side": [
+        6,
+        13
+      ],
+      "foot_peak_median_mm": [
+        13.436807785183191,
+        14.38873540610075
+      ],
+      "width_mean_mm": 208.99258944276428,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 30,
+      "label": "combined_1",
+      "group": "endpoint",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.5325068235397339,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 10.087265014648438,
+      "min_height_m": 0.3114469349384308,
+      "signed_speed_or_turn_rate": 0.1304209264828306,
+      "body_vx_mean_mps": 0.13042092323303223,
+      "body_vy_mean_mps": 0.007293843198567629,
+      "min1s_signed_progress": 0.09782610647380352,
+      "yaw_change_deg": 53.39240646362305,
+      "initial_direction_angle_deg": 27.789707877915095,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        17,
+        17
+      ],
+      "foot_peak_median_mm": [
+        48.773568123579025,
+        46.816688030958176
+      ],
+      "width_mean_mm": 210.01652682953215,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 31,
+      "label": "random_0",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.23573395609855652,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.560857772827148,
+      "min_height_m": 0.3134497106075287,
+      "signed_speed_or_turn_rate": 0.17699852529499266,
+      "body_vx_mean_mps": 0.17699852585792542,
+      "body_vy_mean_mps": 0.02983771450817585,
+      "min1s_signed_progress": 0.15085865408182145,
+      "yaw_change_deg": 2.34442138671875,
+      "initial_direction_angle_deg": 13.343027374612802,
+      "rough_translation_direction": true,
+      "early_full_steps": 6,
+      "late_full_steps_by_side": [
+        17,
+        17
+      ],
+      "foot_peak_median_mm": [
+        41.42649471759796,
+        35.940155386924744
+      ],
+      "width_mean_mm": 209.10302649141414,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 32,
+      "label": "random_1",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.9737771153450012,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.870682716369629,
+      "min_height_m": 0.31994864344596863,
+      "signed_speed_or_turn_rate": 0.243926861749755,
+      "body_vx_mean_mps": 0.24392686784267426,
+      "body_vy_mean_mps": 0.023341165855526924,
+      "min1s_signed_progress": 0.2195611396431923,
+      "yaw_change_deg": -35.44240951538086,
+      "initial_direction_angle_deg": 17.557458363081476,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        33.965498208999634,
+        30.06666526198387
+      ],
+      "width_mean_mm": 208.9074608049411,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 33,
+      "label": "random_2",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4736590385437012,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.695390224456787,
+      "min_height_m": 0.31950485706329346,
+      "signed_speed_or_turn_rate": 0.22791891988780763,
+      "body_vx_mean_mps": 0.22791892290115356,
+      "body_vy_mean_mps": 0.013927590101957321,
+      "min1s_signed_progress": 0.20151298031210899,
+      "yaw_change_deg": -91.2325668334961,
+      "initial_direction_angle_deg": 39.08363350376444,
+      "rough_translation_direction": false,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        23,
+        23
+      ],
+      "foot_peak_median_mm": [
+        37.971094250679016,
+        19.222553819417953
+      ],
+      "width_mean_mm": 207.7184996582683,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 34,
+      "label": "random_3",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.5556711554527283,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.905098915100098,
+      "min_height_m": 0.3198162913322449,
+      "signed_speed_or_turn_rate": 0.21859693008992406,
+      "body_vx_mean_mps": 0.2185969054698944,
+      "body_vy_mean_mps": 0.024556774646043777,
+      "min1s_signed_progress": 0.1809364354610443,
+      "yaw_change_deg": 5.432909965515137,
+      "initial_direction_angle_deg": 5.137641279157769,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        30.93481808900833,
+        35.90127266943455
+      ],
+      "width_mean_mm": 208.93063718451296,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 35,
+      "label": "random_4",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.456712007522583,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.029789924621582,
+      "min_height_m": 0.31930726766586304,
+      "signed_speed_or_turn_rate": 0.21637304171919822,
+      "body_vx_mean_mps": 0.2163730412721634,
+      "body_vy_mean_mps": 0.031625114381313324,
+      "min1s_signed_progress": 0.19216503381729125,
+      "yaw_change_deg": -21.823631286621094,
+      "initial_direction_angle_deg": 2.2469464070949745,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        21,
+        20
+      ],
+      "foot_peak_median_mm": [
+        35.01090407371521,
+        28.856842778623104
+      ],
+      "width_mean_mm": 208.56147655311142,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 36,
+      "label": "random_5",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.1485881805419922,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.093591690063477,
+      "min_height_m": 0.3194880187511444,
+      "signed_speed_or_turn_rate": 0.2401643240451813,
+      "body_vx_mean_mps": 0.24016432464122772,
+      "body_vy_mean_mps": 0.03196064382791519,
+      "min1s_signed_progress": 0.2012294912338257,
+      "yaw_change_deg": 43.60165786743164,
+      "initial_direction_angle_deg": 26.368279687116793,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        18,
+        19
+      ],
+      "foot_peak_median_mm": [
+        31.06482047587633,
+        34.28295627236366
+      ],
+      "width_mean_mm": 208.75672541956953,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 37,
+      "label": "random_6",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.12820424139499664,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.067036628723145,
+      "min_height_m": 0.32102689146995544,
+      "signed_speed_or_turn_rate": 0.2605860453678502,
+      "body_vx_mean_mps": 0.26058605313301086,
+      "body_vy_mean_mps": 0.02763049304485321,
+      "min1s_signed_progress": 0.22367095425724984,
+      "yaw_change_deg": -66.87918853759766,
+      "initial_direction_angle_deg": 20.166623133607953,
+      "rough_translation_direction": true,
+      "early_full_steps": 11,
+      "late_full_steps_by_side": [
+        23,
+        23
+      ],
+      "foot_peak_median_mm": [
+        34.048981964588165,
+        19.556604325771332
+      ],
+      "width_mean_mm": 208.31774879626735,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 38,
+      "label": "random_7",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8550078868865967,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.792786598205566,
+      "min_height_m": 0.3189234435558319,
+      "signed_speed_or_turn_rate": 0.22256121618880165,
+      "body_vx_mean_mps": 0.22256121039390564,
+      "body_vy_mean_mps": 0.01375588122755289,
+      "min1s_signed_progress": 0.19575579196214676,
+      "yaw_change_deg": -51.42365646362305,
+      "initial_direction_angle_deg": 18.32392180967908,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        36.96318343281746,
+        28.66197656840086
+      ],
+      "width_mean_mm": 208.76206823524598,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 39,
+      "label": "random_8",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": false,
+      "standing_tilt_deg": 0.9048216938972473,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 5.421083450317383,
+      "min_height_m": 0.32169681787490845,
+      "signed_speed_or_turn_rate": 0.15553708685355053,
+      "body_vx_mean_mps": 0.15553709864616394,
+      "body_vy_mean_mps": 0.06574764102697372,
+      "min1s_signed_progress": 0.004892742894589901,
+      "yaw_change_deg": -4.802455902099609,
+      "initial_direction_angle_deg": 25.75616360922312,
+      "rough_translation_direction": false,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        23,
+        27
+      ],
+      "foot_peak_median_mm": [
+        20.93419060111046,
+        19.263029098510742
+      ],
+      "width_mean_mm": 208.92887741206968,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 40,
+      "label": "random_9",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.3307507038116455,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.118780136108398,
+      "min_height_m": 0.3222154676914215,
+      "signed_speed_or_turn_rate": 0.2875984847876761,
+      "body_vx_mean_mps": 0.28759846091270447,
+      "body_vy_mean_mps": 0.030927905812859535,
+      "min1s_signed_progress": 0.26859312385320666,
+      "yaw_change_deg": -48.075130462646484,
+      "initial_direction_angle_deg": 9.247795452951358,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        24,
+        23
+      ],
+      "foot_peak_median_mm": [
+        34.17408652603626,
+        25.32842941582203
+      ],
+      "width_mean_mm": 208.76559945529527,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 41,
+      "label": "random_10",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4130544662475586,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.685028076171875,
+      "min_height_m": 0.31929734349250793,
+      "signed_speed_or_turn_rate": 0.22114150610235003,
+      "body_vx_mean_mps": 0.221141517162323,
+      "body_vy_mean_mps": 0.017244495451450348,
+      "min1s_signed_progress": 0.19852710247039795,
+      "yaw_change_deg": -40.93075180053711,
+      "initial_direction_angle_deg": 15.290658144456433,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        35.222748294472694,
+        28.508007526397705
+      ],
+      "width_mean_mm": 208.3911490246535,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 42,
+      "label": "random_11",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 2.2150533199310303,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.521986961364746,
+      "min_height_m": 0.31852951645851135,
+      "signed_speed_or_turn_rate": 0.26560974372757806,
+      "body_vx_mean_mps": 0.2656097412109375,
+      "body_vy_mean_mps": 0.03427470475435257,
+      "min1s_signed_progress": 0.23901298314332964,
+      "yaw_change_deg": -17.889568328857422,
+      "initial_direction_angle_deg": 1.8001337242817312,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        34.98930111527443,
+        35.538915544748306
+      ],
+      "width_mean_mm": 208.55503745008755,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 43,
+      "label": "random_12",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4134697914123535,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.573984622955322,
+      "min_height_m": 0.31213656067848206,
+      "signed_speed_or_turn_rate": 0.11584811778118213,
+      "body_vx_mean_mps": 0.1158481165766716,
+      "body_vy_mean_mps": 0.018193095922470093,
+      "min1s_signed_progress": 0.07057736951857804,
+      "yaw_change_deg": -88.10453033447266,
+      "initial_direction_angle_deg": 47.27901705066004,
+      "rough_translation_direction": true,
+      "early_full_steps": 11,
+      "late_full_steps_by_side": [
+        21,
+        21
+      ],
+      "foot_peak_median_mm": [
+        36.74113005399704,
+        30.052831396460533
+      ],
+      "width_mean_mm": 208.46874857014993,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 44,
+      "label": "random_13",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6658785939216614,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.221006870269775,
+      "min_height_m": 0.3203199803829193,
+      "signed_speed_or_turn_rate": 0.27782614943053985,
+      "body_vx_mean_mps": 0.27782613039016724,
+      "body_vy_mean_mps": 0.13379593193531036,
+      "min1s_signed_progress": 0.26412133514881136,
+      "yaw_change_deg": 20.31000328063965,
+      "initial_direction_angle_deg": 45.924404579208264,
+      "rough_translation_direction": true,
+      "early_full_steps": 5,
+      "late_full_steps_by_side": [
+        35,
+        33
+      ],
+      "foot_peak_median_mm": [
+        29.089290648698807,
+        16.06256701052189
+      ],
+      "width_mean_mm": 208.47830692918927,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 45,
+      "label": "random_14",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.7102428674697876,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.233736991882324,
+      "min_height_m": 0.31324487924575806,
+      "signed_speed_or_turn_rate": 0.12668103684774704,
+      "body_vx_mean_mps": 0.12668104469776154,
+      "body_vy_mean_mps": 0.00854082964360714,
+      "min1s_signed_progress": 0.07315044477581979,
+      "yaw_change_deg": -119.18685913085938,
+      "initial_direction_angle_deg": 51.27817897968762,
+      "rough_translation_direction": false,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        42.794033885002136,
+        35.31873971223831
+      ],
+      "width_mean_mm": 209.1660470767391,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 46,
+      "label": "random_15",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.7504419088363647,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.410286903381348,
+      "min_height_m": 0.3191980719566345,
+      "signed_speed_or_turn_rate": 0.2806637100709809,
+      "body_vx_mean_mps": 0.28066372871398926,
+      "body_vy_mean_mps": 0.053641222417354584,
+      "min1s_signed_progress": 0.25945583671331407,
+      "yaw_change_deg": -47.64924240112305,
+      "initial_direction_angle_deg": 28.527038693871244,
+      "rough_translation_direction": true,
+      "early_full_steps": 13,
+      "late_full_steps_by_side": [
+        31,
+        30
+      ],
+      "foot_peak_median_mm": [
+        27.3125097155571,
+        19.01327632367611
+      ],
+      "width_mean_mm": 209.61995510611018,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 47,
+      "label": "random_16",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.736185073852539,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.828221321105957,
+      "min_height_m": 0.31905847787857056,
+      "signed_speed_or_turn_rate": 0.2383483217159907,
+      "body_vx_mean_mps": 0.2383483201265335,
+      "body_vy_mean_mps": 0.02880808338522911,
+      "min1s_signed_progress": 0.2201491090655327,
+      "yaw_change_deg": -17.261962890625,
+      "initial_direction_angle_deg": 0.37463362329065364,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        37.92562335729599,
+        31.82818368077278
+      ],
+      "width_mean_mm": 208.80805872952112,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 48,
+      "label": "random_17",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.7022078037261963,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 5.790480613708496,
+      "min_height_m": 0.31989938020706177,
+      "signed_speed_or_turn_rate": 0.21786765941315228,
+      "body_vx_mean_mps": 0.2178676724433899,
+      "body_vy_mean_mps": 0.03031507320702076,
+      "min1s_signed_progress": 0.1887557776272297,
+      "yaw_change_deg": -41.77592086791992,
+      "initial_direction_angle_deg": 19.465160154120102,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        28,
+        27
+      ],
+      "foot_peak_median_mm": [
+        24.35719035565853,
+        24.38674494624138
+      ],
+      "width_mean_mm": 209.06860448441648,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 49,
+      "label": "random_18",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.2229357808828354,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.24302339553833,
+      "min_height_m": 0.32102110981941223,
+      "signed_speed_or_turn_rate": 0.2882989959915479,
+      "body_vx_mean_mps": 0.288299024105072,
+      "body_vy_mean_mps": 0.09190447628498077,
+      "min1s_signed_progress": 0.2679817965626717,
+      "yaw_change_deg": -65.92096710205078,
+      "initial_direction_angle_deg": 43.11142484309322,
+      "rough_translation_direction": true,
+      "early_full_steps": 14,
+      "late_full_steps_by_side": [
+        30,
+        28
+      ],
+      "foot_peak_median_mm": [
+        36.614395678043365,
+        15.227657277137041
+      ],
+      "width_mean_mm": 209.9494463556231,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 50,
+      "label": "random_19",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.9920923113822937,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.82901668548584,
+      "min_height_m": 0.31625157594680786,
+      "signed_speed_or_turn_rate": 0.21691160251696903,
+      "body_vx_mean_mps": 0.21691161394119263,
+      "body_vy_mean_mps": 0.04307352378964424,
+      "min1s_signed_progress": 0.20464202493429182,
+      "yaw_change_deg": -28.27012825012207,
+      "initial_direction_angle_deg": 4.030556568581668,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        34.98223051428795,
+        31.623687595129013
+      ],
+      "width_mean_mm": 208.73344455292883,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 51,
+      "label": "random_20",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8550078868865967,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.392318725585938,
+      "min_height_m": 0.3193667531013489,
+      "signed_speed_or_turn_rate": 0.19724125014411079,
+      "body_vx_mean_mps": 0.19724124670028687,
+      "body_vy_mean_mps": 0.022414974868297577,
+      "min1s_signed_progress": 0.18166372403502468,
+      "yaw_change_deg": 20.876314163208008,
+      "initial_direction_angle_deg": 22.183035938017582,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        32.52405300736427,
+        23.673783987760544
+      ],
+      "width_mean_mm": 208.2378974930116,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 52,
+      "label": "random_21",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.9911510944366455,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.593770980834961,
+      "min_height_m": 0.31882619857788086,
+      "signed_speed_or_turn_rate": 0.2238286683294508,
+      "body_vx_mean_mps": 0.22382867336273193,
+      "body_vy_mean_mps": 0.04298846051096916,
+      "min1s_signed_progress": 0.20436529099941253,
+      "yaw_change_deg": 29.27816390991211,
+      "initial_direction_angle_deg": 19.81571660661037,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        21,
+        21
+      ],
+      "foot_peak_median_mm": [
+        25.800442323088646,
+        32.81615674495697
+      ],
+      "width_mean_mm": 208.86346764254216,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 53,
+      "label": "random_22",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.48091983795166016,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.236383438110352,
+      "min_height_m": 0.32036375999450684,
+      "signed_speed_or_turn_rate": 0.30385029640462663,
+      "body_vx_mean_mps": 0.30385029315948486,
+      "body_vy_mean_mps": 0.11586076766252518,
+      "min1s_signed_progress": 0.28490304023027424,
+      "yaw_change_deg": -16.842632293701172,
+      "initial_direction_angle_deg": 6.5484023092668915,
+      "rough_translation_direction": true,
+      "early_full_steps": 12,
+      "late_full_steps_by_side": [
+        31,
+        31
+      ],
+      "foot_peak_median_mm": [
+        34.14904326200485,
+        18.315380439162254
+      ],
+      "width_mean_mm": 209.6878673134431,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 54,
+      "label": "random_23",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4708677530288696,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.429254531860352,
+      "min_height_m": 0.3158773183822632,
+      "signed_speed_or_turn_rate": 0.17924924393494923,
+      "body_vx_mean_mps": 0.17924925684928894,
+      "body_vy_mean_mps": 0.0021570895332843065,
+      "min1s_signed_progress": 0.14060162276029586,
+      "yaw_change_deg": 52.10568618774414,
+      "initial_direction_angle_deg": 24.272247147520183,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        16,
+        17
+      ],
+      "foot_peak_median_mm": [
+        45.679712668061256,
+        40.35671800374985
+      ],
+      "width_mean_mm": 209.34583217868555,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 55,
+      "label": "random_24",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.8528739213943481,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.0598726272583,
+      "min_height_m": 0.31910863518714905,
+      "signed_speed_or_turn_rate": 0.22902060753769346,
+      "body_vx_mean_mps": 0.2290206253528595,
+      "body_vy_mean_mps": 0.036322221159935,
+      "min1s_signed_progress": 0.1978047549724579,
+      "yaw_change_deg": -11.517457008361816,
+      "initial_direction_angle_deg": 7.988174290620451,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        39.63059559464455,
+        33.234937116503716
+      ],
+      "width_mean_mm": 208.54255506623284,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 56,
+      "label": "random_25",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.807698130607605,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 10.476755142211914,
+      "min_height_m": 0.3113583028316498,
+      "signed_speed_or_turn_rate": 0.17474965738753478,
+      "body_vx_mean_mps": 0.17474965751171112,
+      "body_vy_mean_mps": 0.011018146760761738,
+      "min1s_signed_progress": 0.13087681740522383,
+      "yaw_change_deg": -78.40335083007812,
+      "initial_direction_angle_deg": 41.11391320363673,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        38.22546266019344,
+        39.87327963113785
+      ],
+      "width_mean_mm": 209.04165247989573,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 57,
+      "label": "random_26",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4365407228469849,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.26386833190918,
+      "min_height_m": 0.3186294138431549,
+      "signed_speed_or_turn_rate": 0.23069212958216667,
+      "body_vx_mean_mps": 0.23069213330745697,
+      "body_vy_mean_mps": 0.03816244378685951,
+      "min1s_signed_progress": 0.2074134036898613,
+      "yaw_change_deg": -18.724241256713867,
+      "initial_direction_angle_deg": 2.9195405024087577,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        18,
+        17
+      ],
+      "foot_peak_median_mm": [
+        41.89142771065235,
+        33.6730033159256
+      ],
+      "width_mean_mm": 208.83380255733246,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 58,
+      "label": "random_27",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.4549950063228607,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.243501663208008,
+      "min_height_m": 0.31752026081085205,
+      "signed_speed_or_turn_rate": 0.18116421172188388,
+      "body_vx_mean_mps": 0.1811642050743103,
+      "body_vy_mean_mps": 0.032764334231615067,
+      "min1s_signed_progress": 0.1548714265227318,
+      "yaw_change_deg": 46.848331451416016,
+      "initial_direction_angle_deg": 25.770616370282944,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        37.39427030086517,
+        30.161873437464237
+      ],
+      "width_mean_mm": 208.45451221699975,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 59,
+      "label": "random_28",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.1266687959432602,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.838944435119629,
+      "min_height_m": 0.3196367025375366,
+      "signed_speed_or_turn_rate": 0.18744743246171208,
+      "body_vx_mean_mps": 0.1874474436044693,
+      "body_vy_mean_mps": 0.021323855966329575,
+      "min1s_signed_progress": 0.16781566485762595,
+      "yaw_change_deg": -43.12678146362305,
+      "initial_direction_angle_deg": 13.622678100022515,
+      "rough_translation_direction": true,
+      "early_full_steps": 11,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        36.305854097008705,
+        24.69201385974884
+      ],
+      "width_mean_mm": 208.27530325999172,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 60,
+      "label": "random_29",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.662638247013092,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.32878589630127,
+      "min_height_m": 0.3200756013393402,
+      "signed_speed_or_turn_rate": 0.2001950168940756,
+      "body_vx_mean_mps": 0.20019501447677612,
+      "body_vy_mean_mps": 0.034603577107191086,
+      "min1s_signed_progress": 0.1787891611456871,
+      "yaw_change_deg": 8.600873947143555,
+      "initial_direction_angle_deg": 16.329376203791547,
+      "rough_translation_direction": true,
+      "early_full_steps": 7,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        35.46062111854553,
+        33.36246311664581
+      ],
+      "width_mean_mm": 208.8884555454877,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 61,
+      "label": "random_30",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.26466989517211914,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.633243083953857,
+      "min_height_m": 0.32063722610473633,
+      "signed_speed_or_turn_rate": 0.2415720789796776,
+      "body_vx_mean_mps": 0.2415720671415329,
+      "body_vy_mean_mps": 0.026651062071323395,
+      "min1s_signed_progress": 0.2247305357456207,
+      "yaw_change_deg": 20.859943389892578,
+      "initial_direction_angle_deg": 17.585501029759072,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        31.703367829322815,
+        34.46606919169426
+      ],
+      "width_mean_mm": 208.91352617532226,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 62,
+      "label": "random_31",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6230682730674744,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.962807655334473,
+      "min_height_m": 0.3209315538406372,
+      "signed_speed_or_turn_rate": 0.20782015541361437,
+      "body_vx_mean_mps": 0.20782016217708588,
+      "body_vy_mean_mps": 0.010261991992592812,
+      "min1s_signed_progress": 0.1744255352020264,
+      "yaw_change_deg": -17.62494659423828,
+      "initial_direction_angle_deg": 4.3567467340855,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        21,
+        21
+      ],
+      "foot_peak_median_mm": [
+        35.99410504102707,
+        22.572342306375504
+      ],
+      "width_mean_mm": 208.0336592649894,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 63,
+      "label": "random_32",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.11869405955076218,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.354395866394043,
+      "min_height_m": 0.3127549886703491,
+      "signed_speed_or_turn_rate": 0.17645058810710906,
+      "body_vx_mean_mps": 0.17645059525966644,
+      "body_vy_mean_mps": 0.03581739217042923,
+      "min1s_signed_progress": 0.14308839708566667,
+      "yaw_change_deg": -16.78352165222168,
+      "initial_direction_angle_deg": 4.026550739968684,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        18,
+        17
+      ],
+      "foot_peak_median_mm": [
+        39.0439685434103,
+        37.7553254365921
+      ],
+      "width_mean_mm": 209.20654702069652,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 64,
+      "label": "random_33",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.5068812370300293,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.980524063110352,
+      "min_height_m": 0.3204682469367981,
+      "signed_speed_or_turn_rate": 0.16665131532483632,
+      "body_vx_mean_mps": 0.16665130853652954,
+      "body_vy_mean_mps": 0.03588785231113434,
+      "min1s_signed_progress": 0.07073065772652626,
+      "yaw_change_deg": -58.60404586791992,
+      "initial_direction_angle_deg": 23.88055148388319,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        25,
+        23
+      ],
+      "foot_peak_median_mm": [
+        26.80022083222866,
+        19.139334559440613
+      ],
+      "width_mean_mm": 209.2101071477425,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 65,
+      "label": "random_34",
+      "group": "random",
+      "started_by_2p5s": false,
+      "sustained_12s": false,
+      "standing_tilt_deg": 1.1968125104904175,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.494012355804443,
+      "min_height_m": 0.31865188479423523,
+      "signed_speed_or_turn_rate": 0.1768026648917132,
+      "body_vx_mean_mps": 0.17680267989635468,
+      "body_vy_mean_mps": 0.020465271547436714,
+      "min1s_signed_progress": 0.046182967983186246,
+      "yaw_change_deg": -4.536870956420898,
+      "initial_direction_angle_deg": 5.656397040248244,
+      "rough_translation_direction": false,
+      "early_full_steps": 0,
+      "late_full_steps_by_side": [
+        28,
+        28
+      ],
+      "foot_peak_median_mm": [
+        19.357522949576378,
+        21.699083968997
+      ],
+      "width_mean_mm": 208.6701065682026,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 66,
+      "label": "random_35",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.2373882532119751,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.358345031738281,
+      "min_height_m": 0.3151068687438965,
+      "signed_speed_or_turn_rate": 0.1892148590253459,
+      "body_vx_mean_mps": 0.18921485543251038,
+      "body_vy_mean_mps": 0.02712271735072136,
+      "min1s_signed_progress": 0.1595936019718647,
+      "yaw_change_deg": -77.62825775146484,
+      "initial_direction_angle_deg": 24.676691049784253,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        17,
+        17
+      ],
+      "foot_peak_median_mm": [
+        39.56014662981033,
+        34.491319209337234
+      ],
+      "width_mean_mm": 208.9919820161229,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 67,
+      "label": "random_36",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 2.035189628601074,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.22172737121582,
+      "min_height_m": 0.31777986884117126,
+      "signed_speed_or_turn_rate": 0.25895566705200407,
+      "body_vx_mean_mps": 0.2589556574821472,
+      "body_vy_mean_mps": 0.03515683487057686,
+      "min1s_signed_progress": 0.24026005625724792,
+      "yaw_change_deg": -37.45012283325195,
+      "initial_direction_angle_deg": 13.444047318116887,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        32.82249718904495,
+        35.20187363028526
+      ],
+      "width_mean_mm": 208.8270780324311,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 68,
+      "label": "random_37",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.9146884679794312,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.994930744171143,
+      "min_height_m": 0.31875914335250854,
+      "signed_speed_or_turn_rate": 0.22352970722648832,
+      "body_vx_mean_mps": 0.22352969646453857,
+      "body_vy_mean_mps": 0.019262835383415222,
+      "min1s_signed_progress": 0.1897904658317566,
+      "yaw_change_deg": -111.27796936035156,
+      "initial_direction_angle_deg": 54.752376736256174,
+      "rough_translation_direction": false,
+      "early_full_steps": 13,
+      "late_full_steps_by_side": [
+        24,
+        24
+      ],
+      "foot_peak_median_mm": [
+        34.77040305733681,
+        17.036035656929016
+      ],
+      "width_mean_mm": 207.6566792593039,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 69,
+      "label": "random_38",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.333378404378891,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.009178161621094,
+      "min_height_m": 0.32000732421875,
+      "signed_speed_or_turn_rate": 0.23124307799670432,
+      "body_vx_mean_mps": 0.2312430888414383,
+      "body_vy_mean_mps": 0.015041601844131947,
+      "min1s_signed_progress": 0.20685595840215684,
+      "yaw_change_deg": -15.157889366149902,
+      "initial_direction_angle_deg": 1.0273398989082916,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        37.02040947973728,
+        32.36841596662998
+      ],
+      "width_mean_mm": 209.06591662702417,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 70,
+      "label": "random_39",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.25178828835487366,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.279033660888672,
+      "min_height_m": 0.3190040588378906,
+      "signed_speed_or_turn_rate": 0.2049740650256475,
+      "body_vx_mean_mps": 0.20497405529022217,
+      "body_vy_mean_mps": 0.023676574230194092,
+      "min1s_signed_progress": 0.18809758633375168,
+      "yaw_change_deg": 19.37752914428711,
+      "initial_direction_angle_deg": 19.863664570256223,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        39.90056365728378,
+        33.272042870521545
+      ],
+      "width_mean_mm": 208.98046167184708,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 71,
+      "label": "random_40",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.3687360286712646,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.939141750335693,
+      "min_height_m": 0.31850796937942505,
+      "signed_speed_or_turn_rate": 0.21660349425342348,
+      "body_vx_mean_mps": 0.21660350263118744,
+      "body_vy_mean_mps": 0.035641588270664215,
+      "min1s_signed_progress": 0.19840755134820942,
+      "yaw_change_deg": 2.2265801429748535,
+      "initial_direction_angle_deg": 11.325496940678345,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        35.085223615169525,
+        26.075324043631554
+      ],
+      "width_mean_mm": 208.24610172971921,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 72,
+      "label": "random_41",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.1720302104949951,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.536813735961914,
+      "min_height_m": 0.3098330497741699,
+      "signed_speed_or_turn_rate": 0.19242791728013092,
+      "body_vx_mean_mps": 0.19242790341377258,
+      "body_vy_mean_mps": 0.037513021379709244,
+      "min1s_signed_progress": 0.1758208175003529,
+      "yaw_change_deg": -31.856853485107422,
+      "initial_direction_angle_deg": 3.2451768842951423,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        17,
+        17
+      ],
+      "foot_peak_median_mm": [
+        44.875722378492355,
+        37.349581718444824
+      ],
+      "width_mean_mm": 209.02134993941561,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 73,
+      "label": "random_42",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.1386638879776,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 5.977008819580078,
+      "min_height_m": 0.3199002146720886,
+      "signed_speed_or_turn_rate": 0.251639522280958,
+      "body_vx_mean_mps": 0.2516395151615143,
+      "body_vy_mean_mps": 0.0840814858675003,
+      "min1s_signed_progress": 0.22560467600822448,
+      "yaw_change_deg": 1.4041502475738525,
+      "initial_direction_angle_deg": 18.623578477012238,
+      "rough_translation_direction": true,
+      "early_full_steps": 12,
+      "late_full_steps_by_side": [
+        24,
+        32
+      ],
+      "foot_peak_median_mm": [
+        23.49502220749855,
+        17.794369719922543
+      ],
+      "width_mean_mm": 209.35457386699278,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 74,
+      "label": "random_43",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.9514160752296448,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.600738525390625,
+      "min_height_m": 0.3192840814590454,
+      "signed_speed_or_turn_rate": 0.20954286553793483,
+      "body_vx_mean_mps": 0.2095428705215454,
+      "body_vy_mean_mps": 0.024487337097525597,
+      "min1s_signed_progress": 0.18637077555060386,
+      "yaw_change_deg": -30.072282791137695,
+      "initial_direction_angle_deg": 9.332297386573568,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        21,
+        20
+      ],
+      "foot_peak_median_mm": [
+        35.05641594529152,
+        22.50876184552908
+      ],
+      "width_mean_mm": 208.27790592138908,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 75,
+      "label": "random_44",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.6694118976593018,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.728816032409668,
+      "min_height_m": 0.3181686997413635,
+      "signed_speed_or_turn_rate": 0.216904812057813,
+      "body_vx_mean_mps": 0.21690480411052704,
+      "body_vy_mean_mps": 0.03608095645904541,
+      "min1s_signed_progress": 0.1978981539607048,
+      "yaw_change_deg": -12.539924621582031,
+      "initial_direction_angle_deg": 6.243631278648966,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        38.3857823908329,
+        32.66294486820698
+      ],
+      "width_mean_mm": 208.6114811809405,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 76,
+      "label": "random_45",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.45456475019454956,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.377799034118652,
+      "min_height_m": 0.31999385356903076,
+      "signed_speed_or_turn_rate": 0.21691979360249308,
+      "body_vx_mean_mps": 0.21691979467868805,
+      "body_vy_mean_mps": 0.01753172278404236,
+      "min1s_signed_progress": 0.18334246590733527,
+      "yaw_change_deg": -94.8343276977539,
+      "initial_direction_angle_deg": 40.23518555712004,
+      "rough_translation_direction": false,
+      "early_full_steps": 11,
+      "late_full_steps_by_side": [
+        22,
+        22
+      ],
+      "foot_peak_median_mm": [
+        36.96896880865097,
+        18.334608525037766
+      ],
+      "width_mean_mm": 207.70354802207257,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 77,
+      "label": "random_46",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.24389326572418213,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.800065994262695,
+      "min_height_m": 0.31897786259651184,
+      "signed_speed_or_turn_rate": 0.2173804267909792,
+      "body_vx_mean_mps": 0.21738043427467346,
+      "body_vy_mean_mps": 0.022131139412522316,
+      "min1s_signed_progress": 0.19369619429111481,
+      "yaw_change_deg": 19.693145751953125,
+      "initial_direction_angle_deg": 14.199233881926611,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        47.409627586603165,
+        32.611289992928505
+      ],
+      "width_mean_mm": 208.92412364504196,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 78,
+      "label": "random_47",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8793776035308838,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 10.475703239440918,
+      "min_height_m": 0.31237566471099854,
+      "signed_speed_or_turn_rate": 0.169975122925308,
+      "body_vx_mean_mps": 0.1699751317501068,
+      "body_vy_mean_mps": 0.028379835188388824,
+      "min1s_signed_progress": 0.13934848181903364,
+      "yaw_change_deg": -96.2248306274414,
+      "initial_direction_angle_deg": 28.169612799341753,
+      "rough_translation_direction": false,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        39.82815518975258,
+        27.79950387775898
+      ],
+      "width_mean_mm": 208.45653234743506,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 79,
+      "label": "random_48",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4691370725631714,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.007512092590332,
+      "min_height_m": 0.3189455270767212,
+      "signed_speed_or_turn_rate": 0.21670350872808034,
+      "body_vx_mean_mps": 0.21670350432395935,
+      "body_vy_mean_mps": 0.029656236991286278,
+      "min1s_signed_progress": 0.1824008494615555,
+      "yaw_change_deg": 20.29732322692871,
+      "initial_direction_angle_deg": 18.88766734899882,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        35.405298694968224,
+        34.035367891192436
+      ],
+      "width_mean_mm": 208.26759124519353,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 80,
+      "label": "random_49",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 2.001640558242798,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 10.144701957702637,
+      "min_height_m": 0.31644710898399353,
+      "signed_speed_or_turn_rate": 0.21090746568308935,
+      "body_vx_mean_mps": 0.2109074741601944,
+      "body_vy_mean_mps": 0.031788308173418045,
+      "min1s_signed_progress": 0.18047470167279245,
+      "yaw_change_deg": -68.9566879272461,
+      "initial_direction_angle_deg": 22.678700599204134,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        40.413495153188705,
+        32.00615756213665
+      ],
+      "width_mean_mm": 208.649052823188,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 81,
+      "label": "random_50",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.6142244338989258,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 10.799714088439941,
+      "min_height_m": 0.3219047784805298,
+      "signed_speed_or_turn_rate": 0.186390570981635,
+      "body_vx_mean_mps": 0.18639057874679565,
+      "body_vy_mean_mps": -0.0006017176201567054,
+      "min1s_signed_progress": 0.14392189875245096,
+      "yaw_change_deg": -20.675031661987305,
+      "initial_direction_angle_deg": 0.06118046307016919,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        19,
+        20
+      ],
+      "foot_peak_median_mm": [
+        32.21527859568596,
+        32.69699960947037
+      ],
+      "width_mean_mm": 208.78396426797747,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 82,
+      "label": "random_51",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8187664151191711,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.37020206451416,
+      "min_height_m": 0.32010456919670105,
+      "signed_speed_or_turn_rate": 0.23654162688387764,
+      "body_vx_mean_mps": 0.23654161393642426,
+      "body_vy_mean_mps": 0.032405074685811996,
+      "min1s_signed_progress": 0.20510237276554108,
+      "yaw_change_deg": -89.40131378173828,
+      "initial_direction_angle_deg": 36.04055633812231,
+      "rough_translation_direction": true,
+      "early_full_steps": 11,
+      "late_full_steps_by_side": [
+        23,
+        22
+      ],
+      "foot_peak_median_mm": [
+        36.6150438785553,
+        22.200994193553925
+      ],
+      "width_mean_mm": 207.96379898751348,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 83,
+      "label": "random_52",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8967843651771545,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.897867679595947,
+      "min_height_m": 0.31910377740859985,
+      "signed_speed_or_turn_rate": 0.17577977447046175,
+      "body_vx_mean_mps": 0.1757797747850418,
+      "body_vy_mean_mps": 0.025058086961507797,
+      "min1s_signed_progress": 0.14629703924059864,
+      "yaw_change_deg": 26.615203857421875,
+      "initial_direction_angle_deg": 23.32084413058866,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        36.51826083660126,
+        30.6935366243124
+      ],
+      "width_mean_mm": 208.86664377064275,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 84,
+      "label": "random_53",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.6930415630340576,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.129812717437744,
+      "min_height_m": 0.31937476992607117,
+      "signed_speed_or_turn_rate": 0.1816678751508395,
+      "body_vx_mean_mps": 0.18166789412498474,
+      "body_vy_mean_mps": 0.02560528740286827,
+      "min1s_signed_progress": 0.14104168027639388,
+      "yaw_change_deg": 4.476813316345215,
+      "initial_direction_angle_deg": 10.46872892228193,
+      "rough_translation_direction": true,
+      "early_full_steps": 3,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        36.025870591402054,
+        31.81145340204239
+      ],
+      "width_mean_mm": 209.1944209589403,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 85,
+      "label": "random_54",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.14401765167713165,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.578943252563477,
+      "min_height_m": 0.3207803964614868,
+      "signed_speed_or_turn_rate": 0.27842436502377194,
+      "body_vx_mean_mps": 0.27842438220977783,
+      "body_vy_mean_mps": 0.09227803349494934,
+      "min1s_signed_progress": 0.21898798406124118,
+      "yaw_change_deg": -109.92621612548828,
+      "initial_direction_angle_deg": 28.064304096566698,
+      "rough_translation_direction": false,
+      "early_full_steps": 12,
+      "late_full_steps_by_side": [
+        28,
+        28
+      ],
+      "foot_peak_median_mm": [
+        31.0300188139081,
+        18.75707320868969
+      ],
+      "width_mean_mm": 209.27463299015656,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 86,
+      "label": "random_55",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.6167683601379395,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.627848625183105,
+      "min_height_m": 0.3173322379589081,
+      "signed_speed_or_turn_rate": 0.1557702635973692,
+      "body_vx_mean_mps": 0.15577025711536407,
+      "body_vy_mean_mps": 0.021734682843089104,
+      "min1s_signed_progress": 0.12813733860850335,
+      "yaw_change_deg": -16.419681549072266,
+      "initial_direction_angle_deg": 6.951444250267711,
+      "rough_translation_direction": true,
+      "early_full_steps": 7,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        37.46526688337326,
+        34.08842533826828
+      ],
+      "width_mean_mm": 208.7956323416938,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 87,
+      "label": "random_56",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.21939688920974731,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.301132202148438,
+      "min_height_m": 0.3183978796005249,
+      "signed_speed_or_turn_rate": 0.19025339586867226,
+      "body_vx_mean_mps": 0.1902533918619156,
+      "body_vy_mean_mps": 0.026933886110782623,
+      "min1s_signed_progress": 0.1630038470029831,
+      "yaw_change_deg": 26.969388961791992,
+      "initial_direction_angle_deg": 21.310424436023453,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        37.13935613632202,
+        30.18168732523918
+      ],
+      "width_mean_mm": 208.73379232077812,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 88,
+      "label": "random_57",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.68179190158844,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.712306022644043,
+      "min_height_m": 0.32109519839286804,
+      "signed_speed_or_turn_rate": 0.2125139441092809,
+      "body_vx_mean_mps": 0.21251395344734192,
+      "body_vy_mean_mps": 0.0174708291888237,
+      "min1s_signed_progress": 0.17695476695895193,
+      "yaw_change_deg": -46.870174407958984,
+      "initial_direction_angle_deg": 15.071467112753453,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        20,
+        21
+      ],
+      "foot_peak_median_mm": [
+        34.21930596232414,
+        31.027916818857193
+      ],
+      "width_mean_mm": 208.63098019471738,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 89,
+      "label": "random_58",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.2138590812683105,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.6781816482543945,
+      "min_height_m": 0.319807767868042,
+      "signed_speed_or_turn_rate": 0.21715208606587516,
+      "body_vx_mean_mps": 0.21715210378170013,
+      "body_vy_mean_mps": 0.020507968962192535,
+      "min1s_signed_progress": 0.18841699838638304,
+      "yaw_change_deg": -58.71947479248047,
+      "initial_direction_angle_deg": 26.571581858173356,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        20,
+        21
+      ],
+      "foot_peak_median_mm": [
+        37.266237661242485,
+        23.991987109184265
+      ],
+      "width_mean_mm": 207.81882542071656,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 90,
+      "label": "random_59",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8908734321594238,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.512415885925293,
+      "min_height_m": 0.3162001669406891,
+      "signed_speed_or_turn_rate": 0.18316042457189824,
+      "body_vx_mean_mps": 0.1831604391336441,
+      "body_vy_mean_mps": 0.017302002757787704,
+      "min1s_signed_progress": 0.1497011651098728,
+      "yaw_change_deg": 6.760377407073975,
+      "initial_direction_angle_deg": 12.285534115460063,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        41.05716943740845,
+        33.00950117409229
+      ],
+      "width_mean_mm": 208.83981696902703,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 91,
+      "label": "random_60",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.6194289922714233,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.033123970031738,
+      "min_height_m": 0.3192019760608673,
+      "signed_speed_or_turn_rate": 0.25289985719654295,
+      "body_vx_mean_mps": 0.2528998553752899,
+      "body_vy_mean_mps": 0.13891512155532837,
+      "min1s_signed_progress": 0.22489801049232486,
+      "yaw_change_deg": 8.159698486328125,
+      "initial_direction_angle_deg": 31.25291352259629,
+      "rough_translation_direction": true,
+      "early_full_steps": 7,
+      "late_full_steps_by_side": [
+        32,
+        31
+      ],
+      "foot_peak_median_mm": [
+        29.19663116335869,
+        17.91713386774063
+      ],
+      "width_mean_mm": 208.99011625495507,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 92,
+      "label": "random_61",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.455890417098999,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.490839958190918,
+      "min_height_m": 0.31923019886016846,
+      "signed_speed_or_turn_rate": 0.2248430969648891,
+      "body_vx_mean_mps": 0.2248430997133255,
+      "body_vy_mean_mps": 0.03991062566637993,
+      "min1s_signed_progress": 0.19793427169322966,
+      "yaw_change_deg": 18.355682373046875,
+      "initial_direction_angle_deg": 19.318070157714903,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        38.49988430738449,
+        34.11916270852089
+      ],
+      "width_mean_mm": 208.9270788239389,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 93,
+      "label": "random_62",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.1005624532699585,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.374732971191406,
+      "min_height_m": 0.3185739517211914,
+      "signed_speed_or_turn_rate": 0.1644071841239929,
+      "body_vx_mean_mps": 0.1644071787595749,
+      "body_vy_mean_mps": 0.028144340962171555,
+      "min1s_signed_progress": 0.13065156899392608,
+      "yaw_change_deg": -34.36909866333008,
+      "initial_direction_angle_deg": 8.946941625937773,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        39.28645886480808,
+        23.226916790008545
+      ],
+      "width_mean_mm": 208.42083391912593,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 94,
+      "label": "random_63",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4346323013305664,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.39730167388916,
+      "min_height_m": 0.3190845251083374,
+      "signed_speed_or_turn_rate": 0.2087124464246962,
+      "body_vx_mean_mps": 0.20871244370937347,
+      "body_vy_mean_mps": 0.01949508860707283,
+      "min1s_signed_progress": 0.1771635898947716,
+      "yaw_change_deg": -37.38603591918945,
+      "initial_direction_angle_deg": 11.218427079748144,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        36.46373562514782,
+        29.57018930464983
+      ],
+      "width_mean_mm": 208.19828719638102,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 95,
+      "label": "random_64",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.9795873761177063,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.870417594909668,
+      "min_height_m": 0.31938812136650085,
+      "signed_speed_or_turn_rate": 0.20695779333511988,
+      "body_vx_mean_mps": 0.20695780217647552,
+      "body_vy_mean_mps": 0.036127083003520966,
+      "min1s_signed_progress": 0.18399907261133197,
+      "yaw_change_deg": -27.46270751953125,
+      "initial_direction_angle_deg": 5.243410366479715,
+      "rough_translation_direction": true,
+      "early_full_steps": 7,
+      "late_full_steps_by_side": [
+        18,
+        17
+      ],
+      "foot_peak_median_mm": [
+        39.57673721015453,
+        29.468894004821777
+      ],
+      "width_mean_mm": 208.59140562074523,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 96,
+      "label": "random_65",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4644676446914673,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.398119926452637,
+      "min_height_m": 0.31925326585769653,
+      "signed_speed_or_turn_rate": 0.20218468123012118,
+      "body_vx_mean_mps": 0.20218469202518463,
+      "body_vy_mean_mps": 0.03211839124560356,
+      "min1s_signed_progress": 0.1845558674633503,
+      "yaw_change_deg": -30.863656997680664,
+      "initial_direction_angle_deg": 4.182214037608472,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        36.25024855136871,
+        27.545318007469177
+      ],
+      "width_mean_mm": 208.70655260975812,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 97,
+      "label": "random_66",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.6602717041969299,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.83984661102295,
+      "min_height_m": 0.32039403915405273,
+      "signed_speed_or_turn_rate": 0.1756210680802663,
+      "body_vx_mean_mps": 0.17562106251716614,
+      "body_vy_mean_mps": 0.021201761439442635,
+      "min1s_signed_progress": 0.1509995801746845,
+      "yaw_change_deg": -36.880096435546875,
+      "initial_direction_angle_deg": 13.848378170829532,
+      "rough_translation_direction": true,
+      "early_full_steps": 7,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        36.84604540467262,
+        25.07612481713295
+      ],
+      "width_mean_mm": 208.4526034010992,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 98,
+      "label": "random_67",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.7751984596252441,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.447965621948242,
+      "min_height_m": 0.3139146566390991,
+      "signed_speed_or_turn_rate": 0.1755160277750757,
+      "body_vx_mean_mps": 0.1755160242319107,
+      "body_vy_mean_mps": 0.02753922902047634,
+      "min1s_signed_progress": 0.11977855369448662,
+      "yaw_change_deg": 60.525238037109375,
+      "initial_direction_angle_deg": 41.37796502413234,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        30.534829944372177,
+        36.99136525392532
+      ],
+      "width_mean_mm": 209.362409182926,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 99,
+      "label": "random_68",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.4121197760105133,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 10.031503677368164,
+      "min_height_m": 0.3082384467124939,
+      "signed_speed_or_turn_rate": 0.11842804595414136,
+      "body_vx_mean_mps": 0.11842803657054901,
+      "body_vy_mean_mps": 0.0017096768133342266,
+      "min1s_signed_progress": 0.04689507681876421,
+      "yaw_change_deg": -55.9873046875,
+      "initial_direction_angle_deg": 10.033947370562565,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        33.78022834658623,
+        36.3437756896019
+      ],
+      "width_mean_mm": 209.59361439976544,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 100,
+      "label": "random_69",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.3501667976379395,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.730189323425293,
+      "min_height_m": 0.3215160369873047,
+      "signed_speed_or_turn_rate": 0.18058245366646183,
+      "body_vx_mean_mps": 0.1805824488401413,
+      "body_vy_mean_mps": 0.01644761674106121,
+      "min1s_signed_progress": 0.15312740325927737,
+      "yaw_change_deg": -72.52433776855469,
+      "initial_direction_angle_deg": 23.098660683495204,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        23,
+        22
+      ],
+      "foot_peak_median_mm": [
+        34.64670106768608,
+        18.72697751969099
+      ],
+      "width_mean_mm": 207.79319255654235,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 101,
+      "label": "random_70",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.9104271531105042,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.662472248077393,
+      "min_height_m": 0.31994789838790894,
+      "signed_speed_or_turn_rate": 0.2896138405137592,
+      "body_vx_mean_mps": 0.28961384296417236,
+      "body_vy_mean_mps": 0.08150111883878708,
+      "min1s_signed_progress": 0.26006686627864833,
+      "yaw_change_deg": -88.26451873779297,
+      "initial_direction_angle_deg": 20.727574711757107,
+      "rough_translation_direction": true,
+      "early_full_steps": 12,
+      "late_full_steps_by_side": [
+        31,
+        28
+      ],
+      "foot_peak_median_mm": [
+        29.376953840255737,
+        19.78096552193165
+      ],
+      "width_mean_mm": 209.57318899018424,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 102,
+      "label": "random_71",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.4845678508281708,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.125799179077148,
+      "min_height_m": 0.32054510712623596,
+      "signed_speed_or_turn_rate": 0.24725118905305862,
+      "body_vx_mean_mps": 0.24725118279457092,
+      "body_vy_mean_mps": 0.08643976598978043,
+      "min1s_signed_progress": 0.22745330095291139,
+      "yaw_change_deg": -14.631111145019531,
+      "initial_direction_angle_deg": 8.275769001067852,
+      "rough_translation_direction": true,
+      "early_full_steps": 12,
+      "late_full_steps_by_side": [
+        30,
+        32
+      ],
+      "foot_peak_median_mm": [
+        27.083073742687702,
+        19.365688785910606
+      ],
+      "width_mean_mm": 208.63266661964295,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 103,
+      "label": "random_72",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.3168554306030273,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 5.98713493347168,
+      "min_height_m": 0.3193131387233734,
+      "signed_speed_or_turn_rate": 0.264946932858891,
+      "body_vx_mean_mps": 0.26494693756103516,
+      "body_vy_mean_mps": 0.0404268354177475,
+      "min1s_signed_progress": 0.23226348519325257,
+      "yaw_change_deg": -64.16580200195312,
+      "initial_direction_angle_deg": 19.292370365613177,
+      "rough_translation_direction": true,
+      "early_full_steps": 12,
+      "late_full_steps_by_side": [
+        27,
+        27
+      ],
+      "foot_peak_median_mm": [
+        30.873190611600876,
+        22.711459547281265
+      ],
+      "width_mean_mm": 208.42944296198385,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 104,
+      "label": "random_73",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.2492916584014893,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.74731731414795,
+      "min_height_m": 0.31573301553726196,
+      "signed_speed_or_turn_rate": 0.21447911063830058,
+      "body_vx_mean_mps": 0.21447910368442535,
+      "body_vy_mean_mps": 0.035336628556251526,
+      "min1s_signed_progress": 0.19512810349464418,
+      "yaw_change_deg": -33.060272216796875,
+      "initial_direction_angle_deg": 0.7747953526980915,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        17,
+        17
+      ],
+      "foot_peak_median_mm": [
+        42.21874475479126,
+        31.77834302186966
+      ],
+      "width_mean_mm": 208.72732664007162,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 105,
+      "label": "random_74",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.5158620476722717,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.097569465637207,
+      "min_height_m": 0.32001417875289917,
+      "signed_speed_or_turn_rate": 0.2304685456222958,
+      "body_vx_mean_mps": 0.2304685413837433,
+      "body_vy_mean_mps": 0.038729846477508545,
+      "min1s_signed_progress": 0.211087751686573,
+      "yaw_change_deg": -5.879877090454102,
+      "initial_direction_angle_deg": 5.938540014520363,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        38.398418575525284,
+        33.50851126015186
+      ],
+      "width_mean_mm": 208.80692968341768,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 106,
+      "label": "random_75",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4189969301223755,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.005231857299805,
+      "min_height_m": 0.3187527358531952,
+      "signed_speed_or_turn_rate": 0.21457674713598357,
+      "body_vx_mean_mps": 0.21457673609256744,
+      "body_vy_mean_mps": 0.015884561464190483,
+      "min1s_signed_progress": 0.17914209440350534,
+      "yaw_change_deg": -124.14387512207031,
+      "initial_direction_angle_deg": 52.16637321312003,
+      "rough_translation_direction": false,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        23,
+        23
+      ],
+      "foot_peak_median_mm": [
+        34.67760607600212,
+        16.72181859612465
+      ],
+      "width_mean_mm": 207.3900065805225,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 107,
+      "label": "random_76",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.9098784923553467,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.688471794128418,
+      "min_height_m": 0.3195406198501587,
+      "signed_speed_or_turn_rate": 0.3075210319625007,
+      "body_vx_mean_mps": 0.3075210154056549,
+      "body_vy_mean_mps": 0.10796947777271271,
+      "min1s_signed_progress": 0.2676738432049751,
+      "yaw_change_deg": -65.85649108886719,
+      "initial_direction_angle_deg": 10.165148441073539,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        29,
+        29
+      ],
+      "foot_peak_median_mm": [
+        33.56606140732765,
+        18.439875915646553
+      ],
+      "width_mean_mm": 208.9942476729572,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 108,
+      "label": "random_77",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.3180437088012695,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.381689071655273,
+      "min_height_m": 0.31899401545524597,
+      "signed_speed_or_turn_rate": 0.2156451153755188,
+      "body_vx_mean_mps": 0.21564510464668274,
+      "body_vy_mean_mps": 0.019388694316148758,
+      "min1s_signed_progress": 0.18290317714214324,
+      "yaw_change_deg": -129.06103515625,
+      "initial_direction_angle_deg": 60.785355317029705,
+      "rough_translation_direction": false,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        22,
+        22
+      ],
+      "foot_peak_median_mm": [
+        40.00832326710224,
+        17.74779800325632
+      ],
+      "width_mean_mm": 207.99665093295107,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 109,
+      "label": "random_78",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4163742065429688,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.359543800354004,
+      "min_height_m": 0.32124191522598267,
+      "signed_speed_or_turn_rate": 0.20505804555283652,
+      "body_vx_mean_mps": 0.2050580382347107,
+      "body_vy_mean_mps": 0.0159971471875906,
+      "min1s_signed_progress": 0.17334698140621185,
+      "yaw_change_deg": 34.3704948425293,
+      "initial_direction_angle_deg": 24.634635750629002,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        38.17550465464592,
+        30.03443218767643
+      ],
+      "width_mean_mm": 208.89510240222236,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 110,
+      "label": "random_79",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.0592480897903442,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.540409088134766,
+      "min_height_m": 0.3187614679336548,
+      "signed_speed_or_turn_rate": 0.20880873441696168,
+      "body_vx_mean_mps": 0.20880873501300812,
+      "body_vy_mean_mps": 0.01277527492493391,
+      "min1s_signed_progress": 0.18830424785614017,
+      "yaw_change_deg": -86.5264892578125,
+      "initial_direction_angle_deg": 40.08327785697706,
+      "rough_translation_direction": true,
+      "early_full_steps": 11,
+      "late_full_steps_by_side": [
+        23,
+        24
+      ],
+      "foot_peak_median_mm": [
+        33.60903263092041,
+        18.821364268660545
+      ],
+      "width_mean_mm": 207.45831934515766,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 111,
+      "label": "random_80",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.926711916923523,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 10.067122459411621,
+      "min_height_m": 0.31453314423561096,
+      "signed_speed_or_turn_rate": 0.23449382113085854,
+      "body_vx_mean_mps": 0.23449383676052094,
+      "body_vy_mean_mps": 0.04425712674856186,
+      "min1s_signed_progress": 0.21144326984882353,
+      "yaw_change_deg": -53.276512145996094,
+      "initial_direction_angle_deg": 20.232873407797886,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        35.052645951509476,
+        35.93902289867401
+      ],
+      "width_mean_mm": 209.037837291752,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 112,
+      "label": "random_81",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.829451322555542,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.629481792449951,
+      "min_height_m": 0.3196985423564911,
+      "signed_speed_or_turn_rate": 0.2499152030878597,
+      "body_vx_mean_mps": 0.2499151974916458,
+      "body_vy_mean_mps": 0.06424635648727417,
+      "min1s_signed_progress": 0.23711068004369734,
+      "yaw_change_deg": -27.85065460205078,
+      "initial_direction_angle_deg": 6.798223590593183,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        24,
+        24
+      ],
+      "foot_peak_median_mm": [
+        30.57523164898157,
+        29.12987768650055
+      ],
+      "width_mean_mm": 208.70829168053731,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 113,
+      "label": "random_82",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8769264221191406,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.767796516418457,
+      "min_height_m": 0.3178327679634094,
+      "signed_speed_or_turn_rate": 0.22472214851114486,
+      "body_vx_mean_mps": 0.22472213208675385,
+      "body_vy_mean_mps": 0.029346995055675507,
+      "min1s_signed_progress": 0.20034016996622084,
+      "yaw_change_deg": 0.22454245388507843,
+      "initial_direction_angle_deg": 5.299907932227248,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        33.35484862327576,
+        32.80569240450859
+      ],
+      "width_mean_mm": 208.90597676511024,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 114,
+      "label": "random_83",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.10835235565900803,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.232251167297363,
+      "min_height_m": 0.31462037563323975,
+      "signed_speed_or_turn_rate": 0.17554757729586629,
+      "body_vx_mean_mps": 0.17554756999015808,
+      "body_vy_mean_mps": 0.03065890073776245,
+      "min1s_signed_progress": 0.1532542537152767,
+      "yaw_change_deg": 35.00514602661133,
+      "initial_direction_angle_deg": 23.45887499424599,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        31.657829880714417,
+        31.943902373313904
+      ],
+      "width_mean_mm": 208.93058940480662,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 115,
+      "label": "random_84",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8742446899414062,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.187602043151855,
+      "min_height_m": 0.3191651999950409,
+      "signed_speed_or_turn_rate": 0.20222254577610227,
+      "body_vx_mean_mps": 0.202222540974617,
+      "body_vy_mean_mps": 0.042194098234176636,
+      "min1s_signed_progress": 0.18480982720851896,
+      "yaw_change_deg": 12.738862037658691,
+      "initial_direction_angle_deg": 15.863685117369583,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        17
+      ],
+      "foot_peak_median_mm": [
+        38.432955741882324,
+        32.05712512135506
+      ],
+      "width_mean_mm": 208.8436137403386,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 116,
+      "label": "random_85",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.9050378799438477,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.54839038848877,
+      "min_height_m": 0.31518250703811646,
+      "signed_speed_or_turn_rate": 0.1477772665479117,
+      "body_vx_mean_mps": 0.1477772742509842,
+      "body_vy_mean_mps": 0.016978420317173004,
+      "min1s_signed_progress": 0.11640675760805606,
+      "yaw_change_deg": -54.78379821777344,
+      "initial_direction_angle_deg": 0.3749725084860738,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        40.054330602288246,
+        33.59591215848923
+      ],
+      "width_mean_mm": 209.03700541873752,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 117,
+      "label": "random_86",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.7350575923919678,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.988170623779297,
+      "min_height_m": 0.31836792826652527,
+      "signed_speed_or_turn_rate": 0.2189225090543429,
+      "body_vx_mean_mps": 0.21892251074314117,
+      "body_vy_mean_mps": 0.042875561863183975,
+      "min1s_signed_progress": 0.2019697242975235,
+      "yaw_change_deg": -22.687332153320312,
+      "initial_direction_angle_deg": 0.32487667680996507,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        34.14616920053959,
+        26.927417144179344
+      ],
+      "width_mean_mm": 208.10891585083505,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 118,
+      "label": "random_87",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.9522383213043213,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.835238456726074,
+      "min_height_m": 0.316040575504303,
+      "signed_speed_or_turn_rate": 0.20359561521146033,
+      "body_vx_mean_mps": 0.2035956084728241,
+      "body_vy_mean_mps": 0.0419427864253521,
+      "min1s_signed_progress": 0.18100917443633083,
+      "yaw_change_deg": 81.1584243774414,
+      "initial_direction_angle_deg": 49.53412882075274,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        36.16316244006157,
+        36.00962087512016
+      ],
+      "width_mean_mm": 208.94092956895912,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 119,
+      "label": "random_88",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.3121604323387146,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.567424774169922,
+      "min_height_m": 0.3195491433143616,
+      "signed_speed_or_turn_rate": 0.2104719190961785,
+      "body_vx_mean_mps": 0.21047191321849823,
+      "body_vy_mean_mps": 0.01878843642771244,
+      "min1s_signed_progress": 0.18260678946971895,
+      "yaw_change_deg": 10.645258903503418,
+      "initial_direction_angle_deg": 13.428426733787242,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        20
+      ],
+      "foot_peak_median_mm": [
+        35.90766713023186,
+        30.955427326261997
+      ],
+      "width_mean_mm": 208.55901601807275,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 120,
+      "label": "random_89",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.4015127420425415,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.934417724609375,
+      "min_height_m": 0.31944066286087036,
+      "signed_speed_or_turn_rate": 0.2209875711136394,
+      "body_vx_mean_mps": 0.22098755836486816,
+      "body_vy_mean_mps": 0.026113811880350113,
+      "min1s_signed_progress": 0.2041384020447731,
+      "yaw_change_deg": -23.115516662597656,
+      "initial_direction_angle_deg": 2.65217572090865,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        22,
+        21
+      ],
+      "foot_peak_median_mm": [
+        32.294388860464096,
+        22.652864456176758
+      ],
+      "width_mean_mm": 208.02089294475167,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 121,
+      "label": "random_90",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8764801025390625,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.949791431427002,
+      "min_height_m": 0.3199375569820404,
+      "signed_speed_or_turn_rate": 0.21473407834975256,
+      "body_vx_mean_mps": 0.21473407745361328,
+      "body_vy_mean_mps": 0.009810825809836388,
+      "min1s_signed_progress": 0.1745959055610001,
+      "yaw_change_deg": -41.998817443847656,
+      "initial_direction_angle_deg": 21.37379598076742,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        21,
+        21
+      ],
+      "foot_peak_median_mm": [
+        39.097778499126434,
+        24.945607408881187
+      ],
+      "width_mean_mm": 208.366044918084,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 122,
+      "label": "random_91",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.888454020023346,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.956924915313721,
+      "min_height_m": 0.31427910923957825,
+      "signed_speed_or_turn_rate": 0.20824292194512156,
+      "body_vx_mean_mps": 0.20824292302131653,
+      "body_vy_mean_mps": 0.03454131260514259,
+      "min1s_signed_progress": 0.1834090656042099,
+      "yaw_change_deg": 101.22686767578125,
+      "initial_direction_angle_deg": 59.88010527113974,
+      "rough_translation_direction": false,
+      "early_full_steps": 7,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        39.497438818216324,
+        38.70701231062412
+      ],
+      "width_mean_mm": 208.76289885638158,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 123,
+      "label": "random_92",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.42704302072525024,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.964346885681152,
+      "min_height_m": 0.31842154264450073,
+      "signed_speed_or_turn_rate": 0.20292528203792043,
+      "body_vx_mean_mps": 0.20292527973651886,
+      "body_vy_mean_mps": 0.02262011542916298,
+      "min1s_signed_progress": 0.17300713308155535,
+      "yaw_change_deg": -95.57384490966797,
+      "initial_direction_angle_deg": 36.13882926411791,
+      "rough_translation_direction": false,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        21,
+        21
+      ],
+      "foot_peak_median_mm": [
+        39.50148820877075,
+        19.97417025268078
+      ],
+      "width_mean_mm": 207.62259064155063,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 124,
+      "label": "random_93",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.0675288438796997,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.235311508178711,
+      "min_height_m": 0.319193959236145,
+      "signed_speed_or_turn_rate": 0.19400185972452164,
+      "body_vx_mean_mps": 0.19400185346603394,
+      "body_vy_mean_mps": 0.014219701290130615,
+      "min1s_signed_progress": 0.16020871400833128,
+      "yaw_change_deg": -51.659996032714844,
+      "initial_direction_angle_deg": 17.131652198122016,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        20,
+        21
+      ],
+      "foot_peak_median_mm": [
+        35.748936235904694,
+        26.13234519958496
+      ],
+      "width_mean_mm": 208.18241543575394,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 125,
+      "label": "random_94",
+      "group": "random",
+      "started_by_2p5s": false,
+      "sustained_12s": false,
+      "standing_tilt_deg": 1.6008332967758179,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.696588039398193,
+      "min_height_m": 0.3185969293117523,
+      "signed_speed_or_turn_rate": 0.10369536962541234,
+      "body_vx_mean_mps": 0.10369537025690079,
+      "body_vy_mean_mps": 0.012720509432256222,
+      "min1s_signed_progress": 0.016929295118898156,
+      "yaw_change_deg": -119.7495346069336,
+      "initial_direction_angle_deg": 63.08057869342821,
+      "rough_translation_direction": false,
+      "early_full_steps": 1,
+      "late_full_steps_by_side": [
+        10,
+        7
+      ],
+      "foot_peak_median_mm": [
+        26.242570951581,
+        14.247220940887928
+      ],
+      "width_mean_mm": 209.9857329143131,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 126,
+      "label": "random_95",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.0786525011062622,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.383514404296875,
+      "min_height_m": 0.3184666633605957,
+      "signed_speed_or_turn_rate": 0.19398761538995637,
+      "body_vx_mean_mps": 0.19398760795593262,
+      "body_vy_mean_mps": 0.030022840946912766,
+      "min1s_signed_progress": 0.1754208254814148,
+      "yaw_change_deg": -80.43406677246094,
+      "initial_direction_angle_deg": 26.940485710976944,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        38.28167915344238,
+        31.91916272044182
+      ],
+      "width_mean_mm": 208.77849131815447,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 127,
+      "label": "random_96",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.4562833309173584,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.127591133117676,
+      "min_height_m": 0.3203927278518677,
+      "signed_speed_or_turn_rate": 0.266603717274136,
+      "body_vx_mean_mps": 0.2666037082672119,
+      "body_vy_mean_mps": 0.06849489361047745,
+      "min1s_signed_progress": 0.22313752889633176,
+      "yaw_change_deg": -139.3152618408203,
+      "initial_direction_angle_deg": 46.29352646759543,
+      "rough_translation_direction": false,
+      "early_full_steps": 14,
+      "late_full_steps_by_side": [
+        32,
+        26
+      ],
+      "foot_peak_median_mm": [
+        26.15327201783657,
+        16.240096651017666
+      ],
+      "width_mean_mm": 209.3966451597418,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 128,
+      "label": "random_97",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.284618616104126,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.301511764526367,
+      "min_height_m": 0.3135051131248474,
+      "signed_speed_or_turn_rate": 0.16365831015010676,
+      "body_vx_mean_mps": 0.16365830600261688,
+      "body_vy_mean_mps": 0.0389556810259819,
+      "min1s_signed_progress": 0.12342935658991337,
+      "yaw_change_deg": 62.53020095825195,
+      "initial_direction_angle_deg": 36.06966736426212,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        31.57317265868187,
+        37.20181807875633
+      ],
+      "width_mean_mm": 208.95559041514647,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 129,
+      "label": "random_98",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.3748224973678589,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.943367004394531,
+      "min_height_m": 0.3186417818069458,
+      "signed_speed_or_turn_rate": 0.2469956386751599,
+      "body_vx_mean_mps": 0.24699564278125763,
+      "body_vy_mean_mps": 0.05204782634973526,
+      "min1s_signed_progress": 0.21767696753144264,
+      "yaw_change_deg": -61.997676849365234,
+      "initial_direction_angle_deg": 17.465248460025112,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        22,
+        22
+      ],
+      "foot_peak_median_mm": [
+        34.859420731663704,
+        32.52887353301048
+      ],
+      "width_mean_mm": 208.8598145463834,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 130,
+      "label": "random_99",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.5888388156890869,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.608160972595215,
+      "min_height_m": 0.31897658109664917,
+      "signed_speed_or_turn_rate": 0.19756348710921076,
+      "body_vx_mean_mps": 0.19756346940994263,
+      "body_vy_mean_mps": 0.013692361302673817,
+      "min1s_signed_progress": 0.17023303359746936,
+      "yaw_change_deg": 84.46183776855469,
+      "initial_direction_angle_deg": 48.27538574564126,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        20
+      ],
+      "foot_peak_median_mm": [
+        34.43353250622749,
+        36.62444464862347
+      ],
+      "width_mean_mm": 208.97442624792328,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 131,
+      "label": "random_100",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.1019837856292725,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.620532035827637,
+      "min_height_m": 0.3195933997631073,
+      "signed_speed_or_turn_rate": 0.23628283687763743,
+      "body_vx_mean_mps": 0.2362828552722931,
+      "body_vy_mean_mps": 0.028874646872282028,
+      "min1s_signed_progress": 0.21057418227195737,
+      "yaw_change_deg": -111.81609344482422,
+      "initial_direction_angle_deg": 52.60322179251549,
+      "rough_translation_direction": false,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        24,
+        24
+      ],
+      "foot_peak_median_mm": [
+        37.708427757024765,
+        21.72575332224369
+      ],
+      "width_mean_mm": 208.0381588686806,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 132,
+      "label": "random_101",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.7335907220840454,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.556580543518066,
+      "min_height_m": 0.31242871284484863,
+      "signed_speed_or_turn_rate": 0.17458719258507094,
+      "body_vx_mean_mps": 0.1745872050523758,
+      "body_vy_mean_mps": 0.007823250256478786,
+      "min1s_signed_progress": 0.14605497390031813,
+      "yaw_change_deg": 45.521793365478516,
+      "initial_direction_angle_deg": 21.271654547040246,
+      "rough_translation_direction": true,
+      "early_full_steps": 7,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        42.96993091702461,
+        40.76798819005489
+      ],
+      "width_mean_mm": 209.24287072560392,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 133,
+      "label": "random_102",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.1895965337753296,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 6.424952030181885,
+      "min_height_m": 0.3214189410209656,
+      "signed_speed_or_turn_rate": 0.23338110307852428,
+      "body_vx_mean_mps": 0.23338110744953156,
+      "body_vy_mean_mps": 0.05585870519280434,
+      "min1s_signed_progress": 0.20966060966253283,
+      "yaw_change_deg": 11.939796447753906,
+      "initial_direction_angle_deg": 22.29587545649562,
+      "rough_translation_direction": true,
+      "early_full_steps": 13,
+      "late_full_steps_by_side": [
+        27,
+        26
+      ],
+      "foot_peak_median_mm": [
+        29.593445360660553,
+        20.694788545370102
+      ],
+      "width_mean_mm": 209.7934843273444,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 134,
+      "label": "random_103",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.10835235565900803,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.728479385375977,
+      "min_height_m": 0.31721973419189453,
+      "signed_speed_or_turn_rate": 0.19580674884219965,
+      "body_vx_mean_mps": 0.19580674171447754,
+      "body_vy_mean_mps": 0.034166544675827026,
+      "min1s_signed_progress": 0.1746939351409674,
+      "yaw_change_deg": 63.93406295776367,
+      "initial_direction_angle_deg": 34.07255748846467,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        17,
+        17
+      ],
+      "foot_peak_median_mm": [
+        41.8793186545372,
+        32.40091726183891
+      ],
+      "width_mean_mm": 208.66854044081765,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 135,
+      "label": "random_104",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.5640591979026794,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.926571369171143,
+      "min_height_m": 0.3191940486431122,
+      "signed_speed_or_turn_rate": 0.20207405451271268,
+      "body_vx_mean_mps": 0.20207403600215912,
+      "body_vy_mean_mps": 0.020041359588503838,
+      "min1s_signed_progress": 0.18492547750473023,
+      "yaw_change_deg": 36.62590408325195,
+      "initial_direction_angle_deg": 23.682965968448986,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        32.557692378759384,
+        31.1629269272089
+      ],
+      "width_mean_mm": 208.49152946958037,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 136,
+      "label": "random_105",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.2973940968513489,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.199579238891602,
+      "min_height_m": 0.3186130225658417,
+      "signed_speed_or_turn_rate": 0.22715859494275517,
+      "body_vx_mean_mps": 0.2271585911512375,
+      "body_vy_mean_mps": 0.0277155339717865,
+      "min1s_signed_progress": 0.189250755161047,
+      "yaw_change_deg": -34.587059020996094,
+      "initial_direction_angle_deg": 9.866888845198718,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        36.813993006944656,
+        30.567150563001633
+      ],
+      "width_mean_mm": 209.21590561305345,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 137,
+      "label": "random_106",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8151736855506897,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.830677509307861,
+      "min_height_m": 0.3191096782684326,
+      "signed_speed_or_turn_rate": 0.20728438682026334,
+      "body_vx_mean_mps": 0.2072843760251999,
+      "body_vy_mean_mps": 0.030853936448693275,
+      "min1s_signed_progress": 0.18594266086816788,
+      "yaw_change_deg": -6.861068248748779,
+      "initial_direction_angle_deg": 12.547595361818695,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        35.57259403169155,
+        29.574887827038765
+      ],
+      "width_mean_mm": 208.61173238555298,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 138,
+      "label": "random_107",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.17132015526294708,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.029241561889648,
+      "min_height_m": 0.3191370368003845,
+      "signed_speed_or_turn_rate": 0.20309952429599232,
+      "body_vx_mean_mps": 0.20309951901435852,
+      "body_vy_mean_mps": 0.011995771899819374,
+      "min1s_signed_progress": 0.1789417201280594,
+      "yaw_change_deg": -53.1796875,
+      "initial_direction_angle_deg": 30.26529317482635,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        37.71505504846573,
+        31.038781628012657
+      ],
+      "width_mean_mm": 208.73727865005364,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 139,
+      "label": "random_108",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.4677187502384186,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.91588020324707,
+      "min_height_m": 0.31580114364624023,
+      "signed_speed_or_turn_rate": 0.2416581791970465,
+      "body_vx_mean_mps": 0.24165816605091095,
+      "body_vy_mean_mps": 0.009979472495615482,
+      "min1s_signed_progress": 0.20863245040178297,
+      "yaw_change_deg": 22.06358528137207,
+      "initial_direction_angle_deg": 19.56466922288919,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        17,
+        18
+      ],
+      "foot_peak_median_mm": [
+        36.578405648469925,
+        42.62005724012852
+      ],
+      "width_mean_mm": 209.04394747455612,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 140,
+      "label": "random_109",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.3261843919754028,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 10.397936820983887,
+      "min_height_m": 0.31341126561164856,
+      "signed_speed_or_turn_rate": 0.2001689308219486,
+      "body_vx_mean_mps": 0.2001689374446869,
+      "body_vy_mean_mps": 0.03216893970966339,
+      "min1s_signed_progress": 0.17161968156695367,
+      "yaw_change_deg": -35.0075798034668,
+      "initial_direction_angle_deg": 2.358055825755531,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        16,
+        16
+      ],
+      "foot_peak_median_mm": [
+        46.196434646844864,
+        36.75426356494427
+      ],
+      "width_mean_mm": 209.08285923472968,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 141,
+      "label": "random_110",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.0087183713912964,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.279579162597656,
+      "min_height_m": 0.31789445877075195,
+      "signed_speed_or_turn_rate": 0.22174831334087583,
+      "body_vx_mean_mps": 0.22174830734729767,
+      "body_vy_mean_mps": 0.019646404311060905,
+      "min1s_signed_progress": 0.19620328217744828,
+      "yaw_change_deg": -16.24186134338379,
+      "initial_direction_angle_deg": 0.32048858537453534,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        39.83205929398537,
+        34.628793597221375
+      ],
+      "width_mean_mm": 208.852937749993,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 142,
+      "label": "random_111",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.5078340172767639,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.511612892150879,
+      "min_height_m": 0.31905850768089294,
+      "signed_speed_or_turn_rate": 0.1698960875140296,
+      "body_vx_mean_mps": 0.16989608108997345,
+      "body_vy_mean_mps": 0.017435133457183838,
+      "min1s_signed_progress": 0.15021528944373133,
+      "yaw_change_deg": -46.41183090209961,
+      "initial_direction_angle_deg": 4.224973940290611,
+      "rough_translation_direction": true,
+      "early_full_steps": 7,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        38.689058274030685,
+        31.45509772002697
+      ],
+      "width_mean_mm": 208.87655755734176,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 143,
+      "label": "random_112",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.0239288806915283,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.3239970207214355,
+      "min_height_m": 0.31703948974609375,
+      "signed_speed_or_turn_rate": 0.14843761997918287,
+      "body_vx_mean_mps": 0.14843763411045074,
+      "body_vy_mean_mps": 0.013685201294720173,
+      "min1s_signed_progress": 0.104975531026721,
+      "yaw_change_deg": -82.34500122070312,
+      "initial_direction_angle_deg": 26.440211076259647,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        23,
+        22
+      ],
+      "foot_peak_median_mm": [
+        25.55038034915924,
+        30.089338310062885
+      ],
+      "width_mean_mm": 209.10139915912103,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    },
+    {
+      "case": 144,
+      "label": "random_113",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.0923528671264648,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.330554008483887,
+      "min_height_m": 0.31782981753349304,
+      "signed_speed_or_turn_rate": 0.18502573400735856,
+      "body_vx_mean_mps": 0.18502573668956757,
+      "body_vy_mean_mps": 0.01886042207479477,
+      "min1s_signed_progress": 0.14783416256308557,
+      "yaw_change_deg": -14.330500602722168,
+      "initial_direction_angle_deg": 3.5083848326823968,
+      "rough_translation_direction": true,
+      "early_full_steps": 4,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        36.395832896232605,
+        30.006367713212967
+      ],
+      "width_mean_mm": 208.6102743294836,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 145,
+      "label": "random_114",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.2673313617706299,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.191246032714844,
+      "min_height_m": 0.3171248435974121,
+      "signed_speed_or_turn_rate": 0.2001023643049929,
+      "body_vx_mean_mps": 0.20010237395763397,
+      "body_vy_mean_mps": 0.007887998595833778,
+      "min1s_signed_progress": 0.17524891242384913,
+      "yaw_change_deg": 40.02104187011719,
+      "initial_direction_angle_deg": 24.84489029601519,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        17
+      ],
+      "foot_peak_median_mm": [
+        38.96110877394676,
+        42.93649643659592
+      ],
+      "width_mean_mm": 209.19603343471462,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 146,
+      "label": "random_115",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.3674412965774536,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.048783302307129,
+      "min_height_m": 0.32020071148872375,
+      "signed_speed_or_turn_rate": 0.1981295937465297,
+      "body_vx_mean_mps": 0.1981295943260193,
+      "body_vy_mean_mps": 0.027370862662792206,
+      "min1s_signed_progress": 0.15925144895911217,
+      "yaw_change_deg": 43.248783111572266,
+      "initial_direction_angle_deg": 25.354608582103808,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        18,
+        19
+      ],
+      "foot_peak_median_mm": [
+        34.72195938229561,
+        30.464978888630867
+      ],
+      "width_mean_mm": 208.17088296962814,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 147,
+      "label": "random_116",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.1557663530111313,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.61009693145752,
+      "min_height_m": 0.3183375597000122,
+      "signed_speed_or_turn_rate": 0.19061486742562717,
+      "body_vx_mean_mps": 0.19061486423015594,
+      "body_vy_mean_mps": 0.02561991661787033,
+      "min1s_signed_progress": 0.1656948395073414,
+      "yaw_change_deg": -2.262086868286133,
+      "initial_direction_angle_deg": 11.022068302092114,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        19,
+        19
+      ],
+      "foot_peak_median_mm": [
+        33.98581966757774,
+        28.653841465711594
+      ],
+      "width_mean_mm": 208.76129741248315,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 148,
+      "label": "random_117",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.699695348739624,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.3919677734375,
+      "min_height_m": 0.3193705677986145,
+      "signed_speed_or_turn_rate": 0.1941743123365773,
+      "body_vx_mean_mps": 0.19417433440685272,
+      "body_vy_mean_mps": 0.030508866533637047,
+      "min1s_signed_progress": 0.16563780978322026,
+      "yaw_change_deg": 14.66954517364502,
+      "initial_direction_angle_deg": 15.73454507469308,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        17
+      ],
+      "foot_peak_median_mm": [
+        36.990344524383545,
+        32.54850581288338
+      ],
+      "width_mean_mm": 208.9249803785392,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 149,
+      "label": "random_118",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.14536994695663452,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.676339149475098,
+      "min_height_m": 0.3169132173061371,
+      "signed_speed_or_turn_rate": 0.1797559679216809,
+      "body_vx_mean_mps": 0.17975595593452454,
+      "body_vy_mean_mps": 0.02286921627819538,
+      "min1s_signed_progress": 0.15277022764086726,
+      "yaw_change_deg": -43.94364547729492,
+      "initial_direction_angle_deg": 8.456185938647735,
+      "rough_translation_direction": true,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        36.73706389963627,
+        34.7254853695631
+      ],
+      "width_mean_mm": 209.16467799191926,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 150,
+      "label": "random_119",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.293919563293457,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 9.445978164672852,
+      "min_height_m": 0.3182445466518402,
+      "signed_speed_or_turn_rate": 0.22816465202305053,
+      "body_vx_mean_mps": 0.2281646430492401,
+      "body_vy_mean_mps": 0.035668350756168365,
+      "min1s_signed_progress": 0.2042357313632965,
+      "yaw_change_deg": -16.947084426879883,
+      "initial_direction_angle_deg": 1.2778661481291798,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        18
+      ],
+      "foot_peak_median_mm": [
+        39.357634261250496,
+        32.83238783478737
+      ],
+      "width_mean_mm": 208.6309593136025,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 151,
+      "label": "random_120",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.6195498704910278,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.304468631744385,
+      "min_height_m": 0.3183158338069916,
+      "signed_speed_or_turn_rate": 0.2035843248003059,
+      "body_vx_mean_mps": 0.20358432829380035,
+      "body_vy_mean_mps": 0.03893284872174263,
+      "min1s_signed_progress": 0.18261185735464097,
+      "yaw_change_deg": 23.309070587158203,
+      "initial_direction_angle_deg": 22.95482457276529,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        19,
+        18
+      ],
+      "foot_peak_median_mm": [
+        35.51068156957626,
+        31.741369515657425
+      ],
+      "width_mean_mm": 208.36268820084965,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 152,
+      "label": "random_121",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.5036311149597168,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 11.158049583435059,
+      "min_height_m": 0.322307825088501,
+      "signed_speed_or_turn_rate": 0.19920983720156882,
+      "body_vx_mean_mps": 0.19920983910560608,
+      "body_vy_mean_mps": 0.006260148715227842,
+      "min1s_signed_progress": 0.14529504150152206,
+      "yaw_change_deg": -65.120849609375,
+      "initial_direction_angle_deg": 32.44135953618708,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        21,
+        21
+      ],
+      "foot_peak_median_mm": [
+        35.29611602425575,
+        22.06595055758953
+      ],
+      "width_mean_mm": 207.9365520730992,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 153,
+      "label": "random_122",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.3866333961486816,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 7.136743068695068,
+      "min_height_m": 0.31833821535110474,
+      "signed_speed_or_turn_rate": 0.21859636536902852,
+      "body_vx_mean_mps": 0.21859635412693024,
+      "body_vy_mean_mps": 0.04330985248088837,
+      "min1s_signed_progress": 0.1915271471440792,
+      "yaw_change_deg": 107.24067687988281,
+      "initial_direction_angle_deg": 58.88321758273048,
+      "rough_translation_direction": false,
+      "early_full_steps": 8,
+      "late_full_steps_by_side": [
+        20,
+        19
+      ],
+      "foot_peak_median_mm": [
+        30.0300270318985,
+        34.023720771074295
+      ],
+      "width_mean_mm": 208.6681529669998,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 154,
+      "label": "random_123",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8069709539413452,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.667119979858398,
+      "min_height_m": 0.31753814220428467,
+      "signed_speed_or_turn_rate": 0.20833790931436752,
+      "body_vx_mean_mps": 0.2083379179239273,
+      "body_vy_mean_mps": 0.03195144608616829,
+      "min1s_signed_progress": 0.16207688599824907,
+      "yaw_change_deg": -36.48180389404297,
+      "initial_direction_angle_deg": 4.771824107668222,
+      "rough_translation_direction": true,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        21
+      ],
+      "foot_peak_median_mm": [
+        38.11999037861824,
+        24.76196549832821
+      ],
+      "width_mean_mm": 208.0268265202946,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 155,
+      "label": "random_124",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.4329586923122406,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.42972183227539,
+      "min_height_m": 0.313843309879303,
+      "signed_speed_or_turn_rate": 0.19681622033317883,
+      "body_vx_mean_mps": 0.19681622087955475,
+      "body_vy_mean_mps": 0.03129196539521217,
+      "min1s_signed_progress": 0.148501750305295,
+      "yaw_change_deg": 136.8844451904297,
+      "initial_direction_angle_deg": 74.06405987312408,
+      "rough_translation_direction": false,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        18,
+        19
+      ],
+      "foot_peak_median_mm": [
+        35.55436432361603,
+        36.5171805024147
+      ],
+      "width_mean_mm": 208.9491955190782,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 156,
+      "label": "random_125",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.14935342967510223,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.808656692504883,
+      "min_height_m": 0.3203468322753906,
+      "signed_speed_or_turn_rate": 0.22240342654287815,
+      "body_vx_mean_mps": 0.222403421998024,
+      "body_vy_mean_mps": 0.027111854404211044,
+      "min1s_signed_progress": 0.17620194397866726,
+      "yaw_change_deg": -58.23262023925781,
+      "initial_direction_angle_deg": 24.196017963497578,
+      "rough_translation_direction": true,
+      "early_full_steps": 10,
+      "late_full_steps_by_side": [
+        21,
+        20
+      ],
+      "foot_peak_median_mm": [
+        35.171687602996826,
+        27.151260524988174
+      ],
+      "width_mean_mm": 208.4758690617655,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 157,
+      "label": "random_126",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 0.8127697110176086,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 8.076327323913574,
+      "min_height_m": 0.3123554289340973,
+      "signed_speed_or_turn_rate": 0.19153398160305288,
+      "body_vx_mean_mps": 0.19153398275375366,
+      "body_vy_mean_mps": 0.038967303931713104,
+      "min1s_signed_progress": 0.14950842566788194,
+      "yaw_change_deg": 161.30203247070312,
+      "initial_direction_angle_deg": 88.20868888368442,
+      "rough_translation_direction": false,
+      "early_full_steps": 9,
+      "late_full_steps_by_side": [
+        20,
+        20
+      ],
+      "foot_peak_median_mm": [
+        29.599957168102264,
+        39.86606188118458
+      ],
+      "width_mean_mm": 209.29243164653826,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": true
+    },
+    {
+      "case": 158,
+      "label": "random_127",
+      "group": "random",
+      "started_by_2p5s": true,
+      "sustained_12s": true,
+      "standing_tilt_deg": 1.6963903903961182,
+      "stable_start": true,
+      "stable_all": true,
+      "tilt_max_deg": 5.869255542755127,
+      "min_height_m": 0.31923946738243103,
+      "signed_speed_or_turn_rate": 0.2835073821743329,
+      "body_vx_mean_mps": 0.283507376909256,
+      "body_vy_mean_mps": 0.04185568168759346,
+      "min1s_signed_progress": 0.26266521066427234,
+      "yaw_change_deg": -75.63208770751953,
+      "initial_direction_angle_deg": 36.1744043954123,
+      "rough_translation_direction": true,
+      "early_full_steps": 13,
+      "late_full_steps_by_side": [
+        30,
+        31
+      ],
+      "foot_peak_median_mm": [
+        26.763739995658398,
+        17.505452036857605
+      ],
+      "width_mean_mm": 209.33880691148116,
+      "imu_delay_steps_seen": [
+        0,
+        1
+      ],
+      "speed_within_median_20pct": false
+    }
+  ]
+}
