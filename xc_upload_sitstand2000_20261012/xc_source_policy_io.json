@@ -1,0 +1,154 @@
+{
+  "actor_observation_size": 61,
+  "actor_output_size": 14,
+  "policy_joint_names": [
+    "left_hip_yaw_joint",
+    "left_hip_roll_joint",
+    "left_hip_pitch_joint",
+    "left_knee_pitch_joint",
+    "left_ankle_pitch_joint",
+    "neck_pitch_joint",
+    "head_pitch_joint",
+    "head_yaw_joint",
+    "head_roll_joint",
+    "right_hip_yaw_joint",
+    "right_hip_roll_joint",
+    "right_hip_pitch_joint",
+    "right_knee_pitch_joint",
+    "right_ankle_pitch_joint"
+  ],
+  "units": "radians, radians/second, seconds",
+  "control_dt_s": 0.02,
+  "simulation_dt_s": 0.001,
+  "default_angles_rad": [
+    0.0,
+    0.0,
+    0.594845,
+    0.005,
+    -0.589848,
+    -0.25,
+    -0.349066,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -0.594845,
+    -0.005,
+    0.589848
+  ],
+  "target_low_rad": [
+    -1.19,
+    -0.11,
+    -2.7791550000000003,
+    -1.185,
+    -1.6958480000000002,
+    -0.54,
+    -1.539066,
+    -1.99,
+    -0.49,
+    -0.49,
+    -1.19,
+    -3.2008449999999997,
+    -1.4949999999999999,
+    -1.084152
+  ],
+  "target_high_rad": [
+    0.49,
+    1.49,
+    3.2008449999999997,
+    1.3949999999999998,
+    1.084152,
+    1.04,
+    0.840934,
+    1.99,
+    0.49,
+    1.19,
+    0.19,
+    1.7791550000000003,
+    1.2850000000000001,
+    1.6958480000000002
+  ],
+  "target_increment_rad": [
+    0.015,
+    0.01,
+    0.08,
+    0.06,
+    0.075,
+    0.11,
+    0.025,
+    0.025,
+    0.01,
+    0.015,
+    0.01,
+    0.08,
+    0.06,
+    0.075
+  ],
+  "target_history_scale_rad": 0.12,
+  "target_mapping": "target_next = clip(target_previous + increment * tanh(actor_output), target_low, target_high)",
+  "integrator_initialization": "Initialize target_previous to actual joint positions, matching training reset.",
+  "actor_observation_layout": {
+    "gyro": [
+      0,
+      3
+    ],
+    "negative_body_up": [
+      3,
+      6
+    ],
+    "joint_position_minus_default": [
+      6,
+      20
+    ],
+    "joint_velocity": [
+      20,
+      34
+    ],
+    "(target_previous-default_angles)/0.12": [
+      34,
+      48
+    ],
+    "commands": [
+      48,
+      61
+    ]
+  },
+  "commands_order": [
+    "posture_0_stand_1_sit",
+    "velocity_y",
+    "velocity_yaw",
+    "neck_pitch_offset",
+    "head_pitch_offset",
+    "head_yaw_offset",
+    "head_roll_offset",
+    "body_command_0",
+    "body_command_1",
+    "body_command_2",
+    "body_command_3",
+    "body_command_4",
+    "body_command_5"
+  ],
+  "head_command_units": "radians, offset from default joint posture",
+  "normalization": "Actor obs_normalization=false (Identity); critic obs_normalization=true. Do not add actor normalization.",
+  "recent_video_neck_only_commands_deg": {
+    "descent": [
+      32.591129302978516,
+      0,
+      0,
+      0
+    ],
+    "rise_initial": [
+      3.408290386199951,
+      0,
+      0,
+      0
+    ],
+    "rise_after_3s": [
+      -13.706999778747559,
+      0,
+      0,
+      0
+    ]
+  },
+  "recent_video_commands_are_evaluation_only": true
+}
