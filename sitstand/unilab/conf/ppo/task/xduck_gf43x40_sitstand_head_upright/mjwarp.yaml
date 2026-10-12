@@ -1,0 +1,26 @@
+# @package _global_
+defaults:
+  - /task/xduck_gf43x40_sitstand_incremental/mjwarp
+  - _self_
+algo:
+  run_name: gf_head_upright
+  max_iterations: 250
+  save_interval: 50
+env:
+  geometric_head_enabled: true
+  head_up_axis: [0.0, 0.9999999999932535, 0.000003673192317532603]
+  head_upright_std_deg: 15.0
+  head_upright_height_std_m: 0.03
+  endpoint_safe_soft_limits: true
+  executed_increment_cost_enabled: false
+  curriculum:
+    head_range_stages:
+      - {step: 0, ranges: [[0, 0], [0, 0], [-0.07, 0.07], [0, 0]]}
+      - {step: 12000, ranges: [[0, 0], [0, 0], [-0.21, 0.21], [0, 0]]}
+      - {step: 24000, ranges: [[0, 0], [0, 0], [-0.49, 0.49], [0, 0]]}
+      - {step: 36000, ranges: [[0, 0], [0, 0], [-0.91, 0.91], [0, 0]]}
+      - {step: 48000, ranges: [[0, 0], [0, 0], [-1.4, 1.4], [0, 0]]}
+reward:
+  endpoint_refinement_enabled: false
+  scales:
+    head_pose_tracking: 3.0

@@ -1,0 +1,26 @@
+# @package _global_
+defaults:
+  - /task/xduck_gf43x40_sitstand_quiet_transition/mjwarp
+  - _self_
+algo:
+  run_name: gf_quiet_curriculum_stage1
+  max_iterations: 50
+  save_interval: 25
+  algorithm:
+    learning_rate: 0.0001
+    entropy_coef: 0.001
+env:
+  # First stage blends in the new objective while preserving the source plant.
+  quiet_transition_blend: 0.4
+  quiet_transition_start_step: 32424
+  quiet_transition_ramp_steps: 1200
+  target_increment_start_rad: [0.015, 0.010, 0.080, 0.060, 0.075, 0.110, 0.025, 0.025, 0.010, 0.015, 0.010, 0.080, 0.060, 0.075]
+  target_increment_rad: [0.015, 0.010, 0.080, 0.060, 0.075, 0.060, 0.020, 0.020, 0.010, 0.015, 0.010, 0.080, 0.060, 0.075]
+  transition_head_std_deg: 25.0
+  transition_head_speed_std_rad_s: 2.0
+  transition_body_band_deg: 15.0
+  head_upright_std_deg: 15.0
+reward:
+  scales:
+    transition_head_excursion: -1.0
+    transition_body_tilt: -1.0

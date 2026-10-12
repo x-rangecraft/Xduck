@@ -1,0 +1,332 @@
+{
+  "checkpoint": "/home/xingchen/Xduck/diagnose_from_control_20261009/newstand_resume_2000_to2500_20261012/train/model_2499.pt",
+  "checkpoint_sha256": "426e2a56edee1ab1e4e8f869d1446b83c343db39efd08837d2b4aa43b17feab3",
+  "env_steps_per_env": 60000,
+  "deterministic": true,
+  "command_effect_units": "radians per control-tick target increment",
+  "head_mode": "curriculum",
+  "conditions": "Original physical/reset/observation DR retained; fixed sit/stand command; curriculum frozen at checkpoint. Head mode: curriculum",
+  "criterion": "Original owner success for entire final second; cumulative original owner fall mask; all four head joint errors <0.15 rad for entire final second.",
+  "rows": [
+    {
+      "seed": 6401,
+      "case": "stand_hold",
+      "trials": 16,
+      "successes": 0,
+      "owner_successes": 0,
+      "failures": 1,
+      "late_height_mean": 0.30738306045532227,
+      "late_joint_speed_rms": 0.5885121822357178,
+      "clip_fraction": 0.015238095238095238,
+      "late_action_delta_rms": 0.22530235350131989,
+      "late_pose_error_rad": 0.16746491193771362,
+      "late_head_error_rms_rad": 0.28763341903686523,
+      "late_target_delta_rms_rad": 0.013703060349851144,
+      "target_excursion_rms_rad": 0.6373882222324032,
+      "command_effect_rms": 0.04168961855389814,
+      "success_criterion": "legacy_joint_pose_and_head_tracking",
+      "transition_head_joint_excursion_median_deg": [
+        66.21529388427734,
+        37.41697692871094,
+        47.64422607421875,
+        6.945500373840332
+      ],
+      "transition_body_peak_tilt_median_deg": 11.107403755187988,
+      "transition_body_peak_tilt_max_deg": 125.3231430053711,
+      "transition_head_joint_peak_speed_rad_s": [
+        5.809966087341309,
+        1.9443553686141968,
+        1.3234049081802368,
+        0.5967193245887756
+      ],
+      "last_second_condition_violations": {
+        "height": 4,
+        "tilt": 6,
+        "base_speed": 16,
+        "pose": 14,
+        "joint_speed": 16,
+        "head": 16
+      }
+    },
+    {
+      "seed": 6401,
+      "case": "sit_hold",
+      "trials": 16,
+      "successes": 0,
+      "owner_successes": 0,
+      "failures": 1,
+      "late_height_mean": 0.2148510217666626,
+      "late_joint_speed_rms": 0.36914223432540894,
+      "clip_fraction": 0.21032738095238096,
+      "late_action_delta_rms": 0.15041044354438782,
+      "late_pose_error_rad": 0.25608542561531067,
+      "late_head_error_rms_rad": 0.5166182518005371,
+      "late_target_delta_rms_rad": 0.008359524850250825,
+      "target_excursion_rms_rad": 0.526931212879667,
+      "command_effect_rms": 0.0583391360862904,
+      "success_criterion": "legacy_joint_pose_and_head_tracking",
+      "transition_head_joint_excursion_median_deg": [
+        21.679853439331055,
+        40.56806182861328,
+        76.26667022705078,
+        6.353842258453369
+      ],
+      "transition_body_peak_tilt_median_deg": 19.557374954223633,
+      "transition_body_peak_tilt_max_deg": 89.77323913574219,
+      "transition_head_joint_peak_speed_rad_s": [
+        5.487786293029785,
+        1.5014158487319946,
+        1.361977458000183,
+        0.5304040908813477
+      ],
+      "last_second_condition_violations": {
+        "height": 1,
+        "tilt": 8,
+        "base_speed": 11,
+        "pose": 15,
+        "joint_speed": 10,
+        "head": 15
+      }
+    },
+    {
+      "seed": 6401,
+      "case": "rise",
+      "trials": 16,
+      "successes": 0,
+      "owner_successes": 0,
+      "failures": 0,
+      "late_height_mean": 0.31808796525001526,
+      "late_joint_speed_rms": 0.5433236956596375,
+      "clip_fraction": 0.009702380952380952,
+      "late_action_delta_rms": 0.22770719230175018,
+      "late_pose_error_rad": 0.17891718447208405,
+      "late_head_error_rms_rad": 0.3453453481197357,
+      "late_target_delta_rms_rad": 0.013036829294492635,
+      "target_excursion_rms_rad": 0.8413851561788462,
+      "command_effect_rms": 0.04277733536879411,
+      "success_criterion": "legacy_joint_pose_and_head_tracking",
+      "transition_head_joint_excursion_median_deg": [
+        70.16851043701172,
+        45.57211685180664,
+        50.55961227416992,
+        7.399097442626953
+      ],
+      "transition_body_peak_tilt_median_deg": 16.45163917541504,
+      "transition_body_peak_tilt_max_deg": 56.383480072021484,
+      "transition_head_joint_peak_speed_rad_s": [
+        5.70739221572876,
+        1.5121824741363525,
+        1.380204200744629,
+        0.5465551018714905
+      ],
+      "last_second_condition_violations": {
+        "height": 1,
+        "tilt": 3,
+        "base_speed": 16,
+        "pose": 15,
+        "joint_speed": 16,
+        "head": 16
+      }
+    },
+    {
+      "seed": 6401,
+      "case": "descent",
+      "trials": 16,
+      "successes": 0,
+      "owner_successes": 0,
+      "failures": 4,
+      "late_height_mean": 0.20467785000801086,
+      "late_joint_speed_rms": 0.2814297080039978,
+      "clip_fraction": 0.20278273809523809,
+      "late_action_delta_rms": 0.1366322785615921,
+      "late_pose_error_rad": 0.2513049244880676,
+      "late_head_error_rms_rad": 0.46417996287345886,
+      "late_target_delta_rms_rad": 0.006616095126793276,
+      "target_excursion_rms_rad": 0.7682875758527792,
+      "command_effect_rms": 0.05421909843988571,
+      "success_criterion": "legacy_joint_pose_and_head_tracking",
+      "transition_head_joint_excursion_median_deg": [
+        88.23455810546875,
+        40.95866394042969,
+        58.24212646484375,
+        6.505252838134766
+      ],
+      "transition_body_peak_tilt_median_deg": 36.776756286621094,
+      "transition_body_peak_tilt_max_deg": 105.99783325195312,
+      "transition_head_joint_peak_speed_rad_s": [
+        5.6557793617248535,
+        1.5925192832946777,
+        1.990653157234192,
+        0.6654624342918396
+      ],
+      "last_second_condition_violations": {
+        "height": 4,
+        "tilt": 8,
+        "base_speed": 11,
+        "pose": 16,
+        "joint_speed": 13,
+        "head": 16
+      }
+    },
+    {
+      "seed": 7401,
+      "case": "stand_hold",
+      "trials": 16,
+      "successes": 0,
+      "owner_successes": 0,
+      "failures": 0,
+      "late_height_mean": 0.31716182827949524,
+      "late_joint_speed_rms": 0.6189566254615784,
+      "clip_fraction": 0.006116071428571428,
+      "late_action_delta_rms": 0.24835103750228882,
+      "late_pose_error_rad": 0.16095070540905,
+      "late_head_error_rms_rad": 0.2974662482738495,
+      "late_target_delta_rms_rad": 0.014626343803113652,
+      "target_excursion_rms_rad": 0.7306555371095894,
+      "command_effect_rms": 0.04243846385332254,
+      "success_criterion": "legacy_joint_pose_and_head_tracking",
+      "transition_head_joint_excursion_median_deg": [
+        74.67308807373047,
+        40.09009552001953,
+        61.23921203613281,
+        9.470024108886719
+      ],
+      "transition_body_peak_tilt_median_deg": 23.55560302734375,
+      "transition_body_peak_tilt_max_deg": 57.640899658203125,
+      "transition_head_joint_peak_speed_rad_s": [
+        5.791689872741699,
+        1.4369133710861206,
+        1.383890151977539,
+        0.6191471815109253
+      ],
+      "last_second_condition_violations": {
+        "height": 5,
+        "tilt": 6,
+        "base_speed": 16,
+        "pose": 15,
+        "joint_speed": 16,
+        "head": 16
+      }
+    },
+    {
+      "seed": 7401,
+      "case": "sit_hold",
+      "trials": 16,
+      "successes": 0,
+      "owner_successes": 0,
+      "failures": 0,
+      "late_height_mean": 0.21837835013866425,
+      "late_joint_speed_rms": 0.20339500904083252,
+      "clip_fraction": 0.21010416666666668,
+      "late_action_delta_rms": 0.1227838471531868,
+      "late_pose_error_rad": 0.27833232283592224,
+      "late_head_error_rms_rad": 0.5364468693733215,
+      "late_target_delta_rms_rad": 0.005078561753373362,
+      "target_excursion_rms_rad": 0.3820779009343369,
+      "command_effect_rms": 0.06106801026171233,
+      "success_criterion": "legacy_joint_pose_and_head_tracking",
+      "transition_head_joint_excursion_median_deg": [
+        26.55092430114746,
+        34.314456939697266,
+        43.20014953613281,
+        5.978336811065674
+      ],
+      "transition_body_peak_tilt_median_deg": 19.99302864074707,
+      "transition_body_peak_tilt_max_deg": 38.72865676879883,
+      "transition_head_joint_peak_speed_rad_s": [
+        5.437447547912598,
+        1.405605673789978,
+        1.3509057760238647,
+        0.5454723238945007
+      ],
+      "last_second_condition_violations": {
+        "height": 0,
+        "tilt": 4,
+        "base_speed": 13,
+        "pose": 16,
+        "joint_speed": 14,
+        "head": 16
+      }
+    },
+    {
+      "seed": 7401,
+      "case": "rise",
+      "trials": 16,
+      "successes": 0,
+      "owner_successes": 0,
+      "failures": 1,
+      "late_height_mean": 0.3067583739757538,
+      "late_joint_speed_rms": 0.6800694465637207,
+      "clip_fraction": 0.02623511904761905,
+      "late_action_delta_rms": 0.2650783360004425,
+      "late_pose_error_rad": 0.20250463485717773,
+      "late_head_error_rms_rad": 0.3603403568267822,
+      "late_target_delta_rms_rad": 0.01591239308968285,
+      "target_excursion_rms_rad": 0.8730554812536302,
+      "command_effect_rms": 0.041572257992968605,
+      "success_criterion": "legacy_joint_pose_and_head_tracking",
+      "transition_head_joint_excursion_median_deg": [
+        78.3470230102539,
+        53.80213165283203,
+        54.07653045654297,
+        9.310637474060059
+      ],
+      "transition_body_peak_tilt_median_deg": 26.78812599182129,
+      "transition_body_peak_tilt_max_deg": 93.09457397460938,
+      "transition_head_joint_peak_speed_rad_s": [
+        5.7516961097717285,
+        1.631814956665039,
+        1.4324331283569336,
+        0.5521908402442932
+      ],
+      "last_second_condition_violations": {
+        "height": 4,
+        "tilt": 5,
+        "base_speed": 16,
+        "pose": 16,
+        "joint_speed": 16,
+        "head": 16
+      }
+    },
+    {
+      "seed": 7401,
+      "case": "descent",
+      "trials": 16,
+      "successes": 0,
+      "owner_successes": 0,
+      "failures": 2,
+      "late_height_mean": 0.21127229928970337,
+      "late_joint_speed_rms": 0.3309159576892853,
+      "clip_fraction": 0.19730654761904762,
+      "late_action_delta_rms": 0.12858402729034424,
+      "late_pose_error_rad": 0.2675850987434387,
+      "late_head_error_rms_rad": 0.4937439262866974,
+      "late_target_delta_rms_rad": 0.0074420067911476154,
+      "target_excursion_rms_rad": 0.7621273596392716,
+      "command_effect_rms": 0.05664208358601914,
+      "success_criterion": "legacy_joint_pose_and_head_tracking",
+      "transition_head_joint_excursion_median_deg": [
+        91.95260620117188,
+        39.68067932128906,
+        70.94171142578125,
+        7.960550785064697
+      ],
+      "transition_body_peak_tilt_median_deg": 38.107513427734375,
+      "transition_body_peak_tilt_max_deg": 108.83231353759766,
+      "transition_head_joint_peak_speed_rad_s": [
+        5.588018894195557,
+        1.4891090393066406,
+        1.3477517366409302,
+        0.9979584813117981
+      ],
+      "last_second_condition_violations": {
+        "height": 2,
+        "tilt": 5,
+        "base_speed": 7,
+        "pose": 16,
+        "joint_speed": 11,
+        "head": 16
+      }
+    }
+  ]
+}

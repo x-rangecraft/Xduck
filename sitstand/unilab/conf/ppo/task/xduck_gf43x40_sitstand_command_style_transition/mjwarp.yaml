@@ -1,0 +1,23 @@
+# @package _global_
+defaults:
+  - /task/xduck_gf43x40_sitstand_command_style/mjwarp
+  - _self_
+algo:
+  run_name: gf_command_style_transition_from1351
+  max_iterations: 100
+env:
+  # More full-action starts, using the original seated/standing reset states.
+  max_episode_seconds: 4.0
+  posture_dwell_seconds: [4.0, 4.0]
+  case_weights: [0.1, 0.1, 0.4, 0.4]
+  command_style_blend_start: 0.35
+  command_style_blend_end: 0.65
+  command_style_head_width_start_deg: 30.0
+  command_style_head_width_end_deg: 15.0
+  command_style_pitch_width_start_deg: 12.0
+  command_style_pitch_width_end_deg: 6.0
+reward:
+  scales:
+    style_sit_head_displacement: -4.0
+    style_sit_head_speed: -0.25
+    style_rise_pitch: -3.0

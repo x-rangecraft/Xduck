@@ -1,0 +1,124 @@
+# @package _global_
+# PPO and reset sampling aligned to microduck_rl cfe1c2adcceb55f6b6e369c888b31c6873175c55.
+# Robot physics, actuator limits, observations and reward terms remain XDuck-specific.
+defaults:
+  - /task/xduck_gf43x40_sitstand_pure_flat/mjwarp
+  - _self_
+training:
+  task_name: XDuckGF43X40SitStandMicroduckPPOFlat
+algo:
+  num_envs: 4096
+  num_steps_per_env: 24
+  max_iterations: 500
+  run_name: microduck_ppo_alignment
+  resume: false
+  load_run: '-1'
+  policy:
+    init_noise_std: 1.0
+  actor:
+    class_name: rsl_rl.models.MLPModel
+    distribution_cfg:
+      init_std: 1.0
+  algorithm:
+    learning_rate: 0.001
+    entropy_coef: 0.01
+    gamma: 0.99
+    lam: 0.95
+env:
+  pure_policy_revision: 3
+  posture_dwell_seconds: [3.5, 6.5]
+  posture_slew_seconds: 2.0
+  case_weights: [0.25, 0.25, 0.25, 0.25]
+  dr_level: 1.0
+  nominal_env_fraction: 0.0
+  whole_body_mass_dr: false
+  reset_joint_noise_rad: 0.10
+  reset_velocity_max: 0.015
+  ankle_target_offset_max_deg: 0.0
+  transition_success_reward: 0.0
+  terminal_failure_cost: 0.0
+  noise_config:
+    level: 1.0
+    scale_gyro: 0.03
+    scale_gravity: 0.01
+    scale_joint_angle: 0.001
+    scale_joint_vel: 0.25
+  domain_rand:
+    mass_inertia_scale_range: [0.95, 1.05]
+    foot_friction_range: [0.7, 1.3]
+    imu_max_angle_deg: 6.0
+    velocity_pushes: true
+  curriculum:
+    step_cap: null
+    head_range_stages:
+      - {step: 0, ranges: [[-0.05, 0.05], [-0.05, 0.05], [-0.07, 0.07], [-0.015, 0.015]]}
+      - {step: 12000, ranges: [[-0.17, 0.17], [-0.17, 0.17], [-0.21, 0.21], [-0.047, 0.047]]}
+      - {step: 24000, ranges: [[-0.39, 0.39], [-0.39, 0.39], [-0.49, 0.49], [-0.11, 0.11]]}
+      - {step: 36000, ranges: [[-0.72, 0.72], [-0.72, 0.72], [-0.91, 0.91], [-0.20, 0.20]]}
+      - {step: 48000, ranges: [[-1.10, 1.10], [-1.10, 1.10], [-1.40, 1.40], [-0.31, 0.31]]}
+    com_range_stages:
+      - {step: 0, value: 0.00627}
+      - {step: 12000, value: 0.01045}
+      - {step: 24000, value: 0.0209}
+      - {step: 36000, value: 0.03135}
+    head_com_range_stages:
+      - {step: 0, value: 0.00627}
+      - {step: 12000, value: 0.01045}
+      - {step: 24000, value: 0.0209}
+    action_rate_stages:
+      - {step: 0, value: -0.1}
+      - {step: 12000, value: -0.2}
+      - {step: 18000, value: -0.4}
+      - {step: 24000, value: -0.6}
+      - {step: 30000, value: -0.8}
+      - {step: 36000, value: -1.0}
+    descent_speed_stages:
+      - {step: 0, value: -6.0}
+      - {step: 12000, value: -12.0}
+    rise_speed_stages:
+      - {step: 0, value: 0.0}
+      - {step: 36000, value: -3.0}
+      - {step: 60000, value: -6.0}
+    push_stages:
+      - {step: 0, value: 0.0}
+      - {step: 24000, value: 0.0723}
+      - {step: 36000, value: 0.1446}
+      - {step: 48000, value: 0.2891}
+      - {step: 60000, value: 0.4337}
+reward:
+  progress_discount: 0.99
+  pose_std: 0.5
+  height_std: 0.06887
+  sharp_height_std: 0.02583
+  composite_height_std: 0.05165
+  composite_pose_std: 0.4
+  upright_std: 0.4
+  upright_from_tilt: true
+  pose_match_per_joint: true
+  stillness_band_full: 0.01722
+  stillness_band_zero: 0.05165
+  stillness_speed_std: 0.1084
+  max_descent_speed: 0.0861
+  max_rise_speed: 0.1377
+  angular_momentum_reference: 0.25
+  scales:
+    posture_pose: 4.0
+    posture_pose_l1: -1.0
+    posture_height: 1.0
+    posture_height_sharp: 1.0
+    posture_height_l1: -3.4857
+    posture_composite: 4.0
+    rise_bootstrap: 0.4357
+    upright_linear: 2.5
+    upright_while_tall: 1.5
+    head_pose_tracking: 0.75
+    posture_stillness: 2.0
+    action_rate_l2: -0.1
+    descent_speed: -6.0
+    rise_speed: 0.0
+    gentle_motion: -0.029
+    body_ang_vel: -0.05
+    dof_pos_limits: -1.0
+    self_collisions: -1.0
+    joint_torque_rate_l2: 0.0
+    angular_momentum: -0.02

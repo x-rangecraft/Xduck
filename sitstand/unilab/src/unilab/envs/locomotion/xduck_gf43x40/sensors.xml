@@ -1,0 +1,33 @@
+<mujoco>
+  <sensor>
+    <framezaxis name="imu_upvector" objtype="site" objname="imu" />
+    <contact name="left_foot_contact" geom1="floor" geom2="left_foot_collision"
+             data="force" num="1" reduce="netforce" />
+    <contact name="right_foot_contact" geom1="floor" geom2="right_foot_collision"
+             data="force" num="1" reduce="netforce" />
+    <contact name="left_foot_found" geom1="floor" geom2="left_foot_collision"
+             data="found" num="1" reduce="none" />
+    <contact name="right_foot_found" geom1="floor" geom2="right_foot_collision"
+             data="found" num="1" reduce="none" />
+    <framepos name="left_foot_pos" objtype="site" objname="left_foot" />
+    <framepos name="right_foot_pos" objtype="site" objname="right_foot" />
+    <framelinvel name="left_foot_vel" objtype="site" objname="left_foot" />
+    <framelinvel name="right_foot_vel" objtype="site" objname="right_foot" />
+    <contact name="self_collision_found" subtree1="base_link" subtree2="base_link"
+             data="found" num="1" reduce="none" />
+    <actuatorfrc name="torque_left_hip_yaw" actuator="left_hip_yaw" />
+    <actuatorfrc name="torque_left_hip_roll" actuator="left_hip_roll" />
+    <actuatorfrc name="torque_left_hip_pitch" actuator="left_hip_pitch" />
+    <actuatorfrc name="torque_left_knee" actuator="left_knee_pitch" />
+    <actuatorfrc name="torque_left_ankle" actuator="left_ankle_pitch" />
+    <actuatorfrc name="torque_neck_pitch" actuator="neck_pitch" />
+    <actuatorfrc name="torque_head_pitch" actuator="head_pitch" />
+    <actuatorfrc name="torque_head_yaw" actuator="head_yaw" />
+    <actuatorfrc name="torque_head_roll" actuator="head_roll" />
+    <actuatorfrc name="torque_right_hip_yaw" actuator="right_hip_yaw" />
+    <actuatorfrc name="torque_right_hip_roll" actuator="right_hip_roll" />
+    <actuatorfrc name="torque_right_hip_pitch" actuator="right_hip_pitch" />
+    <actuatorfrc name="torque_right_knee" actuator="right_knee_pitch" />
+    <actuatorfrc name="torque_right_ankle" actuator="right_ankle_pitch" />
+  </sensor>
+</mujoco>

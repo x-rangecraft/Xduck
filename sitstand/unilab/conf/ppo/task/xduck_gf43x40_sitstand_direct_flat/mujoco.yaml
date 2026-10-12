@@ -1,0 +1,309 @@
+# @package _global_
+# 1024*24/1 = official 4096*24/4 = 24576 samples per minibatch.
+# Four local iterations match one official iteration in fresh samples AND optimizer steps.
+training:
+  task_name: XDuckGF43X40SitStandDirectFlat
+  sim_backend: mujoco
+  no_play: true
+  logger: tensorboard
+  wandb_project: xduck_sitstand_direct
+  play_steps: 1000
+  play_env_num: 16
+algo:
+  seed: 1
+  num_envs: 1024
+  num_steps_per_env: 24
+  max_iterations: 60000
+  save_interval: 250
+  empirical_normalization: true
+  experiment_name: xduck_gf43x40_sitstand_direct
+  run_name: xduck_v112_gf_direct_v4
+  obs_groups:
+    actor:
+    - actor
+    critic:
+    - critic
+  policy:
+    init_noise_std: 0.1
+    actor_hidden_dims:
+    - 512
+    - 256
+    - 128
+    critic_hidden_dims:
+    - 512
+    - 256
+    - 128
+    activation: elu
+    class_name: ActorCritic
+  algorithm:
+    class_name: unilab.training.checked_ppo:FiniteCheckedPPO
+    value_loss_coef: 1.0
+    use_clipped_value_loss: true
+    clip_param: 0.2
+    entropy_coef: 0.001
+    num_learning_epochs: 5
+    num_mini_batches: 1
+    # RSL-RL 5 uses desired_kl adaptive LR; legacy target_kl_stop is stripped.
+    learning_rate: 0.0001
+    schedule: adaptive
+    gamma: 0.99
+    lam: 0.95
+    desired_kl: 0.01
+    max_grad_norm: 1.0
+env:
+  reference_keyframe: STAND
+  sim_dt: 0.001
+  ctrl_dt: 0.02
+  max_episode_seconds: 30
+  policy_action_scale_rad: 1.0
+  nominal_env_fraction: 0.25
+  transition_success_reward: 4.0
+  terminal_failure_cost: 8.0
+  completion_hold_seconds: 0.5
+  posture_dwell_seconds:
+  - 4.0
+  - 6.0
+  sit_reset_probability: 0.5
+  sit_command_probability: 0.5
+  posture_slew_seconds: 2.0
+  sit_reset_height: 0.22
+  stand_reset_height: 0.313459
+  ankle_target_offset_max_deg: 3.0
+  communication:
+    jitter_mode: measured_20260918
+    command_jitter_ms:
+    - 0
+    - 0
+    feedback_jitter_ms:
+    - 0
+    - 0
+    feedback_delay_ms: 0.0
+    jitter_seed: 0
+  control_config:
+    action_scale: 1.0
+    simulate_action_latency: false
+    Kp: 90.0
+    Kd: 2.5
+    joint_kp:
+    - 90
+    - 90
+    - 75
+    - 100
+    - 90
+    - 75
+    - 90
+    - 75
+    - 90
+    - 90
+    - 90
+    - 75
+    - 100
+    - 90
+    joint_kd:
+    - 2.5
+    - 2.5
+    - 2.5
+    - 3.0
+    - 3.0
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 3.0
+    - 3.0
+  latency:
+    actuator_delay_ms:
+    - 0.0
+    - 0.0
+    imu_delay_ms:
+    - 0.0
+    - 20.0
+    joint_velocity_delay_ms: 20.0
+  noise_config:
+    level: 2.0
+    scale_joint_angle: 0.001
+    scale_joint_vel: 0.17292861596651865
+    scale_gyro: 0.020751433915982238
+    scale_gravity: 0.01
+    scale_linvel: 0.14456832294800961
+  commands:
+    velocity_low:
+    - 0.0
+    - 0.0
+    - 0.0
+    velocity_high:
+    - 1.0
+    - 0.0
+    - 0.0
+    resampling_time_range:
+    - 4.0
+    - 6.0
+    rel_forward_envs: 0.0
+    rel_turn_in_place_envs: 0.0
+    forward_min_speed: 0.0
+    head_resampling_time_range:
+    - 2.9
+    - 7.2
+    body_resampling_time_range:
+    - 2.9
+    - 7.2
+  domain_rand:
+    randomize_base_mass: false
+    random_com: false
+    randomize_ground_friction: false
+    randomize_foot_friction: true
+    foot_friction_range:
+    - 0.4
+    - 1.6
+    mass_inertia_scale_range:
+    - 0.9
+    - 1.1
+    imu_max_angle_deg: 12.0
+    randomize_dof_armature: true
+    dof_armature_multiplier_range:
+    - 0.9
+    - 1.1
+    randomize_kp: false
+    randomize_kd: false
+    randomize_joint_friction: false
+    push_robots: false
+    velocity_pushes: false
+    velocity_push_interval_s:
+    - 3.0
+    - 6.0
+    velocity_push_xy:
+    - 0.0
+    - 0.0
+    push_body_name: base_link
+    motor:
+      enabled: false
+  curriculum:
+    step_cap: null
+    action_rate_stages:
+    - step: 0.0
+      value: 0.0
+    standing_stages:
+    - step: 0.0
+      value: 0.0
+    velocity_scale_stages:
+    - step: 0.0
+      value: 1.0
+    linear_velocity_std_stages:
+    - step: 0.0
+      value: 0.4571651780264985
+    angular_velocity_std_stages:
+    - step: 0.0
+      value: 0.4891159880445185
+    head_range_stages:
+    - step: 0
+      ranges:
+      - - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+    head_bias_stages:
+    - step: 0.0
+      value: 0.0
+    - step: 14400.0
+      value: 1.0
+    - step: 24000.0
+      value: 2.0
+    - step: 36000.0
+      value: 3.0
+    com_range_stages:
+    - step: 0.0
+      value: 0.031349999999999996
+    head_com_range_stages:
+    - step: 0.0
+      value: 0.0209
+    push_stages:
+    - step: 0.0
+      value: 0.0
+    rise_speed_stages:
+    - step: 0.0
+      value: 0.0
+    descent_speed_stages:
+    - step: 0.0
+      value: 0.0
+  motor_envelope_mode: continuous_conservative
+  whole_body_mass_dr: true
+  residual_bound_rad: 0.08
+  residual_rate_rad_s: 0.5
+reward:
+  scales:
+    posture_pose: 0.0
+    posture_pose_l1: 0.0
+    posture_height: 0.0
+    posture_height_sharp: 0.0
+    posture_height_l1: 0.0
+    posture_composite: 0.0
+    rise_bootstrap: 0.0
+    upright_linear: 0.0
+    upright_while_tall: 0.0
+    head_pose_tracking: 0.0
+    posture_stillness: 0.0
+    action_rate_l2: 0.0
+    descent_speed: 0.0
+    rise_speed: 0.0
+    gentle_motion: 0.0
+    body_ang_vel: 0.0
+    dof_pos_limits: 0.0
+    self_collisions: 0.0
+    reference_tracking: 8.0
+    reference_hold: 2.0
+    residual_rate: -0.0002
+    reference_velocity_error: -2.0
+    reference_fall: -10.0
+    reference_contact: -20.0
+  linear_velocity_std: 0.4571651780264985
+  angular_velocity_std: 0.4891159880445185
+  upright_std: 0.4
+  foot_target_height: 0.0418
+  angular_momentum_reference: 0.25
+  height_std: 0.06887272727272728
+  height_sharp_std: 0.015
+  posture_composite_height_std: 0.035
+  stillness_velocity_std: 0.05
+  linear_velocity_error_delta: 0.15
+  yaw_velocity_error_delta: 0.3
+  vertical_velocity_error_delta: 0.15
+  air_time_target: 0.25
+  air_time_std: 0.08
+  joint_limit_margin_fraction: 0.15
+  foot_clearance_reference_height: 0.02
+  air_time_threshold_min: 0.180710403685012
+  air_time_threshold_max: 0.4337049688440288
+  head_bias_tau_s: 1.0
+  progress_command_threshold: 0.05
+  progress_upright_min: 0.8660254037844387
+  action_rate_units: policy
+  action_rate_time_scale: 1.0
+  action_rate_reference_dt: 0.02
+  scale_model_fingerprint: null
+  sit_height: 0.2182
+  stand_height: 0.3129
+  pose_std: 0.42222222222222217
+  sharp_height_std: 0.02582727272727273
+  stillness_speed_std: 0.07228416147400481
+  composite_height_std: 0.05165454545454546
+  composite_pose_std: 0.4
+  pose_match_per_joint: true
+  upright_from_tilt: true
+  stillness_band_full: 0.020661818181818184
+  stillness_band_zero: 0.05165454545454546
+  stillness_tilt_full_deg: 25.0
+  stillness_tilt_zero_deg: 60.0
+  max_descent_speed: 0.07228416147400481
+  max_rise_speed: 0.11565465835840769
+play_profile:
+  enabled: true
+  env:
+    noise_config:
+      level: 0.0

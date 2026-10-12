@@ -1,0 +1,15 @@
+# @package _global_
+# GF 50 Hz exploration candidate, selected using physical perturbation probes.
+defaults:
+  - /task/xduck_gf43x40_sitstand_microduck_repaired/mjwarp
+  - _self_
+algo:
+  run_name: xduck_gf_scaled_ppo_validation
+  max_iterations: 100
+  policy:
+    init_noise_std: 0.06
+  actor:
+    distribution_cfg:
+      init_std: 0.06
+  algorithm:
+    entropy_coef: 0.002

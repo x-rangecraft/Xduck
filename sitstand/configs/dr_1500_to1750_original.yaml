@@ -1,0 +1,486 @@
+algo:
+  algo: ppo
+  algo_log_name: rsl_rl_ppo
+  seed: 1
+  num_envs: 4096
+  num_steps_per_env: 24
+  max_iterations: 250
+  save_interval: 25
+  empirical_normalization: true
+  runner_class_name: OnPolicyRunner
+  obs_groups:
+    default:
+    - policy
+    actor:
+    - actor
+    critic:
+    - critic
+  experiment_name: xduck_sitstand_pure
+  run_name: gf_incremental_search
+  resume: true
+  load_run: /home/xingchen/Xduck/diagnose_from_control_20261009/unchanged_resume_1500_20261010/train/model_1499.pt
+  checkpoint: -1
+  resume_path: null
+  policy:
+    init_noise_std: 0.25
+    actor_hidden_dims:
+    - 512
+    - 256
+    - 128
+    critic_hidden_dims:
+    - 512
+    - 256
+    - 128
+    activation: elu
+    class_name: ActorCritic
+  algorithm:
+    class_name: unilab.training.checked_ppo:FiniteCheckedPPO
+    value_loss_coef: 1.0
+    use_clipped_value_loss: true
+    clip_param: 0.2
+    entropy_coef: 0.005
+    num_learning_epochs: 5
+    num_mini_batches: 8
+    learning_rate: 0.0003
+    schedule: fixed
+    gamma: 0.997
+    lam: 0.99
+    desired_kl: 0.01
+    target_kl_stop: null
+    max_grad_norm: 1.0
+    adaptive_kl_beta: 0.9
+    adaptive_lr_growth: 1.1
+    adaptive_lr_decay: 1.2
+    adaptive_lr_update_interval: 5
+    metrics_interval: 8
+    finite_check_interval: 8
+    enable_compile: false
+    warmup_strict_iters: 10
+    warmup_metrics_interval: 2
+    warmup_finite_check_interval: 2
+    disable_finite_checks: false
+  actor:
+    class_name: rsl_rl.models.MLPModel
+    hidden_dims:
+    - 512
+    - 256
+    - 128
+    activation: elu
+    obs_normalization: false
+    distribution_cfg:
+      class_name: unilab.training.policy_initialization:SmallMeanGaussianDistribution
+      init_std: 0.25
+      std_type: log
+      init_mean_gain: 0.01
+  critic:
+    class_name: rsl_rl.models.MLPModel
+    hidden_dims:
+    - 512
+    - 256
+    - 128
+    activation: elu
+    obs_normalization: true
+training:
+  task_name: XDuckGF43X40SitStandIncrementalFlat
+  devices: null
+  device: cuda:0
+  logger: tensorboard
+  wandb_project: xduck_sitstand_pure
+  wandb_entity: null
+  wandb_group: null
+  wandb_job_type: null
+  wandb_name: null
+  wandb_tags: []
+  wandb_notes: null
+  wandb_mode: null
+  sim_backend: mjwarp
+  nan_guard:
+    enabled: false
+    buffer_size: 100
+    max_envs_to_dump: 5
+    output_dir: null
+  play_only: false
+  no_play: true
+  sim2sim_strict: true
+  play_render_mode: record
+  play_env_num: 16
+  render_spacing: 1.0
+  play_steps: 1000
+  cam_distance: 6.0
+  cam_elevation: -20.0
+  cam_azimuth: 90.0
+  cam_lookat: null
+  cam_tracking: false
+  cam_tracking_env_idx: 0
+  cam_tracking_extra_envs: 2
+  log_root: null
+  num_timesteps: null
+  log_dir: /home/xingchen/Xduck/diagnose_from_control_20261009/dr_resume_1500_to2000_20261010/stage1
+interactive:
+  action_mode: zero
+  policy_obs_mode: auto
+  show_target_bodies: false
+  show_reward_debug: false
+  target_show_axes: false
+  target_body_names: ''
+  target_max_bodies: 0
+  target_marker_radius: 0.02
+  target_axis_length: 0.08
+  target_marker_alpha: 0.75
+  reward_debug_show_velocity: false
+  reward_debug_lin_vel_scale: 0.08
+  reward_debug_ang_vel_scale: 0.05
+  reward_debug_show_connectors: false
+  reward_debug_show_global_anchor: false
+  camera_follow_body: true
+  camera_focus_body_name: ''
+  camera_height_offset: 0.15
+  camera_distance: null
+  camera_elevation: null
+  camera_azimuth: null
+  use_env_visual_model: true
+  speed: 1.0
+  start_paused: false
+  keyboard: false
+  keyboard_step_lin: 0.1
+  keyboard_step_ang: 0.2
+viser:
+  port: 8080
+  env_idx: 0
+  display_mode: all
+  max_envs: 16
+env:
+  post_step_forward_sensor: false
+  adaptive_chunk_size: false
+  chunk_size: null
+  pure_policy_revision: 6
+  reference_keyframe: STAND
+  sim_dt: 0.001
+  ctrl_dt: 0.02
+  max_episode_seconds: 12.0
+  policy_action_scale_rad: 1.0
+  posture_dwell_seconds:
+  - 3.5
+  - 6.5
+  sit_reset_probability: 0.5
+  sit_command_probability: 0.5
+  posture_slew_seconds: 2.0
+  sit_reset_height: 0.22
+  stand_reset_height: 0.313459
+  ankle_target_offset_max_deg: 0.0
+  communication:
+    jitter_mode: measured_20260918
+    command_jitter_ms:
+    - 0
+    - 0
+    feedback_jitter_ms:
+    - 0
+    - 0
+    feedback_delay_ms: 0.0
+    jitter_seed: 0
+  control_config:
+    action_scale: 1.0
+    simulate_action_latency: false
+    Kp: 90.0
+    Kd: 2.5
+    joint_kp:
+    - 90
+    - 90
+    - 75
+    - 100
+    - 90
+    - 75
+    - 90
+    - 75
+    - 90
+    - 90
+    - 90
+    - 75
+    - 100
+    - 90
+    joint_kd:
+    - 2.5
+    - 2.5
+    - 2.5
+    - 3.0
+    - 3.0
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 3.0
+    - 3.0
+  latency:
+    actuator_delay_ms:
+    - 0.0
+    - 0.0
+    imu_delay_ms:
+    - 0.0
+    - 20.0
+    joint_velocity_delay_ms: 20.0
+  noise_config:
+    level: 1.5
+    scale_joint_angle: 0.001
+    scale_joint_vel: 0.25
+    scale_gyro: 0.03
+    scale_gravity: 0.01
+    scale_linvel: 0.14456832294800961
+  commands:
+    velocity_low:
+    - 0.0
+    - 0.0
+    - 0.0
+    velocity_high:
+    - 1.0
+    - 0.0
+    - 0.0
+    resampling_time_range:
+    - 3.5
+    - 6.5
+    rel_forward_envs: 0.0
+    rel_turn_in_place_envs: 0.0
+    forward_min_speed: 0.0
+    head_resampling_time_range:
+    - 2.9
+    - 7.2
+    body_resampling_time_range:
+    - 2.9
+    - 7.2
+  domain_rand:
+    randomize_base_mass: false
+    random_com: false
+    randomize_ground_friction: false
+    randomize_foot_friction: true
+    foot_friction_range:
+    - 0.55
+    - 1.45
+    mass_inertia_scale_range:
+    - 0.925
+    - 1.075
+    imu_max_angle_deg: 9.0
+    randomize_dof_armature: true
+    dof_armature_multiplier_range:
+    - 0.85
+    - 1.15
+    randomize_kp: false
+    randomize_kd: false
+    randomize_joint_friction: false
+    push_robots: false
+    velocity_pushes: true
+    velocity_push_interval_s:
+    - 3.0
+    - 6.0
+    velocity_push_xy:
+    - 0.0
+    - 0.0
+    push_body_name: base_link
+    motor:
+      enabled: false
+  motor_envelope_mode: continuous_conservative
+  whole_body_mass_dr: false
+  dr_level: 1.0
+  evaluation_case: -1
+  reset_clearance_m: 0.0005
+  nominal_env_fraction: 0.0
+  case_weights:
+  - 0.25
+  - 0.25
+  - 0.25
+  - 0.25
+  warp_compiled_model_file: /home/xingchen/Xduck/xduck_sitstand_pure_warp_20260930/physics/pure_effective_linux.mjb
+  reset_joint_noise_rad: 0.1
+  reset_velocity_max: 0.015
+  transition_success_reward: 0.0
+  terminal_failure_cost: 0.0
+  curriculum:
+    step_cap: null
+    head_range_stages:
+    - step: 0
+      ranges:
+      - - -0.05
+        - 0.05
+      - - -0.05
+        - 0.05
+      - - -0.07
+        - 0.07
+      - - -0.015
+        - 0.015
+    - step: 12000
+      ranges:
+      - - -0.17
+        - 0.17
+      - - -0.17
+        - 0.17
+      - - -0.21
+        - 0.21
+      - - -0.047
+        - 0.047
+    - step: 24000
+      ranges:
+      - - -0.39
+        - 0.39
+      - - -0.39
+        - 0.39
+      - - -0.49
+        - 0.49
+      - - -0.11
+        - 0.11
+    - step: 36000
+      ranges:
+      - - -0.72
+        - 0.72
+      - - -0.72
+        - 0.72
+      - - -0.91
+        - 0.91
+      - - -0.2
+        - 0.2
+    - step: 48000
+      ranges:
+      - - -1.1
+        - 1.1
+      - - -1.1
+        - 1.1
+      - - -1.4
+        - 1.4
+      - - -0.31
+        - 0.31
+    com_range_stages:
+    - step: 0
+      value: 0.009405
+    - step: 12000
+      value: 0.015674999999999998
+    - step: 24000
+      value: 0.031349999999999996
+    - step: 36000
+      value: 0.047025000000000004
+    head_com_range_stages:
+    - step: 0
+      value: 0.009405
+    - step: 12000
+      value: 0.015674999999999998
+    - step: 24000
+      value: 0.031349999999999996
+    action_rate_stages:
+    - step: 0
+      value: -0.1
+    - step: 12000
+      value: -0.2
+    - step: 18000
+      value: -0.4
+    - step: 24000
+      value: -0.6
+    - step: 30000
+      value: -0.8
+    - step: 36000
+      value: -1.0
+    descent_speed_stages:
+    - step: 0
+      value: -5.80781415
+    - step: 12000
+      value: -11.6156283
+    rise_speed_stages:
+    - step: 0
+      value: 0.0
+    - step: 36000
+      value: -2.903907075
+    - step: 60000
+      value: -5.80781415
+    push_stages:
+    - step: 0
+      value: 0.0
+    - step: 24000
+      value: 0.10845
+    - step: 36000
+      value: 0.2169
+    - step: 48000
+      value: 0.43365000000000004
+    - step: 60000
+      value: 0.65055
+  target_increment_rad:
+  - 0.015
+  - 0.01
+  - 0.08
+  - 0.06
+  - 0.075
+  - 0.11
+  - 0.025
+  - 0.025
+  - 0.01
+  - 0.015
+  - 0.01
+  - 0.08
+  - 0.06
+  - 0.075
+  target_history_scale_rad: 0.12
+reward:
+  scales:
+    ramp_height: 4.0
+    goal_distance: -0.5
+    pose_distance: -0.5
+    task_progress: 2.0
+    goal_composite: 5.0
+    goal_stillness: 2.0
+    transition_tilt: -0.2
+    target_rate: -0.02
+    torque_rate: 0.0
+    descent_speed: -5.80781415
+    rise_speed: 0.0
+    impact: -0.1
+    limit_proximity: -0.5
+    forbidden_contact: -2.0
+    posture_pose: 4.0
+    posture_pose_l1: -1.0
+    posture_height: 1.0
+    posture_height_sharp: 1.0
+    posture_height_l1: -3.48468849
+    posture_composite: 3.0
+    rise_bootstrap: 0.435586061
+    upright_linear: 2.5
+    upright_while_tall: 1.5
+    head_pose_tracking: 0.75
+    posture_stillness: 2.0
+    action_rate_l2: -0.1
+    gentle_motion: -0.029039071
+    body_ang_vel: -0.05
+    dof_pos_limits: -1.0
+    self_collisions: -1.0
+    joint_torque_rate_l2: 0.0
+    angular_momentum: -0.02
+    target_overflow: -1.0
+  stand_height: 0.3129
+  sit_height: 0.2182
+  height_std: 0.068872727273
+  pose_std: 0.5
+  max_descent_speed: 0.086090909091
+  max_rise_speed: 0.137745454545
+  target_rate_std_rad_s: 5.0
+  torque_rate_std_nm_s: 100.0
+  progress_discount: 0.99
+  sharp_height_std: 0.025827272727
+  composite_height_std: 0.051654545455
+  composite_pose_std: 0.4
+  upright_std: 0.4
+  upright_from_tilt: true
+  pose_match_per_joint: true
+  stillness_band_full: 0.020661818182
+  stillness_band_zero: 0.051654545455
+  stillness_speed_std: 0.086090909091
+  angular_momentum_reference: 0.25
+  repair_enabled: true
+  rise_bootstrap_height_margin: 0.017218181818
+  upright_height_low_fraction: 0.272727272727
+  upright_height_high_fraction: 0.727272727273
+  target_overflow_std_rad: 0.25
+  stationary_joint_speed_std: 0.5
+  stationary_angular_speed_std: 0.5
+  discovery_gate_positive_terms: true
+  discovery_motion_cost_multiplier: 0.1
+play_profile:
+  enabled: true
+  env:
+    noise_config:
+      level: 0.0

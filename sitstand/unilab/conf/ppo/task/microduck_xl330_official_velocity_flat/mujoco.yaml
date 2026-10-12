@@ -1,0 +1,104 @@
+# @package _global_
+training:
+  task_name: MicroDuckXl330OfficialVelocityFlat
+  sim_backend: mujoco
+  logger: tensorboard
+  wandb_project: mjlab_microduck
+  play_steps: 1000
+  play_env_num: 16
+algo:
+  seed: 1
+  num_envs: 1024
+  num_steps_per_env: 24
+  max_iterations: 600
+  save_interval: 50
+  empirical_normalization: true
+  experiment_name: xl330_official_velocity
+  run_name: xl330_official_velocity_unilab
+  obs_groups:
+    actor: [actor]
+    critic: [critic]
+  policy:
+    init_noise_std: 1.0
+    actor_hidden_dims: [512, 256, 128]
+    critic_hidden_dims: [512, 256, 128]
+    activation: elu
+    class_name: ActorCritic
+  algorithm:
+    value_loss_coef: 1.0
+    use_clipped_value_loss: true
+    clip_param: 0.2
+    entropy_coef: 0.01
+    num_learning_epochs: 5
+    num_mini_batches: 4
+    learning_rate: 0.001
+    schedule: adaptive
+    gamma: 0.99
+    lam: 0.95
+    desired_kl: 0.01
+    max_grad_norm: 1.0
+env:
+  sim_dt: 0.005
+  ctrl_dt: 0.02
+  max_episode_seconds: 20.0
+  control_config:
+    action_scale: 1.0
+    simulate_action_latency: false
+    Kp: 60.0
+    Kd: 2.0
+  noise_config:
+    level: 1.0
+    scale_joint_angle: 0.001
+    scale_joint_vel: 0.25
+    scale_gyro: 0.03
+    scale_gravity: 0.01
+    scale_linvel: 0.1
+  commands:
+    velocity_low: [-0.4, -0.3, -1.0]
+    velocity_high: [0.4, 0.3, 1.0]
+    resampling_time_range: [3.0, 8.0]
+    rel_forward_envs: 0.2
+    rel_turn_in_place_envs: 0.15
+  domain_rand:
+    randomize_base_mass: false
+    random_com: false
+    randomize_ground_friction: false
+    randomize_foot_friction: true
+    foot_friction_range: [0.7, 1.3]
+    randomize_dof_armature: true
+    dof_armature_multiplier_range: [0.9, 1.1]
+    randomize_kp: false
+    randomize_kd: false
+    push_robots: false
+    velocity_pushes: true
+    velocity_push_interval_s: [3.0, 6.0]
+    velocity_push_xy: [-0.3, 0.3]
+    randomize_joint_friction: false
+    push_body_name: trunk_base
+    motor:
+      enabled: false
+reward:
+  scales:
+    pose: 1.0
+    upright: 2.0
+    foot_slip: -0.1
+    self_collisions: -1.0
+    air_time: 3.0
+    body_ang_vel: -0.05
+    angular_momentum: -0.02
+    track_linear_velocity: 2.0
+    track_angular_velocity: 2.0
+    action_rate_l2: -0.1
+    foot_clearance: -2.0
+    foot_swing_height: -0.25
+    head_pose_tracking: 2.0
+    body_pose_tracking: 0.0
+    head_pose_bias: 0.0
+    dof_pos_limits: -1.0
+  linear_velocity_std: 0.31622776601683794
+  angular_velocity_std: 0.7071067811865476
+  upright_std: 0.22360679774997896
+  foot_target_height: 0.02
+  angular_momentum_reference: 1.0
+  air_time_threshold_min: 0.125
+  air_time_threshold_max: 0.3

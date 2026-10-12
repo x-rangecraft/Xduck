@@ -1,0 +1,26 @@
+# @package _global_
+# Original task behind model_1350, with additive sitting head costs only.
+defaults:
+  - /task/xduck_gf43x40_sitstand_head_upright/mjwarp
+  - _self_
+algo:
+  run_name: gf_head_only_zero500
+  num_envs: 4096
+  max_iterations: 500
+  save_interval: 100
+  resume: false
+  load_run: '-1'
+  resume_path: null
+  checkpoint: -1
+env:
+  neck_target_bounds_deg: [-16.6, 33.9]
+  head_only_repair_enabled: true
+  head_only_ramp_steps: 12000
+  head_only_neutral_band_deg: 15.0
+  head_only_excursion_width_deg: 30.0
+  head_only_speed_band_rad_s: 1.5
+reward:
+  scales:
+    head_only_excursion: -0.5
+    head_only_speed: -0.05
+    head_only_increment: -0.05

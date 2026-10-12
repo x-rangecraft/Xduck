@@ -1,0 +1,8 @@
+<mujoco>
+  <sensor>
+    <contact name="pure_head_floor" geom1="floor" subtree2="neck_pitch" data="found" num="1" reduce="none" />
+    <contact name="pure_trunk_floor" geom1="floor" geom2="base_link_collision" data="found" num="1" reduce="none" />
+    <contact name="pure_left_hip_floor" geom1="floor" geom2="left_hip_pitch_collision" data="found" num="1" reduce="none" />
+    <contact name="pure_right_hip_floor" geom1="floor" geom2="right_hip_pitch_collision" data="found" num="1" reduce="none" />
+  </sensor>
+</mujoco>

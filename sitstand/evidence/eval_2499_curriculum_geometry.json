@@ -1,0 +1,146 @@
+{
+  "criterion": "Geometric height/body/head uprightness and stationarity, no joint pose matching; continuous hold0.5s and success throughout final1s; original fall mask retained.",
+  "thresholds": {
+    "height_error_m": 0.015,
+    "body_tilt_deg": 10.0,
+    "head_tilt_deg": 10.0,
+    "base_speed_m_s": 0.04,
+    "joint_speed_rad_s": 0.5,
+    "minimum_hold_s": 0.5,
+    "final_window_s": 1.0
+  },
+  "head_body": "head_roll",
+  "head_local_up": [
+    0.0,
+    0.9999999999932535,
+    3.673192317532603e-06
+  ],
+  "reference": "Zero head/neck joints, upright root; head axis calibrated with exact frozen model.",
+  "trajectory": "/home/xingchen/Xduck/diagnose_from_control_20261009/newstand_resume_2000_to2500_20261012/eval_2499_curriculum.npz",
+  "height_targets_m": {
+    "stand": 0.3198,
+    "sit": 0.2182
+  },
+  "rows": [
+    {
+      "case": "stand_hold",
+      "seed": 6401,
+      "trials": 16,
+      "successes": 0,
+      "falls": 1,
+      "late_head_tilt_mean_deg": 30.07048458626533,
+      "last_second_condition_violations": {
+        "height": 4,
+        "body_upright": 6,
+        "head_upright": 14,
+        "base_stationary": 16,
+        "joints_stationary": 16
+      }
+    },
+    {
+      "case": "stand_hold",
+      "seed": 7401,
+      "trials": 16,
+      "successes": 0,
+      "falls": 0,
+      "late_head_tilt_mean_deg": 34.502996399329646,
+      "last_second_condition_violations": {
+        "height": 5,
+        "body_upright": 6,
+        "head_upright": 15,
+        "base_stationary": 16,
+        "joints_stationary": 16
+      }
+    },
+    {
+      "case": "sit_hold",
+      "seed": 6401,
+      "trials": 16,
+      "successes": 0,
+      "falls": 1,
+      "late_head_tilt_mean_deg": 29.759075203496078,
+      "last_second_condition_violations": {
+        "height": 1,
+        "body_upright": 8,
+        "head_upright": 16,
+        "base_stationary": 11,
+        "joints_stationary": 10
+      }
+    },
+    {
+      "case": "sit_hold",
+      "seed": 7401,
+      "trials": 16,
+      "successes": 0,
+      "falls": 0,
+      "late_head_tilt_mean_deg": 21.290917538534703,
+      "last_second_condition_violations": {
+        "height": 0,
+        "body_upright": 4,
+        "head_upright": 15,
+        "base_stationary": 13,
+        "joints_stationary": 14
+      }
+    },
+    {
+      "case": "rise",
+      "seed": 6401,
+      "trials": 16,
+      "successes": 0,
+      "falls": 0,
+      "late_head_tilt_mean_deg": 44.16371486092781,
+      "last_second_condition_violations": {
+        "height": 1,
+        "body_upright": 3,
+        "head_upright": 16,
+        "base_stationary": 16,
+        "joints_stationary": 16
+      }
+    },
+    {
+      "case": "rise",
+      "seed": 7401,
+      "trials": 16,
+      "successes": 0,
+      "falls": 1,
+      "late_head_tilt_mean_deg": 47.2940152051509,
+      "last_second_condition_violations": {
+        "height": 4,
+        "body_upright": 5,
+        "head_upright": 16,
+        "base_stationary": 16,
+        "joints_stationary": 16
+      }
+    },
+    {
+      "case": "descent",
+      "seed": 6401,
+      "trials": 16,
+      "successes": 1,
+      "falls": 4,
+      "late_head_tilt_mean_deg": 46.04650911474713,
+      "last_second_condition_violations": {
+        "height": 4,
+        "body_upright": 8,
+        "head_upright": 15,
+        "base_stationary": 11,
+        "joints_stationary": 13
+      }
+    },
+    {
+      "case": "descent",
+      "seed": 7401,
+      "trials": 16,
+      "successes": 0,
+      "falls": 2,
+      "late_head_tilt_mean_deg": 30.830689666028082,
+      "last_second_condition_violations": {
+        "height": 2,
+        "body_upright": 5,
+        "head_upright": 16,
+        "base_stationary": 7,
+        "joints_stationary": 11
+      }
+    }
+  ]
+}

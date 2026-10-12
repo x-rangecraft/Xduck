@@ -1,0 +1,15 @@
+# @package _global_
+# Restore the original zero-to1250 recipe. Only neck policy bounds differ.
+defaults:
+  - /task/xduck_gf43x40_sitstand_incremental/mjwarp
+  - _self_
+algo:
+  run_name: gf_original_neck_limited
+  num_envs: 4096
+  max_iterations: 1250
+  resume: false
+  load_run: '-1'
+  resume_path: null
+  checkpoint: -1
+env:
+  neck_target_bounds_deg: [-16.6, 33.9]

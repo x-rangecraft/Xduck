@@ -1,0 +1,110 @@
+# @package _global_
+# Short continuation of old model_1500 with 75% folded actor outputs.
+defaults:
+- xduck_v111_original_reward_v1
+- _self_
+algo:
+  num_envs: 1024
+  num_steps_per_env: 24
+  max_iterations: 50
+  save_interval: 25
+  algorithm:
+    learning_rate: 0.0001
+    schedule: fixed
+    entropy_coef: 0.0
+env:
+  control_config:
+    action_scale: 1.0
+    simulate_action_latency: false
+    Kp: 60.0
+    Kd: 2.0
+    joint_kp:
+    - 90.0
+    - 90.0
+    - 75.0
+    - 100.0
+    - 90.0
+    - 75.0
+    - 90.0
+    - 75.0
+    - 90.0
+    - 90.0
+    - 90.0
+    - 75.0
+    - 100.0
+    - 90.0
+    joint_kd:
+    - 2.5
+    - 2.5
+    - 2.5
+    - 3.0
+    - 3.0
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 2.5
+    - 3.0
+    - 3.0
+  communication:
+    jitter_mode: measured_20260918
+    command_jitter_ms:
+    - 0
+    - 0
+    feedback_jitter_ms:
+    - 0
+    - 0
+    feedback_delay_ms: 0.0
+    jitter_seed: 0
+  domain_rand:
+    mass_inertia_scale_range:
+    - 0.94
+    - 1.06
+    imu_max_angle_deg: 7.199999999999999
+    foot_friction_range:
+    - 0.64
+    - 1.3599999999999999
+  noise_config:
+    level: 1.2
+  curriculum:
+    step_cap: null
+    com_range_stages:
+    - step: 0
+      value: 0.012540000000000003
+    head_com_range_stages:
+    - step: 0
+      value: 0.00836
+reward:
+  scales:
+    pose: 1.0
+    upright: 2.0
+    foot_slip: -0.04784688995215312
+    self_collisions: -1.0
+    air_time: 3.0
+    body_ang_vel: -0.1045
+    angular_momentum: -1.1111281185647048e-05
+    track_linear_velocity: 2.0
+    track_angular_velocity: 2.0
+    action_rate_l2: -0.1
+    foot_clearance: -0.6619277166182533
+    foot_swing_height: -0.25
+    head_pose_tracking: 2.0
+    body_pose_tracking: 0.0
+    head_pose_bias: 0.0
+    dof_pos_limits: -1.0
+    command_progress: 0
+  linear_velocity_std: 0.4571651780264985
+  angular_velocity_std: 0.4891159880445185
+  upright_std: 0.22360679774997896
+  foot_target_height: 0.0418
+  air_time_threshold_min: 0.180710403685012
+  air_time_threshold_max: 0.4337049688440288
+  progress_command_threshold: 0.05
+  progress_upright_min: 0.8660254037844387
+  action_rate_units: policy
+  action_rate_time_scale: 1.0
+  action_rate_reference_dt: 0.02
+  head_bias_tau_s: 1.0
+  scale_model_fingerprint: null

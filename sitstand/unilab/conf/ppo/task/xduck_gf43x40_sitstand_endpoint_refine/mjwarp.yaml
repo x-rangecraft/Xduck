@@ -1,0 +1,25 @@
+# @package _global_
+# Continue revision-6 policy: reward-only endpoint refinement, unchanged GF.
+defaults:
+  - /task/xduck_gf43x40_sitstand_incremental/mjwarp
+  - _self_
+algo:
+  run_name: gf_endpoint_refine
+  max_iterations: 250
+  save_interval: 50
+env:
+  endpoint_safe_soft_limits: true
+reward:
+  endpoint_refinement_enabled: true
+  endpoint_refinement_start_step: 30000
+  endpoint_refinement_ramp_steps: 6000
+  endpoint_height_std: 0.03
+  endpoint_leg_std: 0.15
+  endpoint_head_std: 0.20
+  endpoint_pose_weight: 4.0
+  endpoint_head_weight: 2.0
+  endpoint_velocity_weight: -0.5
+  scales:
+    endpoint_pose: 1.0
+    endpoint_head: 1.0
+    endpoint_velocity: 1.0

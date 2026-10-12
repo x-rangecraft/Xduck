@@ -1,0 +1,25 @@
+# @package _global_
+# Fresh random MLP; official curriculum clock; versioned GF target increments.
+defaults:
+  - /task/xduck_gf43x40_sitstand_training_coupled_v2/mjwarp
+  - _self_
+training:
+  task_name: XDuckGF43X40SitStandIncrementalFlat
+algo:
+  run_name: gf_incremental_search
+  num_steps_per_env: 24
+  max_iterations: 100
+  save_interval: 25
+  actor:
+    distribution_cfg:
+      init_std: 0.25
+  policy:
+    init_noise_std: 0.25
+  algorithm:
+    learning_rate: 0.0003
+    entropy_coef: 0.005
+env:
+  adaptive_chunk_size: false
+  pure_policy_revision: 6
+  target_increment_rad: [0.015, 0.010, 0.080, 0.060, 0.075, 0.110, 0.025, 0.025, 0.010, 0.015, 0.010, 0.080, 0.060, 0.075]
+  target_history_scale_rad: 0.12

@@ -1,0 +1,48 @@
+# @package _global_
+# User standing pose; physical target bounds remain identical.
+defaults:
+- /task/xduck_gf43x40_sitstand_incremental/mjwarp
+- _self_
+algo:
+  run_name: gf_incremental_user_stand_20261012
+env:
+  reference_keyframe: STAND
+  scene:
+    fragment_files:
+    - src/unilab/envs/locomotion/xduck_gf43x40/sensors.xml
+    - src/unilab/envs/locomotion/xduck_gf43x40/pure_sensors.xml
+    - src/unilab/envs/locomotion/xduck_gf43x40/stand_user_20261012.xml
+  stand_reset_height: 0.3217271865924776
+  action_offset_low:
+  - -1.19
+  - -0.19
+  - -3.383999997
+  - -1.129
+  - -1.035000003
+  - -0.309
+  - -1.25
+  - -1.99
+  - -0.49
+  - -0.49
+  - -1.11
+  - -2.596000003
+  - -1.551
+  - -1.744999997
+  action_offset_high:
+  - 0.49
+  - 1.41
+  - 2.596000003
+  - 1.451
+  - 1.744999997
+  - 1.271
+  - 1.13
+  - 1.99
+  - 0.49
+  - 1.19
+  - 0.27
+  - 2.383999997
+  - 1.229
+  - 1.035000003
+  warp_compiled_model_file: training_runs/xduck_diagnosis_from_microduck_control_20261009/newstand_20261012/pure_effective_newstand_linux.mjb
+reward:
+  stand_height: 0.3198

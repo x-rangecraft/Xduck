@@ -1,0 +1,180 @@
+{
+  "completed_updates": 2500,
+  "model_filename": "xduck_sitstand_2500_newstand.onnx",
+  "input_name": "obs",
+  "input_shape": [
+    1,
+    61
+  ],
+  "output_name": "actions",
+  "output_shape": [
+    1,
+    14
+  ],
+  "actor_observation_normalization": false,
+  "control_dt_s": 0.02,
+  "simulation_dt_s": 0.001,
+  "policy_joint_names": [
+    "left_hip_yaw_joint",
+    "left_hip_roll_joint",
+    "left_hip_pitch_joint",
+    "left_knee_pitch_joint",
+    "left_ankle_pitch_joint",
+    "neck_pitch_joint",
+    "head_pitch_joint",
+    "head_yaw_joint",
+    "head_roll_joint",
+    "right_hip_yaw_joint",
+    "right_hip_roll_joint",
+    "right_hip_pitch_joint",
+    "right_knee_pitch_joint",
+    "right_ankle_pitch_joint"
+  ],
+  "default_angles_rad": [
+    0.0,
+    0.07999999821186066,
+    0.39399999380111694,
+    -0.061000000685453415,
+    -0.45500001311302185,
+    0.01899999938905239,
+    0.05999999865889549,
+    0.0,
+    0.0,
+    0.0,
+    -0.07999999821186066,
+    -0.39399999380111694,
+    0.061000000685453415,
+    0.45500001311302185
+  ],
+  "target_low_rad": [
+    -1.19,
+    -0.11000000178813935,
+    -2.990000003198883,
+    -1.1900000006854534,
+    -1.4900000161130218,
+    -0.2900000006109476,
+    -1.1900000013411045,
+    -1.99,
+    -0.49,
+    -0.49,
+    -1.1899999982118608,
+    -2.989999996801117,
+    -1.4899999993145465,
+    -1.2899999838869782
+  ],
+  "target_high_rad": [
+    0.49,
+    1.4899999982118606,
+    2.989999996801117,
+    1.3899999993145467,
+    1.2899999838869782,
+    1.2899999993890523,
+    1.1899999986588954,
+    1.99,
+    0.49,
+    1.19,
+    0.19000000178813936,
+    1.9900000031988831,
+    1.2900000006854535,
+    1.4900000161130218
+  ],
+  "target_increment_rad": [
+    0.015,
+    0.01,
+    0.08,
+    0.06,
+    0.075,
+    0.11,
+    0.025,
+    0.025,
+    0.01,
+    0.015,
+    0.01,
+    0.08,
+    0.06,
+    0.075
+  ],
+  "target_history_scale_rad": 0.12,
+  "reference_source": "Actual registered training environment, not compiled HOME",
+  "actor_observation_layout": {
+    "body_gyro_rad_s": [
+      0,
+      3
+    ],
+    "body_gravity_down_unit": [
+      3,
+      6
+    ],
+    "joint_position_minus_default_rad": [
+      6,
+      20
+    ],
+    "joint_velocity_rad_s": [
+      20,
+      34
+    ],
+    "(previous_target-default)/history_scale": [
+      34,
+      48
+    ],
+    "commands": [
+      48,
+      61
+    ]
+  },
+  "command_layout": {
+    "posture_0_stand_1_sit": [
+      48,
+      49
+    ],
+    "other_twist_slots": [
+      49,
+      51
+    ],
+    "neck_head_pitch_yaw_roll_offsets_rad": [
+      51,
+      55
+    ],
+    "body_command_six_slots": [
+      55,
+      61
+    ]
+  },
+  "target_mapping": "clip(previous_target + increment * tanh(raw_actions), low, high)",
+  "hardware_to_policy_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    10,
+    11,
+    12,
+    13,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "policy_to_hardware_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    9,
+    10,
+    11,
+    12,
+    13,
+    5,
+    6,
+    7,
+    8
+  ],
+  "hardware_order": "left leg five, right leg five, neck/head four; mouth excluded",
+  "stand_height_m": 0.3198,
+  "sit_height_m": 0.2182,
+  "policy_reference_applies_to_both_joint_observations_and_target_history": true
+}

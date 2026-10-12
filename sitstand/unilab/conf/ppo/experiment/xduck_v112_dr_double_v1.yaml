@@ -1,0 +1,12 @@
+# @package _global_
+# Twice the deviations from nominal; COM is ramped independently during evaluation.
+defaults:
+  - xduck_v112_original_reward_v1
+  - _self_
+env:
+  domain_rand:
+    mass_inertia_scale_range: [0.9, 1.1]
+    imu_max_angle_deg: 12.0
+    foot_friction_range: [0.4, 1.6]
+  noise_config:
+    level: 2.0

@@ -1,0 +1,16 @@
+# @package _global_
+defaults:
+  - /task/xduck_gf43x40_sitstand_official_rewards/mjwarp
+  - _self_
+training:
+  task_name: XDuckGF43X40SitStandDiscoveryPilotFlat
+algo:
+  max_iterations: 100
+  save_interval: 50
+env:
+  pure_policy_revision: 5
+  pilot_spawn_enabled: true
+  pilot_spawn_alpha: 0.25
+  pilot_easy_fraction: 0.75
+  pilot_progress_weight: 5.0
+  pilot_progress_discount: 0.99

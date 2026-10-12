@@ -1,0 +1,77 @@
+# @package _global_
+# V1.1.2 candidate: existing reward weights only, plus feasible head commands.
+# Not gait-validated. Fresh training required; old V1.1.0 policies are not retuned.
+defaults:
+- xduck_official4096_sample_aligned_1024_v1
+- _self_
+env:
+  curriculum:
+    action_rate_stages:
+    - step: 0
+      value: -0.6
+    - step: 48004
+      value: -0.7
+    - step: 72004
+      value: -0.8
+    - step: 96004
+      value: -0.9
+    - step: 120004
+      value: -1.0
+    - step: 144004
+      value: -1.0
+    head_range_stages:
+    - step: 0
+      ranges:
+      - - -0.05
+        - 0.05
+      - - -0.05
+        - 0.05
+      - - -0.07
+        - 0.07
+      - - -0.015
+        - 0.015
+    - step: 48000
+      ranges:
+      - - -0.17
+        - 0.17
+      - - -0.17
+        - 0.17
+      - - -0.21
+        - 0.21
+      - - -0.047
+        - 0.047
+    - step: 96000
+      ranges:
+      - - -0.39
+        - 0.39
+      - - -0.39
+        - 0.39
+      - - -0.49
+        - 0.49
+      - - -0.11
+        - 0.11
+    - step: 144000
+      ranges:
+      - - -0.72
+        - 0.72
+      - - -0.72
+        - 0.72
+      - - -0.91
+        - 0.91
+      - - -0.2
+        - 0.2
+    - step: 192000
+      ranges:
+      - - -0.79
+        - 0.79
+      - - -0.99
+        - 0.99
+      - - -1.4
+        - 1.4
+      - - -0.31
+        - 0.31
+reward:
+  scale_model_fingerprint: 86a4a3005ec0306a57f9d115df4240d396436c433a378d148c4e1d070bd14c91
+  scales:
+    air_time: 1.5
+    action_rate_l2: -0.6

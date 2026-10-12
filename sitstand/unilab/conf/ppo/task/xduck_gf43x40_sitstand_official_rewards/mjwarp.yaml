@@ -1,0 +1,74 @@
+# @package _global_
+# Official cfe1c2ad learning recipe; XDuck/GF plant and dimensional rewards.
+# This is a fresh-training entry. Do not resume the revision-4 history actor.
+defaults:
+  - /task/xduck_gf43x40_sitstand_microduck_ppo/mjwarp
+  - _self_
+algo:
+  run_name: official_ppo_gf_reward_units
+  num_envs: 4096
+  num_steps_per_env: 24
+  max_iterations: 15000
+  save_interval: 50
+  resume: false
+  load_run: '-1'
+  actor:
+    class_name: rsl_rl.models.MLPModel
+    distribution_cfg:
+      init_std: 1.0
+      std_type: scalar
+  policy:
+    init_noise_std: 1.0
+  algorithm:
+    learning_rate: 0.001
+    schedule: adaptive
+    entropy_coef: 0.01
+    gamma: 0.99
+    lam: 0.95
+    num_learning_epochs: 5
+    num_mini_batches: 4
+    clip_param: 0.2
+    desired_kl: 0.01
+    max_grad_norm: 1.0
+env:
+  pure_policy_revision: 3
+  # Official curriculum times; dimensional costs below use 1 / height scale.
+  curriculum:
+    descent_speed_stages:
+      - {step: 0, value: -5.807814150}
+      - {step: 12000, value: -11.615628300}
+    rise_speed_stages:
+      - {step: 0, value: 0.0}
+      - {step: 36000, value: -2.903907075}
+      - {step: 60000, value: -5.807814150}
+reward:
+  # Preserve the official reward structure; no v4 fall gate or extra repairs.
+  repair_enabled: false
+  # L = (0.3129 - 0.2182) / (0.115 - 0.060) = 1.72181818.
+  # Same transition time: lengths, speeds, accelerations scale by L;
+  # linear dimensional costs scale by 1/L. Angular tolerances stay unchanged.
+  stand_height: 0.3129
+  sit_height: 0.2182
+  height_std: 0.068872727273
+  sharp_height_std: 0.025827272727
+  composite_height_std: 0.051654545455
+  pose_std: 0.5
+  composite_pose_std: 0.4
+  upright_std: 0.4
+  stillness_band_full: 0.020661818182
+  stillness_band_zero: 0.051654545455
+  stillness_speed_std: 0.086090909091
+  max_descent_speed: 0.086090909091
+  max_rise_speed: 0.137745454545
+  rise_bootstrap_height_margin: 0.017218181818
+  upright_height_low_fraction: 0.272727272727
+  upright_height_high_fraction: 0.727272727273
+  # Existing GF reward normalization, not a change to motor physics or limits.
+  angular_momentum_reference: 0.25
+  scales:
+    posture_composite: 3.0
+    posture_height_l1: -3.484688490
+    rise_bootstrap: 0.435586061
+    descent_speed: -5.807814150
+    rise_speed: 0.0
+    gentle_motion: -0.029039071

@@ -1,0 +1,22 @@
+# @package _global_
+defaults:
+  - /task/xduck_gf43x40_sitstand_head_upright/mjwarp
+  - _self_
+algo:
+  run_name: gf_quiet_transition
+  max_iterations: 100
+  save_interval: 25
+env:
+  quiet_transition_enabled: true
+  transition_head_std_deg: 5.0
+  transition_body_band_deg: 5.0
+  transition_head_speed_std_rad_s: 1.0
+  curriculum:
+    head_range_stages:
+      - {step: 0, ranges: [[0, 0], [0, 0], [0, 0], [0, 0]]}
+reward:
+  scales:
+    transition_head_neutral: 3.0
+    transition_head_excursion: -0.5
+    transition_head_speed: -0.25
+    transition_body_tilt: -0.5

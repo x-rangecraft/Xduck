@@ -1,0 +1,11 @@
+# @package _global_
+# User-selected rollback. Explicit checkpoint prevents selecting the newer failed run.
+defaults:
+  - xduck_grouped_baseline_v1
+  - _self_
+training:
+  play_only: true
+  play_env_num: 1
+algo:
+  load_run: 2026-09-18_grouped_symmetric600_resume51
+  checkpoint: 599

@@ -1,0 +1,24 @@
+# @package _global_
+# Head: absolute position. Legs: original integrated targets. GF untouched.
+defaults:
+  - /task/xduck_gf43x40_sitstand_head_upright/mjwarp
+  - _self_
+algo:
+  run_name: gf_head_absolute_zero500
+  num_envs: 4096
+  max_iterations: 500
+  save_interval: 100
+  resume: false
+  load_run: '-1'
+  resume_path: null
+  checkpoint: -1
+env:
+  neck_target_bounds_deg: [-16.6, 33.9]
+  head_absolute_position: true
+  # Physical replay probe: smaller response than0.25; not PPO acceptance.
+  # Original-incremental restored task does not use this separate scale.
+  head_absolute_scale_rad: 0.05
+  head_official_joint_reward: true
+reward:
+  scales:
+    head_pose_tracking: 0.75

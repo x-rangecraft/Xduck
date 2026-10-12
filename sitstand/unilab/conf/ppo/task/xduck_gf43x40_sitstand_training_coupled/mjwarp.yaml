@@ -1,0 +1,40 @@
+# @package _global_
+# Training-side diagnostic candidate; not an accepted learned policy.
+# Keep the Xduck/GF physical system and reset distribution unchanged.
+defaults:
+  - /task/xduck_gf43x40_sitstand_official_rewards/mjwarp
+  - _self_
+algo:
+  run_name: xduck_coupled_training_preflight
+  num_envs: 4096
+  num_steps_per_env: 96
+  max_iterations: 2
+  save_interval: 1
+  load_run: '-1'
+  resume: false
+  actor:
+    obs_normalization: false
+    distribution_cfg:
+      class_name: unilab.training.policy_initialization:SmallMeanGaussianDistribution
+      init_std: 0.03
+      std_type: log
+      init_mean_gain: 0.01
+  policy:
+    init_noise_std: 0.03
+  algorithm:
+    learning_rate: 0.00003
+    schedule: fixed
+    entropy_coef: 0.0
+    gamma: 0.997
+    lam: 0.99
+    num_learning_epochs: 3
+    num_mini_batches: 8
+    clip_param: 0.1
+reward:
+  # Learning objective changes, no actuator or target decoder changes.
+  repair_enabled: true
+  target_overflow_std_rad: 0.25
+  stationary_joint_speed_std: 0.5
+  stationary_angular_speed_std: 0.5
+  scales:
+    target_overflow: -1.0

@@ -1,0 +1,32 @@
+# @package _global_
+# Fresh ordinary MLP/PPO. No checkpoint, trajectory or fixed head controller.
+defaults:
+  - /task/xduck_gf43x40_sitstand_command_geometry/mjwarp
+  - _self_
+algo:
+  run_name: gf_quiet_reward_repair_zero500
+  seed: 42
+  num_envs: 4096
+  num_steps_per_env: 24
+  max_iterations: 500
+  save_interval: 100
+  resume: false
+  load_run: '-1'
+  resume_path: null
+  checkpoint: -1
+  algorithm:
+    learning_rate: 0.0003
+    entropy_coef: 0.005
+env:
+  head_upright_full_motion: true
+  executed_increment_cost_enabled: true
+  # Preserve original motor decoder and original noisy seated/standing resets.
+  # Head orientation feedback is active from step0; movement costs tighten.
+  command_style_start_step: 0
+  command_style_ramp_steps: 12000
+  command_style_blend_start: 0.15
+  command_style_blend_end: 0.65
+  command_style_head_width_start_deg: 45.0
+  command_style_head_width_end_deg: 15.0
+  command_style_pitch_width_start_deg: 15.0
+  command_style_pitch_width_end_deg: 6.0

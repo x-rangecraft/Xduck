@@ -1,0 +1,45 @@
+# @package _global_
+# V1.1.2 physics, original physical STAND reference (joint signs reversed).
+algo:
+  algorithm:
+    learning_rate: 0.0001
+    schedule: fixed
+env:
+  scene:
+    model_file: /Users/xiaoyaozi/xinchen/MicroDuck/Model/1.1.2/mjcf/scene.xml
+    visual_model_file: /Users/xiaoyaozi/xinchen/MicroDuck/Model/1.1.2/mjcf/scene.xml
+    fragment_files:
+    - /Users/xiaoyaozi/xinchen/MicroDuck/unilab/src/unilab/envs/locomotion/xduck_gf43x40/sensors.xml
+    - /Users/xiaoyaozi/xinchen/MicroDuck/unilab/src/unilab/envs/locomotion/xduck_gf43x40/stand_v112.xml
+  reference_keyframe: STAND
+  action_offset_low:
+  - -1.19
+  - -0.11
+  - -3.374
+  - -1.19
+  - -1.1059999999999999
+  - -0.29
+  - -1.19
+  - -1.99
+  - -0.49
+  - -0.49
+  - -1.19
+  - -2.6060000000000003
+  - -1.49
+  - -1.674
+  action_offset_high:
+  - 0.49
+  - 1.49
+  - 2.6060000000000003
+  - 1.39
+  - 1.674
+  - 1.29
+  - 1.19
+  - 1.99
+  - 0.49
+  - 1.19
+  - 0.19
+  - 2.374
+  - 1.29
+  - 1.1059999999999999
+  handoff_bank: data/xduck_stop/walk_handoffs_v112.npz

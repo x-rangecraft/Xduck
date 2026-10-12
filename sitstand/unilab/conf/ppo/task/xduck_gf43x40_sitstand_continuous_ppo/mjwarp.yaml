@@ -1,0 +1,27 @@
+# @package _global_
+defaults:
+  - /task/xduck_gf43x40_sitstand_microduck_repaired/mjwarp
+  - _self_
+training:
+  task_name: XDuckGF43X40SitStandContinuousPPOFlat
+algo:
+  run_name: gf_continuous_target_v4
+  max_iterations: 10
+  policy:
+    init_noise_std: 0.005
+  actor:
+    class_name: unilab.training.xduck_pure_actor:ContinuousTargetActor
+    residual_scale: 0.05
+    distribution_cfg:
+      init_std: 0.005
+  algorithm:
+    learning_rate: 0.00001
+    # Adaptive KL scheduling increased this 38x within ten smoke iterations.
+    schedule: fixed
+    entropy_coef: 0.0
+env:
+  pure_policy_revision: 4
+  target_rate_limit_rad_s: 6.0
+reward:
+  scales:
+    fallen: -2.0

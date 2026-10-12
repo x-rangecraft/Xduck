@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - /task/xduck_gf43x40_sitstand_pure_flat/mujoco
+  - _self_
+training:
+  sim_backend: mjwarp
+  device: cuda:0
+  play_render_mode: record
+env:
+  warp_compiled_model_file: null

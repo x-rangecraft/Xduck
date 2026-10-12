@@ -1,0 +1,10 @@
+<mujoco>
+  <sensor>
+    <contact name="reference_head_floor" geom1="floor" subtree2="neck_pitch"
+             data="found" num="1" reduce="none" />
+    <contact name="reference_trunk_floor" geom1="floor" geom2="base_link_collision"
+             data="found" num="1" reduce="none" />
+    <contact name="reference_ground_force" geom1="floor" subtree2="base_link"
+             data="force" num="1" reduce="netforce" />
+  </sensor>
+</mujoco>

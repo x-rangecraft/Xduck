@@ -1,0 +1,26 @@
+# @package _global_
+# Stop-policy DR adaptation only; preserves dedicated stop rewards.
+algo:
+  max_iterations: 50
+  algorithm:
+    learning_rate: 0.0001
+    schedule: fixed
+    entropy_coef: 0.0
+env:
+  domain_rand:
+    mass_inertia_scale_range:
+    - 0.925
+    - 1.075
+    imu_max_angle_deg: 9.0
+    foot_friction_range:
+    - 0.55
+    - 1.45
+  noise_config:
+    level: 1.5
+  curriculum:
+    com_range_stages:
+    - step: 0
+      value: 0.01881
+    head_com_range_stages:
+    - step: 0
+      value: 0.012539999999999999

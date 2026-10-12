@@ -1,0 +1,33 @@
+# @package _global_
+defaults:
+  - /task/xduck_gf43x40_sitstand_head_upright/mjwarp
+  - _self_
+algo:
+  run_name: gf_command_style_from1351
+  max_iterations: 50
+  save_interval: 25
+  algorithm:
+    learning_rate: 0.00015
+    entropy_coef: 0.003
+env:
+  command_style_enabled: true
+  command_style_start_step: 32424
+  command_style_ramp_steps: 2400
+  command_style_blend_start: 0.15
+  command_style_blend_end: 0.8
+  command_style_head_width_start_deg: 45.0
+  command_style_head_width_end_deg: 15.0
+  command_style_pitch_width_start_deg: 15.0
+  command_style_pitch_width_end_deg: 6.0
+  command_style_speed_width_start: 4.0
+  command_style_speed_width_end: 1.5
+  curriculum:
+    head_range_stages:
+      - {step: 0, ranges: [[0, 0], [0, 0], [0, 0], [0, 0]]}
+reward:
+  scales:
+    style_sit_head_displacement: -3.0
+    style_sit_head_speed: -0.5
+    style_sit_head_tilt: -3.0
+    style_rise_pitch: -5.0
+    style_rise_pitch_rate: -0.5

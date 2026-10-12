@@ -1,0 +1,40 @@
+# @package _global_
+defaults:
+  - /task/xduck_gf43x40_velocity_flat: mujoco
+  - _self_
+training:
+  task_name: XDuckGF43X40WalkStopFlat
+  no_play: true
+algo:
+  experiment_name: xduck_walk_stop
+  run_name: walk_to_stop_v111
+  num_envs: 1024
+  num_steps_per_env: 24
+  max_iterations: 600
+  save_interval: 50
+  load_run: "-1"
+  policy:
+    init_noise_std: 0.2
+env:
+  handoff_bank: data/xduck_stop/walk_handoffs.npz
+  max_episode_seconds: 6.0
+  control_config:
+    joint_kp: [90,90,75,100,90,75,90,75,90,90,90,75,100,90]
+    joint_kd: [2.5,2.5,2.5,3,3,2.5,2.5,2.5,2.5,2.5,2.5,2.5,3,3]
+reward:
+  linear_velocity_std: 0.10
+  angular_velocity_std: 0.35
+  scales:
+    track_linear_velocity: 4.0
+    track_angular_velocity: 2.0
+    action_rate_l2: -0.05
+    air_time: 0.0
+    foot_clearance: 0.0
+    foot_swing_height: 0.0
+    head_pose_bias: 0.0
+    command_progress: 0.0
+play_profile:
+  env:
+    domain_rand:
+      velocity_pushes: false
+      push_robots: false

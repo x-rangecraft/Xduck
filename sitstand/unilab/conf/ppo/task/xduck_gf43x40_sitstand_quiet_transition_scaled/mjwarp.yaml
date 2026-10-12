@@ -1,0 +1,16 @@
+# @package _global_
+defaults:
+  - /task/xduck_gf43x40_sitstand_quiet_transition/mjwarp
+  - _self_
+algo:
+  run_name: gf_quiet_transition_scaled
+env:
+  # Legs retain their original range per tick; head motors remain policy-owned
+  # but their target slew is 0.1 rad/s at 50Hz, suited to a quiet head task.
+  target_increment_rad: [0.015, 0.010, 0.080, 0.060, 0.075, 0.002, 0.002, 0.002, 0.002, 0.015, 0.010, 0.080, 0.060, 0.075]
+  transition_head_speed_std_rad_s: 0.25
+  head_upright_std_deg: 8.0
+reward:
+  scales:
+    transition_head_excursion: -1.0
+    transition_body_tilt: -1.0
