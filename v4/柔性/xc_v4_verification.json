@@ -1,0 +1,57 @@
+{
+  "version": "v4",
+  "api_version": 2,
+  "reference_contract": "Walk matches compiled training STAND; Stand matches model650 deployment reference",
+  "walk_reference_rad": [
+    0.0,
+    0.0,
+    0.3840000033378601,
+    0.0,
+    -0.3840000033378601,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    -0.3840000033378601,
+    0.0,
+    0.3840000033378601
+  ],
+  "stand_reference_rad": [
+    0.0,
+    0.07999999821186066,
+    0.39399999380111694,
+    -0.061000000685453415,
+    -0.45500001311302185,
+    0.01899999938905239,
+    0.05999999865889549,
+    0.0,
+    0.0,
+    0.0,
+    -0.07999999821186066,
+    -0.39399999380111694,
+    0.061000000685453415,
+    0.45500001311302185
+  ],
+  "scale_kp_kd_limits_latency": "matched_saved_configs",
+  "steps": 100,
+  "mode_switches": 3,
+  "reference_and_action_history_rebase": "passed",
+  "same_mode_raw_history": "passed",
+  "velocity_delay": "passed",
+  "saturation_history": "passed",
+  "kp_kd": "matched_training",
+  "onnx_files": {
+    "walk": {
+      "path": "/Users/xiaoyaozi/Desktop/v4/\u67d4\u6027/flex_adapt_50.onnx",
+      "sha256": "3db03a4558cb06033e9239af4c57bec5bff107bc9d2fed27df127221e564f85d"
+    },
+    "stand": {
+      "path": "/Users/xiaoyaozi/Desktop/v4/\u67d4\u6027/model_650_stand_newdefault_flex.onnx",
+      "sha256": "82fdd48b5da77cae98d4d72cb9ea7955cd87a71c72bcb5f2492725255b173f20"
+    }
+  },
+  "policy_sha256": "2f08f72962c22c45fcd8939ff5f8ba7ac716117bf33f01def2fde9f023784abf",
+  "hardware_tested": false
+}
