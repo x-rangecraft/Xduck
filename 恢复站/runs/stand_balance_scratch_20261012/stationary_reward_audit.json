@@ -1,0 +1,91 @@
+{
+  "pause": "user_requested; no training resumed",
+  "analytic_assumptions": "same ideal upright/height/pose, zero gyro and both feet contact; raw pre-dt reward coefficients; reward change sensitivity is not PPO gradient",
+  "trace_limitations": "gyro/action outputs were not saved, current gate and quiet values are upper bounds ignoring angular-rate suppression, not exact total reward; old pose/linear are rescoring same states, not causal retraining evidence",
+  "points": [
+    {
+      "speed_m_s": 0,
+      "current_gate_max": 1.0,
+      "current_quiet_reward_max": 2.0,
+      "current_pose_reward_max": 0.1,
+      "old_linear_reward": 2.0,
+      "current_velocity_dependent_reward_change_magnitude": 0.0,
+      "old_linear_reward_change_magnitude": 0.0
+    },
+    {
+      "speed_m_s": 0.05,
+      "current_gate_max": 0.8406237433345053,
+      "current_quiet_reward_max": 0.6184963858666875,
+      "current_pose_reward_max": 0.08406237433345054,
+      "old_linear_reward": 1.8788261256269516,
+      "current_velocity_dependent_reward_change_magnitude": 29.618735713835125,
+      "old_linear_reward_change_magnitude": 4.697065314067379
+    },
+    {
+      "speed_m_s": 0.1,
+      "current_gate_max": 0.49935178859927615,
+      "current_quiet_reward_max": 0.01829189407685574,
+      "current_pose_reward_max": 0.04993517885992762,
+      "old_linear_reward": 1.5576015661428098,
+      "current_velocity_dependent_reward_change_magnitude": 2.4109497613815614,
+      "old_linear_reward_change_magnitude": 7.788007830714047
+    },
+    {
+      "speed_m_s": 0.2,
+      "current_gate_max": 0.06217652402211629,
+      "current_quiet_reward_max": 1.3994091988530137e-08,
+      "current_pose_reward_max": 0.006217652402211629,
+      "old_linear_reward": 0.7357588823428847,
+      "current_velocity_dependent_reward_change_magnitude": 0.17271519450759643,
+      "old_linear_reward_change_magnitude": 7.357588823428846
+    },
+    {
+      "speed_m_s": 0.3,
+      "current_gate_max": 0.0019304541362277093,
+      "current_quiet_reward_max": 8.95546488343673e-19,
+      "current_pose_reward_max": 0.00019304541362277094,
+      "old_linear_reward": 0.21079844912372886,
+      "current_velocity_dependent_reward_change_magnitude": 0.00804355890094904,
+      "old_linear_reward_change_magnitude": 3.161976736855932
+    },
+    {
+      "speed_m_s": 0.5,
+      "current_gate_max": 2.885129057248758e-08,
+      "current_quiet_reward_max": 2.1465798587181497e-51,
+      "current_pose_reward_max": 2.8851290572487583e-09,
+      "old_linear_reward": 0.0038609082724554186,
+      "current_velocity_dependent_reward_change_magnitude": 2.0035618453116378e-07,
+      "old_linear_reward_change_magnitude": 0.09652270681138544
+    }
+  ],
+  "traces": [
+    {
+      "test": "block_00_static_none",
+      "mean_speed_m_s": 0.19552917778491974,
+      "median_speed_m_s": 0.19043593108654022,
+      "fraction_speed_above_01": 0.763125,
+      "fraction_speed_above_02": 0.47052083333333333,
+      "current_base_upright_mean": 3.9806323051452637,
+      "current_height_mean": 0.9803680093769767,
+      "current_pose_reward_upper_mean": 0.02340778515472525,
+      "current_quiet_bonus_upper_mean": 0.12383166887807874,
+      "old_linear_reward_counterfactual_mean": 0.9110264182090759,
+      "old_pose_reward_counterfactual_mean": 0.5809208690222606
+    },
+    {
+      "test": "block_01_static_none",
+      "mean_speed_m_s": 0.2426035851240158,
+      "median_speed_m_s": 0.2147577852010727,
+      "fraction_speed_above_01": 0.821875,
+      "fraction_speed_above_02": 0.5394791666666666,
+      "current_base_upright_mean": 3.9633443355560303,
+      "current_height_mean": 0.9598017559635467,
+      "current_pose_reward_upper_mean": 0.014805586776766706,
+      "current_quiet_bonus_upper_mean": 0.0045290425337752216,
+      "old_linear_reward_counterfactual_mean": 0.761752724647522,
+      "old_pose_reward_counterfactual_mean": 0.19085456552364935
+    }
+  ],
+  "action_rate_ratio_at_same_actions": 70.0,
+  "action_rate_ratio_derivation": "old 0.05*sum(14 action deltas^2) versus current 0.01*mean(delta^2); ratio70 before extra movement gate"
+}

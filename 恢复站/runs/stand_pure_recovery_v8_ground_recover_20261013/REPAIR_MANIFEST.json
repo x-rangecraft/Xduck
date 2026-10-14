@@ -1,0 +1,28 @@
+{
+  "source_checkpoint": "/home/xingchen/Xduck/stand_pure_recovery_v6_keep_pose_20261013/block_20/final.pt",
+  "source_sha256": "e98c34ae7c2568e48886ccb8f64378bd721d8561f9e780b3fa8d3d5672c462ed",
+  "source_lineage_updates": 2400,
+  "excluded_checkpoints": [
+    2500,
+    2600
+  ],
+  "actor_dimension": 61,
+  "critic_dimension": 76,
+  "old_action_increments_restored": true,
+  "gaelambda": 0.95,
+  "flexible_joints": false,
+  "mechanical_dt": 0.001,
+  "control_dt": 0.02,
+  "num_envs": 4096,
+  "rollout_steps": 20,
+  "DR_multiplier": 2.5,
+  "push_stage": 3,
+  "save_and_evaluate_every": 100,
+  "termination": "8-second task deadline only; temporary ground contact and tip allowed",
+  "posture_reward_gate": "actual body tilt, height, foot support, linear and angular speed; 0.2s confirmation; immediately release when destabilized",
+  "targeted_tilt_fraction": 0.5,
+  "push_sampling": "50% fore/aft;20% lateral;30% broad",
+  "extra_v7_head_return_terms_removed": true,
+  "trajectory_or_teacher": false,
+  "optimizer_moments_reset_for_new_objective": true
+}

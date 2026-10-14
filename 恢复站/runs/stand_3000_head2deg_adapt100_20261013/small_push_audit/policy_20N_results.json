@@ -1,0 +1,120 @@
+{
+  "model": 3100,
+  "mode": "policy",
+  "force_N": 20,
+  "duration_s": 0.3,
+  "force_starts_s": 2.0,
+  "DR_multiplier": 2.5,
+  "matched_DR": true,
+  "matching_note": "Identical sampled parameters and noise seed; GPU contact solver can yield small pre-push numerical trajectory differences",
+  "pre_push_max_qpos_difference": 0.000886082649230957,
+  "cases": 8,
+  "successful": 8,
+  "cases_with_active_step": 0,
+  "active_steps": 0,
+  "rows": [
+    {
+      "case": 0,
+      "direction_deg": 0,
+      "final_stand_success": true,
+      "active_recovery_steps": 0,
+      "airborne_events": [],
+      "body_touched_ground": true,
+      "max_tilt_deg": 70.35077667236328,
+      "maximum_foot_horizontal_displacement_m": 0.08229069411754608
+    },
+    {
+      "case": 1,
+      "direction_deg": 45,
+      "final_stand_success": true,
+      "active_recovery_steps": 0,
+      "airborne_events": [],
+      "body_touched_ground": false,
+      "max_tilt_deg": 7.23790168762207,
+      "maximum_foot_horizontal_displacement_m": 0.0031595625914633274
+    },
+    {
+      "case": 2,
+      "direction_deg": 90,
+      "final_stand_success": true,
+      "active_recovery_steps": 0,
+      "airborne_events": [],
+      "body_touched_ground": false,
+      "max_tilt_deg": 2.6346278190612793,
+      "maximum_foot_horizontal_displacement_m": 0.002254995284602046
+    },
+    {
+      "case": 3,
+      "direction_deg": 135,
+      "final_stand_success": true,
+      "active_recovery_steps": 0,
+      "airborne_events": [],
+      "body_touched_ground": false,
+      "max_tilt_deg": 3.6042394638061523,
+      "maximum_foot_horizontal_displacement_m": 0.0032971566542983055
+    },
+    {
+      "case": 4,
+      "direction_deg": 180,
+      "final_stand_success": true,
+      "active_recovery_steps": 0,
+      "airborne_events": [
+        {
+          "foot": "left",
+          "takeoff_s": 2.44,
+          "airborne_duration_s": 0.3,
+          "landing_s": 2.74,
+          "landing_shift_m": 0.03595789521932602,
+          "leg_target_change_rad": 1.268025739043951,
+          "body_contact_before_landing": true,
+          "upright_before_landing": true,
+          "active_recovery_step": false
+        },
+        {
+          "foot": "right",
+          "takeoff_s": 2.48,
+          "airborne_duration_s": 0.24,
+          "landing_s": 2.74,
+          "landing_shift_m": 0.048440903425216675,
+          "leg_target_change_rad": 1.1497294822800903,
+          "body_contact_before_landing": true,
+          "upright_before_landing": true,
+          "active_recovery_step": false
+        }
+      ],
+      "body_touched_ground": true,
+      "max_tilt_deg": 25.89282989501953,
+      "maximum_foot_horizontal_displacement_m": 0.06947916746139526
+    },
+    {
+      "case": 5,
+      "direction_deg": 225,
+      "final_stand_success": true,
+      "active_recovery_steps": 0,
+      "airborne_events": [],
+      "body_touched_ground": false,
+      "max_tilt_deg": 6.037671089172363,
+      "maximum_foot_horizontal_displacement_m": 0.004150190856307745
+    },
+    {
+      "case": 6,
+      "direction_deg": 270,
+      "final_stand_success": true,
+      "active_recovery_steps": 0,
+      "airborne_events": [],
+      "body_touched_ground": false,
+      "max_tilt_deg": 2.885205030441284,
+      "maximum_foot_horizontal_displacement_m": 0.0015871593495830894
+    },
+    {
+      "case": 7,
+      "direction_deg": 315,
+      "final_stand_success": true,
+      "active_recovery_steps": 0,
+      "airborne_events": [],
+      "body_touched_ground": false,
+      "max_tilt_deg": 6.88110876083374,
+      "maximum_foot_horizontal_displacement_m": 0.0040459465235471725
+    }
+  ]
+}

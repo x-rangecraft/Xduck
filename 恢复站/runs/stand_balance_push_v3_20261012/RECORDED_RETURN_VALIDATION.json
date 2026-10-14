@@ -1,0 +1,5180 @@
+{
+  "gamma": 0.99,
+  "horizon_s": 8,
+  "terminal_potential_corrected_for_finite_horizon": true,
+  "limitations": "Unpaired observed cases; reward rescoring is not causal evidence of behavior after retraining; no successful recovery trajectories invented",
+  "summary": [
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "nonfall_settled": {
+        "count": 21,
+        "median_return": 20.697481099306646
+      },
+      "falls": {
+        "count": 3,
+        "median_return": 4.25789163561864
+      },
+      "recovered_from_tilt_gt12": {
+        "count": 0,
+        "median_return": null
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "nonfall_settled": {
+        "count": 22,
+        "median_return": 20.051511732930898
+      },
+      "falls": {
+        "count": 2,
+        "median_return": -4.076166638476897
+      },
+      "recovered_from_tilt_gt12": {
+        "count": 0,
+        "median_return": null
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "nonfall_settled": {
+        "count": 21,
+        "median_return": 20.013474624159656
+      },
+      "falls": {
+        "count": 2,
+        "median_return": 0.9202541897445696
+      },
+      "recovered_from_tilt_gt12": {
+        "count": 0,
+        "median_return": null
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "nonfall_settled": {
+        "count": 22,
+        "median_return": 20.493757755593382
+      },
+      "falls": {
+        "count": 1,
+        "median_return": 17.673970541761214
+      },
+      "recovered_from_tilt_gt12": {
+        "count": 0,
+        "median_return": null
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "nonfall_settled": {
+        "count": 19,
+        "median_return": 19.463591524593333
+      },
+      "falls": {
+        "count": 5,
+        "median_return": -1.6329916095114632
+      },
+      "recovered_from_tilt_gt12": {
+        "count": 0,
+        "median_return": null
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "nonfall_settled": {
+        "count": 22,
+        "median_return": 19.817538083568962
+      },
+      "falls": {
+        "count": 1,
+        "median_return": -1.7423106133499235
+      },
+      "recovered_from_tilt_gt12": {
+        "count": 0,
+        "median_return": null
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "nonfall_settled": {
+        "count": 15,
+        "median_return": 20.38515338421725
+      },
+      "falls": {
+        "count": 1,
+        "median_return": 5.127524980862287
+      },
+      "recovered_from_tilt_gt12": {
+        "count": 0,
+        "median_return": null
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "nonfall_settled": {
+        "count": 13,
+        "median_return": 19.90596718637855
+      },
+      "falls": {
+        "count": 3,
+        "median_return": 0.34723706785728004
+      },
+      "recovered_from_tilt_gt12": {
+        "count": 0,
+        "median_return": null
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "nonfall_settled": {
+        "count": 14,
+        "median_return": 19.512075765640695
+      },
+      "falls": {
+        "count": 1,
+        "median_return": -1.5127181314542617
+      },
+      "recovered_from_tilt_gt12": {
+        "count": 0,
+        "median_return": null
+      }
+    }
+  ],
+  "records": [
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.9639356136322021,
+      "return_discounted": 21.213511537915338,
+      "returns_with_terminal_cost": {
+        "3": 21.213511537915338,
+        "10": 21.213511537915338,
+        "30": 21.213511537915338
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.088584542274475,
+      "return_discounted": 21.30698317310375,
+      "returns_with_terminal_cost": {
+        "3": 21.30698317310375,
+        "10": 21.30698317310375,
+        "30": 21.30698317310375
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 2,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 58.37305450439453,
+      "return_discounted": 0.47730253985746973,
+      "returns_with_terminal_cost": {
+        "3": 0.47730253985746973,
+        "10": -3.9314628785651564,
+        "30": -16.527935502629802
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.160006284713745,
+      "return_discounted": 20.702807958018536,
+      "returns_with_terminal_cost": {
+        "3": 20.702807958018536,
+        "10": 20.702807958018536,
+        "30": 20.702807958018536
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.2725704908370972,
+      "return_discounted": 21.146246266908634,
+      "returns_with_terminal_cost": {
+        "3": 21.146246266908634,
+        "10": 21.146246266908634,
+        "30": 21.146246266908634
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.917417049407959,
+      "return_discounted": 19.570042233768902,
+      "returns_with_terminal_cost": {
+        "3": 19.570042233768902,
+        "10": 19.570042233768902,
+        "30": 19.570042233768902
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.433130264282227,
+      "return_discounted": 18.73159454730537,
+      "returns_with_terminal_cost": {
+        "3": 18.73159454730537,
+        "10": 18.73159454730537,
+        "30": 18.73159454730537
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.3480753898620605,
+      "return_discounted": 19.909447690085116,
+      "returns_with_terminal_cost": {
+        "3": 19.909447690085116,
+        "10": 19.909447690085116,
+        "30": 19.909447690085116
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.711352348327637,
+      "return_discounted": 20.401299718900013,
+      "returns_with_terminal_cost": {
+        "3": 20.401299718900013,
+        "10": 20.401299718900013,
+        "30": 20.401299718900013
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.453246593475342,
+      "return_discounted": 20.29606830976599,
+      "returns_with_terminal_cost": {
+        "3": 20.29606830976599,
+        "10": 20.29606830976599,
+        "30": 20.29606830976599
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.5071409940719604,
+      "return_discounted": 21.242911317285856,
+      "returns_with_terminal_cost": {
+        "3": 21.242911317285856,
+        "10": 21.242911317285856,
+        "30": 21.242911317285856
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.8035252094268799,
+      "return_discounted": 21.07534464616184,
+      "returns_with_terminal_cost": {
+        "3": 21.07534464616184,
+        "10": 21.07534464616184,
+        "30": 21.07534464616184
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.6869955658912659,
+      "return_discounted": 21.32200926109441,
+      "returns_with_terminal_cost": {
+        "3": 21.32200926109441,
+        "10": 21.32200926109441,
+        "30": 21.32200926109441
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.8105363845825195,
+      "return_discounted": 20.68293863352558,
+      "returns_with_terminal_cost": {
+        "3": 20.68293863352558,
+        "10": 20.68293863352558,
+        "30": 20.68293863352558
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.5517840385437012,
+      "return_discounted": 21.28206247043148,
+      "returns_with_terminal_cost": {
+        "3": 21.28206247043148,
+        "10": 21.28206247043148,
+        "30": 21.28206247043148
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.248814344406128,
+      "return_discounted": 21.142895748504205,
+      "returns_with_terminal_cost": {
+        "3": 21.142895748504205,
+        "10": 21.142895748504205,
+        "30": 21.142895748504205
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.272704124450684,
+      "return_discounted": 19.96604551019985,
+      "returns_with_terminal_cost": {
+        "3": 19.96604551019985,
+        "10": 19.96604551019985,
+        "30": 19.96604551019985
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.901779890060425,
+      "return_discounted": 20.46858589311528,
+      "returns_with_terminal_cost": {
+        "3": 20.46858589311528,
+        "10": 20.46858589311528,
+        "30": 20.46858589311528
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.537832260131836,
+      "return_discounted": 20.003910669221888,
+      "returns_with_terminal_cost": {
+        "3": 20.003910669221888,
+        "10": 20.003910669221888,
+        "30": 20.003910669221888
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.7415131330490112,
+      "return_discounted": 21.242859127566643,
+      "returns_with_terminal_cost": {
+        "3": 21.242859127566643,
+        "10": 21.242859127566643,
+        "30": 21.242859127566643
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.8249567747116089,
+      "return_discounted": 21.33090678244778,
+      "returns_with_terminal_cost": {
+        "3": 21.33090678244778,
+        "10": 21.33090678244778,
+        "30": 21.33090678244778
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.897809982299805,
+      "return_discounted": 19.58261000744959,
+      "returns_with_terminal_cost": {
+        "3": 19.58261000744959,
+        "10": 19.58261000744959,
+        "30": 19.58261000744959
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.589248180389404,
+      "return_discounted": 20.086908093615026,
+      "returns_with_terminal_cost": {
+        "3": 20.086908093615026,
+        "10": 20.086908093615026,
+        "30": 20.086908093615026
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_none",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.732104301452637,
+      "return_discounted": 19.804000676584547,
+      "returns_with_terminal_cost": {
+        "3": 19.804000676584547,
+        "10": 19.804000676584547,
+        "30": 19.804000676584547
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.0317249298095703,
+      "return_discounted": 21.21197258626612,
+      "returns_with_terminal_cost": {
+        "3": 21.21197258626612,
+        "10": 21.21197258626612,
+        "30": 21.21197258626612
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.0891236066818237,
+      "return_discounted": 21.306753256356558,
+      "returns_with_terminal_cost": {
+        "3": 21.306753256356558,
+        "10": 21.306753256356558,
+        "30": 21.306753256356558
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 2,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 59.43003845214844,
+      "return_discounted": 0.44972159355675534,
+      "returns_with_terminal_cost": {
+        "3": 0.44972159355675534,
+        "10": -3.959043824865871,
+        "30": -16.555516448930515
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.160006284713745,
+      "return_discounted": 20.676879433321204,
+      "returns_with_terminal_cost": {
+        "3": 20.676879433321204,
+        "10": 20.676879433321204,
+        "30": 20.676879433321204
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.2691829204559326,
+      "return_discounted": 21.149635143041355,
+      "returns_with_terminal_cost": {
+        "3": 21.149635143041355,
+        "10": 21.149635143041355,
+        "30": 21.149635143041355
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.917417049407959,
+      "return_discounted": 19.412161006771086,
+      "returns_with_terminal_cost": {
+        "3": 19.412161006771086,
+        "10": 19.412161006771086,
+        "30": 19.412161006771086
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.433130264282227,
+      "return_discounted": 18.366247100380377,
+      "returns_with_terminal_cost": {
+        "3": 18.366247100380377,
+        "10": 18.366247100380377,
+        "30": 18.366247100380377
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.3480753898620605,
+      "return_discounted": 19.956266537673294,
+      "returns_with_terminal_cost": {
+        "3": 19.956266537673294,
+        "10": 19.956266537673294,
+        "30": 19.956266537673294
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.711352348327637,
+      "return_discounted": 20.389996550544417,
+      "returns_with_terminal_cost": {
+        "3": 20.389996550544417,
+        "10": 20.389996550544417,
+        "30": 20.389996550544417
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.453246593475342,
+      "return_discounted": 20.296761484376756,
+      "returns_with_terminal_cost": {
+        "3": 20.296761484376756,
+        "10": 20.296761484376756,
+        "30": 20.296761484376756
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.489640235900879,
+      "return_discounted": 21.20832333726892,
+      "returns_with_terminal_cost": {
+        "3": 21.20832333726892,
+        "10": 21.20832333726892,
+        "30": 21.20832333726892
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.803091049194336,
+      "return_discounted": 21.054730446509147,
+      "returns_with_terminal_cost": {
+        "3": 21.054730446509147,
+        "10": 21.054730446509147,
+        "30": 21.054730446509147
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.8492671251296997,
+      "return_discounted": 21.308897292697676,
+      "returns_with_terminal_cost": {
+        "3": 21.308897292697676,
+        "10": 21.308897292697676,
+        "30": 21.308897292697676
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.8105363845825195,
+      "return_discounted": 20.677796565261787,
+      "returns_with_terminal_cost": {
+        "3": 20.677796565261787,
+        "10": 20.677796565261787,
+        "30": 20.677796565261787
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.5692389607429504,
+      "return_discounted": 21.275316488616408,
+      "returns_with_terminal_cost": {
+        "3": 21.275316488616408,
+        "10": 21.275316488616408,
+        "30": 21.275316488616408
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.0470964908599854,
+      "return_discounted": 21.13554840028134,
+      "returns_with_terminal_cost": {
+        "3": 21.13554840028134,
+        "10": 21.13554840028134,
+        "30": 21.13554840028134
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.272704124450684,
+      "return_discounted": 19.961451460509732,
+      "returns_with_terminal_cost": {
+        "3": 19.961451460509732,
+        "10": 19.961451460509732,
+        "30": 19.961451460509732
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.9018473625183105,
+      "return_discounted": 20.462728984762478,
+      "returns_with_terminal_cost": {
+        "3": 20.462728984762478,
+        "10": 20.462728984762478,
+        "30": 20.462728984762478
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.537832260131836,
+      "return_discounted": 19.903184526768335,
+      "returns_with_terminal_cost": {
+        "3": 19.903184526768335,
+        "10": 19.903184526768335,
+        "30": 19.903184526768335
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.7917943000793457,
+      "return_discounted": 21.225444146291906,
+      "returns_with_terminal_cost": {
+        "3": 21.225444146291906,
+        "10": 21.225444146291906,
+        "30": 21.225444146291906
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.7589877247810364,
+      "return_discounted": 21.312955667461658,
+      "returns_with_terminal_cost": {
+        "3": 21.312955667461658,
+        "10": 21.312955667461658,
+        "30": 21.312955667461658
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.89260721206665,
+      "return_discounted": 19.56507265541066,
+      "returns_with_terminal_cost": {
+        "3": 19.56507265541066,
+        "10": 19.56507265541066,
+        "30": 19.56507265541066
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.589248180389404,
+      "return_discounted": 20.07930228526125,
+      "returns_with_terminal_cost": {
+        "3": 20.07930228526125,
+        "10": 20.07930228526125,
+        "30": 20.07930228526125
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_short",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.732104301452637,
+      "return_discounted": 19.775570036222522,
+      "returns_with_terminal_cost": {
+        "3": 19.775570036222522,
+        "10": 19.775570036222522,
+        "30": 19.775570036222522
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.0318210124969482,
+      "return_discounted": 21.20949390113068,
+      "returns_with_terminal_cost": {
+        "3": 21.20949390113068,
+        "10": 21.20949390113068,
+        "30": 21.20949390113068
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.1760303974151611,
+      "return_discounted": 21.30359324381973,
+      "returns_with_terminal_cost": {
+        "3": 21.30359324381973,
+        "10": 21.30359324381973,
+        "30": 21.30359324381973
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 2,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 55.1543083190918,
+      "return_discounted": 0.4458129531001196,
+      "returns_with_terminal_cost": {
+        "3": 0.4458129531001196,
+        "10": -4.0074854493469765,
+        "30": -16.731195170624396
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.160006284713745,
+      "return_discounted": 20.697481099306646,
+      "returns_with_terminal_cost": {
+        "3": 20.697481099306646,
+        "10": 20.697481099306646,
+        "30": 20.697481099306646
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.26825749874115,
+      "return_discounted": 21.152678922875822,
+      "returns_with_terminal_cost": {
+        "3": 21.152678922875822,
+        "10": 21.152678922875822,
+        "30": 21.152678922875822
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.917417049407959,
+      "return_discounted": 19.359338057905934,
+      "returns_with_terminal_cost": {
+        "3": 19.359338057905934,
+        "10": 19.359338057905934,
+        "30": 19.359338057905934
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 6,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 56.80767059326172,
+      "return_discounted": 4.25789163561864,
+      "returns_with_terminal_cost": {
+        "3": 4.25789163561864,
+        "10": 1.029337863691972,
+        "30": -8.195101484669937
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 7,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 56.54570388793945,
+      "return_discounted": 19.152769080783244,
+      "returns_with_terminal_cost": {
+        "3": 19.152769080783244,
+        "10": 18.885753696534504,
+        "30": 18.122852598680964
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.711352348327637,
+      "return_discounted": 20.398075792538013,
+      "returns_with_terminal_cost": {
+        "3": 20.398075792538013,
+        "10": 20.398075792538013,
+        "30": 20.398075792538013
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.453246593475342,
+      "return_discounted": 20.29549974212409,
+      "returns_with_terminal_cost": {
+        "3": 20.29549974212409,
+        "10": 20.29549974212409,
+        "30": 20.29549974212409
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.4457741975784302,
+      "return_discounted": 21.232120021183174,
+      "returns_with_terminal_cost": {
+        "3": 21.232120021183174,
+        "10": 21.232120021183174,
+        "30": 21.232120021183174
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.802873969078064,
+      "return_discounted": 21.073185006855564,
+      "returns_with_terminal_cost": {
+        "3": 21.073185006855564,
+        "10": 21.073185006855564,
+        "30": 21.073185006855564
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.6884182095527649,
+      "return_discounted": 21.312477220998186,
+      "returns_with_terminal_cost": {
+        "3": 21.312477220998186,
+        "10": 21.312477220998186,
+        "30": 21.312477220998186
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.8105363845825195,
+      "return_discounted": 20.67681976731918,
+      "returns_with_terminal_cost": {
+        "3": 20.67681976731918,
+        "10": 20.67681976731918,
+        "30": 20.67681976731918
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.6052260398864746,
+      "return_discounted": 21.274451820741085,
+      "returns_with_terminal_cost": {
+        "3": 21.274451820741085,
+        "10": 21.274451820741085,
+        "30": 21.274451820741085
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.852452516555786,
+      "return_discounted": 21.13419896218241,
+      "returns_with_terminal_cost": {
+        "3": 21.13419896218241,
+        "10": 21.13419896218241,
+        "30": 21.13419896218241
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.272704124450684,
+      "return_discounted": 19.96499349097036,
+      "returns_with_terminal_cost": {
+        "3": 19.96499349097036,
+        "10": 19.96499349097036,
+        "30": 19.96499349097036
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.901779890060425,
+      "return_discounted": 20.455020404938605,
+      "returns_with_terminal_cost": {
+        "3": 20.455020404938605,
+        "10": 20.455020404938605,
+        "30": 20.455020404938605
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.537832260131836,
+      "return_discounted": 19.90720572974819,
+      "returns_with_terminal_cost": {
+        "3": 19.90720572974819,
+        "10": 19.90720572974819,
+        "30": 19.90720572974819
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.7415131330490112,
+      "return_discounted": 21.233337818347774,
+      "returns_with_terminal_cost": {
+        "3": 21.233337818347774,
+        "10": 21.233337818347774,
+        "30": 21.233337818347774
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.7241573929786682,
+      "return_discounted": 21.32378613951247,
+      "returns_with_terminal_cost": {
+        "3": 21.32378613951247,
+        "10": 21.32378613951247,
+        "30": 21.32378613951247
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.879977703094482,
+      "return_discounted": 19.564824878127983,
+      "returns_with_terminal_cost": {
+        "3": 19.564824878127983,
+        "10": 19.564824878127983,
+        "30": 19.564824878127983
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.589248180389404,
+      "return_discounted": 20.08496595276255,
+      "returns_with_terminal_cost": {
+        "3": 20.08496595276255,
+        "10": 20.08496595276255,
+        "30": 20.08496595276255
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "static_sustained",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.732104301452637,
+      "return_discounted": 19.75532104335725,
+      "returns_with_terminal_cost": {
+        "3": 19.75532104335725,
+        "10": 19.75532104335725,
+        "30": 19.75532104335725
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.476263999938965,
+      "return_discounted": 20.15031012032258,
+      "returns_with_terminal_cost": {
+        "3": 20.15031012032258,
+        "10": 20.15031012032258,
+        "30": 20.15031012032258
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.541398525238037,
+      "return_discounted": 19.92571900431245,
+      "returns_with_terminal_cost": {
+        "3": 19.92571900431245,
+        "10": 19.92571900431245,
+        "30": 19.92571900431245
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.888327598571777,
+      "return_discounted": 19.183376851740878,
+      "returns_with_terminal_cost": {
+        "3": 19.183376851740878,
+        "10": 19.183376851740878,
+        "30": 19.183376851740878
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.546731948852539,
+      "return_discounted": 18.53868113223187,
+      "returns_with_terminal_cost": {
+        "3": 18.53868113223187,
+        "10": 18.53868113223187,
+        "30": 18.53868113223187
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.975598335266113,
+      "return_discounted": 19.385310076717403,
+      "returns_with_terminal_cost": {
+        "3": 19.385310076717403,
+        "10": 19.385310076717403,
+        "30": 19.385310076717403
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.7600479125976562,
+      "return_discounted": 20.405320232150743,
+      "returns_with_terminal_cost": {
+        "3": 20.405320232150743,
+        "10": 20.405320232150743,
+        "30": 20.405320232150743
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.5180840492248535,
+      "return_discounted": 19.99882264460745,
+      "returns_with_terminal_cost": {
+        "3": 19.99882264460745,
+        "10": 19.99882264460745,
+        "30": 19.99882264460745
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.774810552597046,
+      "return_discounted": 20.4513600497756,
+      "returns_with_terminal_cost": {
+        "3": 20.4513600497756,
+        "10": 20.4513600497756,
+        "30": 20.4513600497756
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.739997148513794,
+      "return_discounted": 20.242824660414136,
+      "returns_with_terminal_cost": {
+        "3": 20.242824660414136,
+        "10": 20.242824660414136,
+        "30": 20.242824660414136
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.762366771697998,
+      "return_discounted": 20.70480685902668,
+      "returns_with_terminal_cost": {
+        "3": 20.70480685902668,
+        "10": 20.70480685902668,
+        "30": 20.70480685902668
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.721279144287109,
+      "return_discounted": 20.10420082125434,
+      "returns_with_terminal_cost": {
+        "3": 20.10420082125434,
+        "10": 20.10420082125434,
+        "30": 20.10420082125434
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.064216375350952,
+      "return_discounted": 20.88947949357125,
+      "returns_with_terminal_cost": {
+        "3": 20.88947949357125,
+        "10": 20.88947949357125,
+        "30": 20.88947949357125
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.723672389984131,
+      "return_discounted": 18.099603414341,
+      "returns_with_terminal_cost": {
+        "3": 18.099603414341,
+        "10": 18.099603414341,
+        "30": 18.099603414341
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.771785736083984,
+      "return_discounted": 19.24837096602523,
+      "returns_with_terminal_cost": {
+        "3": 19.24837096602523,
+        "10": 19.24837096602523,
+        "30": 19.24837096602523
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.635231971740723,
+      "return_discounted": 19.572413611949138,
+      "returns_with_terminal_cost": {
+        "3": 19.572413611949138,
+        "10": 19.572413611949138,
+        "30": 19.572413611949138
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.8017072677612305,
+      "return_discounted": 19.417474107067456,
+      "returns_with_terminal_cost": {
+        "3": 19.417474107067456,
+        "10": 19.417474107067456,
+        "30": 19.417474107067456
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 16,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 58.11180114746094,
+      "return_discounted": -3.4153210091501505,
+      "returns_with_terminal_cost": {
+        "3": -3.4153210091501505,
+        "10": -8.97062099465574,
+        "30": -24.842906667528847
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.749162197113037,
+      "return_discounted": 20.15939029147527,
+      "returns_with_terminal_cost": {
+        "3": 20.15939029147527,
+        "10": 20.15939029147527,
+        "30": 20.15939029147527
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.889026165008545,
+      "return_discounted": 19.86469822374801,
+      "returns_with_terminal_cost": {
+        "3": 19.86469822374801,
+        "10": 19.86469822374801,
+        "30": 19.86469822374801
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 19,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 58.07796859741211,
+      "return_discounted": -4.737012267803644,
+      "returns_with_terminal_cost": {
+        "3": -4.737012267803644,
+        "10": -11.261469703152574,
+        "30": -29.90277666129237
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.9163167476654053,
+      "return_discounted": 20.23741962881333,
+      "returns_with_terminal_cost": {
+        "3": 20.23741962881333,
+        "10": 20.23741962881333,
+        "30": 20.23741962881333
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.6856513023376465,
+      "return_discounted": 19.577264890119384,
+      "returns_with_terminal_cost": {
+        "3": 19.577264890119384,
+        "10": 19.577264890119384,
+        "30": 19.577264890119384
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.922905445098877,
+      "return_discounted": 20.62733318608295,
+      "returns_with_terminal_cost": {
+        "3": 20.62733318608295,
+        "10": 20.62733318608295,
+        "30": 20.62733318608295
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_1.2",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.032451629638672,
+      "return_discounted": 20.25441508104348,
+      "returns_with_terminal_cost": {
+        "3": 20.25441508104348,
+        "10": 20.25441508104348,
+        "30": 20.25441508104348
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.546022653579712,
+      "return_discounted": 20.045498134431714,
+      "returns_with_terminal_cost": {
+        "3": 20.045498134431714,
+        "10": 20.045498134431714,
+        "30": 20.045498134431714
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.620719909667969,
+      "return_discounted": 19.278011554611066,
+      "returns_with_terminal_cost": {
+        "3": 19.278011554611066,
+        "10": 19.278011554611066,
+        "30": 19.278011554611066
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 2,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 55.58882522583008,
+      "return_discounted": 3.5187526986927598,
+      "returns_with_terminal_cost": {
+        "3": 3.5187526986927598,
+        "10": 0.0895207876633255,
+        "30": -9.708284672420772
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.6082029342651367,
+      "return_discounted": 19.884013241935843,
+      "returns_with_terminal_cost": {
+        "3": 19.884013241935843,
+        "10": 19.884013241935843,
+        "30": 19.884013241935843
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.400564193725586,
+      "return_discounted": 19.419487822154082,
+      "returns_with_terminal_cost": {
+        "3": 19.419487822154082,
+        "10": 19.419487822154082,
+        "30": 19.419487822154082
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.809919834136963,
+      "return_discounted": 20.11795845391901,
+      "returns_with_terminal_cost": {
+        "3": 20.11795845391901,
+        "10": 20.11795845391901,
+        "30": 20.11795845391901
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.2774558067321777,
+      "return_discounted": 20.520312354685117,
+      "returns_with_terminal_cost": {
+        "3": 20.520312354685117,
+        "10": 20.520312354685117,
+        "30": 20.520312354685117
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.7070369720458984,
+      "return_discounted": 20.195361674298955,
+      "returns_with_terminal_cost": {
+        "3": 20.195361674298955,
+        "10": 20.195361674298955,
+        "30": 20.195361674298955
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.315974712371826,
+      "return_discounted": 20.25463683873875,
+      "returns_with_terminal_cost": {
+        "3": 20.25463683873875,
+        "10": 20.25463683873875,
+        "30": 20.25463683873875
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.6335105895996094,
+      "return_discounted": 20.231926097286077,
+      "returns_with_terminal_cost": {
+        "3": 20.231926097286077,
+        "10": 20.231926097286077,
+        "30": 20.231926097286077
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.184817314147949,
+      "return_discounted": 20.525992195432888,
+      "returns_with_terminal_cost": {
+        "3": 20.525992195432888,
+        "10": 20.525992195432888,
+        "30": 20.525992195432888
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.265214920043945,
+      "return_discounted": 20.00834506404041,
+      "returns_with_terminal_cost": {
+        "3": 20.00834506404041,
+        "10": 20.00834506404041,
+        "30": 20.00834506404041
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.465263366699219,
+      "return_discounted": 19.142706075830773,
+      "returns_with_terminal_cost": {
+        "3": 19.142706075830773,
+        "10": 19.142706075830773,
+        "30": 19.142706075830773
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.991127967834473,
+      "return_discounted": 19.22045056040857,
+      "returns_with_terminal_cost": {
+        "3": 19.22045056040857,
+        "10": 19.22045056040857,
+        "30": 19.22045056040857
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.537805557250977,
+      "return_discounted": 19.7342711210089,
+      "returns_with_terminal_cost": {
+        "3": 19.7342711210089,
+        "10": 19.7342711210089,
+        "30": 19.7342711210089
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.17498254776001,
+      "return_discounted": 19.884674417868677,
+      "returns_with_terminal_cost": {
+        "3": 19.884674417868677,
+        "10": 19.884674417868677,
+        "30": 19.884674417868677
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 16,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 59.55146026611328,
+      "return_discounted": -1.6782443192036205,
+      "returns_with_terminal_cost": {
+        "3": -1.6782443192036205,
+        "10": -6.602378184200604,
+        "30": -20.671332084191988
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.4551339149475098,
+      "return_discounted": 20.26980669252608,
+      "returns_with_terminal_cost": {
+        "3": 20.26980669252608,
+        "10": 20.26980669252608,
+        "30": 20.26980669252608
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.4300947189331055,
+      "return_discounted": 18.69192087630189,
+      "returns_with_terminal_cost": {
+        "3": 18.69192087630189,
+        "10": 18.69192087630189,
+        "30": 18.69192087630189
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.988192558288574,
+      "return_discounted": 20.063082478307738,
+      "returns_with_terminal_cost": {
+        "3": 20.063082478307738,
+        "10": 20.063082478307738,
+        "30": 20.063082478307738
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.312297344207764,
+      "return_discounted": 20.013474624159656,
+      "returns_with_terminal_cost": {
+        "3": 20.013474624159656,
+        "10": 20.013474624159656,
+        "30": 20.013474624159656
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.215280532836914,
+      "return_discounted": 20.751882461341697,
+      "returns_with_terminal_cost": {
+        "3": 20.751882461341697,
+        "10": 20.751882461341697,
+        "30": 20.751882461341697
+      }
+    },
+    {
+      "updates": 350,
+      "mode": "walk_3.6",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.739995002746582,
+      "return_discounted": 19.713577669759214,
+      "returns_with_terminal_cost": {
+        "3": 19.713577669759214,
+        "10": 19.713577669759214,
+        "30": 19.713577669759214
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.5502811670303345,
+      "return_discounted": 20.944576522026512,
+      "returns_with_terminal_cost": {
+        "3": 20.944576522026512,
+        "10": 20.944576522026512,
+        "30": 20.944576522026512
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.6611601114273071,
+      "return_discounted": 21.067122078312075,
+      "returns_with_terminal_cost": {
+        "3": 21.067122078312075,
+        "10": 21.067122078312075,
+        "30": 21.067122078312075
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.281627655029297,
+      "return_discounted": 19.164780687734368,
+      "returns_with_terminal_cost": {
+        "3": 19.164780687734368,
+        "10": 19.164780687734368,
+        "30": 19.164780687734368
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.06640100479126,
+      "return_discounted": 20.436968043446868,
+      "returns_with_terminal_cost": {
+        "3": 20.436968043446868,
+        "10": 20.436968043446868,
+        "30": 20.436968043446868
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.8775956630706787,
+      "return_discounted": 20.717028500346643,
+      "returns_with_terminal_cost": {
+        "3": 20.717028500346643,
+        "10": 20.717028500346643,
+        "30": 20.717028500346643
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.076347827911377,
+      "return_discounted": 19.40524873714054,
+      "returns_with_terminal_cost": {
+        "3": 19.40524873714054,
+        "10": 19.40524873714054,
+        "30": 19.40524873714054
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.413670539855957,
+      "return_discounted": 19.297733782863524,
+      "returns_with_terminal_cost": {
+        "3": 19.297733782863524,
+        "10": 19.297733782863524,
+        "30": 19.297733782863524
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.616097927093506,
+      "return_discounted": 19.979226384639567,
+      "returns_with_terminal_cost": {
+        "3": 19.979226384639567,
+        "10": 19.979226384639567,
+        "30": 19.979226384639567
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.682366371154785,
+      "return_discounted": 20.536793229461523,
+      "returns_with_terminal_cost": {
+        "3": 20.536793229461523,
+        "10": 20.536793229461523,
+        "30": 20.536793229461523
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.997594356536865,
+      "return_discounted": 19.988841618407744,
+      "returns_with_terminal_cost": {
+        "3": 19.988841618407744,
+        "10": 19.988841618407744,
+        "30": 19.988841618407744
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 1.8404748439788818,
+      "return_discounted": 20.99839513497713,
+      "returns_with_terminal_cost": {
+        "3": 20.99839513497713,
+        "10": 20.99839513497713,
+        "30": 20.99839513497713
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.4122233390808105,
+      "return_discounted": 20.96913929873107,
+      "returns_with_terminal_cost": {
+        "3": 20.96913929873107,
+        "10": 20.96913929873107,
+        "30": 20.96913929873107
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.7400133609771729,
+      "return_discounted": 21.084851091262106,
+      "returns_with_terminal_cost": {
+        "3": 21.084851091262106,
+        "10": 21.084851091262106,
+        "30": 21.084851091262106
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.925506353378296,
+      "return_discounted": 20.64826685696594,
+      "returns_with_terminal_cost": {
+        "3": 20.64826685696594,
+        "10": 20.64826685696594,
+        "30": 20.64826685696594
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.856988787651062,
+      "return_discounted": 21.194208765965964,
+      "returns_with_terminal_cost": {
+        "3": 21.194208765965964,
+        "10": 21.194208765965964,
+        "30": 21.194208765965964
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.7659138441085815,
+      "return_discounted": 20.88363303083528,
+      "returns_with_terminal_cost": {
+        "3": 20.88363303083528,
+        "10": 20.88363303083528,
+        "30": 20.88363303083528
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.676238536834717,
+      "return_discounted": 19.80205294409453,
+      "returns_with_terminal_cost": {
+        "3": 19.80205294409453,
+        "10": 19.80205294409453,
+        "30": 19.80205294409453
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.092747688293457,
+      "return_discounted": 20.46561805275833,
+      "returns_with_terminal_cost": {
+        "3": 20.46561805275833,
+        "10": 20.46561805275833,
+        "30": 20.46561805275833
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.455167293548584,
+      "return_discounted": 19.888796972907993,
+      "returns_with_terminal_cost": {
+        "3": 19.888796972907993,
+        "10": 19.888796972907993,
+        "30": 19.888796972907993
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.1541966199874878,
+      "return_discounted": 20.88764792168432,
+      "returns_with_terminal_cost": {
+        "3": 20.88764792168432,
+        "10": 20.88764792168432,
+        "30": 20.88764792168432
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.3314857482910156,
+      "return_discounted": 20.997998642319452,
+      "returns_with_terminal_cost": {
+        "3": 20.997998642319452,
+        "10": 20.997998642319452,
+        "30": 20.997998642319452
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.286559581756592,
+      "return_discounted": 20.074240894805186,
+      "returns_with_terminal_cost": {
+        "3": 20.074240894805186,
+        "10": 20.074240894805186,
+        "30": 20.074240894805186
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.266788482666016,
+      "return_discounted": 20.262576625039756,
+      "returns_with_terminal_cost": {
+        "3": 20.262576625039756,
+        "10": 20.262576625039756,
+        "30": 20.262576625039756
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_none",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.721207618713379,
+      "return_discounted": 19.38031874904141,
+      "returns_with_terminal_cost": {
+        "3": 19.38031874904141,
+        "10": 19.38031874904141,
+        "30": 19.38031874904141
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.6317085027694702,
+      "return_discounted": 20.942264452772033,
+      "returns_with_terminal_cost": {
+        "3": 20.942264452772033,
+        "10": 20.942264452772033,
+        "30": 20.942264452772033
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.0968221426010132,
+      "return_discounted": 21.060041484293986,
+      "returns_with_terminal_cost": {
+        "3": 21.060041484293986,
+        "10": 21.060041484293986,
+        "30": 21.060041484293986
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.279510498046875,
+      "return_discounted": 19.168208218764068,
+      "returns_with_terminal_cost": {
+        "3": 19.168208218764068,
+        "10": 19.168208218764068,
+        "30": 19.168208218764068
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.066352844238281,
+      "return_discounted": 20.43188762880089,
+      "returns_with_terminal_cost": {
+        "3": 20.43188762880089,
+        "10": 20.43188762880089,
+        "30": 20.43188762880089
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.8869109749794006,
+      "return_discounted": 20.727784109565757,
+      "returns_with_terminal_cost": {
+        "3": 20.727784109565757,
+        "10": 20.727784109565757,
+        "30": 20.727784109565757
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.076347827911377,
+      "return_discounted": 19.372601528388493,
+      "returns_with_terminal_cost": {
+        "3": 19.372601528388493,
+        "10": 19.372601528388493,
+        "30": 19.372601528388493
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.413670539855957,
+      "return_discounted": 19.28826666851418,
+      "returns_with_terminal_cost": {
+        "3": 19.28826666851418,
+        "10": 19.28826666851418,
+        "30": 19.28826666851418
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.616097927093506,
+      "return_discounted": 19.9797650039898,
+      "returns_with_terminal_cost": {
+        "3": 19.9797650039898,
+        "10": 19.9797650039898,
+        "30": 19.9797650039898
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.682366371154785,
+      "return_discounted": 20.531587361151207,
+      "returns_with_terminal_cost": {
+        "3": 20.531587361151207,
+        "10": 20.531587361151207,
+        "30": 20.531587361151207
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.997594356536865,
+      "return_discounted": 19.98557133031588,
+      "returns_with_terminal_cost": {
+        "3": 19.98557133031588,
+        "10": 19.98557133031588,
+        "30": 19.98557133031588
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 1.8363231420516968,
+      "return_discounted": 20.99589535382137,
+      "returns_with_terminal_cost": {
+        "3": 20.99589535382137,
+        "10": 20.99589535382137,
+        "30": 20.99589535382137
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.4093103408813477,
+      "return_discounted": 20.960095974637785,
+      "returns_with_terminal_cost": {
+        "3": 20.960095974637785,
+        "10": 20.960095974637785,
+        "30": 20.960095974637785
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.771004319190979,
+      "return_discounted": 21.059667311376092,
+      "returns_with_terminal_cost": {
+        "3": 21.059667311376092,
+        "10": 21.059667311376092,
+        "30": 21.059667311376092
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.925506353378296,
+      "return_discounted": 20.55483064360891,
+      "returns_with_terminal_cost": {
+        "3": 20.55483064360891,
+        "10": 20.55483064360891,
+        "30": 20.55483064360891
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.9740737676620483,
+      "return_discounted": 21.195343899849558,
+      "returns_with_terminal_cost": {
+        "3": 21.195343899849558,
+        "10": 21.195343899849558,
+        "30": 21.195343899849558
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 1.8307727575302124,
+      "return_discounted": 20.879786451141072,
+      "returns_with_terminal_cost": {
+        "3": 20.879786451141072,
+        "10": 20.879786451141072,
+        "30": 20.879786451141072
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.676238536834717,
+      "return_discounted": 19.797096028689793,
+      "returns_with_terminal_cost": {
+        "3": 19.797096028689793,
+        "10": 19.797096028689793,
+        "30": 19.797096028689793
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.092747688293457,
+      "return_discounted": 20.461175541964167,
+      "returns_with_terminal_cost": {
+        "3": 20.461175541964167,
+        "10": 20.461175541964167,
+        "30": 20.461175541964167
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.455167293548584,
+      "return_discounted": 19.9178270128115,
+      "returns_with_terminal_cost": {
+        "3": 19.9178270128115,
+        "10": 19.9178270128115,
+        "30": 19.9178270128115
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.1935378313064575,
+      "return_discounted": 20.86685848759097,
+      "returns_with_terminal_cost": {
+        "3": 20.86685848759097,
+        "10": 20.86685848759097,
+        "30": 20.86685848759097
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.4763123989105225,
+      "return_discounted": 20.96685663281649,
+      "returns_with_terminal_cost": {
+        "3": 20.96685663281649,
+        "10": 20.96685663281649,
+        "30": 20.96685663281649
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.286559581756592,
+      "return_discounted": 20.03054638866104,
+      "returns_with_terminal_cost": {
+        "3": 20.03054638866104,
+        "10": 20.03054638866104,
+        "30": 20.03054638866104
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.266788482666016,
+      "return_discounted": 20.26357170404895,
+      "returns_with_terminal_cost": {
+        "3": 20.26357170404895,
+        "10": 20.26357170404895,
+        "30": 20.26357170404895
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_short",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.721207618713379,
+      "return_discounted": 19.38295820053973,
+      "returns_with_terminal_cost": {
+        "3": 19.38295820053973,
+        "10": 19.38295820053973,
+        "30": 19.38295820053973
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.5355684757232666,
+      "return_discounted": 20.93645889635287,
+      "returns_with_terminal_cost": {
+        "3": 20.93645889635287,
+        "10": 20.93645889635287,
+        "30": 20.93645889635287
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.7233462929725647,
+      "return_discounted": 21.06640407737021,
+      "returns_with_terminal_cost": {
+        "3": 21.06640407737021,
+        "10": 21.06640407737021,
+        "30": 21.06640407737021
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.280082702636719,
+      "return_discounted": 18.9682736559821,
+      "returns_with_terminal_cost": {
+        "3": 18.9682736559821,
+        "10": 18.9682736559821,
+        "30": 18.9682736559821
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.066352844238281,
+      "return_discounted": 20.432057065860878,
+      "returns_with_terminal_cost": {
+        "3": 20.432057065860878,
+        "10": 20.432057065860878,
+        "30": 20.432057065860878
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.8864696025848389,
+      "return_discounted": 20.722508072096684,
+      "returns_with_terminal_cost": {
+        "3": 20.722508072096684,
+        "10": 20.722508072096684,
+        "30": 20.722508072096684
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.076347827911377,
+      "return_discounted": 19.3755601625947,
+      "returns_with_terminal_cost": {
+        "3": 19.3755601625947,
+        "10": 19.3755601625947,
+        "30": 19.3755601625947
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 6,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 59.27541732788086,
+      "return_discounted": 17.673970541761214,
+      "returns_with_terminal_cost": {
+        "3": 17.673970541761214,
+        "10": 17.232627225136195,
+        "30": 15.971646320493285
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.616097927093506,
+      "return_discounted": 19.97881232213272,
+      "returns_with_terminal_cost": {
+        "3": 19.97881232213272,
+        "10": 19.97881232213272,
+        "30": 19.97881232213272
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.682366371154785,
+      "return_discounted": 20.531636736489585,
+      "returns_with_terminal_cost": {
+        "3": 20.531636736489585,
+        "10": 20.531636736489585,
+        "30": 20.531636736489585
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.997594356536865,
+      "return_discounted": 19.98133073309567,
+      "returns_with_terminal_cost": {
+        "3": 19.98133073309567,
+        "10": 19.98133073309567,
+        "30": 19.98133073309567
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 1.9644337892532349,
+      "return_discounted": 20.975519689928017,
+      "returns_with_terminal_cost": {
+        "3": 20.975519689928017,
+        "10": 20.975519689928017,
+        "30": 20.975519689928017
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.4075040817260742,
+      "return_discounted": 20.968152149125967,
+      "returns_with_terminal_cost": {
+        "3": 20.968152149125967,
+        "10": 20.968152149125967,
+        "30": 20.968152149125967
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.8865779638290405,
+      "return_discounted": 21.074088374977162,
+      "returns_with_terminal_cost": {
+        "3": 21.074088374977162,
+        "10": 21.074088374977162,
+        "30": 21.074088374977162
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.925506353378296,
+      "return_discounted": 20.573685872914673,
+      "returns_with_terminal_cost": {
+        "3": 20.573685872914673,
+        "10": 20.573685872914673,
+        "30": 20.573685872914673
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.8498084545135498,
+      "return_discounted": 21.200128510126387,
+      "returns_with_terminal_cost": {
+        "3": 21.200128510126387,
+        "10": 21.200128510126387,
+        "30": 21.200128510126387
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.8679170608520508,
+      "return_discounted": 20.8750083429706,
+      "returns_with_terminal_cost": {
+        "3": 20.8750083429706,
+        "10": 20.8750083429706,
+        "30": 20.8750083429706
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.676238536834717,
+      "return_discounted": 19.79843970362015,
+      "returns_with_terminal_cost": {
+        "3": 19.79843970362015,
+        "10": 19.79843970362015,
+        "30": 19.79843970362015
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.092747688293457,
+      "return_discounted": 20.45587877469718,
+      "returns_with_terminal_cost": {
+        "3": 20.45587877469718,
+        "10": 20.45587877469718,
+        "30": 20.45587877469718
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.455167293548584,
+      "return_discounted": 19.93582693549426,
+      "returns_with_terminal_cost": {
+        "3": 19.93582693549426,
+        "10": 19.93582693549426,
+        "30": 19.93582693549426
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.1675134897232056,
+      "return_discounted": 20.876337480386244,
+      "returns_with_terminal_cost": {
+        "3": 20.876337480386244,
+        "10": 20.876337480386244,
+        "30": 20.876337480386244
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.5595942735671997,
+      "return_discounted": 20.962592363835984,
+      "returns_with_terminal_cost": {
+        "3": 20.962592363835984,
+        "10": 20.962592363835984,
+        "30": 20.962592363835984
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.286559581756592,
+      "return_discounted": 20.038015925081538,
+      "returns_with_terminal_cost": {
+        "3": 20.038015925081538,
+        "10": 20.038015925081538,
+        "30": 20.038015925081538
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.266788482666016,
+      "return_discounted": 20.259456585590332,
+      "returns_with_terminal_cost": {
+        "3": 20.259456585590332,
+        "10": 20.259456585590332,
+        "30": 20.259456585590332
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "static_sustained",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.721207618713379,
+      "return_discounted": 19.38109435110291,
+      "returns_with_terminal_cost": {
+        "3": 19.38109435110291,
+        "10": 19.38109435110291,
+        "30": 19.38109435110291
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.440650463104248,
+      "return_discounted": 19.620039091543685,
+      "returns_with_terminal_cost": {
+        "3": 19.620039091543685,
+        "10": 19.620039091543685,
+        "30": 19.620039091543685
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.724846363067627,
+      "return_discounted": 19.363715573025587,
+      "returns_with_terminal_cost": {
+        "3": 19.363715573025587,
+        "10": 19.363715573025587,
+        "30": 19.363715573025587
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.051713943481445,
+      "return_discounted": 19.09161163634638,
+      "returns_with_terminal_cost": {
+        "3": 19.09161163634638,
+        "10": 19.09161163634638,
+        "30": 19.09161163634638
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.8116655349731445,
+      "return_discounted": 18.878154088671547,
+      "returns_with_terminal_cost": {
+        "3": 18.878154088671547,
+        "10": 18.878154088671547,
+        "30": 18.878154088671547
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.895488262176514,
+      "return_discounted": 19.37696982129132,
+      "returns_with_terminal_cost": {
+        "3": 19.37696982129132,
+        "10": 19.37696982129132,
+        "30": 19.37696982129132
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.395113945007324,
+      "return_discounted": 20.181338643679183,
+      "returns_with_terminal_cost": {
+        "3": 20.181338643679183,
+        "10": 20.181338643679183,
+        "30": 20.181338643679183
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.50915002822876,
+      "return_discounted": 20.16941842247622,
+      "returns_with_terminal_cost": {
+        "3": 20.16941842247622,
+        "10": 20.16941842247622,
+        "30": 20.16941842247622
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.105668544769287,
+      "return_discounted": 19.573669513102427,
+      "returns_with_terminal_cost": {
+        "3": 19.573669513102427,
+        "10": 19.573669513102427,
+        "30": 19.573669513102427
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.018094539642334,
+      "return_discounted": 19.725035697723836,
+      "returns_with_terminal_cost": {
+        "3": 19.725035697723836,
+        "10": 19.725035697723836,
+        "30": 19.725035697723836
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 9,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 55.61309814453125,
+      "return_discounted": 2.068339417863455,
+      "returns_with_terminal_cost": {
+        "3": 2.068339417863455,
+        "10": -1.839523551971591,
+        "30": -13.004846322928863
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.380331993103027,
+      "return_discounted": 18.448741727448812,
+      "returns_with_terminal_cost": {
+        "3": 18.448741727448812,
+        "10": 18.448741727448812,
+        "30": 18.448741727448812
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.150722026824951,
+      "return_discounted": 20.410799387686584,
+      "returns_with_terminal_cost": {
+        "3": 20.410799387686584,
+        "10": 20.410799387686584,
+        "30": 20.410799387686584
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.2770771980285645,
+      "return_discounted": 19.448593173272805,
+      "returns_with_terminal_cost": {
+        "3": 19.448593173272805,
+        "10": 19.448593173272805,
+        "30": 19.448593173272805
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 8.50248908996582,
+      "return_discounted": 17.666082008327272,
+      "returns_with_terminal_cost": {
+        "3": 17.666082008327272,
+        "10": 17.666082008327272,
+        "30": 17.666082008327272
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.948704719543457,
+      "return_discounted": 19.566302335861103,
+      "returns_with_terminal_cost": {
+        "3": 19.566302335861103,
+        "10": 19.566302335861103,
+        "30": 19.566302335861103
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.478759288787842,
+      "return_discounted": 19.231416265424347,
+      "returns_with_terminal_cost": {
+        "3": 19.231416265424347,
+        "10": 19.231416265424347,
+        "30": 19.231416265424347
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 16,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 55.53005599975586,
+      "return_discounted": 3.574152111890977,
+      "returns_with_terminal_cost": {
+        "3": 3.574152111890977,
+        "10": 0.07529290259658472,
+        "30": -9.921447695387393
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 17,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 59.416748046875,
+      "return_discounted": -4.073897180249601,
+      "returns_with_terminal_cost": {
+        "3": -4.073897180249601,
+        "10": -9.857077547098708,
+        "30": -26.38045002381044
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 18,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 57.090030670166016,
+      "return_discounted": -3.1036202575798564,
+      "returns_with_terminal_cost": {
+        "3": -3.1036202575798564,
+        "10": -8.548369773373883,
+        "30": -24.104796961356815
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.656877040863037,
+      "return_discounted": 19.463591524593333,
+      "returns_with_terminal_cost": {
+        "3": 19.463591524593333,
+        "10": 19.463591524593333,
+        "30": 19.463591524593333
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.901661396026611,
+      "return_discounted": 19.861816283382847,
+      "returns_with_terminal_cost": {
+        "3": 19.861816283382847,
+        "10": 19.861816283382847,
+        "30": 19.861816283382847
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.085652828216553,
+      "return_discounted": 19.145009210446954,
+      "returns_with_terminal_cost": {
+        "3": 19.145009210446954,
+        "10": 19.145009210446954,
+        "30": 19.145009210446954
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 22,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 56.12897491455078,
+      "return_discounted": -1.6329916095114632,
+      "returns_with_terminal_cost": {
+        "3": -1.6329916095114632,
+        "10": -6.606864200417507,
+        "30": -20.81792874586335
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_1.2",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.408022403717041,
+      "return_discounted": 20.06812182616428,
+      "returns_with_terminal_cost": {
+        "3": 20.06812182616428,
+        "10": 20.06812182616428,
+        "30": 20.06812182616428
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.596285820007324,
+      "return_discounted": 19.47252187862303,
+      "returns_with_terminal_cost": {
+        "3": 19.47252187862303,
+        "10": 19.47252187862303,
+        "30": 19.47252187862303
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.058574676513672,
+      "return_discounted": 19.78497771111679,
+      "returns_with_terminal_cost": {
+        "3": 19.78497771111679,
+        "10": 19.78497771111679,
+        "30": 19.78497771111679
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.2471394538879395,
+      "return_discounted": 19.317562549994776,
+      "returns_with_terminal_cost": {
+        "3": 19.317562549994776,
+        "10": 19.317562549994776,
+        "30": 19.317562549994776
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 3.870952606201172,
+      "return_discounted": 20.001284810216927,
+      "returns_with_terminal_cost": {
+        "3": 20.001284810216927,
+        "10": 20.001284810216927,
+        "30": 20.001284810216927
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.378003120422363,
+      "return_discounted": 18.665270446793812,
+      "returns_with_terminal_cost": {
+        "3": 18.665270446793812,
+        "10": 18.665270446793812,
+        "30": 18.665270446793812
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.712197780609131,
+      "return_discounted": 20.27742019201568,
+      "returns_with_terminal_cost": {
+        "3": 20.27742019201568,
+        "10": 20.27742019201568,
+        "30": 20.27742019201568
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.460409641265869,
+      "return_discounted": 20.24668741136021,
+      "returns_with_terminal_cost": {
+        "3": 20.24668741136021,
+        "10": 20.24668741136021,
+        "30": 20.24668741136021
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.705472469329834,
+      "return_discounted": 20.035872843105132,
+      "returns_with_terminal_cost": {
+        "3": 20.035872843105132,
+        "10": 20.035872843105132,
+        "30": 20.035872843105132
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.4524130821228027,
+      "return_discounted": 19.815366291302727,
+      "returns_with_terminal_cost": {
+        "3": 19.815366291302727,
+        "10": 19.815366291302727,
+        "30": 19.815366291302727
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.1776750087738037,
+      "return_discounted": 20.3605885973502,
+      "returns_with_terminal_cost": {
+        "3": 20.3605885973502,
+        "10": 20.3605885973502,
+        "30": 20.3605885973502
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.6492414474487305,
+      "return_discounted": 19.096846433848594,
+      "returns_with_terminal_cost": {
+        "3": 19.096846433848594,
+        "10": 19.096846433848594,
+        "30": 19.096846433848594
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.8610177040100098,
+      "return_discounted": 20.344455023775144,
+      "returns_with_terminal_cost": {
+        "3": 20.344455023775144,
+        "10": 20.344455023775144,
+        "30": 20.344455023775144
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.8367626667022705,
+      "return_discounted": 20.019875586393677,
+      "returns_with_terminal_cost": {
+        "3": 20.019875586393677,
+        "10": 20.019875586393677,
+        "30": 20.019875586393677
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.873208522796631,
+      "return_discounted": 18.723285151330177,
+      "returns_with_terminal_cost": {
+        "3": 18.723285151330177,
+        "10": 18.723285151330177,
+        "30": 18.723285151330177
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.841657876968384,
+      "return_discounted": 20.080506093762676,
+      "returns_with_terminal_cost": {
+        "3": 20.080506093762676,
+        "10": 20.080506093762676,
+        "30": 20.080506093762676
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.192878246307373,
+      "return_discounted": 19.96488780162844,
+      "returns_with_terminal_cost": {
+        "3": 19.96488780162844,
+        "10": 19.96488780162844,
+        "30": 19.96488780162844
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.6246771812438965,
+      "return_discounted": 18.95698135309795,
+      "returns_with_terminal_cost": {
+        "3": 18.95698135309795,
+        "10": 18.95698135309795,
+        "30": 18.95698135309795
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.143260478973389,
+      "return_discounted": 19.100550053652107,
+      "returns_with_terminal_cost": {
+        "3": 19.100550053652107,
+        "10": 19.100550053652107,
+        "30": 19.100550053652107
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 18,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 58.854637145996094,
+      "return_discounted": -1.7423106133499235,
+      "returns_with_terminal_cost": {
+        "3": -1.7423106133499235,
+        "10": -6.716183204255968,
+        "30": -20.927247749701813
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.079239368438721,
+      "return_discounted": 20.06368632080789,
+      "returns_with_terminal_cost": {
+        "3": 20.06368632080789,
+        "10": 20.06368632080789,
+        "30": 20.06368632080789
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.436147689819336,
+      "return_discounted": 19.897508499051003,
+      "returns_with_terminal_cost": {
+        "3": 19.897508499051003,
+        "10": 19.897508499051003,
+        "30": 19.897508499051003
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.483979225158691,
+      "return_discounted": 19.57144521455202,
+      "returns_with_terminal_cost": {
+        "3": 19.57144521455202,
+        "10": 19.57144521455202,
+        "30": 19.57144521455202
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.10812520980835,
+      "return_discounted": 18.733678948357973,
+      "returns_with_terminal_cost": {
+        "3": 18.733678948357973,
+        "10": 18.733678948357973,
+        "30": 18.733678948357973
+      }
+    },
+    {
+      "updates": 500,
+      "mode": "walk_3.6",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.481441020965576,
+      "return_discounted": 19.819709875835198,
+      "returns_with_terminal_cost": {
+        "3": 19.819709875835198,
+        "10": 19.819709875835198,
+        "30": 19.819709875835198
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.5374121069908142,
+      "return_discounted": 21.095848170657185,
+      "returns_with_terminal_cost": {
+        "3": 21.095848170657185,
+        "10": 21.095848170657185,
+        "30": 21.095848170657185
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 1.4564279317855835,
+      "return_discounted": 20.902198703470113,
+      "returns_with_terminal_cost": {
+        "3": 20.902198703470113,
+        "10": 20.902198703470113,
+        "30": 20.902198703470113
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.376583576202393,
+      "return_discounted": 19.745975037393592,
+      "returns_with_terminal_cost": {
+        "3": 19.745975037393592,
+        "10": 19.745975037393592,
+        "30": 19.745975037393592
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.86948561668396,
+      "return_discounted": 20.398832510710232,
+      "returns_with_terminal_cost": {
+        "3": 20.398832510710232,
+        "10": 20.398832510710232,
+        "30": 20.398832510710232
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.7765730619430542,
+      "return_discounted": 21.08587848962735,
+      "returns_with_terminal_cost": {
+        "3": 21.08587848962735,
+        "10": 21.08587848962735,
+        "30": 21.08587848962735
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.902325630187988,
+      "return_discounted": 19.515109630507062,
+      "returns_with_terminal_cost": {
+        "3": 19.515109630507062,
+        "10": 19.515109630507062,
+        "30": 19.515109630507062
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.454339981079102,
+      "return_discounted": 19.302438475441875,
+      "returns_with_terminal_cost": {
+        "3": 19.302438475441875,
+        "10": 19.302438475441875,
+        "30": 19.302438475441875
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 6.395710468292236,
+      "return_discounted": 19.979885012374762,
+      "returns_with_terminal_cost": {
+        "3": 19.979885012374762,
+        "10": 19.979885012374762,
+        "30": 19.979885012374762
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.760203838348389,
+      "return_discounted": 20.191109362604763,
+      "returns_with_terminal_cost": {
+        "3": 20.191109362604763,
+        "10": 20.191109362604763,
+        "30": 20.191109362604763
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.505021572113037,
+      "return_discounted": 20.27306524348993,
+      "returns_with_terminal_cost": {
+        "3": 20.27306524348993,
+        "10": 20.27306524348993,
+        "30": 20.27306524348993
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.0869654417037964,
+      "return_discounted": 21.119615214572182,
+      "returns_with_terminal_cost": {
+        "3": 21.119615214572182,
+        "10": 21.119615214572182,
+        "30": 21.119615214572182
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 2.0734872817993164,
+      "return_discounted": 20.669022081231688,
+      "returns_with_terminal_cost": {
+        "3": 20.669022081231688,
+        "10": 20.669022081231688,
+        "30": 20.669022081231688
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.656822919845581,
+      "return_discounted": 20.83928476918189,
+      "returns_with_terminal_cost": {
+        "3": 20.83928476918189,
+        "10": 20.83928476918189,
+        "30": 20.83928476918189
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.4469523429870605,
+      "return_discounted": 20.366338752745733,
+      "returns_with_terminal_cost": {
+        "3": 20.366338752745733,
+        "10": 20.366338752745733,
+        "30": 20.366338752745733
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.9703028202056885,
+      "return_discounted": 20.860914159343167,
+      "returns_with_terminal_cost": {
+        "3": 20.860914159343167,
+        "10": 20.860914159343167,
+        "30": 20.860914159343167
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 0.9536758065223694,
+      "return_discounted": 20.955882323996033,
+      "returns_with_terminal_cost": {
+        "3": 20.955882323996033,
+        "10": 20.955882323996033,
+        "30": 20.955882323996033
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 7.385383129119873,
+      "return_discounted": 19.22463721633152,
+      "returns_with_terminal_cost": {
+        "3": 19.22463721633152,
+        "10": 19.22463721633152,
+        "30": 19.22463721633152
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.9714945554733276,
+      "return_discounted": 20.330573555607664,
+      "returns_with_terminal_cost": {
+        "3": 20.330573555607664,
+        "10": 20.330573555607664,
+        "30": 20.330573555607664
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.467764854431152,
+      "return_discounted": 19.79018869405548,
+      "returns_with_terminal_cost": {
+        "3": 19.79018869405548,
+        "10": 19.79018869405548,
+        "30": 19.79018869405548
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.3963371515274048,
+      "return_discounted": 21.076600870514756,
+      "returns_with_terminal_cost": {
+        "3": 21.076600870514756,
+        "10": 21.076600870514756,
+        "30": 21.076600870514756
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 1.5852320194244385,
+      "return_discounted": 20.741958706649744,
+      "returns_with_terminal_cost": {
+        "3": 20.741958706649744,
+        "10": 20.741958706649744,
+        "30": 20.741958706649744
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.414105415344238,
+      "return_discounted": 19.60429093929008,
+      "returns_with_terminal_cost": {
+        "3": 19.60429093929008,
+        "10": 19.60429093929008,
+        "30": 19.60429093929008
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.210914134979248,
+      "return_discounted": 20.041390091267235,
+      "returns_with_terminal_cost": {
+        "3": 20.041390091267235,
+        "10": 20.041390091267235,
+        "30": 20.041390091267235
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_none",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.907132625579834,
+      "return_discounted": 19.450015096096845,
+      "returns_with_terminal_cost": {
+        "3": 19.450015096096845,
+        "10": 19.450015096096845,
+        "30": 19.450015096096845
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.5374121069908142,
+      "return_discounted": 21.096566973492468,
+      "returns_with_terminal_cost": {
+        "3": 21.096566973492468,
+        "10": 21.096566973492468,
+        "30": 21.096566973492468
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.560221552848816,
+      "return_discounted": 20.9019694934285,
+      "returns_with_terminal_cost": {
+        "3": 20.9019694934285,
+        "10": 20.9019694934285,
+        "30": 20.9019694934285
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.376583576202393,
+      "return_discounted": 19.745345704878023,
+      "returns_with_terminal_cost": {
+        "3": 19.745345704878023,
+        "10": 19.745345704878023,
+        "30": 19.745345704878023
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.8809056282043457,
+      "return_discounted": 20.366960651494264,
+      "returns_with_terminal_cost": {
+        "3": 20.366960651494264,
+        "10": 20.366960651494264,
+        "30": 20.366960651494264
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.7783348560333252,
+      "return_discounted": 21.084839002791227,
+      "returns_with_terminal_cost": {
+        "3": 21.084839002791227,
+        "10": 21.084839002791227,
+        "30": 21.084839002791227
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.902325630187988,
+      "return_discounted": 19.356411208473652,
+      "returns_with_terminal_cost": {
+        "3": 19.356411208473652,
+        "10": 19.356411208473652,
+        "30": 19.356411208473652
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.454339981079102,
+      "return_discounted": 19.29875033468447,
+      "returns_with_terminal_cost": {
+        "3": 19.29875033468447,
+        "10": 19.29875033468447,
+        "30": 19.29875033468447
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 6.395710468292236,
+      "return_discounted": 19.97175534128025,
+      "returns_with_terminal_cost": {
+        "3": 19.97175534128025,
+        "10": 19.97175534128025,
+        "30": 19.97175534128025
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.760203838348389,
+      "return_discounted": 20.174314684016696,
+      "returns_with_terminal_cost": {
+        "3": 20.174314684016696,
+        "10": 20.174314684016696,
+        "30": 20.174314684016696
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.505021572113037,
+      "return_discounted": 20.27012582362041,
+      "returns_with_terminal_cost": {
+        "3": 20.27012582362041,
+        "10": 20.27012582362041,
+        "30": 20.27012582362041
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.0902011394500732,
+      "return_discounted": 21.105029362857124,
+      "returns_with_terminal_cost": {
+        "3": 21.105029362857124,
+        "10": 21.105029362857124,
+        "30": 21.105029362857124
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 2.0734872817993164,
+      "return_discounted": 20.660756777012832,
+      "returns_with_terminal_cost": {
+        "3": 20.660756777012832,
+        "10": 20.660756777012832,
+        "30": 20.660756777012832
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.662710189819336,
+      "return_discounted": 20.830846723776098,
+      "returns_with_terminal_cost": {
+        "3": 20.830846723776098,
+        "10": 20.830846723776098,
+        "30": 20.830846723776098
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.446864128112793,
+      "return_discounted": 20.367024804770466,
+      "returns_with_terminal_cost": {
+        "3": 20.367024804770466,
+        "10": 20.367024804770466,
+        "30": 20.367024804770466
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 2.10058856010437,
+      "return_discounted": 20.853982369483084,
+      "returns_with_terminal_cost": {
+        "3": 20.853982369483084,
+        "10": 20.853982369483084,
+        "30": 20.853982369483084
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 1.37728750705719,
+      "return_discounted": 20.94943775528449,
+      "returns_with_terminal_cost": {
+        "3": 20.94943775528449,
+        "10": 20.94943775528449,
+        "30": 20.94943775528449
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 7.385383129119873,
+      "return_discounted": 19.250258782469263,
+      "returns_with_terminal_cost": {
+        "3": 19.250258782469263,
+        "10": 19.250258782469263,
+        "30": 19.250258782469263
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.9714945554733276,
+      "return_discounted": 20.306760886267124,
+      "returns_with_terminal_cost": {
+        "3": 20.306760886267124,
+        "10": 20.306760886267124,
+        "30": 20.306760886267124
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.467764854431152,
+      "return_discounted": 19.793608770101663,
+      "returns_with_terminal_cost": {
+        "3": 19.793608770101663,
+        "10": 19.793608770101663,
+        "30": 19.793608770101663
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.4098656177520752,
+      "return_discounted": 21.06914227689602,
+      "returns_with_terminal_cost": {
+        "3": 21.06914227689602,
+        "10": 21.06914227689602,
+        "30": 21.06914227689602
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 2.753068208694458,
+      "return_discounted": 20.602696670798043,
+      "returns_with_terminal_cost": {
+        "3": 20.602696670798043,
+        "10": 20.602696670798043,
+        "30": 20.602696670798043
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.414105415344238,
+      "return_discounted": 19.603543165631322,
+      "returns_with_terminal_cost": {
+        "3": 19.603543165631322,
+        "10": 19.603543165631322,
+        "30": 19.603543165631322
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.210914134979248,
+      "return_discounted": 20.035866089901617,
+      "returns_with_terminal_cost": {
+        "3": 20.035866089901617,
+        "10": 20.035866089901617,
+        "30": 20.035866089901617
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_short",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 7.907132625579834,
+      "return_discounted": 19.449349349176458,
+      "returns_with_terminal_cost": {
+        "3": 19.449349349176458,
+        "10": 19.449349349176458,
+        "30": 19.449349349176458
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.5374121069908142,
+      "return_discounted": 21.091322519202485,
+      "returns_with_terminal_cost": {
+        "3": 21.091322519202485,
+        "10": 21.091322519202485,
+        "30": 21.091322519202485
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.467537760734558,
+      "return_discounted": 20.909104006933433,
+      "returns_with_terminal_cost": {
+        "3": 20.909104006933433,
+        "10": 20.909104006933433,
+        "30": 20.909104006933433
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.376583576202393,
+      "return_discounted": 19.74130343278796,
+      "returns_with_terminal_cost": {
+        "3": 19.74130343278796,
+        "10": 19.74130343278796,
+        "30": 19.74130343278796
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.86948561668396,
+      "return_discounted": 20.38515338421725,
+      "returns_with_terminal_cost": {
+        "3": 20.38515338421725,
+        "10": 20.38515338421725,
+        "30": 20.38515338421725
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 0.8311010599136353,
+      "return_discounted": 21.08093816366928,
+      "returns_with_terminal_cost": {
+        "3": 21.08093816366928,
+        "10": 21.08093816366928,
+        "30": 21.08093816366928
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.902325630187988,
+      "return_discounted": 19.373767255555816,
+      "returns_with_terminal_cost": {
+        "3": 19.373767255555816,
+        "10": 19.373767255555816,
+        "30": 19.373767255555816
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.454339981079102,
+      "return_discounted": 19.294617726244795,
+      "returns_with_terminal_cost": {
+        "3": 19.294617726244795,
+        "10": 19.294617726244795,
+        "30": 19.294617726244795
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 7,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 6.395710468292236,
+      "return_discounted": 19.991916022227176,
+      "returns_with_terminal_cost": {
+        "3": 19.991916022227176,
+        "10": 19.991916022227176,
+        "30": 19.991916022227176
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.760203838348389,
+      "return_discounted": 20.168267119025646,
+      "returns_with_terminal_cost": {
+        "3": 20.168267119025646,
+        "10": 20.168267119025646,
+        "30": 20.168267119025646
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.505021572113037,
+      "return_discounted": 20.269177444903338,
+      "returns_with_terminal_cost": {
+        "3": 20.269177444903338,
+        "10": 20.269177444903338,
+        "30": 20.269177444903338
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.1315958499908447,
+      "return_discounted": 21.098324976690076,
+      "returns_with_terminal_cost": {
+        "3": 21.098324976690076,
+        "10": 21.098324976690076,
+        "30": 21.098324976690076
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 2.06677508354187,
+      "return_discounted": 20.672099869178723,
+      "returns_with_terminal_cost": {
+        "3": 20.672099869178723,
+        "10": 20.672099869178723,
+        "30": 20.672099869178723
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.673860788345337,
+      "return_discounted": 20.839500737936167,
+      "returns_with_terminal_cost": {
+        "3": 20.839500737936167,
+        "10": 20.839500737936167,
+        "30": 20.839500737936167
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.4469523429870605,
+      "return_discounted": 20.38945387975554,
+      "returns_with_terminal_cost": {
+        "3": 20.38945387975554,
+        "10": 20.38945387975554,
+        "30": 20.38945387975554
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.421234607696533,
+      "return_discounted": 20.83797926434943,
+      "returns_with_terminal_cost": {
+        "3": 20.83797926434943,
+        "10": 20.83797926434943,
+        "30": 20.83797926434943
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 0.9489448070526123,
+      "return_discounted": 20.96177767325435,
+      "returns_with_terminal_cost": {
+        "3": 20.96177767325435,
+        "10": 20.96177767325435,
+        "30": 20.96177767325435
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 7.385383129119873,
+      "return_discounted": 19.251456108322742,
+      "returns_with_terminal_cost": {
+        "3": 19.251456108322742,
+        "10": 19.251456108322742,
+        "30": 19.251456108322742
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 2.9676167964935303,
+      "return_discounted": 20.26901368957569,
+      "returns_with_terminal_cost": {
+        "3": 20.26901368957569,
+        "10": 20.26901368957569,
+        "30": 20.26901368957569
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.467764854431152,
+      "return_discounted": 19.798590791798365,
+      "returns_with_terminal_cost": {
+        "3": 19.798590791798365,
+        "10": 19.798590791798365,
+        "30": 19.798590791798365
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 1.4145768880844116,
+      "return_discounted": 21.070123542032768,
+      "returns_with_terminal_cost": {
+        "3": 21.070123542032768,
+        "10": 21.070123542032768,
+        "30": 21.070123542032768
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 20,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 60.64057540893555,
+      "return_discounted": 5.127524980862287,
+      "returns_with_terminal_cost": {
+        "3": 5.127524980862287,
+        "10": 1.5933237593527991,
+        "30": -8.504394016388593
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.414105415344238,
+      "return_discounted": 19.567062920371022,
+      "returns_with_terminal_cost": {
+        "3": 19.567062920371022,
+        "10": 19.567062920371022,
+        "30": 19.567062920371022
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.210914134979248,
+      "return_discounted": 20.037726358978745,
+      "returns_with_terminal_cost": {
+        "3": 20.037726358978745,
+        "10": 20.037726358978745,
+        "30": 20.037726358978745
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "static_sustained",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 7.907132625579834,
+      "return_discounted": 19.446551823486075,
+      "returns_with_terminal_cost": {
+        "3": 19.446551823486075,
+        "10": 19.446551823486075,
+        "30": 19.446551823486075
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 2.167356491088867,
+      "return_discounted": 20.639637016462444,
+      "returns_with_terminal_cost": {
+        "3": 20.639637016462444,
+        "10": 20.639637016462444,
+        "30": 20.639637016462444
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 5.028469562530518,
+      "return_discounted": 19.96895875525897,
+      "returns_with_terminal_cost": {
+        "3": 19.96895875525897,
+        "10": 19.96895875525897,
+        "30": 19.96895875525897
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.088176250457764,
+      "return_discounted": 19.336350941864946,
+      "returns_with_terminal_cost": {
+        "3": 19.336350941864946,
+        "10": 19.336350941864946,
+        "30": 19.336350941864946
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 8.982269287109375,
+      "return_discounted": 17.67220174390557,
+      "returns_with_terminal_cost": {
+        "3": 17.67220174390557,
+        "10": 17.67220174390557,
+        "30": 17.67220174390557
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 4,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 57.042903900146484,
+      "return_discounted": -1.0990589562704827,
+      "returns_with_terminal_cost": {
+        "3": -1.0990589562704827,
+        "10": -5.781861266258245,
+        "30": -19.16129643765185
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 5,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 56.47945022583008,
+      "return_discounted": 0.34723706785728004,
+      "returns_with_terminal_cost": {
+        "3": 0.34723706785728004,
+        "10": -3.9305836088727752,
+        "30": -16.152928399530076
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.311165809631348,
+      "return_discounted": 20.006445704792903,
+      "returns_with_terminal_cost": {
+        "3": 20.006445704792903,
+        "10": 20.006445704792903,
+        "30": 20.006445704792903
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 7,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 55.89262008666992,
+      "return_discounted": 2.1653742192407948,
+      "returns_with_terminal_cost": {
+        "3": 2.1653742192407948,
+        "10": -1.7034101208959007,
+        "30": -12.757079664143603
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.256619453430176,
+      "return_discounted": 19.456391520468202,
+      "returns_with_terminal_cost": {
+        "3": 19.456391520468202,
+        "10": 19.456391520468202,
+        "30": 19.456391520468202
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.92962646484375,
+      "return_discounted": 19.479346744113222,
+      "returns_with_terminal_cost": {
+        "3": 19.479346744113222,
+        "10": 19.479346744113222,
+        "30": 19.479346744113222
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.4652059078216553,
+      "return_discounted": 19.966955976346018,
+      "returns_with_terminal_cost": {
+        "3": 19.966955976346018,
+        "10": 19.966955976346018,
+        "30": 19.966955976346018
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.509781837463379,
+      "return_discounted": 19.935363578643393,
+      "returns_with_terminal_cost": {
+        "3": 19.935363578643393,
+        "10": 19.935363578643393,
+        "30": 19.935363578643393
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.629574775695801,
+      "return_discounted": 20.14938094072726,
+      "returns_with_terminal_cost": {
+        "3": 20.14938094072726,
+        "10": 20.14938094072726,
+        "30": 20.14938094072726
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.835090637207031,
+      "return_discounted": 19.333046056081354,
+      "returns_with_terminal_cost": {
+        "3": 19.333046056081354,
+        "10": 19.333046056081354,
+        "30": 19.333046056081354
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.63075065612793,
+      "return_discounted": 19.781459915527233,
+      "returns_with_terminal_cost": {
+        "3": 19.781459915527233,
+        "10": 19.781459915527233,
+        "30": 19.781459915527233
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 8.615865707397461,
+      "return_discounted": 19.048131500409905,
+      "returns_with_terminal_cost": {
+        "3": 19.048131500409905,
+        "10": 19.048131500409905,
+        "30": 19.048131500409905
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 6.522725582122803,
+      "return_discounted": 19.336608894959678,
+      "returns_with_terminal_cost": {
+        "3": 19.336608894959678,
+        "10": 19.336608894959678,
+        "30": 19.336608894959678
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.855613708496094,
+      "return_discounted": 20.043421675700884,
+      "returns_with_terminal_cost": {
+        "3": 20.043421675700884,
+        "10": 20.043421675700884,
+        "30": 20.043421675700884
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.618297576904297,
+      "return_discounted": 19.637867203340694,
+      "returns_with_terminal_cost": {
+        "3": 19.637867203340694,
+        "10": 19.637867203340694,
+        "30": 19.637867203340694
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 8.16926097869873,
+      "return_discounted": 19.134298637585193,
+      "returns_with_terminal_cost": {
+        "3": 19.134298637585193,
+        "10": 19.134298637585193,
+        "30": 19.134298637585193
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.2869038581848145,
+      "return_discounted": 19.392543992578666,
+      "returns_with_terminal_cost": {
+        "3": 19.392543992578666,
+        "10": 19.392543992578666,
+        "30": 19.392543992578666
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.740653991699219,
+      "return_discounted": 19.71011567740385,
+      "returns_with_terminal_cost": {
+        "3": 19.71011567740385,
+        "10": 19.71011567740385,
+        "30": 19.71011567740385
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 4.073185443878174,
+      "return_discounted": 19.91240498547412,
+      "returns_with_terminal_cost": {
+        "3": 19.91240498547412,
+        "10": 19.91240498547412,
+        "30": 19.91240498547412
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_1.2",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.812339782714844,
+      "return_discounted": 19.90596718637855,
+      "returns_with_terminal_cost": {
+        "3": 19.90596718637855,
+        "10": 19.90596718637855,
+        "30": 19.90596718637855
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 0,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.259121894836426,
+      "return_discounted": 19.539130111784612,
+      "returns_with_terminal_cost": {
+        "3": 19.539130111784612,
+        "10": 19.539130111784612,
+        "30": 19.539130111784612
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 1,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 3.620229721069336,
+      "return_discounted": 19.740710090966264,
+      "returns_with_terminal_cost": {
+        "3": 19.740710090966264,
+        "10": 19.740710090966264,
+        "30": 19.740710090966264
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 2,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.270351886749268,
+      "return_discounted": 19.187281631170517,
+      "returns_with_terminal_cost": {
+        "3": 19.187281631170517,
+        "10": 19.187281631170517,
+        "30": 19.187281631170517
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 3,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 6.476172924041748,
+      "return_discounted": 19.33162296020039,
+      "returns_with_terminal_cost": {
+        "3": 19.33162296020039,
+        "10": 19.33162296020039,
+        "30": 19.33162296020039
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 4,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.792342185974121,
+      "return_discounted": 19.24103704493973,
+      "returns_with_terminal_cost": {
+        "3": 19.24103704493973,
+        "10": 19.24103704493973,
+        "30": 19.24103704493973
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 5,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 7.461087226867676,
+      "return_discounted": 19.78434690781669,
+      "returns_with_terminal_cost": {
+        "3": 19.78434690781669,
+        "10": 19.78434690781669,
+        "30": 19.78434690781669
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 6,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.607553958892822,
+      "return_discounted": 19.61920800642961,
+      "returns_with_terminal_cost": {
+        "3": 19.61920800642961,
+        "10": 19.61920800642961,
+        "30": 19.61920800642961
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 7,
+      "falls": true,
+      "nonfall_settled": false,
+      "peak_tilt": 59.23008728027344,
+      "return_discounted": -1.5127181314542617,
+      "returns_with_terminal_cost": {
+        "3": -1.5127181314542617,
+        "10": -6.338861732537806,
+        "30": -20.127843449919357
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 8,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 3.802511692047119,
+      "return_discounted": 19.472123747558857,
+      "returns_with_terminal_cost": {
+        "3": 19.472123747558857,
+        "10": 19.472123747558857,
+        "30": 19.472123747558857
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 9,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.647154331207275,
+      "return_discounted": 19.21477412277647,
+      "returns_with_terminal_cost": {
+        "3": 19.21477412277647,
+        "10": 19.21477412277647,
+        "30": 19.21477412277647
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 10,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.458872079849243,
+      "return_discounted": 20.178235697217684,
+      "returns_with_terminal_cost": {
+        "3": 20.178235697217684,
+        "10": 20.178235697217684,
+        "30": 20.178235697217684
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 11,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 3.3711555004119873,
+      "return_discounted": 19.94905848688073,
+      "returns_with_terminal_cost": {
+        "3": 19.94905848688073,
+        "10": 19.94905848688073,
+        "30": 19.94905848688073
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 12,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.709064960479736,
+      "return_discounted": 19.903033964816906,
+      "returns_with_terminal_cost": {
+        "3": 19.903033964816906,
+        "10": 19.903033964816906,
+        "30": 19.903033964816906
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 13,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 9.15911865234375,
+      "return_discounted": 18.460150549313415,
+      "returns_with_terminal_cost": {
+        "3": 18.460150549313415,
+        "10": 18.460150549313415,
+        "30": 18.460150549313415
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 14,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.2887749671936035,
+      "return_discounted": 19.34601322623588,
+      "returns_with_terminal_cost": {
+        "3": 19.34601322623588,
+        "10": 19.34601322623588,
+        "30": 19.34601322623588
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 15,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 3.257563591003418,
+      "return_discounted": 20.298107888671442,
+      "returns_with_terminal_cost": {
+        "3": 20.298107888671442,
+        "10": 20.298107888671442,
+        "30": 20.298107888671442
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 16,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 8.451290130615234,
+      "return_discounted": 18.573817354337002,
+      "returns_with_terminal_cost": {
+        "3": 18.573817354337002,
+        "10": 18.573817354337002,
+        "30": 18.573817354337002
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 17,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 3.8274056911468506,
+      "return_discounted": 20.13574559842807,
+      "returns_with_terminal_cost": {
+        "3": 20.13574559842807,
+        "10": 20.13574559842807,
+        "30": 20.13574559842807
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 18,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 5.421987056732178,
+      "return_discounted": 19.485021419496775,
+      "returns_with_terminal_cost": {
+        "3": 19.485021419496775,
+        "10": 19.485021419496775,
+        "30": 19.485021419496775
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 19,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 6.219714641571045,
+      "return_discounted": 19.319644965811126,
+      "returns_with_terminal_cost": {
+        "3": 19.319644965811126,
+        "10": 19.319644965811126,
+        "30": 19.319644965811126
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 20,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 4.651726722717285,
+      "return_discounted": 20.191063483878594,
+      "returns_with_terminal_cost": {
+        "3": 20.191063483878594,
+        "10": 20.191063483878594,
+        "30": 20.191063483878594
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 21,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 9.095911979675293,
+      "return_discounted": 19.240245274740456,
+      "returns_with_terminal_cost": {
+        "3": 19.240245274740456,
+        "10": 19.240245274740456,
+        "30": 19.240245274740456
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 22,
+      "falls": false,
+      "nonfall_settled": false,
+      "peak_tilt": 3.089271068572998,
+      "return_discounted": 19.833219188330897,
+      "returns_with_terminal_cost": {
+        "3": 19.833219188330897,
+        "10": 19.833219188330897,
+        "30": 19.833219188330897
+      }
+    },
+    {
+      "updates": 600,
+      "mode": "walk_3.6",
+      "case": 23,
+      "falls": false,
+      "nonfall_settled": true,
+      "peak_tilt": 7.80687952041626,
+      "return_discounted": 19.918758527015704,
+      "returns_with_terminal_cost": {
+        "3": 19.918758527015704,
+        "10": 19.918758527015704,
+        "30": 19.918758527015704
+      }
+    }
+  ]
+}

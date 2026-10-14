@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "evaluation_scope": "current-level DR only",
+  "groups": [
+    "quiet",
+    "tilt_and_velocity_recovery",
+    "physical_push",
+    "real_walk_to_stand"
+  ],
+  "nominal_evaluation_disabled": true,
+  "walker_used_for_training": false,
+  "source_walker_sha256": "e959c81f9a362bc6c3c0a4f2cc626716c41d54fafad2ff74debe900e65458ad9",
+  "model800_course": {
+    "quiet": {
+      "cases": 4,
+      "falls": 0,
+      "settled": 4
+    },
+    "course_reset": {
+      "cases": 20,
+      "falls": 0,
+      "settled": 20
+    },
+    "course_push": {
+      "cases": 8,
+      "falls": 1,
+      "settled": 7
+    }
+  },
+  "model800_walk_stop": {
+    "attempted": 48,
+    "eligible": 45,
+    "walk_failed": 3,
+    "not_moving_at_switch": 0,
+    "stop_falls": 0,
+    "successful_stops": 45,
+    "success_rate": 1.0
+  },
+  "overall_success_rate": 0.95,
+  "threshold": 0.9,
+  "invalid_walking_attempts_count_in_overall_denominator": true
+}

@@ -1,0 +1,255 @@
+{
+  "ppo_updates": 0,
+  "training_paused": true,
+  "native_vs_manual_max_error": 0.0,
+  "condition_order": [
+    "horizontal speed<.03",
+    "gyro norm<.2",
+    "joint speed RMS<.15",
+    "both feet contact",
+    "tilt<10deg"
+  ],
+  "independent_same_seed_replays": true,
+  "results": [
+    {
+      "mode": "reference_target",
+      "checkpoint": "block_02/final.pt",
+      "mean_distribution_std": 1.521671175956726,
+      "sampling_multiplier": null,
+      "falls": 0,
+      "settled": 8,
+      "cases": 8,
+      "mean_path_m": 0.020131999403304235,
+      "mean_speed_m_s": 0.0002663200721144676,
+      "mean_gyro_rad_s": 0.0011706495424732566,
+      "mean_joint_speed_rad_s": 0.00022358918795362115,
+      "mean_tilt_deg": 0.9217833280563354,
+      "mean_phase_weights": [
+        0.9998937992999951,
+        0.00010620070000489553,
+        0.0
+      ],
+      "condition_pass_fraction": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "best_continuous_stable_s": [
+        7.87999999999992,
+        7.999999999999917,
+        7.85999999999992,
+        7.539999999999927,
+        7.079999999999937,
+        7.85999999999992,
+        7.839999999999921,
+        7.8999999999999195
+      ],
+      "mean_reward": 0.21857132017612457
+    },
+    {
+      "mode": "original650",
+      "checkpoint": "stand_parent.pt",
+      "mean_distribution_std": 0.04309183359146118,
+      "sampling_multiplier": 0.0,
+      "falls": 0,
+      "settled": 8,
+      "cases": 8,
+      "mean_path_m": 0.042748658655142435,
+      "mean_speed_m_s": 0.004287887364625931,
+      "mean_gyro_rad_s": 0.02742186188697815,
+      "mean_joint_speed_rad_s": 0.04212315380573273,
+      "mean_tilt_deg": 1.0986429452896118,
+      "mean_phase_weights": [
+        0.983692115197579,
+        0.016307884802420933,
+        0.0
+      ],
+      "condition_pass_fraction": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "best_continuous_stable_s": [
+        7.939999999999919,
+        7.85999999999992,
+        7.799999999999922,
+        7.599999999999926,
+        7.599999999999926,
+        7.8999999999999195,
+        7.7599999999999225,
+        7.919999999999919
+      ],
+      "mean_reward": 0.21741241216659546
+    },
+    {
+      "mode": "initial_random_mean",
+      "checkpoint": "block_00_start_actor.pt",
+      "mean_distribution_std": 1.0,
+      "sampling_multiplier": 0.0,
+      "falls": 0,
+      "settled": 8,
+      "cases": 8,
+      "mean_path_m": 0.046754183510756775,
+      "mean_speed_m_s": 0.0039092847146093845,
+      "mean_gyro_rad_s": 0.02562711015343666,
+      "mean_joint_speed_rad_s": 0.0214230939745903,
+      "mean_tilt_deg": 1.2380481958389282,
+      "mean_phase_weights": [
+        0.9905636698255936,
+        0.00943633017440637,
+        0.0
+      ],
+      "condition_pass_fraction": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "best_continuous_stable_s": [
+        7.839999999999921,
+        7.799999999999922,
+        7.6199999999999255,
+        7.559999999999927,
+        7.439999999999929,
+        7.919999999999919,
+        7.839999999999921,
+        7.939999999999919
+      ],
+      "mean_reward": 0.21770913898944855
+    },
+    {
+      "mode": "trained300_mean",
+      "checkpoint": "block_02/final.pt",
+      "mean_distribution_std": 1.521671175956726,
+      "sampling_multiplier": 0.0,
+      "falls": 0,
+      "settled": 0,
+      "cases": 8,
+      "mean_path_m": 0.9263380067300204,
+      "mean_speed_m_s": 0.11956565827131271,
+      "mean_gyro_rad_s": 1.5266324281692505,
+      "mean_joint_speed_rad_s": 1.3426674604415894,
+      "mean_tilt_deg": 4.108075141906738,
+      "mean_phase_weights": [
+        0.08192819828098885,
+        0.3730372486775064,
+        0.5450345530415048
+      ],
+      "condition_pass_fraction": [
+        0.11708333333333333,
+        0.06,
+        0.005,
+        0.43083333333333335,
+        0.9745833333333334
+      ],
+      "best_continuous_stable_s": [
+        0.0,
+        0.02,
+        0.02,
+        0.0,
+        0.0,
+        0.02,
+        0.0,
+        0.04
+      ],
+      "mean_reward": 0.13880005478858948
+    },
+    {
+      "mode": "trained300_sample",
+      "checkpoint": "block_02/final.pt",
+      "mean_distribution_std": 1.521671175956726,
+      "sampling_multiplier": 1.0,
+      "falls": 2,
+      "settled": 0,
+      "cases": 8,
+      "mean_path_m": 2.6161892747732054,
+      "mean_speed_m_s": 0.3357190191745758,
+      "mean_gyro_rad_s": 3.653651475906372,
+      "mean_joint_speed_rad_s": 3.5559754371643066,
+      "mean_tilt_deg": 16.82135772705078,
+      "mean_phase_weights": [
+        6.699341422634492e-22,
+        0.016616344700645033,
+        0.983383655299355
+      ],
+      "condition_pass_fraction": [
+        0.004166666666666667,
+        0.0,
+        0.0,
+        0.04958333333333333,
+        0.6204166666666666
+      ],
+      "best_continuous_stable_s": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_reward": 0.06620075553655624
+    },
+    {
+      "mode": "trained300_sample_01",
+      "checkpoint": "block_02/final.pt",
+      "mean_distribution_std": 1.521671175956726,
+      "sampling_multiplier": 0.1,
+      "falls": 0,
+      "settled": 0,
+      "cases": 8,
+      "mean_path_m": 1.068719079077141,
+      "mean_speed_m_s": 0.13953518867492676,
+      "mean_gyro_rad_s": 2.025270938873291,
+      "mean_joint_speed_rad_s": 1.8018900156021118,
+      "mean_tilt_deg": 4.267489910125732,
+      "mean_phase_weights": [
+        0.005574478235864602,
+        0.24960479509349573,
+        0.7448207266706398
+      ],
+      "condition_pass_fraction": [
+        0.055,
+        0.010416666666666666,
+        0.0,
+        0.19708333333333333,
+        0.9775
+      ],
+      "best_continuous_stable_s": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean_reward": 0.13259825110435486
+    }
+  ],
+  "same_state_gate_audit": [
+    {
+      "mode": "trained300_mean",
+      "actual_joint_velocity_cost": -0.024884426918899534,
+      "quiet_strength_cost_same_trajectory": -0.41019201278686523,
+      "penalty_ratio": 16.48388424309372,
+      "small_tilt_recovery_fraction": 0.21875,
+      "note": "offline same-state rescoring, not retraining causality"
+    },
+    {
+      "mode": "trained300_sample",
+      "actual_joint_velocity_cost": -0.09415211845775884,
+      "quiet_strength_cost_same_trajectory": -1.8079081773757935,
+      "penalty_ratio": 19.201991489834697,
+      "small_tilt_recovery_fraction": 0.31166666666666665,
+      "note": "offline same-state rescoring, not retraining causality"
+    }
+  ]
+}

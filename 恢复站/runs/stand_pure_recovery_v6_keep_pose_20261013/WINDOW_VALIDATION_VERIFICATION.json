@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "checks": {
+    "isolated_speed_spikes_allowed": true,
+    "sustained_drift_rejected": true,
+    "physical_fall_always_rejected": true,
+    "brief_step_allowed": true,
+    "persistent_one_foot_support_rejected": true,
+    "crouch_rejected": true,
+    "splayed_hips_rejected": true
+  },
+  "criteria": {
+    "version": "window_v2",
+    "window_seconds": 1.0,
+    "minimum_pose_fraction": 0.8,
+    "minimum_both_feet_fraction": 0.8,
+    "mean_speed_max_m_s": 0.08,
+    "mean_gyro_max_rad_s": 0.4,
+    "mean_joint_speed_rms_max_rad_s": 0.5,
+    "height_error_max_m": 0.03,
+    "body_tilt_max_deg": 12.0,
+    "head_tilt_max_deg": 20.0,
+    "head_joint_error_max_rad": 0.2,
+    "hip_yaw_error_max_rad": 0.12,
+    "hip_roll_error_max_rad": 0.1,
+    "leg_error_rms_max_rad": 0.3
+  },
+  "nominal": {
+    "cases": 32,
+    "falls": 0,
+    "settled": 31
+  },
+  "dr_course": {
+    "cases": 32,
+    "falls": 1,
+    "settled": 31
+  },
+  "overall_success_rate": 0.96875
+}

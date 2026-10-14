@@ -1,0 +1,75 @@
+{
+  "effective_dr": {
+    "enabled": true,
+    "level": 2,
+    "multiplier": 2.0,
+    "mass_inertia_scale_range": [
+      0.8999999999999999,
+      1.1
+    ],
+    "foot_friction_range": [
+      0.3999999999999999,
+      1.6
+    ],
+    "dof_armature_multiplier_range": [
+      0.8,
+      1.2000000000000002
+    ],
+    "kp_multiplier_range": [
+      0.9,
+      1.1
+    ],
+    "kd_multiplier_range": [
+      0.9,
+      1.1
+    ],
+    "motor": {
+      "torque_scale_range": [
+        0.9,
+        1.1
+      ],
+      "friction_scale_range": [
+        0.9,
+        1.1
+      ],
+      "response_time_scale_range": [
+        0.9,
+        1.1
+      ]
+    },
+    "imu_max_angle_deg": 12.0,
+    "noise_level": 4.0,
+    "sole_tilt_range_deg": [
+      -3.0,
+      3.0
+    ],
+    "imu_delay_ms": [
+      0.0,
+      20.0
+    ],
+    "joint_velocity_delay_ms": 20.0,
+    "trunk_com_range_m": 0.03135,
+    "head_com_range_m": 0.0209
+  },
+  "seed": 61024,
+  "updates": 100,
+  "num_envs": 4096,
+  "rollout_steps": 20,
+  "elapsed_seconds": 685.9473898410797,
+  "checkpoint": "block_11/final.pt",
+  "started_from_scratch": false,
+  "source_checkpoint": "block_10/final.pt",
+  "optimizer_moments_reset": false,
+  "actor_weight_max_change": 0.26167842745780945,
+  "std_min": 0.7179191708564758,
+  "std_max": 0.8785601854324341,
+  "level": 2,
+  "phase": "settle",
+  "force_events": 12499,
+  "physical_episode_samples": 512,
+  "training_recovery_window_rate": 0.0,
+  "teacher_or_trajectory_training": false,
+  "actor_dimension": 61,
+  "entropy_type": "tanh_increment_entropy",
+  "pose_goal_height_m": 0.319637239
+}

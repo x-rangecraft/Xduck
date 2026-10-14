@@ -1,0 +1,45 @@
+{
+  "training_state": "paused_by_user; explicit user resume required",
+  "completed_updates_including_partial": 636,
+  "last_fully_saved_and_evaluated_updates": 600,
+  "model": "block_11/final.pt",
+  "achieved_requested_recovery_behavior": false,
+  "confirmed_design_mismatches": [
+    "Level 2 uses 90% static initial states and 10% walking handoffs; initial roll/pitch bounded at 8 degrees each, horizontal velocity components at 0.12 m/s. Broad recovery courses remain inaccessible behind quietness gates.",
+    "Level 2 learned exploration std 0.1581 to 0.2096, multiplied by 0.12 rad per action: approximately 1.09 to 1.44 degrees of independent per-control-step target noise. No entropy reward. This does not impose a hard limit on learned mean actions, but coherent large recovery sequences are exploration-rare.",
+    "Zero horizontal and angular velocity rewards apply during dynamic recovery as well as quiet standing. Phase weights mainly affect quiet pose bonus; they do not implement a different recovery learning objective.",
+    "Motion penalties have no discovery/refinement schedule, unlike official StandUp curricula. Actual action-rate and joint-velocity costs in the failed pre-fall windows are small, so they are not established as the dominant cause.",
+    "In 600-update failed trials the final 0.4 seconds still receive mean height reward 0.86 to 0.89 out of 1.0. Height alone is a poor tipping/recoverability signal in these traces.",
+    "Episode terminates at tilt above 55 degrees or root height below 60% nominal. Official StandUp permits recovery from ground configurations, whereas this experiment only covers pre-fall rescue and ends severe failures immediately. Ground rise is a separate behavior from the user's required prevention of falls."
+  ],
+  "failure_penalty": {
+    "terminal_failure_cost": 3.0,
+    "failure_rate_cost_at_terminal_frame": 0.1,
+    "additional_terminal_potential_and_future_reward_effects": true,
+    "ideal_quiet_net_reward_per_20ms_step_ignoring_other_terms": 0.22,
+    "terminal_cost_in_ideal_quiet_step_equivalents": 13.6364,
+    "causal_effect_of_larger_penalty_tested": false,
+    "conclusion": "Failure has a real penalty; increasing it alone cannot create recovery actions that were never sampled. Its appropriate magnitude requires comparing full discounted successful-recovery and failed-rollout returns."
+  },
+  "failure_behavior": {
+    "600_update_failed_trials_inspected": 5,
+    "median_max_per_joint_target_excursion_in_last_0_4s_deg": 8.5510,
+    "median_joint_speed_rms_in_last_0_4s_rad_s": 0.1610,
+    "conclusion": "Actor outputs change; there is no evidence of a frozen inference pipeline. Actual joint motion remains small and there is no coordinated effective rescue. Target changes do not prove a learned recovery."
+  },
+  "official_reference": "https://github.com/pollen-robotics/microduck_rl/blob/develop/src/mjlab_microduck/tasks/microduck_standup_env_cfg.py",
+  "official_lessons": [
+    "Remove walking zero-velocity tracking from StandUp, use broad goal rewards and broad reset-state coverage.",
+    "Broad and sharp height rewards plus L1; upright rewards; upward-motion bootstrap below goal height; additional motion-blocking refinement costs introduced after recovery discovery.",
+    "Gaussian init std 1.0 with action scale 1.0: copy learning principles, not raw physical action or mechanical parameters, into XDuck."
+  ],
+  "next_work_before_any_new_training": [
+    "Design mixed near-loss-of-balance, single-support, moving-handoff and quiet states in the same early curriculum.",
+    "Provide bounded coherent exploration on meaningful control timescales; verify PPO log probabilities against the actual sampled distribution and XDuck actuator limits.",
+    "Make restored balance and risk reduction primary during discovery; teach quiet settling and add stronger motion refinement afterwards while preserving mixed quiet samples.",
+    "Audit full discounted returns for successful dynamic rescue, rigid falling and perpetual motion before choosing failure penalties.",
+    "Require independent larger-perturbation tests to show nonfalling recovery and subsequent quietness; record new post-push steps and full-body target/actual responses. Do not reward step counts directly or require a prescribed rescue method."
+  ],
+  "no_training_restarted": true,
+  "limitations": "These are verified configuration mismatches and measured behavior, not a causal ablation of each proposed root cause. Synthetic instantaneous reward probes are not feasible trajectories or proof of optimal policy."
+}

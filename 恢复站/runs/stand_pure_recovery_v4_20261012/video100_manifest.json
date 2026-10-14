@@ -1,0 +1,85 @@
+{
+  "updates": 100,
+  "checkpoint": "block_03/final.pt",
+  "source": "original saved diagnostic trajectories; no resimulation",
+  "playback_speed": 1.0,
+  "selected_fixtures": [
+    0,
+    8,
+    26
+  ],
+  "top": "learned model",
+  "bottom": "fixed default target",
+  "nominal_diagnostic": true,
+  "not_real_walking_handoff": true,
+  "failure_panels_freeze_at_first_failure": true,
+  "camera_follows_robot_xy_path_shown": true,
+  "cases": [
+    {
+      "case": 0,
+      "fixture": 0,
+      "name": "quiet",
+      "mode": "model",
+      "failed": false,
+      "legacy_gate_failed": false,
+      "failure_s": null,
+      "nonfall_settled": false,
+      "settle_s": null
+    },
+    {
+      "case": 8,
+      "fixture": 8,
+      "name": "pitch_10_1",
+      "mode": "model",
+      "failed": false,
+      "legacy_gate_failed": false,
+      "failure_s": null,
+      "nonfall_settled": false,
+      "settle_s": null
+    },
+    {
+      "case": 26,
+      "fixture": 26,
+      "name": "push_[-16, 0]",
+      "mode": "model",
+      "failed": false,
+      "legacy_gate_failed": false,
+      "failure_s": null,
+      "nonfall_settled": false,
+      "settle_s": null
+    },
+    {
+      "case": 64,
+      "fixture": 0,
+      "name": "quiet",
+      "mode": "fixed_default_target",
+      "failed": false,
+      "legacy_gate_failed": false,
+      "failure_s": null,
+      "nonfall_settled": true,
+      "settle_s": 0.98
+    },
+    {
+      "case": 72,
+      "fixture": 8,
+      "name": "pitch_10_1",
+      "mode": "fixed_default_target",
+      "failed": true,
+      "legacy_gate_failed": true,
+      "failure_s": 0.66,
+      "nonfall_settled": false,
+      "settle_s": null
+    },
+    {
+      "case": 90,
+      "fixture": 26,
+      "name": "push_[-16, 0]",
+      "mode": "fixed_default_target",
+      "failed": true,
+      "legacy_gate_failed": true,
+      "failure_s": 1.3,
+      "nonfall_settled": false,
+      "settle_s": null
+    }
+  ]
+}

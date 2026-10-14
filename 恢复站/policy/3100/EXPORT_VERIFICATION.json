@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "source_checkpoint": "model_3100.pt",
+  "source_sha256": "8347134e537a217172fea912a5a05e0d6418399d26ca8e2e5961f30a797679fb",
+  "onnx_sha256": "7563bf359553e5faeec8b5b4e9d9f1e52419f4ade8d68616e9ea19a709ec0890",
+  "input": "obs [batch,61]",
+  "output": "raw_action [batch,14]",
+  "normalization_included": true,
+  "epsilon": 0.01,
+  "normalizer_do_not_apply_twice": true,
+  "samples": 1024,
+  "max_raw_action_abs_difference": 7.62939453125e-06,
+  "max_decoded_target_difference_rad": 2.9504299163540804e-07,
+  "decoder": "clip(previous_target + per_joint_increment * tanh(raw_action), low, high)",
+  "flexible_joints": false
+}

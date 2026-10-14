@@ -1,0 +1,57 @@
+{
+  "phase": "complete",
+  "training_running": false,
+  "user_requires_explicit_resume": false,
+  "source_lineage_updates": 3100,
+  "completed_updates": 50,
+  "lineage_compute_updates": 3150,
+  "requested_updates": 50,
+  "flexible_joints": true,
+  "flexible_dr_enabled": true,
+  "flexible_dr_fraction": 0.1,
+  "num_envs": 4096,
+  "rollout_steps": 20,
+  "actor_dimension": 61,
+  "mechanical_dt": 6.25e-05,
+  "control_dt": 0.02,
+  "latest_checkpoint": "model_3150.pt",
+  "groups": {
+    "quiet": {
+      "cases": 4,
+      "falls": 0,
+      "failed_final_stand": 0,
+      "settled": 4
+    },
+    "course_reset": {
+      "cases": 20,
+      "falls": 20,
+      "failed_final_stand": 0,
+      "settled": 20
+    },
+    "course_push": {
+      "cases": 8,
+      "falls": 7,
+      "failed_final_stand": 0,
+      "settled": 8
+    }
+  },
+  "walk_stop": {
+    "attempted": 80,
+    "command_linear_speed_cap_m_s": 0.3,
+    "eligible": 78,
+    "walk_failed": 2,
+    "not_moving_at_switch": 0,
+    "stop_falls": 10,
+    "successful_stops": 80,
+    "final_stand_successes": 80,
+    "success_rate": 1.0
+  },
+  "overall_success_rate": 1.0,
+  "baseline_flex_head_yaw_mean_abs_deg": 0.8464655838467914,
+  "new_head_yaw_mean_abs_deg": 0.3011687055614543,
+  "baseline_flex_head_roll_mean_abs_deg": 0.16203408007065867,
+  "new_head_roll_mean_abs_deg": 0.1993286162262113,
+  "new_head_tilt_mean_deg": 1.8358682121542862,
+  "quiet_head_axes_p95_within2deg_cases": 4,
+  "posture_report": "POSTURE_COMPARISON.json"
+}

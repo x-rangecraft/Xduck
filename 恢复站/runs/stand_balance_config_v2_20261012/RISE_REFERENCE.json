@@ -1,0 +1,12 @@
+{
+  "user_instruction": "Reference only; do not add a separate rise-policy training stage",
+  "training_integration": false,
+  "archive_sha256": "c45eb8d5283270e6a9c9683cc69e0ed65f4583057bfb5a108f26fb456c1fc147",
+  "checkpoint_sha256": "b21eb0b82e6703dc1f28b080e2674a85d8f227f8656371a1858807bcb27bef27",
+  "completed_updates": 2000,
+  "actor_observation_size": 61,
+  "actor_normalization": "Identity",
+  "target_mapping": "target_next = clip(target_previous + increment * tanh(actor_output), target_low, target_high)",
+  "generic_low_height_and_velocity_states_included": true,
+  "extracted_manifest_hashes_verified": 45
+}

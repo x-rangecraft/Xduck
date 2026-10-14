@@ -1,0 +1,94 @@
+{
+  "three_checks": {
+    "course_supply": "failed: saved successful tests have no >12deg recovery; fixed-reference baseline matches current stand in diagnostic battery",
+    "coherent_exploration": "not_validated: held independent 14-joint Gaussian noise is temporally coherent but fails all 24; larger iid noise trades more foot movement for more falls",
+    "return_preference": "validated_for_pitch10_moving_examples: frozen walk-to-stand rescue outperforms rigid falling under existing reward; not proof all possible recovery paths are well rewarded"
+  },
+  "pitch10_results": [
+    {
+      "mode": "mean600",
+      "falls": 3,
+      "settled": 0,
+      "median_return": -2.0981983169497873
+    },
+    {
+      "mode": "fixed_reference",
+      "falls": 3,
+      "settled": 0,
+      "median_return": -2.1685295450795694
+    },
+    {
+      "mode": "walker_zero",
+      "falls": 0,
+      "settled": 0,
+      "median_return": 10.950896522686854
+    },
+    {
+      "mode": "walker_2s_then_stand",
+      "falls": 0,
+      "settled": 3,
+      "median_return": 14.332097249344907
+    },
+    {
+      "mode": "iid_small",
+      "falls": 3,
+      "settled": 0,
+      "median_return": -2.1860013508910123
+    },
+    {
+      "mode": "iid_large",
+      "falls": 3,
+      "settled": 0,
+      "median_return": 1.8568889899053744
+    },
+    {
+      "mode": "held_large",
+      "falls": 3,
+      "settled": 0,
+      "median_return": -2.799179642112769
+    }
+  ],
+  "matched_scenario_return_comparisons": [
+    {
+      "rep": 0,
+      "active_recovery_return": 14.332097249344907,
+      "rigid_fall_return": -2.1607603760054648,
+      "rigid_fall_returns_at_terminal_cost": {
+        "3": -2.1607603760054648,
+        "10": -7.338662989723426,
+        "30": -22.132670457489027
+      },
+      "active_recovery_steps": 10,
+      "settle_s": 3.2800000000000002
+    },
+    {
+      "rep": 1,
+      "active_recovery_return": 13.984871375485326,
+      "rigid_fall_return": -2.8481357278935366,
+      "rigid_fall_returns_at_terminal_cost": {
+        "3": -2.8481357278935366,
+        "10": -8.292885243687564,
+        "30": -23.849312431670498
+      },
+      "active_recovery_steps": 10,
+      "settle_s": 3.3000000000000003
+    },
+    {
+      "rep": 2,
+      "active_recovery_return": 14.335201045389413,
+      "rigid_fall_return": -2.1685295450795694,
+      "rigid_fall_returns_at_terminal_cost": {
+        "3": -2.1685295450795694,
+        "10": -7.346432158797531,
+        "30": -22.140439626563133
+      },
+      "active_recovery_steps": 10,
+      "settle_s": 3.2600000000000002
+    }
+  ],
+  "ppo_updates": 0,
+  "checkpoint_unchanged": true,
+  "training_remains_paused": true,
+  "initial_qpos_difference_across_arms": 0.0,
+  "limitations": "Two signed configurations with repeat runs (three trials), not broad independent statistical coverage. All controlled arms use nominal mechanics without DR/noise. Hybrid reference is a feasibility probe using existing frozen models, not a learned standing policy or proposed deployed switching controller."
+}

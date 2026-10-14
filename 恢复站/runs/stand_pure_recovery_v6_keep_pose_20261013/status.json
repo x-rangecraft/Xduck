@@ -1,0 +1,1113 @@
+{
+  "phase": "superseded_by_contact_repair",
+  "training_running": false,
+  "user_requires_explicit_resume": false,
+  "completed_updates": 2100,
+  "source_lineage_updates": 300,
+  "lineage_compute_updates": 2400,
+  "learner_phase": "settle",
+  "level": 3,
+  "push_stage": 3,
+  "push_stage_every_updates": 100,
+  "training_reset_weights": [
+    0.1,
+    0.3,
+    0.6
+  ],
+  "history": [
+    {
+      "additional_updates": 100,
+      "level": 0,
+      "checkpoint": "block_00/final.pt",
+      "accepted": true,
+      "nominal": {
+        "cases": 32,
+        "falls": 0,
+        "settled": 31
+      },
+      "course": {
+        "cases": 32,
+        "falls": 1,
+        "settled": 31
+      },
+      "quiet_settled": 4,
+      "course_quiet_settled": 4,
+      "std_min": 0.6462313532829285,
+      "std_max": 0.8526209592819214,
+      "seconds_per_update": 5.643640117645264,
+      "superseded_gate_accepted": false,
+      "course_with_dr": {
+        "cases": 32,
+        "falls": 1,
+        "settled": 0
+      },
+      "overall_success_rate": 0.96875,
+      "reevaluated_under_user_rule": true,
+      "previous_validation_accepted": false,
+      "validation_criteria_version": "window_v2"
+    },
+    {
+      "additional_updates": 200,
+      "level": 0,
+      "checkpoint": "block_01/final.pt",
+      "accepted": true,
+      "overall_success_rate": 1.0,
+      "dr_multiplier": 1.0,
+      "nominal": {
+        "cases": 32,
+        "falls": 0,
+        "settled": 32
+      },
+      "course": {
+        "cases": 32,
+        "falls": 0,
+        "settled": 32
+      },
+      "quiet_settled": 0,
+      "course_quiet_settled": 0,
+      "std_min": 0.6531331539154053,
+      "std_max": 0.853664755821228,
+      "seconds_per_update": 5.081161394119262,
+      "previous_validation_accepted": false,
+      "validation_criteria_version": "window_v2"
+    },
+    {
+      "additional_updates": 300,
+      "level": 0,
+      "checkpoint": "block_02/final.pt",
+      "accepted": true,
+      "overall_success_rate": 1.0,
+      "dr_multiplier": 1.0,
+      "nominal": {
+        "cases": 32,
+        "falls": 0,
+        "settled": 32
+      },
+      "course": {
+        "cases": 32,
+        "falls": 0,
+        "settled": 32
+      },
+      "quiet_settled": 4,
+      "course_quiet_settled": 4,
+      "std_min": 0.6434286236763,
+      "std_max": 0.885785698890686,
+      "seconds_per_update": 5.38235077381134
+    },
+    {
+      "additional_updates": 400,
+      "level": 1,
+      "checkpoint": "block_03/final.pt",
+      "accepted": false,
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 1.5,
+      "nominal": {
+        "cases": 32,
+        "falls": 0,
+        "settled": 0
+      },
+      "course": {
+        "cases": 32,
+        "falls": 2,
+        "settled": 0
+      },
+      "quiet_settled": 0,
+      "course_quiet_settled": 0,
+      "std_min": 0.7007303237915039,
+      "std_max": 0.8664102554321289,
+      "seconds_per_update": 7.203432333469391
+    },
+    {
+      "additional_updates": 500,
+      "level": 1,
+      "checkpoint": "block_04/final.pt",
+      "accepted": true,
+      "overall_success_rate": 0.95,
+      "dr_multiplier": 1.5,
+      "nominal": {
+        "cases": 32,
+        "falls": 0,
+        "settled": 32
+      },
+      "course": {
+        "cases": 32,
+        "falls": 1,
+        "settled": 31
+      },
+      "quiet_settled": 4,
+      "course_quiet_settled": 4,
+      "std_min": 0.7010815143585205,
+      "std_max": 0.8741491436958313,
+      "seconds_per_update": 5.6733957862854005,
+      "previous_upgrade_summary": {
+        "nominal": {
+          "cases": 32,
+          "falls": 0,
+          "settled": 32
+        },
+        "course": {
+          "cases": 32,
+          "falls": 3,
+          "settled": 28
+        },
+        "overall_success_rate": 0.9375
+      },
+      "dr_only": true,
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 4
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 0,
+          "settled": 20
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 1,
+          "settled": 7
+        }
+      },
+      "walk_stop": {
+        "attempted": 48,
+        "eligible": 45,
+        "walk_failed": 3,
+        "not_moving_at_switch": 0,
+        "stop_falls": 0,
+        "successful_stops": 45,
+        "success_rate": 1.0
+      }
+    },
+    {
+      "additional_updates": 600,
+      "level": 2,
+      "checkpoint": "block_05/final.pt",
+      "accepted": false,
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.0,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 6,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 1,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 5,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 48,
+        "eligible": 46,
+        "walk_failed": 2,
+        "not_moving_at_switch": 0,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7356634736061096,
+      "std_max": 0.8925507664680481,
+      "seconds_per_update": 6.002199962139129
+    },
+    {
+      "additional_updates": 700,
+      "level": 2,
+      "checkpoint": "block_06/final.pt",
+      "accepted": false,
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.0,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 8,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 1,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 7,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 48,
+        "eligible": 48,
+        "walk_failed": 0,
+        "not_moving_at_switch": 0,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7258128523826599,
+      "std_max": 0.8905787467956543,
+      "seconds_per_update": 5.7343860268592834
+    },
+    {
+      "additional_updates": 800,
+      "level": 2,
+      "checkpoint": "block_07/final.pt",
+      "accepted": false,
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.0,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 6,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 1,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 5,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 48,
+        "eligible": 47,
+        "walk_failed": 1,
+        "not_moving_at_switch": 0,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7296538352966309,
+      "std_max": 0.8812952041625977,
+      "seconds_per_update": 6.969922173023224
+    },
+    {
+      "additional_updates": 900,
+      "level": 2,
+      "checkpoint": "block_08/final.pt",
+      "accepted": false,
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.0,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 7,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 1,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 6,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 48,
+        "eligible": 48,
+        "walk_failed": 0,
+        "not_moving_at_switch": 0,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7120180726051331,
+      "std_max": 0.8977357745170593,
+      "seconds_per_update": 6.293879039287567
+    },
+    {
+      "additional_updates": 1000,
+      "level": 2,
+      "checkpoint": "block_09/final.pt",
+      "accepted": false,
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.0,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 6,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 1,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 5,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 48,
+        "eligible": 48,
+        "walk_failed": 0,
+        "not_moving_at_switch": 0,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7071200609207153,
+      "std_max": 0.8834218382835388,
+      "seconds_per_update": 6.308484005928039
+    },
+    {
+      "additional_updates": 1100,
+      "level": 2,
+      "checkpoint": "block_10/final.pt",
+      "accepted": false,
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.0,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 7,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 1,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 6,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 48,
+        "eligible": 48,
+        "walk_failed": 0,
+        "not_moving_at_switch": 0,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7209780812263489,
+      "std_max": 0.8866448402404785,
+      "seconds_per_update": 7.032194111347199
+    },
+    {
+      "additional_updates": 1200,
+      "level": 2,
+      "checkpoint": "block_11/final.pt",
+      "accepted": false,
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.0,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 9,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 4,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 5,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 77,
+        "walk_failed": 3,
+        "not_moving_at_switch": 0,
+        "stop_falls": 2,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7179191708564758,
+      "std_max": 0.8785601854324341,
+      "seconds_per_update": 6.859473898410797
+    },
+    {
+      "additional_updates": 1300,
+      "level": 2,
+      "checkpoint": "block_12/final.pt",
+      "accepted": false,
+      "push_stage": 0,
+      "push_training_profile": {
+        "stage": 0,
+        "force_N": [
+          18.0,
+          24.0
+        ],
+        "duration_s": [
+          0.3,
+          0.6
+        ],
+        "broad_force_N": [
+          8.0,
+          24.0
+        ],
+        "broad_duration_s": [
+          0.1,
+          0.6
+        ],
+        "fore_aft_fraction": 0.7,
+        "fore_aft_angle_halfwidth_deg": 15.0
+      },
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.0,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 9,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 5,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 4,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 76,
+        "walk_failed": 3,
+        "not_moving_at_switch": 1,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.6821876764297485,
+      "std_max": 0.8720904588699341,
+      "seconds_per_update": 6.5130307006835935
+    },
+    {
+      "additional_updates": 1400,
+      "level": 2,
+      "checkpoint": "block_13/final.pt",
+      "accepted": false,
+      "push_stage": 1,
+      "push_training_profile": {
+        "stage": 1,
+        "force_N": [
+          20.0,
+          26.0
+        ],
+        "duration_s": [
+          0.4,
+          0.75
+        ],
+        "broad_force_N": [
+          8.0,
+          26.0
+        ],
+        "broad_duration_s": [
+          0.1,
+          0.75
+        ],
+        "fore_aft_fraction": 0.7,
+        "fore_aft_angle_halfwidth_deg": 15.0
+      },
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.0,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 4,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 4,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 0,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 78,
+        "walk_failed": 2,
+        "not_moving_at_switch": 0,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.6922263503074646,
+      "std_max": 0.8680214881896973,
+      "seconds_per_update": 6.1848347687721255
+    },
+    {
+      "additional_updates": 1500,
+      "level": 2,
+      "checkpoint": "block_14/final.pt",
+      "accepted": false,
+      "push_stage": 2,
+      "push_training_profile": {
+        "stage": 2,
+        "force_N": [
+          22.0,
+          28.0
+        ],
+        "duration_s": [
+          0.5,
+          0.9
+        ],
+        "broad_force_N": [
+          8.0,
+          28.0
+        ],
+        "broad_duration_s": [
+          0.1,
+          0.9
+        ],
+        "fore_aft_fraction": 0.7,
+        "fore_aft_angle_halfwidth_deg": 15.0
+      },
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.0,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 6,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 5,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 1,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 76,
+        "walk_failed": 4,
+        "not_moving_at_switch": 0,
+        "stop_falls": 2,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7037971615791321,
+      "std_max": 0.8728826642036438,
+      "seconds_per_update": 6.501641089916229,
+      "user_authorized_next_level": 3,
+      "pose_gate_overridden_for_transition": true
+    },
+    {
+      "additional_updates": 1600,
+      "level": 3,
+      "checkpoint": "block_15/final.pt",
+      "accepted": false,
+      "push_stage": 0,
+      "push_training_profile": {
+        "stage": 0,
+        "force_N": [
+          24.0,
+          30.0
+        ],
+        "duration_s": [
+          0.6,
+          1.0
+        ],
+        "broad_force_N": [
+          10.0,
+          30.0
+        ],
+        "broad_duration_s": [
+          0.1,
+          1.0
+        ],
+        "fore_aft_fraction": 0.7,
+        "fore_aft_angle_halfwidth_deg": 15.0
+      },
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.5,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 14,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 8,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 6,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 77,
+        "walk_failed": 3,
+        "not_moving_at_switch": 0,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7256916165351868,
+      "std_max": 0.8829680681228638,
+      "seconds_per_update": 6.778344855308533
+    },
+    {
+      "additional_updates": 1700,
+      "level": 3,
+      "checkpoint": "block_16/final.pt",
+      "accepted": false,
+      "push_stage": 1,
+      "push_training_profile": {
+        "stage": 1,
+        "force_N": [
+          28.0,
+          34.0
+        ],
+        "duration_s": [
+          0.7,
+          1.15
+        ],
+        "broad_force_N": [
+          10.0,
+          34.0
+        ],
+        "broad_duration_s": [
+          0.1,
+          1.15
+        ],
+        "fore_aft_fraction": 0.7,
+        "fore_aft_angle_halfwidth_deg": 15.0
+      },
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.5,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 12,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 8,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 4,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 77,
+        "walk_failed": 3,
+        "not_moving_at_switch": 0,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.737238347530365,
+      "std_max": 0.8878489136695862,
+      "seconds_per_update": 7.116570043563843
+    },
+    {
+      "additional_updates": 1800,
+      "level": 3,
+      "checkpoint": "block_17/final.pt",
+      "accepted": false,
+      "push_stage": 2,
+      "push_training_profile": {
+        "stage": 2,
+        "force_N": [
+          30.0,
+          37.0
+        ],
+        "duration_s": [
+          0.8,
+          1.3
+        ],
+        "broad_force_N": [
+          10.0,
+          37.0
+        ],
+        "broad_duration_s": [
+          0.1,
+          1.3
+        ],
+        "fore_aft_fraction": 0.7,
+        "fore_aft_angle_halfwidth_deg": 15.0
+      },
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.5,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 12,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 8,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 4,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 77,
+        "walk_failed": 2,
+        "not_moving_at_switch": 1,
+        "stop_falls": 0,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7467933893203735,
+      "std_max": 0.9070338010787964,
+      "seconds_per_update": 7.706786978244781
+    },
+    {
+      "additional_updates": 1900,
+      "level": 3,
+      "checkpoint": "block_18/final.pt",
+      "accepted": false,
+      "push_stage": 3,
+      "push_training_profile": {
+        "stage": 3,
+        "force_N": [
+          32.0,
+          40.0
+        ],
+        "duration_s": [
+          1.0,
+          1.5
+        ],
+        "broad_force_N": [
+          10.0,
+          40.0
+        ],
+        "broad_duration_s": [
+          0.1,
+          1.5
+        ],
+        "fore_aft_fraction": 0.7,
+        "fore_aft_angle_halfwidth_deg": 15.0
+      },
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.5,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 12,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 8,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 4,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 73,
+        "walk_failed": 7,
+        "not_moving_at_switch": 0,
+        "stop_falls": 2,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7478430867195129,
+      "std_max": 0.8925682306289673,
+      "seconds_per_update": 8.388352274894714
+    },
+    {
+      "additional_updates": 2000,
+      "level": 3,
+      "checkpoint": "block_19/final.pt",
+      "accepted": false,
+      "push_stage": 3,
+      "push_training_profile": {
+        "stage": 3,
+        "force_N": [
+          32.0,
+          40.0
+        ],
+        "duration_s": [
+          1.0,
+          1.5
+        ],
+        "broad_force_N": [
+          10.0,
+          40.0
+        ],
+        "broad_duration_s": [
+          0.1,
+          1.5
+        ],
+        "fore_aft_fraction": 0.7,
+        "fore_aft_angle_halfwidth_deg": 15.0
+      },
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.5,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 13,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 8,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 5,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 78,
+        "walk_failed": 2,
+        "not_moving_at_switch": 0,
+        "stop_falls": 1,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7664930820465088,
+      "std_max": 0.9187643527984619,
+      "seconds_per_update": 8.11059633731842
+    },
+    {
+      "additional_updates": 2100,
+      "level": 3,
+      "checkpoint": "block_20/final.pt",
+      "accepted": false,
+      "push_stage": 3,
+      "push_training_profile": {
+        "stage": 3,
+        "force_N": [
+          32.0,
+          40.0
+        ],
+        "duration_s": [
+          1.0,
+          1.5
+        ],
+        "broad_force_N": [
+          10.0,
+          40.0
+        ],
+        "broad_duration_s": [
+          0.1,
+          1.5
+        ],
+        "fore_aft_fraction": 0.7,
+        "fore_aft_angle_halfwidth_deg": 15.0
+      },
+      "overall_success_rate": 0.0,
+      "dr_multiplier": 2.5,
+      "dr_only": true,
+      "course": {
+        "cases": 32,
+        "falls": 15,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 8,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 7,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 74,
+        "walk_failed": 4,
+        "not_moving_at_switch": 2,
+        "stop_falls": 1,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "std_min": 0.7311925292015076,
+      "std_max": 0.9066944718360901,
+      "seconds_per_update": 8.339314699172974
+    }
+  ],
+  "best_checkpoint": "block_04/final.pt",
+  "latest_checkpoint": "block_20/final.pt",
+  "pass_streak": 0,
+  "consecutive_rejections": 16,
+  "teacher_or_trajectory_training": false,
+  "initialized_from_scratch": false,
+  "source_model": "v5/model300",
+  "actor_dim": 61,
+  "flexible_dofs": 0,
+  "mechanical_timestep_s": 0.001,
+  "num_envs": 4096,
+  "rollout_steps": 20,
+  "entropy_type": "tanh_increment_entropy",
+  "entropy_coef": 0.01,
+  "checkpoint_every_updates": 100,
+  "evaluation_every_updates": 100,
+  "maximum_additional_updates": null,
+  "concurrent_gpu_training_authorized": true,
+  "required_free_gpu_memory_MiB": 12288,
+  "completion_rule": "level3_overall_success_at_least_90_percent",
+  "validation_criteria_version": "window_v2",
+  "evaluation_scope": "current_course_DR_and_real_walk_stop_only",
+  "dr_multipliers": [
+    1.0,
+    1.5,
+    2.0,
+    2.5
+  ],
+  "upgrade_overall_success_threshold": 0.9,
+  "error": "CalledProcessError(1, ['/home/xingchen/.local/bin/uv', 'run', '--no-project', '--python', '/home/xingchen/Xduck/stand_pure_recovery_v6_keep_pose_20261013/project/.venv/bin/python', '/home/xingchen/Xduck/stand_pure_recovery_v6_keep_pose_20261013/train.py', '--run', 'block_21', '--updates', '100', '--phase', 'settle', '--level', '3', '--push-stage', '3', '--resume', 'block_20/final.pt', '--seed', '61034'])",
+  "repair_destination": "/home/xingchen/Xduck/stand_pure_recovery_v7_dynamic_rescue_20261013"
+}

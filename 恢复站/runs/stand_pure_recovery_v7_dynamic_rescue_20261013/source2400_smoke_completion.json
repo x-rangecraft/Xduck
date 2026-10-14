@@ -1,0 +1,122 @@
+{
+  "action_increment_rad": [
+    0.025,
+    0.04,
+    0.1,
+    0.08,
+    0.09,
+    0.11,
+    0.025,
+    0.025,
+    0.025,
+    0.025,
+    0.04,
+    0.1,
+    0.08,
+    0.09
+  ],
+  "failure_tilt_deg": 100.0,
+  "critic_privileged_phase_cue": true,
+  "push_training_profile": {
+    "stage": 1,
+    "force_N": [
+      28.0,
+      34.0
+    ],
+    "duration_s": [
+      0.7,
+      1.15
+    ],
+    "broad_force_N": [
+      10.0,
+      34.0
+    ],
+    "broad_duration_s": [
+      0.1,
+      1.15
+    ],
+    "focused_direction_fraction": 0.85,
+    "direction_angle_halfwidth_deg": 10.0,
+    "balanced_eight_directions": true
+  },
+  "focused_force_events": 25,
+  "training_reset_weights": [
+    0.1,
+    0.3,
+    0.6
+  ],
+  "reset_bank": "/home/xingchen/Xduck/stand_pure_recovery_v6_keep_pose_20261013/extended_reset_bank.npz",
+  "effective_dr": {
+    "enabled": true,
+    "level": 3,
+    "multiplier": 2.5,
+    "mass_inertia_scale_range": [
+      0.8749999999999999,
+      1.125
+    ],
+    "foot_friction_range": [
+      0.2499999999999999,
+      1.75
+    ],
+    "dof_armature_multiplier_range": [
+      0.75,
+      1.2500000000000002
+    ],
+    "kp_multiplier_range": [
+      0.9,
+      1.1
+    ],
+    "kd_multiplier_range": [
+      0.9,
+      1.1
+    ],
+    "motor": {
+      "torque_scale_range": [
+        0.9,
+        1.1
+      ],
+      "friction_scale_range": [
+        0.9,
+        1.1
+      ],
+      "response_time_scale_range": [
+        0.9,
+        1.1
+      ]
+    },
+    "imu_max_angle_deg": 12.0,
+    "noise_level": 5.0,
+    "sole_tilt_range_deg": [
+      -3.0,
+      3.0
+    ],
+    "imu_delay_ms": [
+      0.0,
+      20.0
+    ],
+    "joint_velocity_delay_ms": 20.0,
+    "trunk_com_range_m": 0.0391875,
+    "head_com_range_m": 0.026125
+  },
+  "seed": 75115,
+  "updates": 4,
+  "num_envs": 32,
+  "rollout_steps": 20,
+  "elapsed_seconds": 4.3586695194244385,
+  "checkpoint": "source2400_smoke/final.pt",
+  "started_from_scratch": false,
+  "source_checkpoint": "block_source/final.pt",
+  "optimizer_moments_reset": true,
+  "actor_weight_max_change": 0.004868082702159882,
+  "std_min": 0.730609655380249,
+  "std_max": 0.9053342938423157,
+  "level": 3,
+  "phase": "settle",
+  "force_events": 27,
+  "physical_episode_samples": 37,
+  "training_recovery_window_rate": 0.0,
+  "teacher_or_trajectory_training": false,
+  "actor_dimension": 61,
+  "entropy_type": "tanh_increment_entropy",
+  "pose_goal_height_m": 0.319637239
+}

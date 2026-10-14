@@ -1,0 +1,62 @@
+{
+  "model": 3100,
+  "flexible_joints": false,
+  "DR_multiplier": 2.5,
+  "summary": [
+    {
+      "force_N": 5,
+      "duration_s": 0.3,
+      "directions": 8,
+      "policy_final_stand": 8,
+      "body_contact_cases": 0,
+      "verified_recovery_step_cases": 0,
+      "hold_target_final_stand": 8,
+      "contact_directions_deg": []
+    },
+    {
+      "force_N": 10,
+      "duration_s": 0.3,
+      "directions": 8,
+      "policy_final_stand": 8,
+      "body_contact_cases": 0,
+      "verified_recovery_step_cases": 0,
+      "hold_target_final_stand": 8,
+      "contact_directions_deg": []
+    },
+    {
+      "force_N": 15,
+      "duration_s": 0.3,
+      "directions": 8,
+      "policy_final_stand": 8,
+      "body_contact_cases": 2,
+      "verified_recovery_step_cases": 0,
+      "hold_target_final_stand": 6,
+      "contact_directions_deg": [
+        0,
+        180
+      ]
+    },
+    {
+      "force_N": 20,
+      "duration_s": 0.3,
+      "directions": 8,
+      "policy_final_stand": 8,
+      "body_contact_cases": 2,
+      "verified_recovery_step_cases": 0,
+      "hold_target_final_stand": 6,
+      "contact_directions_deg": [
+        0,
+        180
+      ]
+    }
+  ],
+  "interpretation": "No confirmed upright recovery stepping in tested short pushes. Mild pushes resisted in place. Stronger cases recover after body-ground contact.",
+  "step_criteria": {
+    "airborne_clearance_mm": 5,
+    "minimum_airtime_ms": 60,
+    "new_landing_distance_mm": 15,
+    "leg_target_change_rad": 0.03,
+    "no_body_contact_before_landing": true
+  },
+  "comparison_note": "Matched sampled mechanics and noise seeds. Small GPU numerical divergence before push is recorded."
+}

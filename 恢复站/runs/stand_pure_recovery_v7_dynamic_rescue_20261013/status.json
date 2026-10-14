@@ -1,0 +1,117 @@
+{
+  "phase": "failed",
+  "training_running": false,
+  "user_requires_explicit_resume": false,
+  "source_lineage_updates": 2400,
+  "completed_updates": 200,
+  "lineage_compute_updates": 2600,
+  "level": 3,
+  "push_stage": 3,
+  "history": [
+    {
+      "lineage_updates": 2500,
+      "new_updates": 100,
+      "push_stage": 1,
+      "course": {
+        "cases": 32,
+        "falls": 27,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 19,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 8,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 77,
+        "walk_failed": 2,
+        "not_moving_at_switch": 1,
+        "stop_falls": 3,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "overall_success_rate": 0.0,
+      "accepted": false,
+      "seconds_per_update": 7.086603164672852,
+      "std_min": 0.7619883418083191,
+      "std_max": 0.9143807291984558
+    },
+    {
+      "lineage_updates": 2600,
+      "new_updates": 200,
+      "push_stage": 2,
+      "course": {
+        "cases": 32,
+        "falls": 25,
+        "settled": 0
+      },
+      "groups": {
+        "quiet": {
+          "cases": 4,
+          "falls": 0,
+          "settled": 0
+        },
+        "course_reset": {
+          "cases": 20,
+          "falls": 17,
+          "settled": 0
+        },
+        "course_push": {
+          "cases": 8,
+          "falls": 8,
+          "settled": 0
+        }
+      },
+      "walk_stop": {
+        "attempted": 80,
+        "command_linear_speed_cap_m_s": 0.3,
+        "eligible": 77,
+        "walk_failed": 3,
+        "not_moving_at_switch": 0,
+        "stop_falls": 2,
+        "successful_stops": 0,
+        "success_rate": 0.0
+      },
+      "overall_success_rate": 0.0,
+      "accepted": false,
+      "seconds_per_update": 7.797156565189361,
+      "std_min": 0.7701926231384277,
+      "std_max": 0.924591064453125
+    }
+  ],
+  "latest_checkpoint": "block_01/final.pt",
+  "best_checkpoint": "block_source/final.pt",
+  "num_envs": 4096,
+  "rollout_steps": 20,
+  "actor_dimension": 61,
+  "critic_dimension": 76,
+  "flexible_joints": false,
+  "mechanical_dt": 0.001,
+  "DR_multiplier": 2.5,
+  "training_reset_weights": [
+    0.1,
+    0.3,
+    0.6
+  ],
+  "push_sampling": "85% balanced eight directions; 15% broad",
+  "save_every": 100,
+  "evaluate_every": 100,
+  "reward_version": "dynamic_rescue_pose_return",
+  "contact_sensor_mapping_corrected": true,
+  "concurrent_gpu_training": true,
+  "error": "CalledProcessError(1, ['/home/xingchen/.local/bin/uv', 'run', '--no-project', '--python', '/home/xingchen/Xduck/stand_pure_recovery_v7_dynamic_rescue_20261013/project/.venv/bin/python', '/home/xingchen/Xduck/stand_pure_recovery_v7_dynamic_rescue_20261013/train.py', '--run', 'block_02', '--updates', '100', '--resume', 'block_01/final.pt', '--phase', 'settle', '--level', '3', '--push-stage', '3', '--seed', '76015'])"
+}

@@ -1,0 +1,1 @@
+该目录原样保存停训后的快照。pure_recovery.py、pure_reward.py、train.py、TRAINING_CONFIG.yaml 后来含未正式训练的 finalgoal 修改，不能当作旧2500/2600的实训版本。实训源码见 *_before_finalgoal.py；实际配置的重建版见 TRAINED_2500_2600_CONFIG_RECONSTRUCTED.yaml。重建只移除 env.allow_ground_recovery、env.final_stand_bonus、env.final_not_standing_cost 三项；不是当时逐字原件。

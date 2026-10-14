@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "checks": {
+    "low_height_no_longer_gets_full_height_credit": true,
+    "low_head_receives_less_goal_and_quiet_credit": true,
+    "splayed_hips_receive_dense_cost": true,
+    "wrong_pose_cannot_collect_full_quiet_reward": true,
+    "final_pose_gate_rejects_low_head_height_and_splayed_hips": true,
+    "discovery_has_no_velocity_or_smoothness_cost": true,
+    "large_latent_std_no_longer_wins_entropy_reward": true,
+    "raw_action_log_prob_contract_unchanged": true,
+    "actor_61_and_no_teacher": true,
+    "finite_physical_reward_and_head_pose_sensor": true,
+    "native_ppo_uses_repaired_entropy_with_finite_gradients": true,
+    "native_ppo_validation_did_not_update_model": true
+  },
+  "isolated_fixture_scores": {
+    "correct_stand": 10.5,
+    "low_height": 6.425696856778272,
+    "low_head": 7.288317303802589,
+    "splayed_hips": 8.948242113804456
+  },
+  "distribution_results": [
+    {
+      "sigma": 0.1,
+      "raw_entropy": -0.8836468458175659,
+      "bounded_increment_entropy": -0.8936295509338379,
+      "log_std_gradient": 0.9801326990127563
+    },
+    {
+      "sigma": 1.0,
+      "raw_entropy": 1.4189382791519165,
+      "bounded_increment_entropy": 0.6730401515960693,
+      "log_std_gradient": -0.20644456148147583
+    },
+    {
+      "sigma": 3.0,
+      "raw_entropy": 2.5175511837005615,
+      "bounded_increment_entropy": -1.0983420610427856,
+      "log_std_gradient": -3.589515209197998
+    },
+    {
+      "sigma": 15.0,
+      "raw_entropy": 4.126987934112549,
+      "bounded_increment_entropy": -18.585010528564453,
+      "log_std_gradient": -23.01219940185547
+    }
+  ],
+  "ppo_updates": 0,
+  "training_remains_paused": true,
+  "limitations": "Synthetic posture score and entropy tests plus finite physical environment steps; no repaired policy has been trained or qualified."
+}

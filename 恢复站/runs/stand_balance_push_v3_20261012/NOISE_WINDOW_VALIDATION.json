@@ -1,0 +1,8208 @@
+{
+  "ppo_updates": 0,
+  "checkpoint_sha256_before": "1d14e75951b9eb209ce3ee29f6fc190501eb2ec46b3908445edd2d941a55c158",
+  "checkpoint_sha256_after": "1d14e75951b9eb209ce3ee29f6fc190501eb2ec46b3908445edd2d941a55c158",
+  "initial_qpos_max_difference_across_arms": 0.0,
+  "mechanics": "XDuck original rigid GF43X40; 1ms mechanical timestep; nominal diagnostic DR and sensor noise disabled",
+  "horizon_s": 8,
+  "exploration_window_s": 2.5,
+  "quiet_tail_s": 5.5,
+  "noise_held_seconds": 0.16,
+  "noise_std_action_small": 0.2,
+  "noise_std_action_large": 0.8,
+  "force_scenarios": [
+    {
+      "name": "quiet",
+      "tilt": 0,
+      "axis": "pitch",
+      "speed": 0,
+      "omega": 0,
+      "force": 0,
+      "duration": 0
+    },
+    {
+      "name": "pitch_push8",
+      "tilt": 0,
+      "axis": "pitch",
+      "speed": 0,
+      "omega": 0,
+      "force": 8,
+      "duration": 0.4
+    },
+    {
+      "name": "pitch_push16",
+      "tilt": 0,
+      "axis": "pitch",
+      "speed": 0,
+      "omega": 0,
+      "force": 16,
+      "duration": 0.4
+    },
+    {
+      "name": "roll_push8",
+      "tilt": 0,
+      "axis": "roll",
+      "speed": 0,
+      "omega": 0,
+      "force": 8,
+      "duration": 0.4
+    },
+    {
+      "name": "roll_push16",
+      "tilt": 0,
+      "axis": "roll",
+      "speed": 0,
+      "omega": 0,
+      "force": 16,
+      "duration": 0.4
+    },
+    {
+      "name": "pitch_moving10",
+      "tilt": 10,
+      "axis": "pitch",
+      "speed": 0.2,
+      "omega": 0.5,
+      "force": 0,
+      "duration": 0
+    },
+    {
+      "name": "pitch_moving20",
+      "tilt": 20,
+      "axis": "pitch",
+      "speed": 0.3,
+      "omega": 0.8,
+      "force": 0,
+      "duration": 0
+    },
+    {
+      "name": "roll_moving15",
+      "tilt": 15,
+      "axis": "roll",
+      "speed": 0.2,
+      "omega": 0.6,
+      "force": 0,
+      "duration": 0
+    }
+  ],
+  "rows": [
+    {
+      "case": 0,
+      "mode": "mean600",
+      "scenario": "quiet",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.475173406500623,
+      "peak_tilt_deg": 0.8875726461410522
+    },
+    {
+      "case": 1,
+      "mode": "mean600",
+      "scenario": "quiet",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.47503593852995,
+      "peak_tilt_deg": 0.8974387049674988
+    },
+    {
+      "case": 2,
+      "mode": "mean600",
+      "scenario": "quiet",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.47525266113287,
+      "peak_tilt_deg": 0.863887369632721
+    },
+    {
+      "case": 3,
+      "mode": "mean600",
+      "scenario": "pitch_push8",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.460634022885536,
+      "peak_tilt_deg": 0.8746922016143799
+    },
+    {
+      "case": 4,
+      "mode": "mean600",
+      "scenario": "pitch_push8",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.98,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.43462084334987,
+      "peak_tilt_deg": 1.5057120323181152
+    },
+    {
+      "case": 5,
+      "mode": "mean600",
+      "scenario": "pitch_push8",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.460938872055813,
+      "peak_tilt_deg": 0.8769264221191406
+    },
+    {
+      "case": 6,
+      "mode": "mean600",
+      "scenario": "pitch_push16",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 2.56,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 20.28606185156027,
+      "peak_tilt_deg": 6.157273292541504
+    },
+    {
+      "case": 7,
+      "mode": "mean600",
+      "scenario": "pitch_push16",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.3,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.34,
+          "on_s": 1.82,
+          "travel_m": 0.028318345546722412
+        },
+        {
+          "side": 1,
+          "off_s": 1.36,
+          "on_s": 1.92,
+          "travel_m": 0.043375421315431595
+        }
+      ],
+      "discounted_return": 4.797414641674889,
+      "peak_tilt_deg": 55.61441421508789
+    },
+    {
+      "case": 8,
+      "mode": "mean600",
+      "scenario": "pitch_push16",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 2.56,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 20.280747699346104,
+      "peak_tilt_deg": 6.163383960723877
+    },
+    {
+      "case": 9,
+      "mode": "mean600",
+      "scenario": "roll_push8",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.47641762669935,
+      "peak_tilt_deg": 0.8668269515037537
+    },
+    {
+      "case": 10,
+      "mode": "mean600",
+      "scenario": "roll_push8",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.471577055570073,
+      "peak_tilt_deg": 0.8527162075042725
+    },
+    {
+      "case": 11,
+      "mode": "mean600",
+      "scenario": "roll_push8",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.476548760047784,
+      "peak_tilt_deg": 0.869081437587738
+    },
+    {
+      "case": 12,
+      "mode": "mean600",
+      "scenario": "roll_push16",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.476421864564692,
+      "peak_tilt_deg": 0.8780414462089539
+    },
+    {
+      "case": 13,
+      "mode": "mean600",
+      "scenario": "roll_push16",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.465226162713527,
+      "peak_tilt_deg": 0.8413967490196228
+    },
+    {
+      "case": 14,
+      "mode": "mean600",
+      "scenario": "roll_push16",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.476154897193087,
+      "peak_tilt_deg": 0.89240962266922
+    },
+    {
+      "case": 15,
+      "mode": "mean600",
+      "scenario": "pitch_moving10",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.6,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.68,
+          "on_s": 0.76,
+          "travel_m": 0.02507067658007145
+        }
+      ],
+      "discounted_return": -2.099786718739651,
+      "peak_tilt_deg": 56.11827850341797
+    },
+    {
+      "case": 16,
+      "mode": "mean600",
+      "scenario": "pitch_moving10",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.5,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.5,
+          "on_s": 1.02,
+          "travel_m": 0.030677679926156998
+        }
+      ],
+      "discounted_return": -2.8720277045025266,
+      "peak_tilt_deg": 57.999061584472656
+    },
+    {
+      "case": 17,
+      "mode": "mean600",
+      "scenario": "pitch_moving10",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.6,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.68,
+          "on_s": 0.76,
+          "travel_m": 0.024826951324939728
+        }
+      ],
+      "discounted_return": -2.105136707832881,
+      "peak_tilt_deg": 56.276405334472656
+    },
+    {
+      "case": 18,
+      "mode": "mean600",
+      "scenario": "pitch_moving20",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.32,
+      "steps": [],
+      "discounted_return": -3.989354511949874,
+      "peak_tilt_deg": 58.54363250732422
+    },
+    {
+      "case": 19,
+      "mode": "mean600",
+      "scenario": "pitch_moving20",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.28,
+      "steps": [],
+      "discounted_return": -4.088088373116485,
+      "peak_tilt_deg": 56.8677978515625
+    },
+    {
+      "case": 20,
+      "mode": "mean600",
+      "scenario": "pitch_moving20",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.32,
+      "steps": [],
+      "discounted_return": -3.988463708406957,
+      "peak_tilt_deg": 58.512176513671875
+    },
+    {
+      "case": 21,
+      "mode": "mean600",
+      "scenario": "roll_moving15",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.7,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 18.527538864011856,
+      "peak_tilt_deg": 15.424065589904785
+    },
+    {
+      "case": 22,
+      "mode": "mean600",
+      "scenario": "roll_moving15",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.8,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 18.74777729163137,
+      "peak_tilt_deg": 15.430253982543945
+    },
+    {
+      "case": 23,
+      "mode": "mean600",
+      "scenario": "roll_moving15",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.7,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 18.531726207239018,
+      "peak_tilt_deg": 15.425105094909668
+    },
+    {
+      "case": 24,
+      "mode": "fixed_reference",
+      "scenario": "quiet",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.52734506165348,
+      "peak_tilt_deg": 0.2220563441514969
+    },
+    {
+      "case": 25,
+      "mode": "fixed_reference",
+      "scenario": "quiet",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.527417300147846,
+      "peak_tilt_deg": 0.2157999724149704
+    },
+    {
+      "case": 26,
+      "mode": "fixed_reference",
+      "scenario": "quiet",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.527344076678073,
+      "peak_tilt_deg": 0.2220563441514969
+    },
+    {
+      "case": 27,
+      "mode": "fixed_reference",
+      "scenario": "pitch_push8",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.49397747905241,
+      "peak_tilt_deg": 0.8315718173980713
+    },
+    {
+      "case": 28,
+      "mode": "fixed_reference",
+      "scenario": "pitch_push8",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.496310953695744,
+      "peak_tilt_deg": 0.451107919216156
+    },
+    {
+      "case": 29,
+      "mode": "fixed_reference",
+      "scenario": "pitch_push8",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.493997277354055,
+      "peak_tilt_deg": 0.8320422768592834
+    },
+    {
+      "case": 30,
+      "mode": "fixed_reference",
+      "scenario": "pitch_push16",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.46,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 19.315435832279693,
+      "peak_tilt_deg": 7.4174604415893555
+    },
+    {
+      "case": 31,
+      "mode": "fixed_reference",
+      "scenario": "pitch_push16",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.28,
+      "steps": [],
+      "discounted_return": 4.606064281569834,
+      "peak_tilt_deg": 59.91587829589844
+    },
+    {
+      "case": 32,
+      "mode": "fixed_reference",
+      "scenario": "pitch_push16",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.54,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 19.21181371342694,
+      "peak_tilt_deg": 7.690389633178711
+    },
+    {
+      "case": 33,
+      "mode": "fixed_reference",
+      "scenario": "roll_push8",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.52710669446609,
+      "peak_tilt_deg": 0.2185032218694687
+    },
+    {
+      "case": 34,
+      "mode": "fixed_reference",
+      "scenario": "roll_push8",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.527143985123224,
+      "peak_tilt_deg": 0.22028695046901703
+    },
+    {
+      "case": 35,
+      "mode": "fixed_reference",
+      "scenario": "roll_push8",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.527113523628024,
+      "peak_tilt_deg": 0.217605859041214
+    },
+    {
+      "case": 36,
+      "mode": "fixed_reference",
+      "scenario": "roll_push16",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.52602676740532,
+      "peak_tilt_deg": 0.2220563441514969
+    },
+    {
+      "case": 37,
+      "mode": "fixed_reference",
+      "scenario": "roll_push16",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.52614805637466,
+      "peak_tilt_deg": 0.21670480072498322
+    },
+    {
+      "case": 38,
+      "mode": "fixed_reference",
+      "scenario": "roll_push16",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.48,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 21.526049395393702,
+      "peak_tilt_deg": 0.22028695046901703
+    },
+    {
+      "case": 39,
+      "mode": "fixed_reference",
+      "scenario": "pitch_moving10",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.6,
+      "steps": [],
+      "discounted_return": -2.1578875135998508,
+      "peak_tilt_deg": 57.65106964111328
+    },
+    {
+      "case": 40,
+      "mode": "fixed_reference",
+      "scenario": "pitch_moving10",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.5,
+      "steps": [],
+      "discounted_return": -2.851519509075684,
+      "peak_tilt_deg": 57.651329040527344
+    },
+    {
+      "case": 41,
+      "mode": "fixed_reference",
+      "scenario": "pitch_moving10",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.6,
+      "steps": [],
+      "discounted_return": -2.1572241018495184,
+      "peak_tilt_deg": 57.63899230957031
+    },
+    {
+      "case": 42,
+      "mode": "fixed_reference",
+      "scenario": "pitch_moving20",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.3,
+      "steps": [],
+      "discounted_return": -4.004640261779723,
+      "peak_tilt_deg": 57.48126983642578
+    },
+    {
+      "case": 43,
+      "mode": "fixed_reference",
+      "scenario": "pitch_moving20",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.28,
+      "steps": [],
+      "discounted_return": -4.063746846060068,
+      "peak_tilt_deg": 56.6588020324707
+    },
+    {
+      "case": 44,
+      "mode": "fixed_reference",
+      "scenario": "pitch_moving20",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.3,
+      "steps": [],
+      "discounted_return": -4.003676619045935,
+      "peak_tilt_deg": 57.43513107299805
+    },
+    {
+      "case": 45,
+      "mode": "fixed_reference",
+      "scenario": "roll_moving15",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.6600000000000001,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 18.684532943079375,
+      "peak_tilt_deg": 15.494071960449219
+    },
+    {
+      "case": 46,
+      "mode": "fixed_reference",
+      "scenario": "roll_moving15",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.6600000000000001,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 18.686119059840056,
+      "peak_tilt_deg": 15.495376586914062
+    },
+    {
+      "case": 47,
+      "mode": "fixed_reference",
+      "scenario": "roll_moving15",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 1.68,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 18.676633039691044,
+      "peak_tilt_deg": 15.49294662475586
+    },
+    {
+      "case": 48,
+      "mode": "iid_small",
+      "scenario": "quiet",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.58,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.969497699377595,
+      "peak_tilt_deg": 2.0437302589416504
+    },
+    {
+      "case": 49,
+      "mode": "iid_small",
+      "scenario": "quiet",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.6,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.60277009455197,
+      "peak_tilt_deg": 2.6813173294067383
+    },
+    {
+      "case": 50,
+      "mode": "iid_small",
+      "scenario": "quiet",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.56,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.68868620233469,
+      "peak_tilt_deg": 1.9114148616790771
+    },
+    {
+      "case": 51,
+      "mode": "iid_small",
+      "scenario": "pitch_push8",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.6,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.666693987797785,
+      "peak_tilt_deg": 1.9768478870391846
+    },
+    {
+      "case": 52,
+      "mode": "iid_small",
+      "scenario": "pitch_push8",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.58,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.748681100516837,
+      "peak_tilt_deg": 2.5133373737335205
+    },
+    {
+      "case": 53,
+      "mode": "iid_small",
+      "scenario": "pitch_push8",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.54,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.772559976971873,
+      "peak_tilt_deg": 2.0352859497070312
+    },
+    {
+      "case": 54,
+      "mode": "iid_small",
+      "scenario": "pitch_push16",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.46,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.54,
+          "on_s": 1.6600000000000001,
+          "travel_m": 0.016222966834902763
+        }
+      ],
+      "discounted_return": 4.143272854359133,
+      "peak_tilt_deg": 57.037818908691406
+    },
+    {
+      "case": 55,
+      "mode": "iid_small",
+      "scenario": "pitch_push16",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.24,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.28,
+          "on_s": 1.76,
+          "travel_m": 0.0536063127219677
+        },
+        {
+          "side": 1,
+          "off_s": 1.26,
+          "on_s": 1.84,
+          "travel_m": 0.06985725462436676
+        }
+      ],
+      "discounted_return": 2.9485771349290593,
+      "peak_tilt_deg": 56.961883544921875
+    },
+    {
+      "case": 56,
+      "mode": "iid_small",
+      "scenario": "pitch_push16",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.3,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.3800000000000001,
+          "on_s": 1.48,
+          "travel_m": 0.02517264522612095
+        }
+      ],
+      "discounted_return": 3.304921350655656,
+      "peak_tilt_deg": 56.7033805847168
+    },
+    {
+      "case": 57,
+      "mode": "iid_small",
+      "scenario": "roll_push8",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.6,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.789167537203713,
+      "peak_tilt_deg": 1.8810720443725586
+    },
+    {
+      "case": 58,
+      "mode": "iid_small",
+      "scenario": "roll_push8",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.58,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.767650411140117,
+      "peak_tilt_deg": 1.9548463821411133
+    },
+    {
+      "case": 59,
+      "mode": "iid_small",
+      "scenario": "roll_push8",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.6,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.81898434140114,
+      "peak_tilt_deg": 1.6554032564163208
+    },
+    {
+      "case": 60,
+      "mode": "iid_small",
+      "scenario": "roll_push16",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.52,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.823478943224668,
+      "peak_tilt_deg": 2.116830587387085
+    },
+    {
+      "case": 61,
+      "mode": "iid_small",
+      "scenario": "roll_push16",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.58,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.895663405632934,
+      "peak_tilt_deg": 1.6873681545257568
+    },
+    {
+      "case": 62,
+      "mode": "iid_small",
+      "scenario": "roll_push16",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.64,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 17.737068432540166,
+      "peak_tilt_deg": 2.245417594909668
+    },
+    {
+      "case": 63,
+      "mode": "iid_small",
+      "scenario": "pitch_moving10",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.62,
+      "steps": [],
+      "discounted_return": -2.188874498556743,
+      "peak_tilt_deg": 59.5521354675293
+    },
+    {
+      "case": 64,
+      "mode": "iid_small",
+      "scenario": "pitch_moving10",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.5,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.5,
+          "on_s": 1.02,
+          "travel_m": 0.04644893854856491
+        }
+      ],
+      "discounted_return": -2.866131336109851,
+      "peak_tilt_deg": 57.545555114746094
+    },
+    {
+      "case": 65,
+      "mode": "iid_small",
+      "scenario": "pitch_moving10",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.62,
+      "steps": [],
+      "discounted_return": -2.1361007643225327,
+      "peak_tilt_deg": 57.079795837402344
+    },
+    {
+      "case": 66,
+      "mode": "iid_small",
+      "scenario": "pitch_moving20",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.32,
+      "steps": [],
+      "discounted_return": -4.019468651379814,
+      "peak_tilt_deg": 59.40231704711914
+    },
+    {
+      "case": 67,
+      "mode": "iid_small",
+      "scenario": "pitch_moving20",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.28,
+      "steps": [],
+      "discounted_return": -4.101390059250893,
+      "peak_tilt_deg": 56.7700309753418
+    },
+    {
+      "case": 68,
+      "mode": "iid_small",
+      "scenario": "pitch_moving20",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.32,
+      "steps": [],
+      "discounted_return": -4.023065328204262,
+      "peak_tilt_deg": 59.05270004272461
+    },
+    {
+      "case": 69,
+      "mode": "iid_small",
+      "scenario": "roll_moving15",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.54,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 16.04517055446943,
+      "peak_tilt_deg": 15.450674057006836
+    },
+    {
+      "case": 70,
+      "mode": "iid_small",
+      "scenario": "roll_moving15",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.64,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 16.1214034577333,
+      "peak_tilt_deg": 15.3530912399292
+    },
+    {
+      "case": 71,
+      "mode": "iid_small",
+      "scenario": "roll_moving15",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.6,
+      "failure_s": null,
+      "steps": [],
+      "discounted_return": 16.14374647064511,
+      "peak_tilt_deg": 15.440775871276855
+    },
+    {
+      "case": 72,
+      "mode": "iid_large",
+      "scenario": "quiet",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 2.48,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.78,
+          "on_s": 0.92,
+          "travel_m": 0.04858453571796417
+        },
+        {
+          "side": 0,
+          "off_s": 1.18,
+          "on_s": 1.36,
+          "travel_m": 0.061340223997831345
+        },
+        {
+          "side": 0,
+          "off_s": 1.42,
+          "on_s": 1.52,
+          "travel_m": 0.04897212237119675
+        },
+        {
+          "side": 0,
+          "off_s": 1.62,
+          "on_s": 1.68,
+          "travel_m": 0.024156855419278145
+        },
+        {
+          "side": 0,
+          "off_s": 1.74,
+          "on_s": 1.84,
+          "travel_m": 0.024799354374408722
+        },
+        {
+          "side": 0,
+          "off_s": 1.92,
+          "on_s": 1.98,
+          "travel_m": 0.03687262907624245
+        },
+        {
+          "side": 0,
+          "off_s": 2.44,
+          "on_s": 3.08,
+          "travel_m": 0.18802134692668915
+        },
+        {
+          "side": 1,
+          "off_s": 0.66,
+          "on_s": 0.76,
+          "travel_m": 0.01626194454729557
+        },
+        {
+          "side": 1,
+          "off_s": 1.0,
+          "on_s": 1.1400000000000001,
+          "travel_m": 0.036752551794052124
+        },
+        {
+          "side": 1,
+          "off_s": 1.3800000000000001,
+          "on_s": 1.52,
+          "travel_m": 0.08258453011512756
+        },
+        {
+          "side": 1,
+          "off_s": 1.56,
+          "on_s": 1.72,
+          "travel_m": 0.018961042165756226
+        },
+        {
+          "side": 1,
+          "off_s": 1.96,
+          "on_s": 2.08,
+          "travel_m": 0.026100018993020058
+        },
+        {
+          "side": 1,
+          "off_s": 2.22,
+          "on_s": 2.36,
+          "travel_m": 0.05002530291676521
+        }
+      ],
+      "discounted_return": 4.606736591459656,
+      "peak_tilt_deg": 57.90036392211914
+    },
+    {
+      "case": 73,
+      "mode": "iid_large",
+      "scenario": "quiet",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.72,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.52,
+          "on_s": 0.58,
+          "travel_m": 0.0313173346221447
+        },
+        {
+          "side": 0,
+          "off_s": 0.8,
+          "on_s": 0.88,
+          "travel_m": 0.015592852607369423
+        },
+        {
+          "side": 0,
+          "off_s": 1.12,
+          "on_s": 1.26,
+          "travel_m": 0.0329488143324852
+        },
+        {
+          "side": 0,
+          "off_s": 1.4000000000000001,
+          "on_s": 1.52,
+          "travel_m": 0.017437152564525604
+        },
+        {
+          "side": 0,
+          "off_s": 1.62,
+          "on_s": 1.68,
+          "travel_m": 0.024804554879665375
+        },
+        {
+          "side": 0,
+          "off_s": 1.74,
+          "on_s": 2.52,
+          "travel_m": 0.26966792345046997
+        },
+        {
+          "side": 1,
+          "off_s": 0.54,
+          "on_s": 0.62,
+          "travel_m": 0.027765274047851562
+        },
+        {
+          "side": 1,
+          "off_s": 0.66,
+          "on_s": 0.76,
+          "travel_m": 0.027418773621320724
+        },
+        {
+          "side": 1,
+          "off_s": 1.0,
+          "on_s": 1.12,
+          "travel_m": 0.019541168585419655
+        },
+        {
+          "side": 1,
+          "off_s": 1.62,
+          "on_s": 1.74,
+          "travel_m": 0.05688435956835747
+        }
+      ],
+      "discounted_return": 2.728250779808688,
+      "peak_tilt_deg": 55.03478240966797
+    },
+    {
+      "case": 74,
+      "mode": "iid_large",
+      "scenario": "quiet",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.82,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.8200000000000001,
+          "on_s": 0.88,
+          "travel_m": 0.02509959414601326
+        },
+        {
+          "side": 0,
+          "off_s": 0.9,
+          "on_s": 0.98,
+          "travel_m": 0.031111134216189384
+        },
+        {
+          "side": 0,
+          "off_s": 1.04,
+          "on_s": 1.1,
+          "travel_m": 0.01802712120115757
+        },
+        {
+          "side": 0,
+          "off_s": 1.18,
+          "on_s": 1.28,
+          "travel_m": 0.03730284795165062
+        },
+        {
+          "side": 0,
+          "off_s": 1.36,
+          "on_s": 1.42,
+          "travel_m": 0.053577031940221786
+        },
+        {
+          "side": 0,
+          "off_s": 1.48,
+          "on_s": 1.72,
+          "travel_m": 0.1523570567369461
+        },
+        {
+          "side": 1,
+          "off_s": 0.74,
+          "on_s": 0.88,
+          "travel_m": 0.05831097811460495
+        },
+        {
+          "side": 1,
+          "off_s": 0.9400000000000001,
+          "on_s": 1.02,
+          "travel_m": 0.031411681324243546
+        },
+        {
+          "side": 1,
+          "off_s": 1.62,
+          "on_s": 1.7,
+          "travel_m": 0.06326409429311752
+        },
+        {
+          "side": 1,
+          "off_s": 1.74,
+          "on_s": 1.84,
+          "travel_m": 0.03364601731300354
+        }
+      ],
+      "discounted_return": 3.0070938265320253,
+      "peak_tilt_deg": 58.58631896972656
+    },
+    {
+      "case": 75,
+      "mode": "iid_large",
+      "scenario": "pitch_push8",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.84,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.62,
+          "on_s": 0.7000000000000001,
+          "travel_m": 0.020266776904463768
+        },
+        {
+          "side": 0,
+          "off_s": 0.74,
+          "on_s": 0.86,
+          "travel_m": 0.05747593194246292
+        },
+        {
+          "side": 0,
+          "off_s": 1.34,
+          "on_s": 1.5,
+          "travel_m": 0.05182845890522003
+        },
+        {
+          "side": 0,
+          "off_s": 1.82,
+          "on_s": 2.02,
+          "travel_m": 0.05101870372891426
+        },
+        {
+          "side": 0,
+          "off_s": 2.2600000000000002,
+          "on_s": 2.34,
+          "travel_m": 0.021964045241475105
+        },
+        {
+          "side": 1,
+          "off_s": 0.6,
+          "on_s": 0.66,
+          "travel_m": 0.02147931046783924
+        },
+        {
+          "side": 1,
+          "off_s": 0.78,
+          "on_s": 0.84,
+          "travel_m": 0.043398208916187286
+        },
+        {
+          "side": 1,
+          "off_s": 0.98,
+          "on_s": 1.22,
+          "travel_m": 0.08714744448661804
+        },
+        {
+          "side": 1,
+          "off_s": 1.56,
+          "on_s": 1.68,
+          "travel_m": 0.05389028042554855
+        },
+        {
+          "side": 1,
+          "off_s": 1.72,
+          "on_s": 1.82,
+          "travel_m": 0.020566772669553757
+        },
+        {
+          "side": 1,
+          "off_s": 2.04,
+          "on_s": 2.2600000000000002,
+          "travel_m": 0.06228002533316612
+        }
+      ],
+      "discounted_return": 12.310905373387643,
+      "peak_tilt_deg": 9.2875337600708
+    },
+    {
+      "case": 76,
+      "mode": "iid_large",
+      "scenario": "pitch_push8",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.78,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.68,
+          "on_s": 0.74,
+          "travel_m": 0.03624649718403816
+        },
+        {
+          "side": 0,
+          "off_s": 0.78,
+          "on_s": 1.3,
+          "travel_m": 0.09555289894342422
+        },
+        {
+          "side": 0,
+          "off_s": 1.34,
+          "on_s": 1.82,
+          "travel_m": 0.03764082118868828
+        },
+        {
+          "side": 1,
+          "off_s": 0.56,
+          "on_s": 0.64,
+          "travel_m": 0.05785878002643585
+        },
+        {
+          "side": 1,
+          "off_s": 0.72,
+          "on_s": 0.78,
+          "travel_m": 0.026664474979043007
+        },
+        {
+          "side": 1,
+          "off_s": 0.8200000000000001,
+          "on_s": 1.46,
+          "travel_m": 0.14152881503105164
+        }
+      ],
+      "discounted_return": -1.9861365670263864,
+      "peak_tilt_deg": 56.641902923583984
+    },
+    {
+      "case": 77,
+      "mode": "iid_large",
+      "scenario": "pitch_push8",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 3.98,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.68,
+          "on_s": 0.76,
+          "travel_m": 0.030100753530859947
+        },
+        {
+          "side": 0,
+          "off_s": 0.8,
+          "on_s": 0.88,
+          "travel_m": 0.046002183109521866
+        },
+        {
+          "side": 0,
+          "off_s": 0.92,
+          "on_s": 1.2,
+          "travel_m": 0.03346256539225578
+        },
+        {
+          "side": 0,
+          "off_s": 1.36,
+          "on_s": 1.48,
+          "travel_m": 0.034048892557621
+        },
+        {
+          "side": 0,
+          "off_s": 1.56,
+          "on_s": 1.62,
+          "travel_m": 0.016766881570219994
+        },
+        {
+          "side": 0,
+          "off_s": 2.16,
+          "on_s": 2.24,
+          "travel_m": 0.03447667509317398
+        },
+        {
+          "side": 0,
+          "off_s": 2.2600000000000002,
+          "on_s": 2.34,
+          "travel_m": 0.03146880492568016
+        },
+        {
+          "side": 0,
+          "off_s": 2.44,
+          "on_s": 2.5,
+          "travel_m": 0.053566861897706985
+        },
+        {
+          "side": 0,
+          "off_s": 2.54,
+          "on_s": 2.66,
+          "travel_m": 0.029651086777448654
+        },
+        {
+          "side": 0,
+          "off_s": 4.0200000000000005,
+          "on_s": 4.5,
+          "travel_m": 0.029429355636239052
+        },
+        {
+          "side": 1,
+          "off_s": 0.76,
+          "on_s": 0.9,
+          "travel_m": 0.06042395532131195
+        },
+        {
+          "side": 1,
+          "off_s": 1.24,
+          "on_s": 1.32,
+          "travel_m": 0.04599067196249962
+        },
+        {
+          "side": 1,
+          "off_s": 1.48,
+          "on_s": 1.58,
+          "travel_m": 0.020535670220851898
+        },
+        {
+          "side": 1,
+          "off_s": 1.68,
+          "on_s": 1.84,
+          "travel_m": 0.06261733919382095
+        },
+        {
+          "side": 1,
+          "off_s": 2.02,
+          "on_s": 2.16,
+          "travel_m": 0.05949578434228897
+        },
+        {
+          "side": 1,
+          "off_s": 4.0200000000000005,
+          "on_s": 4.6000000000000005,
+          "travel_m": 0.039714016020298004
+        }
+      ],
+      "discounted_return": 8.05563805031197,
+      "peak_tilt_deg": 58.12910079956055
+    },
+    {
+      "case": 78,
+      "mode": "iid_large",
+      "scenario": "pitch_push16",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.8000000000000003,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.9,
+          "on_s": 1.0,
+          "travel_m": 0.035289086401462555
+        },
+        {
+          "side": 0,
+          "off_s": 1.06,
+          "on_s": 1.18,
+          "travel_m": 0.057255957275629044
+        },
+        {
+          "side": 0,
+          "off_s": 1.28,
+          "on_s": 1.3800000000000001,
+          "travel_m": 0.0859408751130104
+        },
+        {
+          "side": 0,
+          "off_s": 1.5,
+          "on_s": 1.56,
+          "travel_m": 0.02545110136270523
+        },
+        {
+          "side": 0,
+          "off_s": 1.68,
+          "on_s": 1.78,
+          "travel_m": 0.035329535603523254
+        },
+        {
+          "side": 0,
+          "off_s": 1.82,
+          "on_s": 1.98,
+          "travel_m": 0.04717323184013367
+        },
+        {
+          "side": 0,
+          "off_s": 2.04,
+          "on_s": 2.14,
+          "travel_m": 0.05037148669362068
+        },
+        {
+          "side": 1,
+          "off_s": 0.64,
+          "on_s": 0.72,
+          "travel_m": 0.016929607838392258
+        },
+        {
+          "side": 1,
+          "off_s": 0.78,
+          "on_s": 0.88,
+          "travel_m": 0.024737881496548653
+        },
+        {
+          "side": 1,
+          "off_s": 0.9400000000000001,
+          "on_s": 1.02,
+          "travel_m": 0.03469245135784149
+        },
+        {
+          "side": 1,
+          "off_s": 1.2,
+          "on_s": 1.4000000000000001,
+          "travel_m": 0.13181480765342712
+        },
+        {
+          "side": 1,
+          "off_s": 1.68,
+          "on_s": 1.8,
+          "travel_m": 0.04565216600894928
+        },
+        {
+          "side": 1,
+          "off_s": 2.0,
+          "on_s": 2.12,
+          "travel_m": 0.06109515205025673
+        },
+        {
+          "side": 1,
+          "off_s": 2.16,
+          "on_s": 2.36,
+          "travel_m": 0.03776842728257179
+        }
+      ],
+      "discounted_return": 11.56767573286087,
+      "peak_tilt_deg": 15.229228973388672
+    },
+    {
+      "case": 79,
+      "mode": "iid_large",
+      "scenario": "pitch_push16",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.88,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.58,
+          "on_s": 0.8200000000000001,
+          "travel_m": 0.052691273391246796
+        },
+        {
+          "side": 0,
+          "off_s": 0.92,
+          "on_s": 2.34,
+          "travel_m": 0.1701192855834961
+        }
+      ],
+      "discounted_return": -1.0882015970561096,
+      "peak_tilt_deg": 58.10179138183594
+    },
+    {
+      "case": 80,
+      "mode": "iid_large",
+      "scenario": "pitch_push16",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.86,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.52,
+          "on_s": 0.66,
+          "travel_m": 0.035388875752687454
+        },
+        {
+          "side": 0,
+          "off_s": 0.8200000000000001,
+          "on_s": 1.04,
+          "travel_m": 0.15899823606014252
+        },
+        {
+          "side": 0,
+          "off_s": 1.1,
+          "on_s": 1.2,
+          "travel_m": 0.07702679932117462
+        },
+        {
+          "side": 0,
+          "off_s": 1.36,
+          "on_s": 1.6,
+          "travel_m": 0.06847517937421799
+        },
+        {
+          "side": 0,
+          "off_s": 1.8,
+          "on_s": 2.02,
+          "travel_m": 0.07475216686725616
+        },
+        {
+          "side": 0,
+          "off_s": 2.4,
+          "on_s": 2.58,
+          "travel_m": 0.03178969398140907
+        },
+        {
+          "side": 1,
+          "off_s": 0.64,
+          "on_s": 0.84,
+          "travel_m": 0.08892392367124557
+        },
+        {
+          "side": 1,
+          "off_s": 1.22,
+          "on_s": 1.3800000000000001,
+          "travel_m": 0.042934682220220566
+        },
+        {
+          "side": 1,
+          "off_s": 1.6,
+          "on_s": 1.8,
+          "travel_m": 0.06198302283883095
+        },
+        {
+          "side": 1,
+          "off_s": 1.84,
+          "on_s": 1.92,
+          "travel_m": 0.06594743579626083
+        },
+        {
+          "side": 1,
+          "off_s": 2.5,
+          "on_s": 2.58,
+          "travel_m": 0.03030666895210743
+        }
+      ],
+      "discounted_return": 1.954952283073578,
+      "peak_tilt_deg": 56.609989166259766
+    },
+    {
+      "case": 81,
+      "mode": "iid_large",
+      "scenario": "roll_push8",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 3.02,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.0,
+          "on_s": 1.1400000000000001,
+          "travel_m": 0.09778515249490738
+        },
+        {
+          "side": 0,
+          "off_s": 1.44,
+          "on_s": 1.56,
+          "travel_m": 0.05738755688071251
+        },
+        {
+          "side": 0,
+          "off_s": 1.86,
+          "on_s": 2.0,
+          "travel_m": 0.01894821971654892
+        },
+        {
+          "side": 0,
+          "off_s": 2.24,
+          "on_s": 2.32,
+          "travel_m": 0.036493003368377686
+        },
+        {
+          "side": 0,
+          "off_s": 3.02,
+          "on_s": 3.54,
+          "travel_m": 0.04791850969195366
+        },
+        {
+          "side": 1,
+          "off_s": 0.64,
+          "on_s": 0.74,
+          "travel_m": 0.0314815416932106
+        },
+        {
+          "side": 1,
+          "off_s": 0.84,
+          "on_s": 0.98,
+          "travel_m": 0.01564580760896206
+        },
+        {
+          "side": 1,
+          "off_s": 1.16,
+          "on_s": 1.28,
+          "travel_m": 0.02372024580836296
+        },
+        {
+          "side": 1,
+          "off_s": 1.4000000000000001,
+          "on_s": 1.46,
+          "travel_m": 0.03318658843636513
+        },
+        {
+          "side": 1,
+          "off_s": 1.58,
+          "on_s": 1.6400000000000001,
+          "travel_m": 0.022578977048397064
+        },
+        {
+          "side": 1,
+          "off_s": 2.02,
+          "on_s": 2.2,
+          "travel_m": 0.11413005739450455
+        },
+        {
+          "side": 1,
+          "off_s": 3.08,
+          "on_s": 3.62,
+          "travel_m": 0.04382393881678581
+        }
+      ],
+      "discounted_return": 5.7750338370474825,
+      "peak_tilt_deg": 57.15013122558594
+    },
+    {
+      "case": 82,
+      "mode": "iid_large",
+      "scenario": "roll_push8",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.9400000000000001,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.54,
+          "on_s": 0.78,
+          "travel_m": 0.08619821071624756
+        },
+        {
+          "side": 1,
+          "off_s": 0.5,
+          "on_s": 0.56,
+          "travel_m": 0.035558152943849564
+        },
+        {
+          "side": 1,
+          "off_s": 0.78,
+          "on_s": 0.98,
+          "travel_m": 0.03136863186955452
+        }
+      ],
+      "discounted_return": -0.2807568951681749,
+      "peak_tilt_deg": 55.78407287597656
+    },
+    {
+      "case": 83,
+      "mode": "iid_large",
+      "scenario": "roll_push8",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.9,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.5,
+          "on_s": 0.58,
+          "travel_m": 0.036012403666973114
+        },
+        {
+          "side": 0,
+          "off_s": 0.7000000000000001,
+          "on_s": 0.84,
+          "travel_m": 0.055669307708740234
+        },
+        {
+          "side": 0,
+          "off_s": 1.04,
+          "on_s": 1.24,
+          "travel_m": 0.08885021507740021
+        },
+        {
+          "side": 0,
+          "off_s": 1.48,
+          "on_s": 1.54,
+          "travel_m": 0.019737742841243744
+        },
+        {
+          "side": 0,
+          "off_s": 1.76,
+          "on_s": 1.8800000000000001,
+          "travel_m": 0.06802724301815033
+        },
+        {
+          "side": 0,
+          "off_s": 2.08,
+          "on_s": 2.2,
+          "travel_m": 0.024593854323029518
+        },
+        {
+          "side": 0,
+          "off_s": 2.36,
+          "on_s": 2.54,
+          "travel_m": 0.0813959613442421
+        },
+        {
+          "side": 1,
+          "off_s": 0.6,
+          "on_s": 0.7000000000000001,
+          "travel_m": 0.060012515634298325
+        },
+        {
+          "side": 1,
+          "off_s": 0.8200000000000001,
+          "on_s": 1.06,
+          "travel_m": 0.06708396971225739
+        },
+        {
+          "side": 1,
+          "off_s": 1.26,
+          "on_s": 1.42,
+          "travel_m": 0.02693123184144497
+        },
+        {
+          "side": 1,
+          "off_s": 1.68,
+          "on_s": 1.74,
+          "travel_m": 0.026826949790120125
+        },
+        {
+          "side": 1,
+          "off_s": 1.8800000000000001,
+          "on_s": 2.08,
+          "travel_m": 0.09765461832284927
+        },
+        {
+          "side": 1,
+          "off_s": 2.56,
+          "on_s": 2.7,
+          "travel_m": 0.021741392090916634
+        }
+      ],
+      "discounted_return": 12.299694586075878,
+      "peak_tilt_deg": 9.471186637878418
+    },
+    {
+      "case": 84,
+      "mode": "iid_large",
+      "scenario": "roll_push16",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.78,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.58,
+          "on_s": 0.68,
+          "travel_m": 0.028813133016228676
+        },
+        {
+          "side": 1,
+          "off_s": 0.68,
+          "on_s": 0.76,
+          "travel_m": 0.029459839686751366
+        },
+        {
+          "side": 1,
+          "off_s": 0.78,
+          "on_s": 2.4,
+          "travel_m": 0.20004621148109436
+        }
+      ],
+      "discounted_return": -1.6903076215223982,
+      "peak_tilt_deg": 58.85432434082031
+    },
+    {
+      "case": 85,
+      "mode": "iid_large",
+      "scenario": "roll_push16",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.18,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.62,
+          "on_s": 0.72,
+          "travel_m": 0.05332633852958679
+        },
+        {
+          "side": 0,
+          "off_s": 0.8,
+          "on_s": 1.06,
+          "travel_m": 0.07016347348690033
+        },
+        {
+          "side": 0,
+          "off_s": 1.08,
+          "on_s": 1.1400000000000001,
+          "travel_m": 0.032724883407354355
+        },
+        {
+          "side": 0,
+          "off_s": 1.18,
+          "on_s": 1.78,
+          "travel_m": 0.11654525250196457
+        },
+        {
+          "side": 0,
+          "off_s": 1.82,
+          "on_s": 2.2,
+          "travel_m": 0.02411438524723053
+        },
+        {
+          "side": 1,
+          "off_s": 0.56,
+          "on_s": 0.62,
+          "travel_m": 0.015754645690321922
+        },
+        {
+          "side": 1,
+          "off_s": 0.68,
+          "on_s": 0.8,
+          "travel_m": 0.10934348404407501
+        },
+        {
+          "side": 1,
+          "off_s": 0.88,
+          "on_s": 0.9400000000000001,
+          "travel_m": 0.016491800546646118
+        },
+        {
+          "side": 1,
+          "off_s": 1.16,
+          "on_s": 1.72,
+          "travel_m": 0.10143008828163147
+        }
+      ],
+      "discounted_return": -0.10627084948286436,
+      "peak_tilt_deg": 57.9931526184082
+    },
+    {
+      "case": 86,
+      "mode": "iid_large",
+      "scenario": "roll_push16",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": true,
+      "settle_s": 3.94,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.8,
+          "on_s": 0.9,
+          "travel_m": 0.06180904805660248
+        },
+        {
+          "side": 0,
+          "off_s": 1.5,
+          "on_s": 1.6600000000000001,
+          "travel_m": 0.08804566413164139
+        },
+        {
+          "side": 0,
+          "off_s": 2.06,
+          "on_s": 2.2,
+          "travel_m": 0.025591980665922165
+        },
+        {
+          "side": 0,
+          "off_s": 2.4,
+          "on_s": 2.58,
+          "travel_m": 0.023122800514101982
+        },
+        {
+          "side": 1,
+          "off_s": 1.0,
+          "on_s": 1.1,
+          "travel_m": 0.08103714883327484
+        },
+        {
+          "side": 1,
+          "off_s": 1.18,
+          "on_s": 1.42,
+          "travel_m": 0.03245563805103302
+        },
+        {
+          "side": 1,
+          "off_s": 1.6600000000000001,
+          "on_s": 1.8,
+          "travel_m": 0.03193367272615433
+        },
+        {
+          "side": 1,
+          "off_s": 1.92,
+          "on_s": 2.0,
+          "travel_m": 0.04275297373533249
+        },
+        {
+          "side": 1,
+          "off_s": 2.3000000000000003,
+          "on_s": 2.38,
+          "travel_m": 0.021529730409383774
+        }
+      ],
+      "discounted_return": 11.875270319348596,
+      "peak_tilt_deg": 8.393839836120605
+    },
+    {
+      "case": 87,
+      "mode": "iid_large",
+      "scenario": "pitch_moving10",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.62,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.58,
+          "on_s": 0.7000000000000001,
+          "travel_m": 0.04535478353500366
+        },
+        {
+          "side": 0,
+          "off_s": 0.96,
+          "on_s": 1.1,
+          "travel_m": 0.052025679498910904
+        },
+        {
+          "side": 0,
+          "off_s": 1.4000000000000001,
+          "on_s": 1.58,
+          "travel_m": 0.07115720212459564
+        },
+        {
+          "side": 0,
+          "off_s": 1.6400000000000001,
+          "on_s": 2.34,
+          "travel_m": 0.2690577805042267
+        },
+        {
+          "side": 1,
+          "off_s": 0.8,
+          "on_s": 0.96,
+          "travel_m": 0.06147293746471405
+        },
+        {
+          "side": 1,
+          "off_s": 1.06,
+          "on_s": 1.2,
+          "travel_m": 0.08690983802080154
+        },
+        {
+          "side": 1,
+          "off_s": 1.28,
+          "on_s": 1.34,
+          "travel_m": 0.020606089383363724
+        },
+        {
+          "side": 1,
+          "off_s": 1.56,
+          "on_s": 1.68,
+          "travel_m": 0.06211405247449875
+        }
+      ],
+      "discounted_return": 1.4105121764078439,
+      "peak_tilt_deg": 61.30401611328125
+    },
+    {
+      "case": 88,
+      "mode": "iid_large",
+      "scenario": "pitch_moving10",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.42,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.78,
+          "on_s": 1.94,
+          "travel_m": 0.015797140076756477
+        }
+      ],
+      "discounted_return": -3.7804542478808925,
+      "peak_tilt_deg": 58.98744201660156
+    },
+    {
+      "case": 89,
+      "mode": "iid_large",
+      "scenario": "pitch_moving10",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 2.84,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.64,
+          "on_s": 0.76,
+          "travel_m": 0.040763258934020996
+        },
+        {
+          "side": 0,
+          "off_s": 1.02,
+          "on_s": 1.1400000000000001,
+          "travel_m": 0.03857925161719322
+        },
+        {
+          "side": 0,
+          "off_s": 1.8,
+          "on_s": 2.02,
+          "travel_m": 0.08519203215837479
+        },
+        {
+          "side": 0,
+          "off_s": 2.16,
+          "on_s": 2.2600000000000002,
+          "travel_m": 0.017903801053762436
+        },
+        {
+          "side": 0,
+          "off_s": 2.44,
+          "on_s": 2.72,
+          "travel_m": 0.05997633561491966
+        },
+        {
+          "side": 0,
+          "off_s": 2.88,
+          "on_s": 3.34,
+          "travel_m": 0.0271847415715456
+        },
+        {
+          "side": 1,
+          "off_s": 0.76,
+          "on_s": 0.86,
+          "travel_m": 0.016187874600291252
+        },
+        {
+          "side": 1,
+          "off_s": 0.92,
+          "on_s": 1.04,
+          "travel_m": 0.028678737580776215
+        },
+        {
+          "side": 1,
+          "off_s": 1.46,
+          "on_s": 1.6,
+          "travel_m": 0.03806818276643753
+        },
+        {
+          "side": 1,
+          "off_s": 1.6400000000000001,
+          "on_s": 1.74,
+          "travel_m": 0.05112270265817642
+        },
+        {
+          "side": 1,
+          "off_s": 2.04,
+          "on_s": 2.18,
+          "travel_m": 0.0521538145840168
+        },
+        {
+          "side": 1,
+          "off_s": 2.2600000000000002,
+          "on_s": 2.42,
+          "travel_m": 0.06183183938264847
+        },
+        {
+          "side": 1,
+          "off_s": 2.72,
+          "on_s": 2.82,
+          "travel_m": 0.04139725863933563
+        },
+        {
+          "side": 1,
+          "off_s": 2.88,
+          "on_s": 3.44,
+          "travel_m": 0.03659944236278534
+        }
+      ],
+      "discounted_return": 4.443755118213254,
+      "peak_tilt_deg": 59.93183135986328
+    },
+    {
+      "case": 90,
+      "mode": "iid_large",
+      "scenario": "pitch_moving20",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.32,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.6,
+          "on_s": 0.68,
+          "travel_m": 0.01746189035475254
+        },
+        {
+          "side": 0,
+          "off_s": 1.02,
+          "on_s": 1.1,
+          "travel_m": 0.02441759966313839
+        },
+        {
+          "side": 0,
+          "off_s": 1.1400000000000001,
+          "on_s": 1.2,
+          "travel_m": 0.022319527342915535
+        },
+        {
+          "side": 0,
+          "off_s": 1.22,
+          "on_s": 1.32,
+          "travel_m": 0.04333161190152168
+        },
+        {
+          "side": 0,
+          "off_s": 1.68,
+          "on_s": 1.74,
+          "travel_m": 0.03164409101009369
+        },
+        {
+          "side": 0,
+          "off_s": 2.46,
+          "on_s": 2.54,
+          "travel_m": 0.027934690937399864
+        },
+        {
+          "side": 1,
+          "off_s": 0.96,
+          "on_s": 1.12,
+          "travel_m": 0.018879234790802002
+        },
+        {
+          "side": 1,
+          "off_s": 1.16,
+          "on_s": 1.32,
+          "travel_m": 0.03460058197379112
+        },
+        {
+          "side": 1,
+          "off_s": 1.46,
+          "on_s": 1.6600000000000001,
+          "travel_m": 0.020544232800602913
+        },
+        {
+          "side": 1,
+          "off_s": 1.68,
+          "on_s": 1.76,
+          "travel_m": 0.025015050545334816
+        },
+        {
+          "side": 1,
+          "off_s": 1.78,
+          "on_s": 1.86,
+          "travel_m": 0.04841074347496033
+        },
+        {
+          "side": 1,
+          "off_s": 1.92,
+          "on_s": 2.06,
+          "travel_m": 0.019935989752411842
+        },
+        {
+          "side": 1,
+          "off_s": 2.12,
+          "on_s": 2.2,
+          "travel_m": 0.021227853372693062
+        },
+        {
+          "side": 1,
+          "off_s": 2.22,
+          "on_s": 2.3000000000000003,
+          "travel_m": 0.026447542011737823
+        }
+      ],
+      "discounted_return": -4.247809467242815,
+      "peak_tilt_deg": 58.688941955566406
+    },
+    {
+      "case": 91,
+      "mode": "iid_large",
+      "scenario": "pitch_moving20",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.26,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.36,
+          "on_s": 1.84,
+          "travel_m": 0.05292920768260956
+        },
+        {
+          "side": 1,
+          "off_s": 1.34,
+          "on_s": 2.0,
+          "travel_m": 0.03603232279419899
+        }
+      ],
+      "discounted_return": -4.490469994173635,
+      "peak_tilt_deg": 59.09733963012695
+    },
+    {
+      "case": 92,
+      "mode": "iid_large",
+      "scenario": "pitch_moving20",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.3,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.68,
+          "on_s": 0.8200000000000001,
+          "travel_m": 0.03596093878149986
+        },
+        {
+          "side": 0,
+          "off_s": 0.88,
+          "on_s": 0.9400000000000001,
+          "travel_m": 0.01947983354330063
+        },
+        {
+          "side": 0,
+          "off_s": 1.32,
+          "on_s": 1.42,
+          "travel_m": 0.021599235013127327
+        },
+        {
+          "side": 0,
+          "off_s": 1.48,
+          "on_s": 1.54,
+          "travel_m": 0.04087390750646591
+        },
+        {
+          "side": 0,
+          "off_s": 1.58,
+          "on_s": 1.76,
+          "travel_m": 0.026948822662234306
+        },
+        {
+          "side": 0,
+          "off_s": 1.8,
+          "on_s": 1.86,
+          "travel_m": 0.024854516610503197
+        },
+        {
+          "side": 0,
+          "off_s": 2.1,
+          "on_s": 2.24,
+          "travel_m": 0.06561705470085144
+        },
+        {
+          "side": 0,
+          "off_s": 2.42,
+          "on_s": 2.54,
+          "travel_m": 0.034872766584157944
+        },
+        {
+          "side": 1,
+          "off_s": 0.8,
+          "on_s": 0.88,
+          "travel_m": 0.027215836569666862
+        },
+        {
+          "side": 1,
+          "off_s": 0.9,
+          "on_s": 0.98,
+          "travel_m": 0.02186347357928753
+        },
+        {
+          "side": 1,
+          "off_s": 1.02,
+          "on_s": 1.08,
+          "travel_m": 0.015264706686139107
+        },
+        {
+          "side": 1,
+          "off_s": 1.16,
+          "on_s": 1.3,
+          "travel_m": 0.035893093794584274
+        },
+        {
+          "side": 1,
+          "off_s": 1.68,
+          "on_s": 1.86,
+          "travel_m": 0.05068865045905113
+        },
+        {
+          "side": 1,
+          "off_s": 1.92,
+          "on_s": 1.98,
+          "travel_m": 0.0173043105751276
+        },
+        {
+          "side": 1,
+          "off_s": 2.06,
+          "on_s": 2.16,
+          "travel_m": 0.060633182525634766
+        },
+        {
+          "side": 1,
+          "off_s": 2.38,
+          "on_s": 2.54,
+          "travel_m": 0.028609350323677063
+        }
+      ],
+      "discounted_return": -4.283297473524269,
+      "peak_tilt_deg": 58.768699645996094
+    },
+    {
+      "case": 93,
+      "mode": "iid_large",
+      "scenario": "roll_moving15",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.02,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.76,
+          "on_s": 0.8200000000000001,
+          "travel_m": 0.03198038041591644
+        },
+        {
+          "side": 1,
+          "off_s": 0.7000000000000001,
+          "on_s": 0.76,
+          "travel_m": 0.028691072016954422
+        },
+        {
+          "side": 1,
+          "off_s": 0.84,
+          "on_s": 1.02,
+          "travel_m": 0.026840131729841232
+        }
+      ],
+      "discounted_return": -1.6687200968897018,
+      "peak_tilt_deg": 59.07577896118164
+    },
+    {
+      "case": 94,
+      "mode": "iid_large",
+      "scenario": "roll_moving15",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.84,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.56,
+          "on_s": 0.64,
+          "travel_m": 0.022368675097823143
+        },
+        {
+          "side": 0,
+          "off_s": 0.68,
+          "on_s": 0.8,
+          "travel_m": 0.019675549119710922
+        },
+        {
+          "side": 0,
+          "off_s": 0.84,
+          "on_s": 1.3800000000000001,
+          "travel_m": 0.08181211352348328
+        },
+        {
+          "side": 0,
+          "off_s": 1.42,
+          "on_s": 1.62,
+          "travel_m": 0.08093346655368805
+        },
+        {
+          "side": 0,
+          "off_s": 1.68,
+          "on_s": 1.86,
+          "travel_m": 0.04440854862332344
+        },
+        {
+          "side": 0,
+          "off_s": 1.9000000000000001,
+          "on_s": 2.5,
+          "travel_m": 0.06914255768060684
+        },
+        {
+          "side": 1,
+          "off_s": 0.62,
+          "on_s": 0.74,
+          "travel_m": 0.03918434679508209
+        },
+        {
+          "side": 1,
+          "off_s": 0.8,
+          "on_s": 1.58,
+          "travel_m": 0.15456371009349823
+        },
+        {
+          "side": 1,
+          "off_s": 1.6,
+          "on_s": 2.2,
+          "travel_m": 0.08458556234836578
+        }
+      ],
+      "discounted_return": -2.0673380325650643,
+      "peak_tilt_deg": 59.583740234375
+    },
+    {
+      "case": 95,
+      "mode": "iid_large",
+      "scenario": "roll_moving15",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.22,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.7000000000000001,
+          "on_s": 0.86,
+          "travel_m": 0.05083021894097328
+        },
+        {
+          "side": 0,
+          "off_s": 0.9,
+          "on_s": 1.0,
+          "travel_m": 0.018758682534098625
+        },
+        {
+          "side": 0,
+          "off_s": 1.12,
+          "on_s": 1.22,
+          "travel_m": 0.02439037710428238
+        },
+        {
+          "side": 0,
+          "off_s": 1.26,
+          "on_s": 1.78,
+          "travel_m": 0.06932344287633896
+        },
+        {
+          "side": 1,
+          "off_s": 0.52,
+          "on_s": 0.68,
+          "travel_m": 0.0945073589682579
+        },
+        {
+          "side": 1,
+          "off_s": 0.74,
+          "on_s": 0.8,
+          "travel_m": 0.015963640064001083
+        },
+        {
+          "side": 1,
+          "off_s": 1.08,
+          "on_s": 1.18,
+          "travel_m": 0.04039730131626129
+        },
+        {
+          "side": 1,
+          "off_s": 1.22,
+          "on_s": 1.82,
+          "travel_m": 0.03345121070742607
+        }
+      ],
+      "discounted_return": -0.22444751142624586,
+      "peak_tilt_deg": 55.49568557739258
+    },
+    {
+      "case": 96,
+      "mode": "held_large",
+      "scenario": "quiet",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.7000000000000001,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.58,
+          "on_s": 0.66,
+          "travel_m": 0.019399145618081093
+        },
+        {
+          "side": 0,
+          "off_s": 0.76,
+          "on_s": 2.06,
+          "travel_m": 0.16965265572071075
+        },
+        {
+          "side": 0,
+          "off_s": 2.08,
+          "on_s": 2.54,
+          "travel_m": 0.08632288128137589
+        },
+        {
+          "side": 1,
+          "off_s": 0.64,
+          "on_s": 0.72,
+          "travel_m": 0.040010273456573486
+        }
+      ],
+      "discounted_return": -1.587647523264714,
+      "peak_tilt_deg": 57.21286392211914
+    },
+    {
+      "case": 97,
+      "mode": "held_large",
+      "scenario": "quiet",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.02,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.06,
+          "on_s": 1.54,
+          "travel_m": 0.15753476321697235
+        },
+        {
+          "side": 1,
+          "off_s": 1.08,
+          "on_s": 1.6,
+          "travel_m": 0.16115574538707733
+        }
+      ],
+      "discounted_return": 0.16093968154503457,
+      "peak_tilt_deg": 56.92245101928711
+    },
+    {
+      "case": 98,
+      "mode": "held_large",
+      "scenario": "quiet",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.7000000000000001,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.62,
+          "on_s": 1.48,
+          "travel_m": 0.053936656564474106
+        },
+        {
+          "side": 0,
+          "off_s": 1.52,
+          "on_s": 2.0,
+          "travel_m": 0.06188592687249184
+        },
+        {
+          "side": 1,
+          "off_s": 0.68,
+          "on_s": 2.48,
+          "travel_m": 0.12341086566448212
+        }
+      ],
+      "discounted_return": -2.384681201331208,
+      "peak_tilt_deg": 59.612632751464844
+    },
+    {
+      "case": 99,
+      "mode": "held_large",
+      "scenario": "pitch_push8",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 2.2600000000000002,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.64,
+          "on_s": 0.86,
+          "travel_m": 0.04295648634433746
+        },
+        {
+          "side": 0,
+          "off_s": 1.48,
+          "on_s": 1.7,
+          "travel_m": 0.0292669665068388
+        },
+        {
+          "side": 0,
+          "off_s": 2.04,
+          "on_s": 2.1,
+          "travel_m": 0.022642064839601517
+        },
+        {
+          "side": 0,
+          "off_s": 2.18,
+          "on_s": 2.84,
+          "travel_m": 0.09084893018007278
+        },
+        {
+          "side": 1,
+          "off_s": 0.86,
+          "on_s": 1.02,
+          "travel_m": 0.052039798349142075
+        },
+        {
+          "side": 1,
+          "off_s": 1.22,
+          "on_s": 1.46,
+          "travel_m": 0.027545612305402756
+        },
+        {
+          "side": 1,
+          "off_s": 1.72,
+          "on_s": 1.84,
+          "travel_m": 0.059128306806087494
+        },
+        {
+          "side": 1,
+          "off_s": 2.1,
+          "on_s": 2.18,
+          "travel_m": 0.031221797689795494
+        }
+      ],
+      "discounted_return": 4.5236255784011075,
+      "peak_tilt_deg": 59.711021423339844
+    },
+    {
+      "case": 100,
+      "mode": "held_large",
+      "scenario": "pitch_push8",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.88,
+      "steps": [
+        {
+          "side": 1,
+          "off_s": 0.8,
+          "on_s": 0.9,
+          "travel_m": 0.017123406752943993
+        }
+      ],
+      "discounted_return": -0.3838100020474102,
+      "peak_tilt_deg": 58.84572982788086
+    },
+    {
+      "case": 101,
+      "mode": "held_large",
+      "scenario": "pitch_push8",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.04,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.68,
+          "on_s": 1.58,
+          "travel_m": 0.21523000299930573
+        },
+        {
+          "side": 1,
+          "off_s": 1.02,
+          "on_s": 2.12,
+          "travel_m": 0.26653173565864563
+        }
+      ],
+      "discounted_return": 0.5169526699053058,
+      "peak_tilt_deg": 57.62606430053711
+    },
+    {
+      "case": 102,
+      "mode": "held_large",
+      "scenario": "pitch_push16",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.4000000000000001,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.64,
+          "on_s": 0.78,
+          "travel_m": 0.03818322345614433
+        },
+        {
+          "side": 0,
+          "off_s": 1.1,
+          "on_s": 1.24,
+          "travel_m": 0.054012052714824677
+        },
+        {
+          "side": 0,
+          "off_s": 1.3,
+          "on_s": 1.4000000000000001,
+          "travel_m": 0.05840711295604706
+        },
+        {
+          "side": 0,
+          "off_s": 2.08,
+          "on_s": 2.2800000000000002,
+          "travel_m": 0.05153633654117584
+        },
+        {
+          "side": 0,
+          "off_s": 2.4,
+          "on_s": 2.5,
+          "travel_m": 0.06574079394340515
+        },
+        {
+          "side": 1,
+          "off_s": 0.78,
+          "on_s": 0.96,
+          "travel_m": 0.05679132789373398
+        },
+        {
+          "side": 1,
+          "off_s": 1.24,
+          "on_s": 1.3,
+          "travel_m": 0.03373272716999054
+        },
+        {
+          "side": 1,
+          "off_s": 1.36,
+          "on_s": 1.7,
+          "travel_m": 0.05325532332062721
+        },
+        {
+          "side": 1,
+          "off_s": 1.92,
+          "on_s": 2.08,
+          "travel_m": 0.016860544681549072
+        },
+        {
+          "side": 1,
+          "off_s": 2.2800000000000002,
+          "on_s": 2.4,
+          "travel_m": 0.018472496420145035
+        }
+      ],
+      "discounted_return": 1.5310129764659055,
+      "peak_tilt_deg": 60.006160736083984
+    },
+    {
+      "case": 103,
+      "mode": "held_large",
+      "scenario": "pitch_push16",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.9,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.6,
+          "on_s": 0.7000000000000001,
+          "travel_m": 0.05357763543725014
+        },
+        {
+          "side": 0,
+          "off_s": 1.6,
+          "on_s": 2.32,
+          "travel_m": 0.08851473778486252
+        },
+        {
+          "side": 1,
+          "off_s": 0.72,
+          "on_s": 0.78,
+          "travel_m": 0.01623913086950779
+        },
+        {
+          "side": 1,
+          "off_s": 0.98,
+          "on_s": 2.24,
+          "travel_m": 0.08594134449958801
+        }
+      ],
+      "discounted_return": -0.728461041353845,
+      "peak_tilt_deg": 57.72277069091797
+    },
+    {
+      "case": 104,
+      "mode": "held_large",
+      "scenario": "pitch_push16",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 2.48,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.96,
+          "on_s": 1.1400000000000001,
+          "travel_m": 0.06794809550046921
+        },
+        {
+          "side": 0,
+          "off_s": 1.28,
+          "on_s": 1.4000000000000001,
+          "travel_m": 0.021049639210104942
+        },
+        {
+          "side": 0,
+          "off_s": 2.08,
+          "on_s": 2.18,
+          "travel_m": 0.04913187399506569
+        },
+        {
+          "side": 0,
+          "off_s": 2.5,
+          "on_s": 3.0,
+          "travel_m": 0.04563397541642189
+        },
+        {
+          "side": 1,
+          "off_s": 0.52,
+          "on_s": 0.72,
+          "travel_m": 0.03866881877183914
+        },
+        {
+          "side": 1,
+          "off_s": 0.8,
+          "on_s": 0.96,
+          "travel_m": 0.06397658586502075
+        }
+      ],
+      "discounted_return": 4.941866296622635,
+      "peak_tilt_deg": 58.628196716308594
+    },
+    {
+      "case": 105,
+      "mode": "held_large",
+      "scenario": "roll_push8",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.92,
+      "steps": [
+        {
+          "side": 1,
+          "off_s": 0.96,
+          "on_s": 1.6600000000000001,
+          "travel_m": 0.10348595678806305
+        },
+        {
+          "side": 1,
+          "off_s": 1.68,
+          "on_s": 2.4,
+          "travel_m": 0.03290804848074913
+        }
+      ],
+      "discounted_return": -0.7039475251976439,
+      "peak_tilt_deg": 58.32499694824219
+    },
+    {
+      "case": 106,
+      "mode": "held_large",
+      "scenario": "roll_push8",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 2.18,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.64,
+          "on_s": 0.78,
+          "travel_m": 0.04364501312375069
+        },
+        {
+          "side": 0,
+          "off_s": 1.12,
+          "on_s": 1.28,
+          "travel_m": 0.08565268665552139
+        },
+        {
+          "side": 0,
+          "off_s": 1.96,
+          "on_s": 2.04,
+          "travel_m": 0.019480198621749878
+        },
+        {
+          "side": 1,
+          "off_s": 0.54,
+          "on_s": 0.62,
+          "travel_m": 0.024791287258267403
+        },
+        {
+          "side": 1,
+          "off_s": 1.28,
+          "on_s": 1.46,
+          "travel_m": 0.03369774669408798
+        },
+        {
+          "side": 1,
+          "off_s": 1.6,
+          "on_s": 1.7,
+          "travel_m": 0.03261813893914223
+        }
+      ],
+      "discounted_return": 4.40541031890964,
+      "peak_tilt_deg": 58.27381896972656
+    },
+    {
+      "case": 107,
+      "mode": "held_large",
+      "scenario": "roll_push8",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.06,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.68,
+          "on_s": 0.9400000000000001,
+          "travel_m": 0.03649390861392021
+        },
+        {
+          "side": 0,
+          "off_s": 1.0,
+          "on_s": 1.6400000000000001,
+          "travel_m": 0.04362905025482178
+        },
+        {
+          "side": 1,
+          "off_s": 0.9400000000000001,
+          "on_s": 1.12,
+          "travel_m": 0.042659398168325424
+        },
+        {
+          "side": 1,
+          "off_s": 1.16,
+          "on_s": 1.62,
+          "travel_m": 0.024695904925465584
+        },
+        {
+          "side": 1,
+          "off_s": 1.76,
+          "on_s": 2.34,
+          "travel_m": 0.017598779872059822
+        }
+      ],
+      "discounted_return": -0.11564528467908008,
+      "peak_tilt_deg": 56.54433059692383
+    },
+    {
+      "case": 108,
+      "mode": "held_large",
+      "scenario": "roll_push16",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.54,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.02,
+          "on_s": 1.18,
+          "travel_m": 0.027610674500465393
+        },
+        {
+          "side": 0,
+          "off_s": 1.46,
+          "on_s": 1.8,
+          "travel_m": 0.06301182508468628
+        },
+        {
+          "side": 0,
+          "off_s": 2.36,
+          "on_s": 2.52,
+          "travel_m": 0.048539139330387115
+        },
+        {
+          "side": 1,
+          "off_s": 0.8,
+          "on_s": 1.0,
+          "travel_m": 0.01612045057117939
+        },
+        {
+          "side": 1,
+          "off_s": 1.12,
+          "on_s": 1.2,
+          "travel_m": 0.021116402000188828
+        },
+        {
+          "side": 1,
+          "off_s": 2.04,
+          "on_s": 2.36,
+          "travel_m": 0.015668245032429695
+        }
+      ],
+      "discounted_return": 1.8868492308446654,
+      "peak_tilt_deg": 57.2521858215332
+    },
+    {
+      "case": 109,
+      "mode": "held_large",
+      "scenario": "roll_push16",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.16,
+      "steps": [],
+      "discounted_return": -0.024278719625425715,
+      "peak_tilt_deg": 55.51246643066406
+    },
+    {
+      "case": 110,
+      "mode": "held_large",
+      "scenario": "roll_push16",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.06,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.96,
+          "on_s": 2.02,
+          "travel_m": 0.29375746846199036
+        },
+        {
+          "side": 1,
+          "off_s": 0.68,
+          "on_s": 0.96,
+          "travel_m": 0.1769792139530182
+        }
+      ],
+      "discounted_return": 0.3388836904896815,
+      "peak_tilt_deg": 57.92706298828125
+    },
+    {
+      "case": 111,
+      "mode": "held_large",
+      "scenario": "pitch_moving10",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.76,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.56,
+          "on_s": 0.62,
+          "travel_m": 0.016370849683880806
+        },
+        {
+          "side": 0,
+          "off_s": 1.1,
+          "on_s": 1.3,
+          "travel_m": 0.0448693186044693
+        },
+        {
+          "side": 0,
+          "off_s": 1.5,
+          "on_s": 1.8800000000000001,
+          "travel_m": 0.0774567574262619
+        },
+        {
+          "side": 0,
+          "off_s": 2.02,
+          "on_s": 2.4,
+          "travel_m": 0.09586690366268158
+        },
+        {
+          "side": 0,
+          "off_s": 2.46,
+          "on_s": 2.54,
+          "travel_m": 0.02737991325557232
+        },
+        {
+          "side": 1,
+          "off_s": 0.62,
+          "on_s": 0.86,
+          "travel_m": 0.05017843097448349
+        },
+        {
+          "side": 1,
+          "off_s": 1.28,
+          "on_s": 1.48,
+          "travel_m": 0.023005250841379166
+        },
+        {
+          "side": 1,
+          "off_s": 2.24,
+          "on_s": 2.3000000000000003,
+          "travel_m": 0.031512461602687836
+        },
+        {
+          "side": 1,
+          "off_s": 2.4,
+          "on_s": 2.56,
+          "travel_m": 0.11242940276861191
+        }
+      ],
+      "discounted_return": -2.680478494520106,
+      "peak_tilt_deg": 54.522064208984375
+    },
+    {
+      "case": 112,
+      "mode": "held_large",
+      "scenario": "pitch_moving10",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.52,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.12,
+          "on_s": 1.34,
+          "travel_m": 0.03403029590845108
+        },
+        {
+          "side": 0,
+          "off_s": 1.42,
+          "on_s": 1.68,
+          "travel_m": 0.0266764797270298
+        },
+        {
+          "side": 0,
+          "off_s": 1.84,
+          "on_s": 2.02,
+          "travel_m": 0.02056683972477913
+        },
+        {
+          "side": 1,
+          "off_s": 0.58,
+          "on_s": 1.22,
+          "travel_m": 0.029186926782131195
+        }
+      ],
+      "discounted_return": -3.0282828045429833,
+      "peak_tilt_deg": 56.98201370239258
+    },
+    {
+      "case": 113,
+      "mode": "held_large",
+      "scenario": "pitch_moving10",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.58,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.9400000000000001,
+          "on_s": 1.06,
+          "travel_m": 0.018136920407414436
+        },
+        {
+          "side": 0,
+          "off_s": 1.12,
+          "on_s": 1.26,
+          "travel_m": 0.036384813487529755
+        },
+        {
+          "side": 0,
+          "off_s": 1.3800000000000001,
+          "on_s": 1.5,
+          "travel_m": 0.04205441474914551
+        },
+        {
+          "side": 0,
+          "off_s": 1.6,
+          "on_s": 1.8,
+          "travel_m": 0.05762440711259842
+        },
+        {
+          "side": 0,
+          "off_s": 1.92,
+          "on_s": 2.2600000000000002,
+          "travel_m": 0.027088752016425133
+        },
+        {
+          "side": 1,
+          "off_s": 0.5,
+          "on_s": 0.58,
+          "travel_m": 0.021571028977632523
+        },
+        {
+          "side": 1,
+          "off_s": 0.64,
+          "on_s": 0.92,
+          "travel_m": 0.03989196568727493
+        },
+        {
+          "side": 1,
+          "off_s": 1.08,
+          "on_s": 1.16,
+          "travel_m": 0.015513895079493523
+        },
+        {
+          "side": 1,
+          "off_s": 1.76,
+          "on_s": 1.96,
+          "travel_m": 0.027099374681711197
+        },
+        {
+          "side": 1,
+          "off_s": 2.4,
+          "on_s": 2.56,
+          "travel_m": 0.019937651231884956
+        }
+      ],
+      "discounted_return": -2.7999342821229942,
+      "peak_tilt_deg": 56.368621826171875
+    },
+    {
+      "case": 114,
+      "mode": "held_large",
+      "scenario": "pitch_moving20",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.36,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.12,
+          "on_s": 1.18,
+          "travel_m": 0.015581591986119747
+        },
+        {
+          "side": 0,
+          "off_s": 1.28,
+          "on_s": 1.54,
+          "travel_m": 0.05005683749914169
+        },
+        {
+          "side": 0,
+          "off_s": 1.6,
+          "on_s": 1.74,
+          "travel_m": 0.033943504095077515
+        },
+        {
+          "side": 0,
+          "off_s": 1.76,
+          "on_s": 1.9000000000000001,
+          "travel_m": 0.049986422061920166
+        },
+        {
+          "side": 0,
+          "off_s": 2.0,
+          "on_s": 2.36,
+          "travel_m": 0.04980205371975899
+        },
+        {
+          "side": 0,
+          "off_s": 2.4,
+          "on_s": 2.54,
+          "travel_m": 0.0330696776509285
+        },
+        {
+          "side": 1,
+          "off_s": 0.8,
+          "on_s": 0.92,
+          "travel_m": 0.01678086444735527
+        },
+        {
+          "side": 1,
+          "off_s": 0.96,
+          "on_s": 1.06,
+          "travel_m": 0.054842688143253326
+        },
+        {
+          "side": 1,
+          "off_s": 1.12,
+          "on_s": 1.24,
+          "travel_m": 0.03189968690276146
+        },
+        {
+          "side": 1,
+          "off_s": 1.92,
+          "on_s": 2.1,
+          "travel_m": 0.023830831050872803
+        }
+      ],
+      "discounted_return": -4.187393462598488,
+      "peak_tilt_deg": 55.992557525634766
+    },
+    {
+      "case": 115,
+      "mode": "held_large",
+      "scenario": "pitch_moving20",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.32,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.78,
+          "on_s": 1.84,
+          "travel_m": 0.09903786331415176
+        },
+        {
+          "side": 1,
+          "off_s": 1.76,
+          "on_s": 2.06,
+          "travel_m": 0.03735881298780441
+        },
+        {
+          "side": 1,
+          "off_s": 2.1,
+          "on_s": 2.34,
+          "travel_m": 0.06287644058465958
+        }
+      ],
+      "discounted_return": -4.144330014616264,
+      "peak_tilt_deg": 56.08783721923828
+    },
+    {
+      "case": 116,
+      "mode": "held_large",
+      "scenario": "pitch_moving20",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.32,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.5,
+          "on_s": 0.56,
+          "travel_m": 0.01903867907822132
+        },
+        {
+          "side": 0,
+          "off_s": 0.96,
+          "on_s": 1.1400000000000001,
+          "travel_m": 0.05407947674393654
+        },
+        {
+          "side": 0,
+          "off_s": 1.3,
+          "on_s": 1.58,
+          "travel_m": 0.03382129967212677
+        },
+        {
+          "side": 0,
+          "off_s": 2.5,
+          "on_s": 2.56,
+          "travel_m": 0.023206427693367004
+        },
+        {
+          "side": 1,
+          "off_s": 1.12,
+          "on_s": 1.3,
+          "travel_m": 0.07021863758563995
+        },
+        {
+          "side": 1,
+          "off_s": 1.76,
+          "on_s": 1.94,
+          "travel_m": 0.044914860278367996
+        },
+        {
+          "side": 1,
+          "off_s": 2.16,
+          "on_s": 2.56,
+          "travel_m": 0.05240681394934654
+        }
+      ],
+      "discounted_return": -4.184421582213499,
+      "peak_tilt_deg": 57.3638801574707
+    },
+    {
+      "case": 117,
+      "mode": "held_large",
+      "scenario": "roll_moving15",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 1.68,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.64,
+          "on_s": 0.8,
+          "travel_m": 0.03604911267757416
+        }
+      ],
+      "discounted_return": 2.2946845086532273,
+      "peak_tilt_deg": 57.873931884765625
+    },
+    {
+      "case": 118,
+      "mode": "held_large",
+      "scenario": "roll_moving15",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.8,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.8,
+          "on_s": 1.3800000000000001,
+          "travel_m": 0.06929881125688553
+        },
+        {
+          "side": 0,
+          "off_s": 1.92,
+          "on_s": 2.44,
+          "travel_m": 0.021184155717492104
+        },
+        {
+          "side": 1,
+          "off_s": 0.64,
+          "on_s": 1.36,
+          "travel_m": 0.1405598223209381
+        },
+        {
+          "side": 1,
+          "off_s": 1.44,
+          "on_s": 2.36,
+          "travel_m": 0.04358837381005287
+        }
+      ],
+      "discounted_return": -1.7165950180276282,
+      "peak_tilt_deg": 58.11986541748047
+    },
+    {
+      "case": 119,
+      "mode": "held_large",
+      "scenario": "roll_moving15",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.6,
+      "steps": [],
+      "discounted_return": -2.918245159019826,
+      "peak_tilt_deg": 57.49480056762695
+    },
+    {
+      "case": 120,
+      "mode": "walker_zero",
+      "scenario": "quiet",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.2,
+          "on_s": 1.28,
+          "travel_m": 0.01891382969915867
+        },
+        {
+          "side": 0,
+          "off_s": 1.86,
+          "on_s": 2.06,
+          "travel_m": 0.02980690635740757
+        },
+        {
+          "side": 0,
+          "off_s": 2.2800000000000002,
+          "on_s": 2.46,
+          "travel_m": 0.03865651786327362
+        },
+        {
+          "side": 0,
+          "off_s": 2.66,
+          "on_s": 2.84,
+          "travel_m": 0.03435427322983742
+        },
+        {
+          "side": 0,
+          "off_s": 3.02,
+          "on_s": 3.22,
+          "travel_m": 0.039775148034095764
+        },
+        {
+          "side": 0,
+          "off_s": 3.42,
+          "on_s": 3.62,
+          "travel_m": 0.03275633603334427
+        },
+        {
+          "side": 0,
+          "off_s": 3.8000000000000003,
+          "on_s": 4.0,
+          "travel_m": 0.03531503677368164
+        },
+        {
+          "side": 0,
+          "off_s": 4.2,
+          "on_s": 4.4,
+          "travel_m": 0.03543761000037193
+        },
+        {
+          "side": 0,
+          "off_s": 4.58,
+          "on_s": 4.8,
+          "travel_m": 0.034651607275009155
+        },
+        {
+          "side": 0,
+          "off_s": 4.98,
+          "on_s": 5.18,
+          "travel_m": 0.03388110548257828
+        },
+        {
+          "side": 0,
+          "off_s": 5.38,
+          "on_s": 5.58,
+          "travel_m": 0.0342453233897686
+        },
+        {
+          "side": 0,
+          "off_s": 5.78,
+          "on_s": 5.98,
+          "travel_m": 0.0352993942797184
+        },
+        {
+          "side": 0,
+          "off_s": 6.18,
+          "on_s": 6.38,
+          "travel_m": 0.034321967512369156
+        },
+        {
+          "side": 0,
+          "off_s": 6.58,
+          "on_s": 6.78,
+          "travel_m": 0.033880677074193954
+        },
+        {
+          "side": 0,
+          "off_s": 6.98,
+          "on_s": 7.18,
+          "travel_m": 0.03434646874666214
+        },
+        {
+          "side": 0,
+          "off_s": 7.38,
+          "on_s": 7.58,
+          "travel_m": 0.034107107669115067
+        },
+        {
+          "side": 0,
+          "off_s": 7.78,
+          "on_s": 7.98,
+          "travel_m": 0.03326180577278137
+        },
+        {
+          "side": 1,
+          "off_s": 1.62,
+          "on_s": 1.84,
+          "travel_m": 0.022223034873604774
+        },
+        {
+          "side": 1,
+          "off_s": 2.06,
+          "on_s": 2.2600000000000002,
+          "travel_m": 0.04716348648071289
+        },
+        {
+          "side": 1,
+          "off_s": 2.48,
+          "on_s": 2.64,
+          "travel_m": 0.03424757719039917
+        },
+        {
+          "side": 1,
+          "off_s": 2.84,
+          "on_s": 3.02,
+          "travel_m": 0.038753293454647064
+        },
+        {
+          "side": 1,
+          "off_s": 3.22,
+          "on_s": 3.42,
+          "travel_m": 0.03930440917611122
+        },
+        {
+          "side": 1,
+          "off_s": 3.62,
+          "on_s": 3.8000000000000003,
+          "travel_m": 0.037545736879110336
+        },
+        {
+          "side": 1,
+          "off_s": 4.0,
+          "on_s": 4.2,
+          "travel_m": 0.03796292096376419
+        },
+        {
+          "side": 1,
+          "off_s": 4.4,
+          "on_s": 4.58,
+          "travel_m": 0.03880687803030014
+        },
+        {
+          "side": 1,
+          "off_s": 4.8,
+          "on_s": 4.98,
+          "travel_m": 0.037984251976013184
+        },
+        {
+          "side": 1,
+          "off_s": 5.2,
+          "on_s": 5.38,
+          "travel_m": 0.03741804137825966
+        },
+        {
+          "side": 1,
+          "off_s": 5.6000000000000005,
+          "on_s": 5.78,
+          "travel_m": 0.03851422667503357
+        },
+        {
+          "side": 1,
+          "off_s": 5.98,
+          "on_s": 6.18,
+          "travel_m": 0.041852377355098724
+        },
+        {
+          "side": 1,
+          "off_s": 6.38,
+          "on_s": 6.58,
+          "travel_m": 0.03975461423397064
+        },
+        {
+          "side": 1,
+          "off_s": 6.78,
+          "on_s": 6.98,
+          "travel_m": 0.039916545152664185
+        },
+        {
+          "side": 1,
+          "off_s": 7.18,
+          "on_s": 7.38,
+          "travel_m": 0.04108380898833275
+        },
+        {
+          "side": 1,
+          "off_s": 7.58,
+          "on_s": 7.78,
+          "travel_m": 0.040598928928375244
+        }
+      ],
+      "discounted_return": 13.926415169400718,
+      "peak_tilt_deg": 6.584425449371338
+    },
+    {
+      "case": 121,
+      "mode": "walker_zero",
+      "scenario": "quiet",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.78,
+          "on_s": 1.98,
+          "travel_m": 0.03700343891978264
+        },
+        {
+          "side": 0,
+          "off_s": 2.18,
+          "on_s": 2.38,
+          "travel_m": 0.03692479059100151
+        },
+        {
+          "side": 0,
+          "off_s": 2.62,
+          "on_s": 2.82,
+          "travel_m": 0.0365290492773056
+        },
+        {
+          "side": 0,
+          "off_s": 3.02,
+          "on_s": 3.22,
+          "travel_m": 0.035247959196567535
+        },
+        {
+          "side": 0,
+          "off_s": 3.42,
+          "on_s": 3.62,
+          "travel_m": 0.03546389192342758
+        },
+        {
+          "side": 0,
+          "off_s": 3.8000000000000003,
+          "on_s": 4.0,
+          "travel_m": 0.034901537001132965
+        },
+        {
+          "side": 0,
+          "off_s": 4.2,
+          "on_s": 4.4,
+          "travel_m": 0.035777535289525986
+        },
+        {
+          "side": 0,
+          "off_s": 4.6000000000000005,
+          "on_s": 4.8,
+          "travel_m": 0.034496188163757324
+        },
+        {
+          "side": 0,
+          "off_s": 5.0,
+          "on_s": 5.2,
+          "travel_m": 0.033892177045345306
+        },
+        {
+          "side": 0,
+          "off_s": 5.4,
+          "on_s": 5.6000000000000005,
+          "travel_m": 0.033764857798814774
+        },
+        {
+          "side": 0,
+          "off_s": 5.8,
+          "on_s": 6.0,
+          "travel_m": 0.03402917459607124
+        },
+        {
+          "side": 0,
+          "off_s": 6.2,
+          "on_s": 6.4,
+          "travel_m": 0.03322220593690872
+        },
+        {
+          "side": 0,
+          "off_s": 6.6000000000000005,
+          "on_s": 6.8,
+          "travel_m": 0.03296500816941261
+        },
+        {
+          "side": 0,
+          "off_s": 7.0,
+          "on_s": 7.2,
+          "travel_m": 0.03356551006436348
+        },
+        {
+          "side": 0,
+          "off_s": 7.4,
+          "on_s": 7.6000000000000005,
+          "travel_m": 0.033319808542728424
+        },
+        {
+          "side": 1,
+          "off_s": 2.0,
+          "on_s": 2.18,
+          "travel_m": 0.053435999900102615
+        },
+        {
+          "side": 1,
+          "off_s": 2.4,
+          "on_s": 2.62,
+          "travel_m": 0.0417882576584816
+        },
+        {
+          "side": 1,
+          "off_s": 2.82,
+          "on_s": 3.02,
+          "travel_m": 0.043348848819732666
+        },
+        {
+          "side": 1,
+          "off_s": 3.24,
+          "on_s": 3.42,
+          "travel_m": 0.03713895380496979
+        },
+        {
+          "side": 1,
+          "off_s": 3.62,
+          "on_s": 3.8000000000000003,
+          "travel_m": 0.037581317126750946
+        },
+        {
+          "side": 1,
+          "off_s": 4.0,
+          "on_s": 4.2,
+          "travel_m": 0.03927115350961685
+        },
+        {
+          "side": 1,
+          "off_s": 4.4,
+          "on_s": 4.6000000000000005,
+          "travel_m": 0.04106094688177109
+        },
+        {
+          "side": 1,
+          "off_s": 4.8,
+          "on_s": 5.0,
+          "travel_m": 0.041664008051157
+        },
+        {
+          "side": 1,
+          "off_s": 5.2,
+          "on_s": 5.4,
+          "travel_m": 0.03918028622865677
+        },
+        {
+          "side": 1,
+          "off_s": 5.6000000000000005,
+          "on_s": 5.8,
+          "travel_m": 0.03956779092550278
+        },
+        {
+          "side": 1,
+          "off_s": 6.0,
+          "on_s": 6.2,
+          "travel_m": 0.04096098616719246
+        },
+        {
+          "side": 1,
+          "off_s": 6.42,
+          "on_s": 6.6000000000000005,
+          "travel_m": 0.03742299973964691
+        },
+        {
+          "side": 1,
+          "off_s": 6.82,
+          "on_s": 7.0,
+          "travel_m": 0.038089264184236526
+        },
+        {
+          "side": 1,
+          "off_s": 7.2,
+          "on_s": 7.4,
+          "travel_m": 0.039939455687999725
+        },
+        {
+          "side": 1,
+          "off_s": 7.62,
+          "on_s": 7.8,
+          "travel_m": 0.03892289474606514
+        }
+      ],
+      "discounted_return": 13.931085233447181,
+      "peak_tilt_deg": 6.380977630615234
+    },
+    {
+      "case": 122,
+      "mode": "walker_zero",
+      "scenario": "quiet",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.82,
+          "on_s": 2.02,
+          "travel_m": 0.027628179639577866
+        },
+        {
+          "side": 0,
+          "off_s": 2.24,
+          "on_s": 2.44,
+          "travel_m": 0.038166873157024384
+        },
+        {
+          "side": 0,
+          "off_s": 2.66,
+          "on_s": 2.86,
+          "travel_m": 0.03625110909342766
+        },
+        {
+          "side": 0,
+          "off_s": 3.06,
+          "on_s": 3.2600000000000002,
+          "travel_m": 0.03673242777585983
+        },
+        {
+          "side": 0,
+          "off_s": 3.44,
+          "on_s": 3.64,
+          "travel_m": 0.03605610877275467
+        },
+        {
+          "side": 0,
+          "off_s": 3.8200000000000003,
+          "on_s": 4.0200000000000005,
+          "travel_m": 0.035210687667131424
+        },
+        {
+          "side": 0,
+          "off_s": 4.22,
+          "on_s": 4.42,
+          "travel_m": 0.03564416989684105
+        },
+        {
+          "side": 0,
+          "off_s": 4.6000000000000005,
+          "on_s": 4.8,
+          "travel_m": 0.03452293947339058
+        },
+        {
+          "side": 0,
+          "off_s": 5.0,
+          "on_s": 5.2,
+          "travel_m": 0.03616190701723099
+        },
+        {
+          "side": 0,
+          "off_s": 5.4,
+          "on_s": 5.6000000000000005,
+          "travel_m": 0.034833744168281555
+        },
+        {
+          "side": 0,
+          "off_s": 5.8,
+          "on_s": 6.0,
+          "travel_m": 0.03463733568787575
+        },
+        {
+          "side": 0,
+          "off_s": 6.2,
+          "on_s": 6.4,
+          "travel_m": 0.03397456184029579
+        },
+        {
+          "side": 0,
+          "off_s": 6.62,
+          "on_s": 6.8,
+          "travel_m": 0.033204104751348495
+        },
+        {
+          "side": 0,
+          "off_s": 7.0200000000000005,
+          "on_s": 7.2,
+          "travel_m": 0.03291869908571243
+        },
+        {
+          "side": 0,
+          "off_s": 7.4,
+          "on_s": 7.6000000000000005,
+          "travel_m": 0.03495994582772255
+        },
+        {
+          "side": 0,
+          "off_s": 7.78,
+          "on_s": 7.98,
+          "travel_m": 0.034043628722429276
+        },
+        {
+          "side": 1,
+          "off_s": 2.02,
+          "on_s": 2.24,
+          "travel_m": 0.05182535946369171
+        },
+        {
+          "side": 1,
+          "off_s": 2.44,
+          "on_s": 2.66,
+          "travel_m": 0.043295830488204956
+        },
+        {
+          "side": 1,
+          "off_s": 2.86,
+          "on_s": 3.06,
+          "travel_m": 0.040436383336782455
+        },
+        {
+          "side": 1,
+          "off_s": 3.2600000000000002,
+          "on_s": 3.44,
+          "travel_m": 0.03548814728856087
+        },
+        {
+          "side": 1,
+          "off_s": 3.64,
+          "on_s": 3.8200000000000003,
+          "travel_m": 0.04061450436711311
+        },
+        {
+          "side": 1,
+          "off_s": 4.0200000000000005,
+          "on_s": 4.2,
+          "travel_m": 0.037687964737415314
+        },
+        {
+          "side": 1,
+          "off_s": 4.42,
+          "on_s": 4.6000000000000005,
+          "travel_m": 0.03726344555616379
+        },
+        {
+          "side": 1,
+          "off_s": 4.82,
+          "on_s": 5.0,
+          "travel_m": 0.03816349431872368
+        },
+        {
+          "side": 1,
+          "off_s": 5.22,
+          "on_s": 5.4,
+          "travel_m": 0.03962205722928047
+        },
+        {
+          "side": 1,
+          "off_s": 5.6000000000000005,
+          "on_s": 5.8,
+          "travel_m": 0.04079389572143555
+        },
+        {
+          "side": 1,
+          "off_s": 6.0,
+          "on_s": 6.2,
+          "travel_m": 0.04096386209130287
+        },
+        {
+          "side": 1,
+          "off_s": 6.4,
+          "on_s": 6.6000000000000005,
+          "travel_m": 0.041371606290340424
+        },
+        {
+          "side": 1,
+          "off_s": 6.82,
+          "on_s": 7.0,
+          "travel_m": 0.03776746988296509
+        },
+        {
+          "side": 1,
+          "off_s": 7.22,
+          "on_s": 7.38,
+          "travel_m": 0.034267738461494446
+        },
+        {
+          "side": 1,
+          "off_s": 7.6000000000000005,
+          "on_s": 7.78,
+          "travel_m": 0.03888968005776405
+        }
+      ],
+      "discounted_return": 13.969747819498883,
+      "peak_tilt_deg": 6.511322021484375
+    },
+    {
+      "case": 123,
+      "mode": "walker_zero",
+      "scenario": "pitch_push8",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.8,
+          "on_s": 0.98,
+          "travel_m": 0.10544323921203613
+        },
+        {
+          "side": 0,
+          "off_s": 1.22,
+          "on_s": 1.3800000000000001,
+          "travel_m": 0.025608602911233902
+        },
+        {
+          "side": 0,
+          "off_s": 2.04,
+          "on_s": 2.2600000000000002,
+          "travel_m": 0.04325190931558609
+        },
+        {
+          "side": 0,
+          "off_s": 2.48,
+          "on_s": 2.66,
+          "travel_m": 0.03651215881109238
+        },
+        {
+          "side": 0,
+          "off_s": 2.84,
+          "on_s": 3.04,
+          "travel_m": 0.03712356463074684
+        },
+        {
+          "side": 0,
+          "off_s": 3.22,
+          "on_s": 3.42,
+          "travel_m": 0.03764748200774193
+        },
+        {
+          "side": 0,
+          "off_s": 3.62,
+          "on_s": 3.8200000000000003,
+          "travel_m": 0.03319452330470085
+        },
+        {
+          "side": 0,
+          "off_s": 4.0,
+          "on_s": 4.2,
+          "travel_m": 0.03432613983750343
+        },
+        {
+          "side": 0,
+          "off_s": 4.4,
+          "on_s": 4.6000000000000005,
+          "travel_m": 0.035067684948444366
+        },
+        {
+          "side": 0,
+          "off_s": 4.8,
+          "on_s": 5.0,
+          "travel_m": 0.034922245889902115
+        },
+        {
+          "side": 0,
+          "off_s": 5.2,
+          "on_s": 5.4,
+          "travel_m": 0.034557044506073
+        },
+        {
+          "side": 0,
+          "off_s": 5.6000000000000005,
+          "on_s": 5.8,
+          "travel_m": 0.033096205443143845
+        },
+        {
+          "side": 0,
+          "off_s": 6.0,
+          "on_s": 6.2,
+          "travel_m": 0.03439680486917496
+        },
+        {
+          "side": 0,
+          "off_s": 6.4,
+          "on_s": 6.6000000000000005,
+          "travel_m": 0.03409462049603462
+        },
+        {
+          "side": 0,
+          "off_s": 6.8,
+          "on_s": 7.0,
+          "travel_m": 0.03398241847753525
+        },
+        {
+          "side": 0,
+          "off_s": 7.2,
+          "on_s": 7.4,
+          "travel_m": 0.03317157179117203
+        },
+        {
+          "side": 0,
+          "off_s": 7.6000000000000005,
+          "on_s": 7.8,
+          "travel_m": 0.032062940299510956
+        },
+        {
+          "side": 1,
+          "off_s": 0.98,
+          "on_s": 1.2,
+          "travel_m": 0.07892805337905884
+        },
+        {
+          "side": 1,
+          "off_s": 1.84,
+          "on_s": 2.04,
+          "travel_m": 0.055633027106523514
+        },
+        {
+          "side": 1,
+          "off_s": 2.2600000000000002,
+          "on_s": 2.46,
+          "travel_m": 0.0445990115404129
+        },
+        {
+          "side": 1,
+          "off_s": 2.66,
+          "on_s": 2.84,
+          "travel_m": 0.0362439900636673
+        },
+        {
+          "side": 1,
+          "off_s": 3.04,
+          "on_s": 3.22,
+          "travel_m": 0.03948547691106796
+        },
+        {
+          "side": 1,
+          "off_s": 3.42,
+          "on_s": 3.62,
+          "travel_m": 0.039901215583086014
+        },
+        {
+          "side": 1,
+          "off_s": 3.8200000000000003,
+          "on_s": 4.0,
+          "travel_m": 0.03757229447364807
+        },
+        {
+          "side": 1,
+          "off_s": 4.22,
+          "on_s": 4.4,
+          "travel_m": 0.03646447882056236
+        },
+        {
+          "side": 1,
+          "off_s": 4.6000000000000005,
+          "on_s": 4.8,
+          "travel_m": 0.04056992754340172
+        },
+        {
+          "side": 1,
+          "off_s": 5.0,
+          "on_s": 5.2,
+          "travel_m": 0.042006198316812515
+        },
+        {
+          "side": 1,
+          "off_s": 5.4,
+          "on_s": 5.6000000000000005,
+          "travel_m": 0.04087601602077484
+        },
+        {
+          "side": 1,
+          "off_s": 5.82,
+          "on_s": 6.0,
+          "travel_m": 0.03662652522325516
+        },
+        {
+          "side": 1,
+          "off_s": 6.2,
+          "on_s": 6.4,
+          "travel_m": 0.03971145674586296
+        },
+        {
+          "side": 1,
+          "off_s": 6.6000000000000005,
+          "on_s": 6.8,
+          "travel_m": 0.04017812758684158
+        },
+        {
+          "side": 1,
+          "off_s": 7.0,
+          "on_s": 7.2,
+          "travel_m": 0.042580779641866684
+        },
+        {
+          "side": 1,
+          "off_s": 7.42,
+          "on_s": 7.6000000000000005,
+          "travel_m": 0.03717771917581558
+        },
+        {
+          "side": 1,
+          "off_s": 7.8,
+          "on_s": 7.98,
+          "travel_m": 0.035190094262361526
+        }
+      ],
+      "discounted_return": 12.834073421082996,
+      "peak_tilt_deg": 6.579748153686523
+    },
+    {
+      "case": 124,
+      "mode": "walker_zero",
+      "scenario": "pitch_push8",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.84,
+          "on_s": 1.1,
+          "travel_m": 0.03003603033721447
+        },
+        {
+          "side": 0,
+          "off_s": 1.3,
+          "on_s": 1.52,
+          "travel_m": 0.0576787106692791
+        },
+        {
+          "side": 0,
+          "off_s": 1.7,
+          "on_s": 1.8800000000000001,
+          "travel_m": 0.03388228639960289
+        },
+        {
+          "side": 0,
+          "off_s": 2.08,
+          "on_s": 2.2600000000000002,
+          "travel_m": 0.03663984313607216
+        },
+        {
+          "side": 0,
+          "off_s": 2.48,
+          "on_s": 2.68,
+          "travel_m": 0.03323778137564659
+        },
+        {
+          "side": 0,
+          "off_s": 2.88,
+          "on_s": 3.08,
+          "travel_m": 0.03640314191579819
+        },
+        {
+          "side": 0,
+          "off_s": 3.2800000000000002,
+          "on_s": 3.48,
+          "travel_m": 0.033505335450172424
+        },
+        {
+          "side": 0,
+          "off_s": 3.68,
+          "on_s": 3.88,
+          "travel_m": 0.03522254526615143
+        },
+        {
+          "side": 0,
+          "off_s": 4.08,
+          "on_s": 4.28,
+          "travel_m": 0.033261265605688095
+        },
+        {
+          "side": 0,
+          "off_s": 4.48,
+          "on_s": 4.68,
+          "travel_m": 0.03457576408982277
+        },
+        {
+          "side": 0,
+          "off_s": 4.88,
+          "on_s": 5.08,
+          "travel_m": 0.032988205552101135
+        },
+        {
+          "side": 0,
+          "off_s": 5.28,
+          "on_s": 5.48,
+          "travel_m": 0.03521869331598282
+        },
+        {
+          "side": 0,
+          "off_s": 5.68,
+          "on_s": 5.88,
+          "travel_m": 0.034347210079431534
+        },
+        {
+          "side": 0,
+          "off_s": 6.08,
+          "on_s": 6.28,
+          "travel_m": 0.03431336581707001
+        },
+        {
+          "side": 0,
+          "off_s": 6.48,
+          "on_s": 6.68,
+          "travel_m": 0.034154314547777176
+        },
+        {
+          "side": 0,
+          "off_s": 6.88,
+          "on_s": 7.08,
+          "travel_m": 0.03382429480552673
+        },
+        {
+          "side": 0,
+          "off_s": 7.28,
+          "on_s": 7.48,
+          "travel_m": 0.033972952514886856
+        },
+        {
+          "side": 0,
+          "off_s": 7.68,
+          "on_s": 7.88,
+          "travel_m": 0.033142346888780594
+        },
+        {
+          "side": 1,
+          "off_s": 0.7000000000000001,
+          "on_s": 0.84,
+          "travel_m": 0.05601471662521362
+        },
+        {
+          "side": 1,
+          "off_s": 1.1,
+          "on_s": 1.3,
+          "travel_m": 0.05653548985719681
+        },
+        {
+          "side": 1,
+          "off_s": 1.52,
+          "on_s": 1.7,
+          "travel_m": 0.04503735899925232
+        },
+        {
+          "side": 1,
+          "off_s": 1.8800000000000001,
+          "on_s": 2.06,
+          "travel_m": 0.03965960815548897
+        },
+        {
+          "side": 1,
+          "off_s": 2.2800000000000002,
+          "on_s": 2.48,
+          "travel_m": 0.03883664309978485
+        },
+        {
+          "side": 1,
+          "off_s": 2.7,
+          "on_s": 2.88,
+          "travel_m": 0.03859196975827217
+        },
+        {
+          "side": 1,
+          "off_s": 3.08,
+          "on_s": 3.2800000000000002,
+          "travel_m": 0.0413648746907711
+        },
+        {
+          "side": 1,
+          "off_s": 3.5,
+          "on_s": 3.68,
+          "travel_m": 0.03826043754816055
+        },
+        {
+          "side": 1,
+          "off_s": 3.88,
+          "on_s": 4.08,
+          "travel_m": 0.04083843529224396
+        },
+        {
+          "side": 1,
+          "off_s": 4.3,
+          "on_s": 4.48,
+          "travel_m": 0.03794058784842491
+        },
+        {
+          "side": 1,
+          "off_s": 4.68,
+          "on_s": 4.88,
+          "travel_m": 0.041312672197818756
+        },
+        {
+          "side": 1,
+          "off_s": 5.1000000000000005,
+          "on_s": 5.28,
+          "travel_m": 0.03638849034905434
+        },
+        {
+          "side": 1,
+          "off_s": 5.48,
+          "on_s": 5.68,
+          "travel_m": 0.03979308903217316
+        },
+        {
+          "side": 1,
+          "off_s": 5.88,
+          "on_s": 6.0600000000000005,
+          "travel_m": 0.03866519406437874
+        },
+        {
+          "side": 1,
+          "off_s": 6.28,
+          "on_s": 6.46,
+          "travel_m": 0.03882356733083725
+        },
+        {
+          "side": 1,
+          "off_s": 6.68,
+          "on_s": 6.88,
+          "travel_m": 0.03996356576681137
+        },
+        {
+          "side": 1,
+          "off_s": 7.08,
+          "on_s": 7.28,
+          "travel_m": 0.04171561822295189
+        },
+        {
+          "side": 1,
+          "off_s": 7.48,
+          "on_s": 7.68,
+          "travel_m": 0.04111212491989136
+        }
+      ],
+      "discounted_return": 12.72762507807105,
+      "peak_tilt_deg": 6.2225823402404785
+    },
+    {
+      "case": 125,
+      "mode": "walker_zero",
+      "scenario": "pitch_push8",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.8,
+          "on_s": 0.98,
+          "travel_m": 0.10614696145057678
+        },
+        {
+          "side": 0,
+          "off_s": 1.2,
+          "on_s": 1.36,
+          "travel_m": 0.026682982221245766
+        },
+        {
+          "side": 0,
+          "off_s": 2.02,
+          "on_s": 2.24,
+          "travel_m": 0.04425850138068199
+        },
+        {
+          "side": 0,
+          "off_s": 2.46,
+          "on_s": 2.66,
+          "travel_m": 0.03735429421067238
+        },
+        {
+          "side": 0,
+          "off_s": 2.86,
+          "on_s": 3.04,
+          "travel_m": 0.036055151373147964
+        },
+        {
+          "side": 0,
+          "off_s": 3.24,
+          "on_s": 3.42,
+          "travel_m": 0.03547258302569389
+        },
+        {
+          "side": 0,
+          "off_s": 3.62,
+          "on_s": 3.8000000000000003,
+          "travel_m": 0.034209102392196655
+        },
+        {
+          "side": 0,
+          "off_s": 4.0,
+          "on_s": 4.2,
+          "travel_m": 0.035340987145900726
+        },
+        {
+          "side": 0,
+          "off_s": 4.4,
+          "on_s": 4.6000000000000005,
+          "travel_m": 0.0341629721224308
+        },
+        {
+          "side": 0,
+          "off_s": 4.78,
+          "on_s": 4.98,
+          "travel_m": 0.0344875305891037
+        },
+        {
+          "side": 0,
+          "off_s": 5.18,
+          "on_s": 5.38,
+          "travel_m": 0.033235933631658554
+        },
+        {
+          "side": 0,
+          "off_s": 5.58,
+          "on_s": 5.78,
+          "travel_m": 0.035325806587934494
+        },
+        {
+          "side": 0,
+          "off_s": 5.98,
+          "on_s": 6.18,
+          "travel_m": 0.033130984753370285
+        },
+        {
+          "side": 0,
+          "off_s": 6.38,
+          "on_s": 6.58,
+          "travel_m": 0.03444523736834526
+        },
+        {
+          "side": 0,
+          "off_s": 6.78,
+          "on_s": 6.98,
+          "travel_m": 0.03390846773982048
+        },
+        {
+          "side": 0,
+          "off_s": 7.18,
+          "on_s": 7.38,
+          "travel_m": 0.03406656160950661
+        },
+        {
+          "side": 0,
+          "off_s": 7.58,
+          "on_s": 7.78,
+          "travel_m": 0.03392000496387482
+        },
+        {
+          "side": 1,
+          "off_s": 0.96,
+          "on_s": 1.18,
+          "travel_m": 0.08165597170591354
+        },
+        {
+          "side": 1,
+          "off_s": 1.82,
+          "on_s": 2.02,
+          "travel_m": 0.05585835129022598
+        },
+        {
+          "side": 1,
+          "off_s": 2.2600000000000002,
+          "on_s": 2.46,
+          "travel_m": 0.045525409281253815
+        },
+        {
+          "side": 1,
+          "off_s": 2.66,
+          "on_s": 2.86,
+          "travel_m": 0.038323838263750076
+        },
+        {
+          "side": 1,
+          "off_s": 3.06,
+          "on_s": 3.22,
+          "travel_m": 0.036293014883995056
+        },
+        {
+          "side": 1,
+          "off_s": 3.42,
+          "on_s": 3.6,
+          "travel_m": 0.03753778710961342
+        },
+        {
+          "side": 1,
+          "off_s": 3.8000000000000003,
+          "on_s": 4.0,
+          "travel_m": 0.037622272968292236
+        },
+        {
+          "side": 1,
+          "off_s": 4.2,
+          "on_s": 4.38,
+          "travel_m": 0.03839689493179321
+        },
+        {
+          "side": 1,
+          "off_s": 4.6000000000000005,
+          "on_s": 4.78,
+          "travel_m": 0.03775927051901817
+        },
+        {
+          "side": 1,
+          "off_s": 5.0,
+          "on_s": 5.18,
+          "travel_m": 0.038238219916820526
+        },
+        {
+          "side": 1,
+          "off_s": 5.4,
+          "on_s": 5.58,
+          "travel_m": 0.037661775946617126
+        },
+        {
+          "side": 1,
+          "off_s": 5.78,
+          "on_s": 5.98,
+          "travel_m": 0.04214102029800415
+        },
+        {
+          "side": 1,
+          "off_s": 6.2,
+          "on_s": 6.38,
+          "travel_m": 0.037171728909015656
+        },
+        {
+          "side": 1,
+          "off_s": 6.58,
+          "on_s": 6.78,
+          "travel_m": 0.038940634578466415
+        },
+        {
+          "side": 1,
+          "off_s": 6.98,
+          "on_s": 7.18,
+          "travel_m": 0.04056624695658684
+        },
+        {
+          "side": 1,
+          "off_s": 7.38,
+          "on_s": 7.58,
+          "travel_m": 0.04038120061159134
+        },
+        {
+          "side": 1,
+          "off_s": 7.78,
+          "on_s": 7.98,
+          "travel_m": 0.039187539368867874
+        }
+      ],
+      "discounted_return": 12.818385682858487,
+      "peak_tilt_deg": 6.417165279388428
+    },
+    {
+      "case": 126,
+      "mode": "walker_zero",
+      "scenario": "pitch_push16",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 2.18,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.74,
+          "on_s": 0.92,
+          "travel_m": 0.13766883313655853
+        },
+        {
+          "side": 0,
+          "off_s": 1.08,
+          "on_s": 1.22,
+          "travel_m": 0.0748291015625
+        },
+        {
+          "side": 0,
+          "off_s": 1.36,
+          "on_s": 1.48,
+          "travel_m": 0.13592176139354706
+        },
+        {
+          "side": 0,
+          "off_s": 1.56,
+          "on_s": 1.72,
+          "travel_m": 0.2028403878211975
+        },
+        {
+          "side": 0,
+          "off_s": 1.78,
+          "on_s": 1.96,
+          "travel_m": 0.2286335527896881
+        },
+        {
+          "side": 0,
+          "off_s": 2.02,
+          "on_s": 2.16,
+          "travel_m": 0.17062468826770782
+        },
+        {
+          "side": 1,
+          "off_s": 0.9,
+          "on_s": 1.1,
+          "travel_m": 0.12525314092636108
+        },
+        {
+          "side": 1,
+          "off_s": 1.22,
+          "on_s": 1.36,
+          "travel_m": 0.12423362582921982
+        },
+        {
+          "side": 1,
+          "off_s": 1.48,
+          "on_s": 1.6,
+          "travel_m": 0.13571088016033173
+        },
+        {
+          "side": 1,
+          "off_s": 1.72,
+          "on_s": 1.84,
+          "travel_m": 0.15837563574314117
+        },
+        {
+          "side": 1,
+          "off_s": 1.92,
+          "on_s": 2.06,
+          "travel_m": 0.13495762646198273
+        },
+        {
+          "side": 1,
+          "off_s": 2.16,
+          "on_s": 2.2600000000000002,
+          "travel_m": 0.08676127344369888
+        }
+      ],
+      "discounted_return": 4.716885495587319,
+      "peak_tilt_deg": 50.96154022216797
+    },
+    {
+      "case": 127,
+      "mode": "walker_zero",
+      "scenario": "pitch_push16",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.84,
+          "on_s": 1.04,
+          "travel_m": 0.13090404868125916
+        },
+        {
+          "side": 0,
+          "off_s": 1.16,
+          "on_s": 1.36,
+          "travel_m": 0.06019910052418709
+        },
+        {
+          "side": 0,
+          "off_s": 1.58,
+          "on_s": 1.78,
+          "travel_m": 0.03975849598646164
+        },
+        {
+          "side": 0,
+          "off_s": 2.0,
+          "on_s": 2.18,
+          "travel_m": 0.02870621532201767
+        },
+        {
+          "side": 0,
+          "off_s": 2.34,
+          "on_s": 2.54,
+          "travel_m": 0.03922262787818909
+        },
+        {
+          "side": 0,
+          "off_s": 2.72,
+          "on_s": 2.92,
+          "travel_m": 0.03372917324304581
+        },
+        {
+          "side": 0,
+          "off_s": 3.12,
+          "on_s": 3.3200000000000003,
+          "travel_m": 0.03527861833572388
+        },
+        {
+          "side": 0,
+          "off_s": 3.5,
+          "on_s": 3.7,
+          "travel_m": 0.03362326696515083
+        },
+        {
+          "side": 0,
+          "off_s": 3.9,
+          "on_s": 4.1,
+          "travel_m": 0.03458669036626816
+        },
+        {
+          "side": 0,
+          "off_s": 4.3,
+          "on_s": 4.5,
+          "travel_m": 0.035370875149965286
+        },
+        {
+          "side": 0,
+          "off_s": 4.7,
+          "on_s": 4.9,
+          "travel_m": 0.03403300419449806
+        },
+        {
+          "side": 0,
+          "off_s": 5.1000000000000005,
+          "on_s": 5.3,
+          "travel_m": 0.0340862013399601
+        },
+        {
+          "side": 0,
+          "off_s": 5.5,
+          "on_s": 5.7,
+          "travel_m": 0.03332538530230522
+        },
+        {
+          "side": 0,
+          "off_s": 5.9,
+          "on_s": 6.1000000000000005,
+          "travel_m": 0.03397561237215996
+        },
+        {
+          "side": 0,
+          "off_s": 6.3,
+          "on_s": 6.5,
+          "travel_m": 0.03400098904967308
+        },
+        {
+          "side": 0,
+          "off_s": 6.7,
+          "on_s": 6.9,
+          "travel_m": 0.034089501947164536
+        },
+        {
+          "side": 0,
+          "off_s": 7.1000000000000005,
+          "on_s": 7.3,
+          "travel_m": 0.033846914768218994
+        },
+        {
+          "side": 0,
+          "off_s": 7.5,
+          "on_s": 7.7,
+          "travel_m": 0.03347111865878105
+        },
+        {
+          "side": 1,
+          "off_s": 0.68,
+          "on_s": 0.84,
+          "travel_m": 0.1016513928771019
+        },
+        {
+          "side": 1,
+          "off_s": 1.04,
+          "on_s": 1.18,
+          "travel_m": 0.07032181322574615
+        },
+        {
+          "side": 1,
+          "off_s": 1.36,
+          "on_s": 1.58,
+          "travel_m": 0.04271343722939491
+        },
+        {
+          "side": 1,
+          "off_s": 1.78,
+          "on_s": 1.98,
+          "travel_m": 0.03635165095329285
+        },
+        {
+          "side": 1,
+          "off_s": 2.18,
+          "on_s": 2.34,
+          "travel_m": 0.034048594534397125
+        },
+        {
+          "side": 1,
+          "off_s": 2.54,
+          "on_s": 2.72,
+          "travel_m": 0.0339386872947216
+        },
+        {
+          "side": 1,
+          "off_s": 2.92,
+          "on_s": 3.1,
+          "travel_m": 0.03863419592380524
+        },
+        {
+          "side": 1,
+          "off_s": 3.3200000000000003,
+          "on_s": 3.5,
+          "travel_m": 0.036629658192396164
+        },
+        {
+          "side": 1,
+          "off_s": 3.72,
+          "on_s": 3.9,
+          "travel_m": 0.038080133497714996
+        },
+        {
+          "side": 1,
+          "off_s": 4.12,
+          "on_s": 4.3,
+          "travel_m": 0.03782089054584503
+        },
+        {
+          "side": 1,
+          "off_s": 4.5,
+          "on_s": 4.7,
+          "travel_m": 0.041916102170944214
+        },
+        {
+          "side": 1,
+          "off_s": 4.9,
+          "on_s": 5.1000000000000005,
+          "travel_m": 0.040057651698589325
+        },
+        {
+          "side": 1,
+          "off_s": 5.32,
+          "on_s": 5.5,
+          "travel_m": 0.0389249362051487
+        },
+        {
+          "side": 1,
+          "off_s": 5.72,
+          "on_s": 5.9,
+          "travel_m": 0.037716273218393326
+        },
+        {
+          "side": 1,
+          "off_s": 6.1000000000000005,
+          "on_s": 6.3,
+          "travel_m": 0.039871763437986374
+        },
+        {
+          "side": 1,
+          "off_s": 6.5,
+          "on_s": 6.7,
+          "travel_m": 0.04152662679553032
+        },
+        {
+          "side": 1,
+          "off_s": 6.9,
+          "on_s": 7.1000000000000005,
+          "travel_m": 0.03908121958374977
+        },
+        {
+          "side": 1,
+          "off_s": 7.3,
+          "on_s": 7.5,
+          "travel_m": 0.04018398001790047
+        },
+        {
+          "side": 1,
+          "off_s": 7.7,
+          "on_s": 7.9,
+          "travel_m": 0.04053804650902748
+        }
+      ],
+      "discounted_return": 12.086628900244808,
+      "peak_tilt_deg": 6.339761257171631
+    },
+    {
+      "case": 128,
+      "mode": "walker_zero",
+      "scenario": "pitch_push16",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 2.16,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.74,
+          "on_s": 0.92,
+          "travel_m": 0.13676273822784424
+        },
+        {
+          "side": 0,
+          "off_s": 1.08,
+          "on_s": 1.22,
+          "travel_m": 0.07641342282295227
+        },
+        {
+          "side": 0,
+          "off_s": 1.32,
+          "on_s": 1.48,
+          "travel_m": 0.14914506673812866
+        },
+        {
+          "side": 0,
+          "off_s": 1.56,
+          "on_s": 1.72,
+          "travel_m": 0.20641112327575684
+        },
+        {
+          "side": 0,
+          "off_s": 1.78,
+          "on_s": 1.94,
+          "travel_m": 0.2203710675239563
+        },
+        {
+          "side": 0,
+          "off_s": 2.0,
+          "on_s": 2.14,
+          "travel_m": 0.15989932417869568
+        },
+        {
+          "side": 1,
+          "off_s": 0.92,
+          "on_s": 1.1,
+          "travel_m": 0.12360375374555588
+        },
+        {
+          "side": 1,
+          "off_s": 1.22,
+          "on_s": 1.34,
+          "travel_m": 0.11938692629337311
+        },
+        {
+          "side": 1,
+          "off_s": 1.48,
+          "on_s": 1.6,
+          "travel_m": 0.13272137939929962
+        },
+        {
+          "side": 1,
+          "off_s": 1.72,
+          "on_s": 1.84,
+          "travel_m": 0.1604839265346527
+        },
+        {
+          "side": 1,
+          "off_s": 1.92,
+          "on_s": 2.06,
+          "travel_m": 0.13861699402332306
+        },
+        {
+          "side": 1,
+          "off_s": 2.1,
+          "on_s": 2.24,
+          "travel_m": 0.10306329280138016
+        }
+      ],
+      "discounted_return": 4.630863947582219,
+      "peak_tilt_deg": 53.13650894165039
+    },
+    {
+      "case": 129,
+      "mode": "walker_zero",
+      "scenario": "roll_push8",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.96,
+          "on_s": 1.08,
+          "travel_m": 0.04793218895792961
+        },
+        {
+          "side": 0,
+          "off_s": 1.7,
+          "on_s": 1.92,
+          "travel_m": 0.03391038626432419
+        },
+        {
+          "side": 0,
+          "off_s": 2.14,
+          "on_s": 2.34,
+          "travel_m": 0.03709105774760246
+        },
+        {
+          "side": 0,
+          "off_s": 2.56,
+          "on_s": 2.74,
+          "travel_m": 0.0336521752178669
+        },
+        {
+          "side": 0,
+          "off_s": 2.94,
+          "on_s": 3.14,
+          "travel_m": 0.03696863725781441
+        },
+        {
+          "side": 0,
+          "off_s": 3.3200000000000003,
+          "on_s": 3.52,
+          "travel_m": 0.03454270213842392
+        },
+        {
+          "side": 0,
+          "off_s": 3.72,
+          "on_s": 3.92,
+          "travel_m": 0.03691320866346359
+        },
+        {
+          "side": 0,
+          "off_s": 4.12,
+          "on_s": 4.32,
+          "travel_m": 0.03550915792584419
+        },
+        {
+          "side": 0,
+          "off_s": 4.5200000000000005,
+          "on_s": 4.72,
+          "travel_m": 0.03559715300798416
+        },
+        {
+          "side": 0,
+          "off_s": 4.9,
+          "on_s": 5.1000000000000005,
+          "travel_m": 0.03525377810001373
+        },
+        {
+          "side": 0,
+          "off_s": 5.3,
+          "on_s": 5.5,
+          "travel_m": 0.03425098955631256
+        },
+        {
+          "side": 0,
+          "off_s": 5.68,
+          "on_s": 5.88,
+          "travel_m": 0.03457249328494072
+        },
+        {
+          "side": 0,
+          "off_s": 6.08,
+          "on_s": 6.28,
+          "travel_m": 0.035960450768470764
+        },
+        {
+          "side": 0,
+          "off_s": 6.48,
+          "on_s": 6.68,
+          "travel_m": 0.035321932286024094
+        },
+        {
+          "side": 0,
+          "off_s": 6.86,
+          "on_s": 7.0600000000000005,
+          "travel_m": 0.034286756068468094
+        },
+        {
+          "side": 0,
+          "off_s": 7.26,
+          "on_s": 7.46,
+          "travel_m": 0.03488766402006149
+        },
+        {
+          "side": 0,
+          "off_s": 7.66,
+          "on_s": 7.86,
+          "travel_m": 0.03488948568701744
+        },
+        {
+          "side": 1,
+          "off_s": 1.1,
+          "on_s": 1.26,
+          "travel_m": 0.05654393509030342
+        },
+        {
+          "side": 1,
+          "off_s": 1.48,
+          "on_s": 1.7,
+          "travel_m": 0.05422550067305565
+        },
+        {
+          "side": 1,
+          "off_s": 1.92,
+          "on_s": 2.14,
+          "travel_m": 0.04615741968154907
+        },
+        {
+          "side": 1,
+          "off_s": 2.34,
+          "on_s": 2.54,
+          "travel_m": 0.042093727737665176
+        },
+        {
+          "side": 1,
+          "off_s": 2.7600000000000002,
+          "on_s": 2.94,
+          "travel_m": 0.03720533102750778
+        },
+        {
+          "side": 1,
+          "off_s": 3.14,
+          "on_s": 3.3200000000000003,
+          "travel_m": 0.038183294236660004
+        },
+        {
+          "side": 1,
+          "off_s": 3.54,
+          "on_s": 3.72,
+          "travel_m": 0.03829061612486839
+        },
+        {
+          "side": 1,
+          "off_s": 3.92,
+          "on_s": 4.12,
+          "travel_m": 0.04091499000787735
+        },
+        {
+          "side": 1,
+          "off_s": 4.32,
+          "on_s": 4.5,
+          "travel_m": 0.03934923931956291
+        },
+        {
+          "side": 1,
+          "off_s": 4.72,
+          "on_s": 4.9,
+          "travel_m": 0.03865702822804451
+        },
+        {
+          "side": 1,
+          "off_s": 5.12,
+          "on_s": 5.28,
+          "travel_m": 0.03660612553358078
+        },
+        {
+          "side": 1,
+          "off_s": 5.5,
+          "on_s": 5.68,
+          "travel_m": 0.03891519829630852
+        },
+        {
+          "side": 1,
+          "off_s": 5.9,
+          "on_s": 6.08,
+          "travel_m": 0.03683171421289444
+        },
+        {
+          "side": 1,
+          "off_s": 6.28,
+          "on_s": 6.46,
+          "travel_m": 0.04032878205180168
+        },
+        {
+          "side": 1,
+          "off_s": 6.68,
+          "on_s": 6.86,
+          "travel_m": 0.03908124938607216
+        },
+        {
+          "side": 1,
+          "off_s": 7.08,
+          "on_s": 7.26,
+          "travel_m": 0.03617362678050995
+        },
+        {
+          "side": 1,
+          "off_s": 7.46,
+          "on_s": 7.640000000000001,
+          "travel_m": 0.039389513432979584
+        }
+      ],
+      "discounted_return": 13.49881169679629,
+      "peak_tilt_deg": 6.042863845825195
+    },
+    {
+      "case": 130,
+      "mode": "walker_zero",
+      "scenario": "roll_push8",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.18,
+          "on_s": 1.3800000000000001,
+          "travel_m": 0.03522760048508644
+        },
+        {
+          "side": 0,
+          "off_s": 1.56,
+          "on_s": 1.76,
+          "travel_m": 0.026615235954523087
+        },
+        {
+          "side": 0,
+          "off_s": 1.98,
+          "on_s": 2.16,
+          "travel_m": 0.03315913304686546
+        },
+        {
+          "side": 0,
+          "off_s": 2.38,
+          "on_s": 2.58,
+          "travel_m": 0.034222427755594254
+        },
+        {
+          "side": 0,
+          "off_s": 2.7800000000000002,
+          "on_s": 2.98,
+          "travel_m": 0.03421136364340782
+        },
+        {
+          "side": 0,
+          "off_s": 3.18,
+          "on_s": 3.38,
+          "travel_m": 0.034042928367853165
+        },
+        {
+          "side": 0,
+          "off_s": 3.58,
+          "on_s": 3.7800000000000002,
+          "travel_m": 0.033126842230558395
+        },
+        {
+          "side": 0,
+          "off_s": 3.98,
+          "on_s": 4.18,
+          "travel_m": 0.03402966633439064
+        },
+        {
+          "side": 0,
+          "off_s": 4.38,
+          "on_s": 4.58,
+          "travel_m": 0.03297920897603035
+        },
+        {
+          "side": 0,
+          "off_s": 4.78,
+          "on_s": 4.98,
+          "travel_m": 0.03261161595582962
+        },
+        {
+          "side": 0,
+          "off_s": 5.18,
+          "on_s": 5.38,
+          "travel_m": 0.033322978764772415
+        },
+        {
+          "side": 0,
+          "off_s": 5.58,
+          "on_s": 5.78,
+          "travel_m": 0.03407566249370575
+        },
+        {
+          "side": 0,
+          "off_s": 5.98,
+          "on_s": 6.18,
+          "travel_m": 0.0335930660367012
+        },
+        {
+          "side": 0,
+          "off_s": 6.38,
+          "on_s": 6.58,
+          "travel_m": 0.032530464231967926
+        },
+        {
+          "side": 0,
+          "off_s": 6.78,
+          "on_s": 6.98,
+          "travel_m": 0.03413896635174751
+        },
+        {
+          "side": 0,
+          "off_s": 7.18,
+          "on_s": 7.38,
+          "travel_m": 0.03341023251414299
+        },
+        {
+          "side": 0,
+          "off_s": 7.58,
+          "on_s": 7.78,
+          "travel_m": 0.0344049297273159
+        },
+        {
+          "side": 1,
+          "off_s": 1.0,
+          "on_s": 1.18,
+          "travel_m": 0.03527797386050224
+        },
+        {
+          "side": 1,
+          "off_s": 1.3800000000000001,
+          "on_s": 1.56,
+          "travel_m": 0.04049725458025932
+        },
+        {
+          "side": 1,
+          "off_s": 1.76,
+          "on_s": 1.96,
+          "travel_m": 0.0385885089635849
+        },
+        {
+          "side": 1,
+          "off_s": 2.18,
+          "on_s": 2.38,
+          "travel_m": 0.04054296016693115
+        },
+        {
+          "side": 1,
+          "off_s": 2.58,
+          "on_s": 2.7800000000000002,
+          "travel_m": 0.04022703692317009
+        },
+        {
+          "side": 1,
+          "off_s": 2.98,
+          "on_s": 3.18,
+          "travel_m": 0.03864419832825661
+        },
+        {
+          "side": 1,
+          "off_s": 3.38,
+          "on_s": 3.58,
+          "travel_m": 0.041964951902627945
+        },
+        {
+          "side": 1,
+          "off_s": 3.8000000000000003,
+          "on_s": 3.98,
+          "travel_m": 0.03662698715925217
+        },
+        {
+          "side": 1,
+          "off_s": 4.18,
+          "on_s": 4.38,
+          "travel_m": 0.0411076582968235
+        },
+        {
+          "side": 1,
+          "off_s": 4.6000000000000005,
+          "on_s": 4.78,
+          "travel_m": 0.038931943476200104
+        },
+        {
+          "side": 1,
+          "off_s": 5.0,
+          "on_s": 5.18,
+          "travel_m": 0.03682951256632805
+        },
+        {
+          "side": 1,
+          "off_s": 5.38,
+          "on_s": 5.58,
+          "travel_m": 0.03824383020401001
+        },
+        {
+          "side": 1,
+          "off_s": 5.78,
+          "on_s": 5.98,
+          "travel_m": 0.040765389800071716
+        },
+        {
+          "side": 1,
+          "off_s": 6.18,
+          "on_s": 6.38,
+          "travel_m": 0.04148692265152931
+        },
+        {
+          "side": 1,
+          "off_s": 6.6000000000000005,
+          "on_s": 6.78,
+          "travel_m": 0.03604110702872276
+        },
+        {
+          "side": 1,
+          "off_s": 6.98,
+          "on_s": 7.18,
+          "travel_m": 0.040177926421165466
+        },
+        {
+          "side": 1,
+          "off_s": 7.38,
+          "on_s": 7.58,
+          "travel_m": 0.039663784205913544
+        },
+        {
+          "side": 1,
+          "off_s": 7.78,
+          "on_s": 7.98,
+          "travel_m": 0.041149407625198364
+        }
+      ],
+      "discounted_return": 13.192091094719832,
+      "peak_tilt_deg": 4.353611469268799
+    },
+    {
+      "case": 131,
+      "mode": "walker_zero",
+      "scenario": "roll_push8",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.98,
+          "on_s": 1.1,
+          "travel_m": 0.04611147567629814
+        },
+        {
+          "side": 0,
+          "off_s": 1.68,
+          "on_s": 1.9000000000000001,
+          "travel_m": 0.03274079039692879
+        },
+        {
+          "side": 0,
+          "off_s": 2.12,
+          "on_s": 2.32,
+          "travel_m": 0.03652883693575859
+        },
+        {
+          "side": 0,
+          "off_s": 2.54,
+          "on_s": 2.74,
+          "travel_m": 0.03448398783802986
+        },
+        {
+          "side": 0,
+          "off_s": 2.92,
+          "on_s": 3.12,
+          "travel_m": 0.03503628447651863
+        },
+        {
+          "side": 0,
+          "off_s": 3.3200000000000003,
+          "on_s": 3.52,
+          "travel_m": 0.03533274307847023
+        },
+        {
+          "side": 0,
+          "off_s": 3.7,
+          "on_s": 3.9,
+          "travel_m": 0.034228939563035965
+        },
+        {
+          "side": 0,
+          "off_s": 4.1,
+          "on_s": 4.3,
+          "travel_m": 0.03559761866927147
+        },
+        {
+          "side": 0,
+          "off_s": 4.5,
+          "on_s": 4.7,
+          "travel_m": 0.035772863775491714
+        },
+        {
+          "side": 0,
+          "off_s": 4.88,
+          "on_s": 5.08,
+          "travel_m": 0.03434516116976738
+        },
+        {
+          "side": 0,
+          "off_s": 5.28,
+          "on_s": 5.48,
+          "travel_m": 0.03608674183487892
+        },
+        {
+          "side": 0,
+          "off_s": 5.68,
+          "on_s": 5.88,
+          "travel_m": 0.03445037454366684
+        },
+        {
+          "side": 0,
+          "off_s": 6.0600000000000005,
+          "on_s": 6.26,
+          "travel_m": 0.034302834421396255
+        },
+        {
+          "side": 0,
+          "off_s": 6.46,
+          "on_s": 6.66,
+          "travel_m": 0.035203151404857635
+        },
+        {
+          "side": 0,
+          "off_s": 6.86,
+          "on_s": 7.0600000000000005,
+          "travel_m": 0.03387105464935303
+        },
+        {
+          "side": 0,
+          "off_s": 7.26,
+          "on_s": 7.46,
+          "travel_m": 0.03487088531255722
+        },
+        {
+          "side": 0,
+          "off_s": 7.66,
+          "on_s": 7.86,
+          "travel_m": 0.03489086031913757
+        },
+        {
+          "side": 1,
+          "off_s": 1.1,
+          "on_s": 1.26,
+          "travel_m": 0.052634526044130325
+        },
+        {
+          "side": 1,
+          "off_s": 1.5,
+          "on_s": 1.68,
+          "travel_m": 0.05105619877576828
+        },
+        {
+          "side": 1,
+          "off_s": 1.9000000000000001,
+          "on_s": 2.12,
+          "travel_m": 0.04681640490889549
+        },
+        {
+          "side": 1,
+          "off_s": 2.34,
+          "on_s": 2.54,
+          "travel_m": 0.04110254347324371
+        },
+        {
+          "side": 1,
+          "off_s": 2.74,
+          "on_s": 2.92,
+          "travel_m": 0.037673696875572205
+        },
+        {
+          "side": 1,
+          "off_s": 3.12,
+          "on_s": 3.3000000000000003,
+          "travel_m": 0.037691228091716766
+        },
+        {
+          "side": 1,
+          "off_s": 3.52,
+          "on_s": 3.7,
+          "travel_m": 0.03836079686880112
+        },
+        {
+          "side": 1,
+          "off_s": 3.92,
+          "on_s": 4.1,
+          "travel_m": 0.03765196353197098
+        },
+        {
+          "side": 1,
+          "off_s": 4.32,
+          "on_s": 4.48,
+          "travel_m": 0.037755947560071945
+        },
+        {
+          "side": 1,
+          "off_s": 4.7,
+          "on_s": 4.88,
+          "travel_m": 0.04003883898258209
+        },
+        {
+          "side": 1,
+          "off_s": 5.1000000000000005,
+          "on_s": 5.28,
+          "travel_m": 0.037354420870542526
+        },
+        {
+          "side": 1,
+          "off_s": 5.48,
+          "on_s": 5.66,
+          "travel_m": 0.03923945873975754
+        },
+        {
+          "side": 1,
+          "off_s": 5.88,
+          "on_s": 6.0600000000000005,
+          "travel_m": 0.03864060714840889
+        },
+        {
+          "side": 1,
+          "off_s": 6.28,
+          "on_s": 6.46,
+          "travel_m": 0.0376364104449749
+        },
+        {
+          "side": 1,
+          "off_s": 6.68,
+          "on_s": 6.86,
+          "travel_m": 0.03996185213327408
+        },
+        {
+          "side": 1,
+          "off_s": 7.08,
+          "on_s": 7.26,
+          "travel_m": 0.0389309898018837
+        },
+        {
+          "side": 1,
+          "off_s": 7.48,
+          "on_s": 7.66,
+          "travel_m": 0.037848517298698425
+        }
+      ],
+      "discounted_return": 13.560562189310463,
+      "peak_tilt_deg": 6.087146282196045
+    },
+    {
+      "case": 132,
+      "mode": "walker_zero",
+      "scenario": "roll_push16",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.6,
+          "on_s": 1.8,
+          "travel_m": 0.03436247631907463
+        },
+        {
+          "side": 0,
+          "off_s": 2.04,
+          "on_s": 2.24,
+          "travel_m": 0.03847213834524155
+        },
+        {
+          "side": 0,
+          "off_s": 2.46,
+          "on_s": 2.66,
+          "travel_m": 0.03585511073470116
+        },
+        {
+          "side": 0,
+          "off_s": 2.88,
+          "on_s": 3.08,
+          "travel_m": 0.034564413130283356
+        },
+        {
+          "side": 0,
+          "off_s": 3.2800000000000002,
+          "on_s": 3.48,
+          "travel_m": 0.03328552842140198
+        },
+        {
+          "side": 0,
+          "off_s": 3.68,
+          "on_s": 3.88,
+          "travel_m": 0.03300226852297783
+        },
+        {
+          "side": 0,
+          "off_s": 4.08,
+          "on_s": 4.28,
+          "travel_m": 0.03322600573301315
+        },
+        {
+          "side": 0,
+          "off_s": 4.48,
+          "on_s": 4.68,
+          "travel_m": 0.033622052520513535
+        },
+        {
+          "side": 0,
+          "off_s": 4.88,
+          "on_s": 5.08,
+          "travel_m": 0.03353126719594002
+        },
+        {
+          "side": 0,
+          "off_s": 5.28,
+          "on_s": 5.48,
+          "travel_m": 0.03351408243179321
+        },
+        {
+          "side": 0,
+          "off_s": 5.68,
+          "on_s": 5.88,
+          "travel_m": 0.03368562459945679
+        },
+        {
+          "side": 0,
+          "off_s": 6.08,
+          "on_s": 6.28,
+          "travel_m": 0.03288564458489418
+        },
+        {
+          "side": 0,
+          "off_s": 6.48,
+          "on_s": 6.68,
+          "travel_m": 0.03440212458372116
+        },
+        {
+          "side": 0,
+          "off_s": 6.88,
+          "on_s": 7.08,
+          "travel_m": 0.03332054242491722
+        },
+        {
+          "side": 0,
+          "off_s": 7.28,
+          "on_s": 7.48,
+          "travel_m": 0.03388127684593201
+        },
+        {
+          "side": 0,
+          "off_s": 7.68,
+          "on_s": 7.88,
+          "travel_m": 0.033338792622089386
+        },
+        {
+          "side": 1,
+          "off_s": 0.96,
+          "on_s": 1.1400000000000001,
+          "travel_m": 0.06477110832929611
+        },
+        {
+          "side": 1,
+          "off_s": 1.3800000000000001,
+          "on_s": 1.6,
+          "travel_m": 0.050817299634218216
+        },
+        {
+          "side": 1,
+          "off_s": 1.82,
+          "on_s": 2.04,
+          "travel_m": 0.04802166670560837
+        },
+        {
+          "side": 1,
+          "off_s": 2.24,
+          "on_s": 2.46,
+          "travel_m": 0.04375792667269707
+        },
+        {
+          "side": 1,
+          "off_s": 2.68,
+          "on_s": 2.88,
+          "travel_m": 0.042078617960214615
+        },
+        {
+          "side": 1,
+          "off_s": 3.08,
+          "on_s": 3.2800000000000002,
+          "travel_m": 0.04211552441120148
+        },
+        {
+          "side": 1,
+          "off_s": 3.5,
+          "on_s": 3.68,
+          "travel_m": 0.03663109242916107
+        },
+        {
+          "side": 1,
+          "off_s": 3.88,
+          "on_s": 4.08,
+          "travel_m": 0.039144061505794525
+        },
+        {
+          "side": 1,
+          "off_s": 4.28,
+          "on_s": 4.48,
+          "travel_m": 0.04011636972427368
+        },
+        {
+          "side": 1,
+          "off_s": 4.7,
+          "on_s": 4.88,
+          "travel_m": 0.03852244094014168
+        },
+        {
+          "side": 1,
+          "off_s": 5.08,
+          "on_s": 5.28,
+          "travel_m": 0.03974734619259834
+        },
+        {
+          "side": 1,
+          "off_s": 5.48,
+          "on_s": 5.68,
+          "travel_m": 0.039246316999197006
+        },
+        {
+          "side": 1,
+          "off_s": 5.88,
+          "on_s": 6.08,
+          "travel_m": 0.04113830253481865
+        },
+        {
+          "side": 1,
+          "off_s": 6.3,
+          "on_s": 6.48,
+          "travel_m": 0.03632451221346855
+        },
+        {
+          "side": 1,
+          "off_s": 6.68,
+          "on_s": 6.88,
+          "travel_m": 0.03977549448609352
+        },
+        {
+          "side": 1,
+          "off_s": 7.08,
+          "on_s": 7.28,
+          "travel_m": 0.04089228808879852
+        },
+        {
+          "side": 1,
+          "off_s": 7.48,
+          "on_s": 7.68,
+          "travel_m": 0.04135167971253395
+        }
+      ],
+      "discounted_return": 13.150447038491453,
+      "peak_tilt_deg": 5.951406002044678
+    },
+    {
+      "case": 133,
+      "mode": "walker_zero",
+      "scenario": "roll_push16",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 1.28,
+          "on_s": 1.5,
+          "travel_m": 0.04574891924858093
+        },
+        {
+          "side": 0,
+          "off_s": 1.72,
+          "on_s": 1.92,
+          "travel_m": 0.03714564070105553
+        },
+        {
+          "side": 0,
+          "off_s": 2.12,
+          "on_s": 2.32,
+          "travel_m": 0.03464354947209358
+        },
+        {
+          "side": 0,
+          "off_s": 2.5,
+          "on_s": 2.7,
+          "travel_m": 0.03468518331646919
+        },
+        {
+          "side": 0,
+          "off_s": 2.88,
+          "on_s": 3.08,
+          "travel_m": 0.03409630432724953
+        },
+        {
+          "side": 0,
+          "off_s": 3.2800000000000002,
+          "on_s": 3.48,
+          "travel_m": 0.0356544554233551
+        },
+        {
+          "side": 0,
+          "off_s": 3.68,
+          "on_s": 3.88,
+          "travel_m": 0.03471892699599266
+        },
+        {
+          "side": 0,
+          "off_s": 4.08,
+          "on_s": 4.28,
+          "travel_m": 0.034827131778001785
+        },
+        {
+          "side": 0,
+          "off_s": 4.48,
+          "on_s": 4.68,
+          "travel_m": 0.034120675176382065
+        },
+        {
+          "side": 0,
+          "off_s": 4.88,
+          "on_s": 5.08,
+          "travel_m": 0.03379314765334129
+        },
+        {
+          "side": 0,
+          "off_s": 5.28,
+          "on_s": 5.48,
+          "travel_m": 0.03277052566409111
+        },
+        {
+          "side": 0,
+          "off_s": 5.68,
+          "on_s": 5.88,
+          "travel_m": 0.033774469047784805
+        },
+        {
+          "side": 0,
+          "off_s": 6.08,
+          "on_s": 6.28,
+          "travel_m": 0.03304630517959595
+        },
+        {
+          "side": 0,
+          "off_s": 6.48,
+          "on_s": 6.68,
+          "travel_m": 0.03352100029587746
+        },
+        {
+          "side": 0,
+          "off_s": 6.88,
+          "on_s": 7.08,
+          "travel_m": 0.03356948494911194
+        },
+        {
+          "side": 0,
+          "off_s": 7.28,
+          "on_s": 7.48,
+          "travel_m": 0.03282301500439644
+        },
+        {
+          "side": 0,
+          "off_s": 7.68,
+          "on_s": 7.88,
+          "travel_m": 0.03380970656871796
+        },
+        {
+          "side": 1,
+          "off_s": 1.06,
+          "on_s": 1.28,
+          "travel_m": 0.055421240627765656
+        },
+        {
+          "side": 1,
+          "off_s": 1.5,
+          "on_s": 1.72,
+          "travel_m": 0.04886998236179352
+        },
+        {
+          "side": 1,
+          "off_s": 1.92,
+          "on_s": 2.12,
+          "travel_m": 0.04034200310707092
+        },
+        {
+          "side": 1,
+          "off_s": 2.32,
+          "on_s": 2.5,
+          "travel_m": 0.036164116114377975
+        },
+        {
+          "side": 1,
+          "off_s": 2.7,
+          "on_s": 2.88,
+          "travel_m": 0.03750772029161453
+        },
+        {
+          "side": 1,
+          "off_s": 3.1,
+          "on_s": 3.2800000000000002,
+          "travel_m": 0.03772025555372238
+        },
+        {
+          "side": 1,
+          "off_s": 3.48,
+          "on_s": 3.68,
+          "travel_m": 0.04004356265068054
+        },
+        {
+          "side": 1,
+          "off_s": 3.88,
+          "on_s": 4.08,
+          "travel_m": 0.040441256016492844
+        },
+        {
+          "side": 1,
+          "off_s": 4.28,
+          "on_s": 4.48,
+          "travel_m": 0.0395984947681427
+        },
+        {
+          "side": 1,
+          "off_s": 4.68,
+          "on_s": 4.88,
+          "travel_m": 0.041388072073459625
+        },
+        {
+          "side": 1,
+          "off_s": 5.08,
+          "on_s": 5.28,
+          "travel_m": 0.04226056858897209
+        },
+        {
+          "side": 1,
+          "off_s": 5.5,
+          "on_s": 5.68,
+          "travel_m": 0.036252208054065704
+        },
+        {
+          "side": 1,
+          "off_s": 5.88,
+          "on_s": 6.08,
+          "travel_m": 0.040732670575380325
+        },
+        {
+          "side": 1,
+          "off_s": 6.28,
+          "on_s": 6.48,
+          "travel_m": 0.04035240784287453
+        },
+        {
+          "side": 1,
+          "off_s": 6.7,
+          "on_s": 6.88,
+          "travel_m": 0.03692486509680748
+        },
+        {
+          "side": 1,
+          "off_s": 7.08,
+          "on_s": 7.28,
+          "travel_m": 0.040843416005373
+        },
+        {
+          "side": 1,
+          "off_s": 7.5,
+          "on_s": 7.68,
+          "travel_m": 0.03774663433432579
+        }
+      ],
+      "discounted_return": 12.965091003688759,
+      "peak_tilt_deg": 5.435198783874512
+    },
+    {
+      "case": 134,
+      "mode": "walker_zero",
+      "scenario": "roll_push16",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.84,
+          "on_s": 0.9400000000000001,
+          "travel_m": 0.052139658480882645
+        },
+        {
+          "side": 0,
+          "off_s": 1.58,
+          "on_s": 1.78,
+          "travel_m": 0.04179789498448372
+        },
+        {
+          "side": 0,
+          "off_s": 2.0,
+          "on_s": 2.2,
+          "travel_m": 0.03415234386920929
+        },
+        {
+          "side": 0,
+          "off_s": 2.42,
+          "on_s": 2.62,
+          "travel_m": 0.037565454840660095
+        },
+        {
+          "side": 0,
+          "off_s": 2.8000000000000003,
+          "on_s": 3.0,
+          "travel_m": 0.03633499518036842
+        },
+        {
+          "side": 0,
+          "off_s": 3.18,
+          "on_s": 3.38,
+          "travel_m": 0.036338817328214645
+        },
+        {
+          "side": 0,
+          "off_s": 3.58,
+          "on_s": 3.7800000000000002,
+          "travel_m": 0.03491779416799545
+        },
+        {
+          "side": 0,
+          "off_s": 3.96,
+          "on_s": 4.16,
+          "travel_m": 0.036129891872406006
+        },
+        {
+          "side": 0,
+          "off_s": 4.36,
+          "on_s": 4.5600000000000005,
+          "travel_m": 0.03373534977436066
+        },
+        {
+          "side": 0,
+          "off_s": 4.76,
+          "on_s": 4.96,
+          "travel_m": 0.03547266870737076
+        },
+        {
+          "side": 0,
+          "off_s": 5.14,
+          "on_s": 5.34,
+          "travel_m": 0.03472938761115074
+        },
+        {
+          "side": 0,
+          "off_s": 5.54,
+          "on_s": 5.74,
+          "travel_m": 0.035551831126213074
+        },
+        {
+          "side": 0,
+          "off_s": 5.92,
+          "on_s": 6.12,
+          "travel_m": 0.03444135934114456
+        },
+        {
+          "side": 0,
+          "off_s": 6.32,
+          "on_s": 6.5200000000000005,
+          "travel_m": 0.03576289862394333
+        },
+        {
+          "side": 0,
+          "off_s": 6.72,
+          "on_s": 6.92,
+          "travel_m": 0.034317273646593094
+        },
+        {
+          "side": 0,
+          "off_s": 7.1000000000000005,
+          "on_s": 7.3,
+          "travel_m": 0.034281522035598755
+        },
+        {
+          "side": 0,
+          "off_s": 7.5,
+          "on_s": 7.7,
+          "travel_m": 0.03458290547132492
+        },
+        {
+          "side": 1,
+          "off_s": 0.9400000000000001,
+          "on_s": 1.12,
+          "travel_m": 0.06226838752627373
+        },
+        {
+          "side": 1,
+          "off_s": 1.36,
+          "on_s": 1.56,
+          "travel_m": 0.04984234273433685
+        },
+        {
+          "side": 1,
+          "off_s": 1.8,
+          "on_s": 2.0,
+          "travel_m": 0.045898862183094025
+        },
+        {
+          "side": 1,
+          "off_s": 2.22,
+          "on_s": 2.42,
+          "travel_m": 0.040250301361083984
+        },
+        {
+          "side": 1,
+          "off_s": 2.62,
+          "on_s": 2.8000000000000003,
+          "travel_m": 0.035039156675338745
+        },
+        {
+          "side": 1,
+          "off_s": 3.0,
+          "on_s": 3.18,
+          "travel_m": 0.04046693071722984
+        },
+        {
+          "side": 1,
+          "off_s": 3.4,
+          "on_s": 3.56,
+          "travel_m": 0.035283975303173065
+        },
+        {
+          "side": 1,
+          "off_s": 3.7800000000000002,
+          "on_s": 3.96,
+          "travel_m": 0.03969253972172737
+        },
+        {
+          "side": 1,
+          "off_s": 4.16,
+          "on_s": 4.36,
+          "travel_m": 0.04004067927598953
+        },
+        {
+          "side": 1,
+          "off_s": 4.5600000000000005,
+          "on_s": 4.74,
+          "travel_m": 0.0374840572476387
+        },
+        {
+          "side": 1,
+          "off_s": 4.96,
+          "on_s": 5.14,
+          "travel_m": 0.03833072632551193
+        },
+        {
+          "side": 1,
+          "off_s": 5.36,
+          "on_s": 5.54,
+          "travel_m": 0.03727622702717781
+        },
+        {
+          "side": 1,
+          "off_s": 5.74,
+          "on_s": 5.92,
+          "travel_m": 0.04058757424354553
+        },
+        {
+          "side": 1,
+          "off_s": 6.140000000000001,
+          "on_s": 6.32,
+          "travel_m": 0.037683162838220596
+        },
+        {
+          "side": 1,
+          "off_s": 6.54,
+          "on_s": 6.7,
+          "travel_m": 0.03749245032668114
+        },
+        {
+          "side": 1,
+          "off_s": 6.92,
+          "on_s": 7.1000000000000005,
+          "travel_m": 0.03946841135621071
+        },
+        {
+          "side": 1,
+          "off_s": 7.32,
+          "on_s": 7.5,
+          "travel_m": 0.03579099103808403
+        },
+        {
+          "side": 1,
+          "off_s": 7.7,
+          "on_s": 7.88,
+          "travel_m": 0.03932015970349312
+        }
+      ],
+      "discounted_return": 13.138930593609505,
+      "peak_tilt_deg": 5.828134536743164
+    },
+    {
+      "case": 135,
+      "mode": "walker_zero",
+      "scenario": "pitch_moving10",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.9,
+          "on_s": 1.1,
+          "travel_m": 0.04020828381180763
+        },
+        {
+          "side": 0,
+          "off_s": 1.28,
+          "on_s": 1.5,
+          "travel_m": 0.02728465013206005
+        },
+        {
+          "side": 0,
+          "off_s": 1.68,
+          "on_s": 1.8800000000000001,
+          "travel_m": 0.03850683197379112
+        },
+        {
+          "side": 0,
+          "off_s": 2.1,
+          "on_s": 2.3000000000000003,
+          "travel_m": 0.03429551050066948
+        },
+        {
+          "side": 0,
+          "off_s": 2.48,
+          "on_s": 2.68,
+          "travel_m": 0.03616891801357269
+        },
+        {
+          "side": 0,
+          "off_s": 2.88,
+          "on_s": 3.06,
+          "travel_m": 0.034659650176763535
+        },
+        {
+          "side": 0,
+          "off_s": 3.2600000000000002,
+          "on_s": 3.46,
+          "travel_m": 0.036854829639196396
+        },
+        {
+          "side": 0,
+          "off_s": 3.66,
+          "on_s": 3.86,
+          "travel_m": 0.03320598974823952
+        },
+        {
+          "side": 0,
+          "off_s": 4.0600000000000005,
+          "on_s": 4.26,
+          "travel_m": 0.036122407764196396
+        },
+        {
+          "side": 0,
+          "off_s": 4.44,
+          "on_s": 4.64,
+          "travel_m": 0.03353744372725487
+        },
+        {
+          "side": 0,
+          "off_s": 4.84,
+          "on_s": 5.04,
+          "travel_m": 0.03575250506401062
+        },
+        {
+          "side": 0,
+          "off_s": 5.24,
+          "on_s": 5.44,
+          "travel_m": 0.03517656773328781
+        },
+        {
+          "side": 0,
+          "off_s": 5.62,
+          "on_s": 5.84,
+          "travel_m": 0.03551853075623512
+        },
+        {
+          "side": 0,
+          "off_s": 6.0200000000000005,
+          "on_s": 6.22,
+          "travel_m": 0.03503075987100601
+        },
+        {
+          "side": 0,
+          "off_s": 6.42,
+          "on_s": 6.62,
+          "travel_m": 0.03376084193587303
+        },
+        {
+          "side": 0,
+          "off_s": 6.82,
+          "on_s": 7.0200000000000005,
+          "travel_m": 0.035182926803827286
+        },
+        {
+          "side": 0,
+          "off_s": 7.22,
+          "on_s": 7.42,
+          "travel_m": 0.0333050861954689
+        },
+        {
+          "side": 0,
+          "off_s": 7.62,
+          "on_s": 7.82,
+          "travel_m": 0.03350447490811348
+        },
+        {
+          "side": 1,
+          "off_s": 0.7000000000000001,
+          "on_s": 0.9,
+          "travel_m": 0.03881865739822388
+        },
+        {
+          "side": 1,
+          "off_s": 1.1,
+          "on_s": 1.28,
+          "travel_m": 0.03456144407391548
+        },
+        {
+          "side": 1,
+          "off_s": 1.5,
+          "on_s": 1.68,
+          "travel_m": 0.044751204550266266
+        },
+        {
+          "side": 1,
+          "off_s": 1.9000000000000001,
+          "on_s": 2.1,
+          "travel_m": 0.040829651057720184
+        },
+        {
+          "side": 1,
+          "off_s": 2.3000000000000003,
+          "on_s": 2.48,
+          "travel_m": 0.04095211625099182
+        },
+        {
+          "side": 1,
+          "off_s": 2.7,
+          "on_s": 2.86,
+          "travel_m": 0.03557877615094185
+        },
+        {
+          "side": 1,
+          "off_s": 3.08,
+          "on_s": 3.2600000000000002,
+          "travel_m": 0.04030937701463699
+        },
+        {
+          "side": 1,
+          "off_s": 3.46,
+          "on_s": 3.66,
+          "travel_m": 0.04243536666035652
+        },
+        {
+          "side": 1,
+          "off_s": 3.88,
+          "on_s": 4.04,
+          "travel_m": 0.03460582718253136
+        },
+        {
+          "side": 1,
+          "off_s": 4.26,
+          "on_s": 4.44,
+          "travel_m": 0.038093239068984985
+        },
+        {
+          "side": 1,
+          "off_s": 4.66,
+          "on_s": 4.84,
+          "travel_m": 0.0369306355714798
+        },
+        {
+          "side": 1,
+          "off_s": 5.04,
+          "on_s": 5.24,
+          "travel_m": 0.040386591106653214
+        },
+        {
+          "side": 1,
+          "off_s": 5.44,
+          "on_s": 5.62,
+          "travel_m": 0.03991488739848137
+        },
+        {
+          "side": 1,
+          "off_s": 5.84,
+          "on_s": 6.0200000000000005,
+          "travel_m": 0.03809308260679245
+        },
+        {
+          "side": 1,
+          "off_s": 6.24,
+          "on_s": 6.42,
+          "travel_m": 0.0389709547162056
+        },
+        {
+          "side": 1,
+          "off_s": 6.640000000000001,
+          "on_s": 6.82,
+          "travel_m": 0.03873538598418236
+        },
+        {
+          "side": 1,
+          "off_s": 7.04,
+          "on_s": 7.22,
+          "travel_m": 0.040243081748485565
+        },
+        {
+          "side": 1,
+          "off_s": 7.44,
+          "on_s": 7.62,
+          "travel_m": 0.037793923169374466
+        }
+      ],
+      "discounted_return": 10.962317156103905,
+      "peak_tilt_deg": 10.271440505981445
+    },
+    {
+      "case": 136,
+      "mode": "walker_zero",
+      "scenario": "pitch_moving10",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.84,
+          "on_s": 1.06,
+          "travel_m": 0.04447411373257637
+        },
+        {
+          "side": 0,
+          "off_s": 1.24,
+          "on_s": 1.42,
+          "travel_m": 0.03664555773139
+        },
+        {
+          "side": 0,
+          "off_s": 1.6,
+          "on_s": 1.8,
+          "travel_m": 0.03686587139964104
+        },
+        {
+          "side": 0,
+          "off_s": 1.98,
+          "on_s": 2.18,
+          "travel_m": 0.034301672130823135
+        },
+        {
+          "side": 0,
+          "off_s": 2.36,
+          "on_s": 2.56,
+          "travel_m": 0.03287602961063385
+        },
+        {
+          "side": 0,
+          "off_s": 2.7600000000000002,
+          "on_s": 2.94,
+          "travel_m": 0.03501668572425842
+        },
+        {
+          "side": 0,
+          "off_s": 3.14,
+          "on_s": 3.34,
+          "travel_m": 0.033366329967975616
+        },
+        {
+          "side": 0,
+          "off_s": 3.54,
+          "on_s": 3.74,
+          "travel_m": 0.03574061021208763
+        },
+        {
+          "side": 0,
+          "off_s": 3.92,
+          "on_s": 4.12,
+          "travel_m": 0.03372430056333542
+        },
+        {
+          "side": 0,
+          "off_s": 4.32,
+          "on_s": 4.5200000000000005,
+          "travel_m": 0.03572878614068031
+        },
+        {
+          "side": 0,
+          "off_s": 4.72,
+          "on_s": 4.92,
+          "travel_m": 0.03537405654788017
+        },
+        {
+          "side": 0,
+          "off_s": 5.12,
+          "on_s": 5.32,
+          "travel_m": 0.03482992574572563
+        },
+        {
+          "side": 0,
+          "off_s": 5.5,
+          "on_s": 5.7,
+          "travel_m": 0.033652614802122116
+        },
+        {
+          "side": 0,
+          "off_s": 5.9,
+          "on_s": 6.1000000000000005,
+          "travel_m": 0.03563129901885986
+        },
+        {
+          "side": 0,
+          "off_s": 6.3,
+          "on_s": 6.5,
+          "travel_m": 0.034616824239492416
+        },
+        {
+          "side": 0,
+          "off_s": 6.68,
+          "on_s": 6.88,
+          "travel_m": 0.0351000539958477
+        },
+        {
+          "side": 0,
+          "off_s": 7.08,
+          "on_s": 7.28,
+          "travel_m": 0.03505046293139458
+        },
+        {
+          "side": 0,
+          "off_s": 7.48,
+          "on_s": 7.68,
+          "travel_m": 0.0355670340359211
+        },
+        {
+          "side": 1,
+          "off_s": 0.64,
+          "on_s": 0.84,
+          "travel_m": 0.05207277089357376
+        },
+        {
+          "side": 1,
+          "off_s": 1.06,
+          "on_s": 1.24,
+          "travel_m": 0.04452002793550491
+        },
+        {
+          "side": 1,
+          "off_s": 1.44,
+          "on_s": 1.6,
+          "travel_m": 0.037997763603925705
+        },
+        {
+          "side": 1,
+          "off_s": 1.8,
+          "on_s": 1.98,
+          "travel_m": 0.038035158067941666
+        },
+        {
+          "side": 1,
+          "off_s": 2.18,
+          "on_s": 2.36,
+          "travel_m": 0.0328528992831707
+        },
+        {
+          "side": 1,
+          "off_s": 2.56,
+          "on_s": 2.74,
+          "travel_m": 0.040045253932476044
+        },
+        {
+          "side": 1,
+          "off_s": 2.96,
+          "on_s": 3.14,
+          "travel_m": 0.03542390093207359
+        },
+        {
+          "side": 1,
+          "off_s": 3.34,
+          "on_s": 3.52,
+          "travel_m": 0.03875567764043808
+        },
+        {
+          "side": 1,
+          "off_s": 3.74,
+          "on_s": 3.92,
+          "travel_m": 0.03769950941205025
+        },
+        {
+          "side": 1,
+          "off_s": 4.14,
+          "on_s": 4.32,
+          "travel_m": 0.03763392195105553
+        },
+        {
+          "side": 1,
+          "off_s": 4.54,
+          "on_s": 4.72,
+          "travel_m": 0.03855590894818306
+        },
+        {
+          "side": 1,
+          "off_s": 4.92,
+          "on_s": 5.1000000000000005,
+          "travel_m": 0.040220871567726135
+        },
+        {
+          "side": 1,
+          "off_s": 5.32,
+          "on_s": 5.5,
+          "travel_m": 0.03813556581735611
+        },
+        {
+          "side": 1,
+          "off_s": 5.72,
+          "on_s": 5.9,
+          "travel_m": 0.03733384981751442
+        },
+        {
+          "side": 1,
+          "off_s": 6.12,
+          "on_s": 6.28,
+          "travel_m": 0.037340421229600906
+        },
+        {
+          "side": 1,
+          "off_s": 6.5,
+          "on_s": 6.68,
+          "travel_m": 0.03911370411515236
+        },
+        {
+          "side": 1,
+          "off_s": 6.9,
+          "on_s": 7.08,
+          "travel_m": 0.03740863502025604
+        },
+        {
+          "side": 1,
+          "off_s": 7.28,
+          "on_s": 7.46,
+          "travel_m": 0.039374787360429764
+        },
+        {
+          "side": 1,
+          "off_s": 7.68,
+          "on_s": 7.86,
+          "travel_m": 0.0380106158554554
+        }
+      ],
+      "discounted_return": 10.691023764548238,
+      "peak_tilt_deg": 10.542957305908203
+    },
+    {
+      "case": 137,
+      "mode": "walker_zero",
+      "scenario": "pitch_moving10",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.9,
+          "on_s": 1.1,
+          "travel_m": 0.040052663534879684
+        },
+        {
+          "side": 0,
+          "off_s": 1.28,
+          "on_s": 1.48,
+          "travel_m": 0.02934330329298973
+        },
+        {
+          "side": 0,
+          "off_s": 1.68,
+          "on_s": 1.8800000000000001,
+          "travel_m": 0.039024386554956436
+        },
+        {
+          "side": 0,
+          "off_s": 2.1,
+          "on_s": 2.3000000000000003,
+          "travel_m": 0.034530993551015854
+        },
+        {
+          "side": 0,
+          "off_s": 2.48,
+          "on_s": 2.68,
+          "travel_m": 0.035587187856435776
+        },
+        {
+          "side": 0,
+          "off_s": 2.88,
+          "on_s": 3.08,
+          "travel_m": 0.035503171384334564
+        },
+        {
+          "side": 0,
+          "off_s": 3.2600000000000002,
+          "on_s": 3.46,
+          "travel_m": 0.03569943457841873
+        },
+        {
+          "side": 0,
+          "off_s": 3.66,
+          "on_s": 3.86,
+          "travel_m": 0.03522918373346329
+        },
+        {
+          "side": 0,
+          "off_s": 4.04,
+          "on_s": 4.24,
+          "travel_m": 0.0347151979804039
+        },
+        {
+          "side": 0,
+          "off_s": 4.44,
+          "on_s": 4.64,
+          "travel_m": 0.03430888429284096
+        },
+        {
+          "side": 0,
+          "off_s": 4.84,
+          "on_s": 5.04,
+          "travel_m": 0.03587409108877182
+        },
+        {
+          "side": 0,
+          "off_s": 5.22,
+          "on_s": 5.42,
+          "travel_m": 0.03457455709576607
+        },
+        {
+          "side": 0,
+          "off_s": 5.62,
+          "on_s": 5.82,
+          "travel_m": 0.034604333341121674
+        },
+        {
+          "side": 0,
+          "off_s": 6.0200000000000005,
+          "on_s": 6.22,
+          "travel_m": 0.03577350825071335
+        },
+        {
+          "side": 0,
+          "off_s": 6.4,
+          "on_s": 6.6000000000000005,
+          "travel_m": 0.034613486379384995
+        },
+        {
+          "side": 0,
+          "off_s": 6.8,
+          "on_s": 7.0,
+          "travel_m": 0.03492095693945885
+        },
+        {
+          "side": 0,
+          "off_s": 7.2,
+          "on_s": 7.4,
+          "travel_m": 0.03480878472328186
+        },
+        {
+          "side": 0,
+          "off_s": 7.58,
+          "on_s": 7.78,
+          "travel_m": 0.03456025943160057
+        },
+        {
+          "side": 1,
+          "off_s": 0.7000000000000001,
+          "on_s": 0.9,
+          "travel_m": 0.03967782482504845
+        },
+        {
+          "side": 1,
+          "off_s": 1.1,
+          "on_s": 1.28,
+          "travel_m": 0.03611297532916069
+        },
+        {
+          "side": 1,
+          "off_s": 1.5,
+          "on_s": 1.68,
+          "travel_m": 0.044969264417886734
+        },
+        {
+          "side": 1,
+          "off_s": 1.9000000000000001,
+          "on_s": 2.1,
+          "travel_m": 0.04254882410168648
+        },
+        {
+          "side": 1,
+          "off_s": 2.3000000000000003,
+          "on_s": 2.48,
+          "travel_m": 0.040008798241615295
+        },
+        {
+          "side": 1,
+          "off_s": 2.68,
+          "on_s": 2.86,
+          "travel_m": 0.03769972547888756
+        },
+        {
+          "side": 1,
+          "off_s": 3.08,
+          "on_s": 3.2600000000000002,
+          "travel_m": 0.03794660419225693
+        },
+        {
+          "side": 1,
+          "off_s": 3.48,
+          "on_s": 3.64,
+          "travel_m": 0.0368281751871109
+        },
+        {
+          "side": 1,
+          "off_s": 3.86,
+          "on_s": 4.04,
+          "travel_m": 0.039564602077007294
+        },
+        {
+          "side": 1,
+          "off_s": 4.26,
+          "on_s": 4.44,
+          "travel_m": 0.03747125342488289
+        },
+        {
+          "side": 1,
+          "off_s": 4.64,
+          "on_s": 4.82,
+          "travel_m": 0.03870076686143875
+        },
+        {
+          "side": 1,
+          "off_s": 5.04,
+          "on_s": 5.22,
+          "travel_m": 0.039130810648202896
+        },
+        {
+          "side": 1,
+          "off_s": 5.44,
+          "on_s": 5.62,
+          "travel_m": 0.03763473406434059
+        },
+        {
+          "side": 1,
+          "off_s": 5.82,
+          "on_s": 6.0,
+          "travel_m": 0.03855358064174652
+        },
+        {
+          "side": 1,
+          "off_s": 6.22,
+          "on_s": 6.4,
+          "travel_m": 0.03899083659052849
+        },
+        {
+          "side": 1,
+          "off_s": 6.62,
+          "on_s": 6.8,
+          "travel_m": 0.0366315133869648
+        },
+        {
+          "side": 1,
+          "off_s": 7.0,
+          "on_s": 7.18,
+          "travel_m": 0.03922376409173012
+        },
+        {
+          "side": 1,
+          "off_s": 7.4,
+          "on_s": 7.58,
+          "travel_m": 0.03856435790657997
+        },
+        {
+          "side": 1,
+          "off_s": 7.8,
+          "on_s": 7.98,
+          "travel_m": 0.0376681312918663
+        }
+      ],
+      "discounted_return": 10.956340489821974,
+      "peak_tilt_deg": 10.27111530303955
+    },
+    {
+      "case": 138,
+      "mode": "walker_zero",
+      "scenario": "pitch_moving20",
+      "rep": 0,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.48,
+      "steps": [],
+      "discounted_return": -3.660286178003666,
+      "peak_tilt_deg": 56.60005569458008
+    },
+    {
+      "case": 139,
+      "mode": "walker_zero",
+      "scenario": "pitch_moving20",
+      "rep": 1,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.32,
+      "steps": [
+        {
+          "side": 1,
+          "off_s": 0.62,
+          "on_s": 0.8,
+          "travel_m": 0.10506806522607803
+        }
+      ],
+      "discounted_return": -4.179267200351021,
+      "peak_tilt_deg": 56.37467575073242
+    },
+    {
+      "case": 140,
+      "mode": "walker_zero",
+      "scenario": "pitch_moving20",
+      "rep": 2,
+      "failed": true,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": 0.48,
+      "steps": [],
+      "discounted_return": -3.655273122688805,
+      "peak_tilt_deg": 56.38762664794922
+    },
+    {
+      "case": 141,
+      "mode": "walker_zero",
+      "scenario": "roll_moving15",
+      "rep": 0,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.88,
+          "on_s": 1.08,
+          "travel_m": 0.03874247148633003
+        },
+        {
+          "side": 0,
+          "off_s": 1.3,
+          "on_s": 1.5,
+          "travel_m": 0.035914864391088486
+        },
+        {
+          "side": 0,
+          "off_s": 1.68,
+          "on_s": 1.8800000000000001,
+          "travel_m": 0.036796241998672485
+        },
+        {
+          "side": 0,
+          "off_s": 2.06,
+          "on_s": 2.2600000000000002,
+          "travel_m": 0.037614934146404266
+        },
+        {
+          "side": 0,
+          "off_s": 2.46,
+          "on_s": 2.66,
+          "travel_m": 0.03455059975385666
+        },
+        {
+          "side": 0,
+          "off_s": 2.84,
+          "on_s": 3.04,
+          "travel_m": 0.036945465952157974
+        },
+        {
+          "side": 0,
+          "off_s": 3.24,
+          "on_s": 3.44,
+          "travel_m": 0.03452065587043762
+        },
+        {
+          "side": 0,
+          "off_s": 3.62,
+          "on_s": 3.8200000000000003,
+          "travel_m": 0.03516063466668129
+        },
+        {
+          "side": 0,
+          "off_s": 4.0200000000000005,
+          "on_s": 4.22,
+          "travel_m": 0.03635697066783905
+        },
+        {
+          "side": 0,
+          "off_s": 4.42,
+          "on_s": 4.62,
+          "travel_m": 0.03481205180287361
+        },
+        {
+          "side": 0,
+          "off_s": 4.82,
+          "on_s": 5.0200000000000005,
+          "travel_m": 0.03543985262513161
+        },
+        {
+          "side": 0,
+          "off_s": 5.22,
+          "on_s": 5.42,
+          "travel_m": 0.034778524190187454
+        },
+        {
+          "side": 0,
+          "off_s": 5.6000000000000005,
+          "on_s": 5.8,
+          "travel_m": 0.03510010242462158
+        },
+        {
+          "side": 0,
+          "off_s": 6.0,
+          "on_s": 6.2,
+          "travel_m": 0.035449735820293427
+        },
+        {
+          "side": 0,
+          "off_s": 6.4,
+          "on_s": 6.6000000000000005,
+          "travel_m": 0.0356566496193409
+        },
+        {
+          "side": 0,
+          "off_s": 6.78,
+          "on_s": 6.98,
+          "travel_m": 0.03435362130403519
+        },
+        {
+          "side": 0,
+          "off_s": 7.18,
+          "on_s": 7.38,
+          "travel_m": 0.03436305746436119
+        },
+        {
+          "side": 0,
+          "off_s": 7.58,
+          "on_s": 7.78,
+          "travel_m": 0.034930210560560226
+        },
+        {
+          "side": 1,
+          "off_s": 0.66,
+          "on_s": 0.88,
+          "travel_m": 0.047037992626428604
+        },
+        {
+          "side": 1,
+          "off_s": 1.1,
+          "on_s": 1.3,
+          "travel_m": 0.03998954966664314
+        },
+        {
+          "side": 1,
+          "off_s": 1.5,
+          "on_s": 1.68,
+          "travel_m": 0.03579014912247658
+        },
+        {
+          "side": 1,
+          "off_s": 1.8800000000000001,
+          "on_s": 2.06,
+          "travel_m": 0.039823584258556366
+        },
+        {
+          "side": 1,
+          "off_s": 2.2600000000000002,
+          "on_s": 2.44,
+          "travel_m": 0.037692755460739136
+        },
+        {
+          "side": 1,
+          "off_s": 2.66,
+          "on_s": 2.84,
+          "travel_m": 0.03901851922273636
+        },
+        {
+          "side": 1,
+          "off_s": 3.04,
+          "on_s": 3.24,
+          "travel_m": 0.04010407254099846
+        },
+        {
+          "side": 1,
+          "off_s": 3.44,
+          "on_s": 3.62,
+          "travel_m": 0.03878968209028244
+        },
+        {
+          "side": 1,
+          "off_s": 3.84,
+          "on_s": 4.0200000000000005,
+          "travel_m": 0.03828812763094902
+        },
+        {
+          "side": 1,
+          "off_s": 4.22,
+          "on_s": 4.42,
+          "travel_m": 0.04105335474014282
+        },
+        {
+          "side": 1,
+          "off_s": 4.62,
+          "on_s": 4.8,
+          "travel_m": 0.03851665183901787
+        },
+        {
+          "side": 1,
+          "off_s": 5.0200000000000005,
+          "on_s": 5.2,
+          "travel_m": 0.03877706453204155
+        },
+        {
+          "side": 1,
+          "off_s": 5.42,
+          "on_s": 5.6000000000000005,
+          "travel_m": 0.037677373737096786
+        },
+        {
+          "side": 1,
+          "off_s": 5.82,
+          "on_s": 6.0,
+          "travel_m": 0.03788500279188156
+        },
+        {
+          "side": 1,
+          "off_s": 6.2,
+          "on_s": 6.38,
+          "travel_m": 0.03968830034136772
+        },
+        {
+          "side": 1,
+          "off_s": 6.6000000000000005,
+          "on_s": 6.78,
+          "travel_m": 0.03874043747782707
+        },
+        {
+          "side": 1,
+          "off_s": 7.0,
+          "on_s": 7.18,
+          "travel_m": 0.03737475723028183
+        },
+        {
+          "side": 1,
+          "off_s": 7.38,
+          "on_s": 7.58,
+          "travel_m": 0.03960253298282623
+        },
+        {
+          "side": 1,
+          "off_s": 7.78,
+          "on_s": 7.98,
+          "travel_m": 0.04136541858315468
+        }
+      ],
+      "discounted_return": 10.819716150737557,
+      "peak_tilt_deg": 15.47635555267334
+    },
+    {
+      "case": 142,
+      "mode": "walker_zero",
+      "scenario": "roll_moving15",
+      "rep": 1,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.62,
+          "on_s": 0.8200000000000001,
+          "travel_m": 0.04417768493294716
+        },
+        {
+          "side": 0,
+          "off_s": 0.98,
+          "on_s": 1.18,
+          "travel_m": 0.03285689279437065
+        },
+        {
+          "side": 0,
+          "off_s": 1.36,
+          "on_s": 1.54,
+          "travel_m": 0.03627905622124672
+        },
+        {
+          "side": 0,
+          "off_s": 1.74,
+          "on_s": 1.96,
+          "travel_m": 0.03444013372063637
+        },
+        {
+          "side": 0,
+          "off_s": 2.14,
+          "on_s": 2.34,
+          "travel_m": 0.0359564907848835
+        },
+        {
+          "side": 0,
+          "off_s": 2.54,
+          "on_s": 2.74,
+          "travel_m": 0.035247448831796646
+        },
+        {
+          "side": 0,
+          "off_s": 2.92,
+          "on_s": 3.12,
+          "travel_m": 0.03452978655695915
+        },
+        {
+          "side": 0,
+          "off_s": 3.3200000000000003,
+          "on_s": 3.52,
+          "travel_m": 0.03540856018662453
+        },
+        {
+          "side": 0,
+          "off_s": 3.72,
+          "on_s": 3.92,
+          "travel_m": 0.03515155613422394
+        },
+        {
+          "side": 0,
+          "off_s": 4.1,
+          "on_s": 4.3,
+          "travel_m": 0.03475255146622658
+        },
+        {
+          "side": 0,
+          "off_s": 4.5,
+          "on_s": 4.7,
+          "travel_m": 0.03477637097239494
+        },
+        {
+          "side": 0,
+          "off_s": 4.9,
+          "on_s": 5.1000000000000005,
+          "travel_m": 0.03562586382031441
+        },
+        {
+          "side": 0,
+          "off_s": 5.28,
+          "on_s": 5.48,
+          "travel_m": 0.03447341546416283
+        },
+        {
+          "side": 0,
+          "off_s": 5.68,
+          "on_s": 5.88,
+          "travel_m": 0.0356505922973156
+        },
+        {
+          "side": 0,
+          "off_s": 6.08,
+          "on_s": 6.28,
+          "travel_m": 0.0353437103331089
+        },
+        {
+          "side": 0,
+          "off_s": 6.46,
+          "on_s": 6.68,
+          "travel_m": 0.035288043320178986
+        },
+        {
+          "side": 0,
+          "off_s": 6.86,
+          "on_s": 7.0600000000000005,
+          "travel_m": 0.03503662720322609
+        },
+        {
+          "side": 0,
+          "off_s": 7.26,
+          "on_s": 7.46,
+          "travel_m": 0.03452781215310097
+        },
+        {
+          "side": 0,
+          "off_s": 7.66,
+          "on_s": 7.86,
+          "travel_m": 0.034671489149332047
+        },
+        {
+          "side": 1,
+          "off_s": 0.8200000000000001,
+          "on_s": 0.98,
+          "travel_m": 0.035329047590494156
+        },
+        {
+          "side": 1,
+          "off_s": 1.18,
+          "on_s": 1.34,
+          "travel_m": 0.03728742152452469
+        },
+        {
+          "side": 1,
+          "off_s": 1.54,
+          "on_s": 1.74,
+          "travel_m": 0.03647911176085472
+        },
+        {
+          "side": 1,
+          "off_s": 1.96,
+          "on_s": 2.14,
+          "travel_m": 0.0413377545773983
+        },
+        {
+          "side": 1,
+          "off_s": 2.36,
+          "on_s": 2.54,
+          "travel_m": 0.03771518915891647
+        },
+        {
+          "side": 1,
+          "off_s": 2.74,
+          "on_s": 2.92,
+          "travel_m": 0.04069485142827034
+        },
+        {
+          "side": 1,
+          "off_s": 3.14,
+          "on_s": 3.3200000000000003,
+          "travel_m": 0.03664111718535423
+        },
+        {
+          "side": 1,
+          "off_s": 3.52,
+          "on_s": 3.7,
+          "travel_m": 0.03873420134186745
+        },
+        {
+          "side": 1,
+          "off_s": 3.92,
+          "on_s": 4.1,
+          "travel_m": 0.040321338921785355
+        },
+        {
+          "side": 1,
+          "off_s": 4.32,
+          "on_s": 4.5,
+          "travel_m": 0.03705931082367897
+        },
+        {
+          "side": 1,
+          "off_s": 4.7,
+          "on_s": 4.88,
+          "travel_m": 0.03923451155424118
+        },
+        {
+          "side": 1,
+          "off_s": 5.1000000000000005,
+          "on_s": 5.28,
+          "travel_m": 0.03853410854935646
+        },
+        {
+          "side": 1,
+          "off_s": 5.5,
+          "on_s": 5.68,
+          "travel_m": 0.03749781847000122
+        },
+        {
+          "side": 1,
+          "off_s": 5.88,
+          "on_s": 6.08,
+          "travel_m": 0.040696464478969574
+        },
+        {
+          "side": 1,
+          "off_s": 6.28,
+          "on_s": 6.46,
+          "travel_m": 0.039534665644168854
+        },
+        {
+          "side": 1,
+          "off_s": 6.68,
+          "on_s": 6.86,
+          "travel_m": 0.038240231573581696
+        },
+        {
+          "side": 1,
+          "off_s": 7.08,
+          "on_s": 7.26,
+          "travel_m": 0.038352902978658676
+        },
+        {
+          "side": 1,
+          "off_s": 7.46,
+          "on_s": 7.66,
+          "travel_m": 0.04106585681438446
+        }
+      ],
+      "discounted_return": 10.82658969363607,
+      "peak_tilt_deg": 15.373868942260742
+    },
+    {
+      "case": 143,
+      "mode": "walker_zero",
+      "scenario": "roll_moving15",
+      "rep": 2,
+      "failed": false,
+      "nonfall_settled": false,
+      "settle_s": null,
+      "failure_s": null,
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.88,
+          "on_s": 1.08,
+          "travel_m": 0.03947407379746437
+        },
+        {
+          "side": 0,
+          "off_s": 1.3,
+          "on_s": 1.5,
+          "travel_m": 0.03546963632106781
+        },
+        {
+          "side": 0,
+          "off_s": 1.68,
+          "on_s": 1.8800000000000001,
+          "travel_m": 0.03666744381189346
+        },
+        {
+          "side": 0,
+          "off_s": 2.06,
+          "on_s": 2.2600000000000002,
+          "travel_m": 0.03745681419968605
+        },
+        {
+          "side": 0,
+          "off_s": 2.44,
+          "on_s": 2.64,
+          "travel_m": 0.0343802385032177
+        },
+        {
+          "side": 0,
+          "off_s": 2.84,
+          "on_s": 3.04,
+          "travel_m": 0.036757081747055054
+        },
+        {
+          "side": 0,
+          "off_s": 3.24,
+          "on_s": 3.44,
+          "travel_m": 0.03400110453367233
+        },
+        {
+          "side": 0,
+          "off_s": 3.64,
+          "on_s": 3.84,
+          "travel_m": 0.035047516226768494
+        },
+        {
+          "side": 0,
+          "off_s": 4.04,
+          "on_s": 4.24,
+          "travel_m": 0.033322446048259735
+        },
+        {
+          "side": 0,
+          "off_s": 4.44,
+          "on_s": 4.64,
+          "travel_m": 0.03338458761572838
+        },
+        {
+          "side": 0,
+          "off_s": 4.84,
+          "on_s": 5.04,
+          "travel_m": 0.033041346818208694
+        },
+        {
+          "side": 0,
+          "off_s": 5.24,
+          "on_s": 5.44,
+          "travel_m": 0.033299773931503296
+        },
+        {
+          "side": 0,
+          "off_s": 5.64,
+          "on_s": 5.84,
+          "travel_m": 0.03267378732562065
+        },
+        {
+          "side": 0,
+          "off_s": 6.04,
+          "on_s": 6.24,
+          "travel_m": 0.03395446762442589
+        },
+        {
+          "side": 0,
+          "off_s": 6.44,
+          "on_s": 6.640000000000001,
+          "travel_m": 0.033591292798519135
+        },
+        {
+          "side": 0,
+          "off_s": 6.84,
+          "on_s": 7.04,
+          "travel_m": 0.0338553786277771
+        },
+        {
+          "side": 0,
+          "off_s": 7.24,
+          "on_s": 7.44,
+          "travel_m": 0.03420621529221535
+        },
+        {
+          "side": 0,
+          "off_s": 7.640000000000001,
+          "on_s": 7.84,
+          "travel_m": 0.03270970284938812
+        },
+        {
+          "side": 1,
+          "off_s": 0.66,
+          "on_s": 0.88,
+          "travel_m": 0.04698982089757919
+        },
+        {
+          "side": 1,
+          "off_s": 1.1,
+          "on_s": 1.3,
+          "travel_m": 0.04082038626074791
+        },
+        {
+          "side": 1,
+          "off_s": 1.5,
+          "on_s": 1.68,
+          "travel_m": 0.03490179404616356
+        },
+        {
+          "side": 1,
+          "off_s": 1.8800000000000001,
+          "on_s": 2.06,
+          "travel_m": 0.03976593539118767
+        },
+        {
+          "side": 1,
+          "off_s": 2.2600000000000002,
+          "on_s": 2.44,
+          "travel_m": 0.03854607418179512
+        },
+        {
+          "side": 1,
+          "off_s": 2.66,
+          "on_s": 2.84,
+          "travel_m": 0.039216943085193634
+        },
+        {
+          "side": 1,
+          "off_s": 3.04,
+          "on_s": 3.24,
+          "travel_m": 0.04099543020129204
+        },
+        {
+          "side": 1,
+          "off_s": 3.44,
+          "on_s": 3.64,
+          "travel_m": 0.03919079154729843
+        },
+        {
+          "side": 1,
+          "off_s": 3.84,
+          "on_s": 4.04,
+          "travel_m": 0.04223709553480148
+        },
+        {
+          "side": 1,
+          "off_s": 4.24,
+          "on_s": 4.44,
+          "travel_m": 0.039769381284713745
+        },
+        {
+          "side": 1,
+          "off_s": 4.64,
+          "on_s": 4.84,
+          "travel_m": 0.03880910947918892
+        },
+        {
+          "side": 1,
+          "off_s": 5.04,
+          "on_s": 5.24,
+          "travel_m": 0.038857560604810715
+        },
+        {
+          "side": 1,
+          "off_s": 5.44,
+          "on_s": 5.64,
+          "travel_m": 0.040992431342601776
+        },
+        {
+          "side": 1,
+          "off_s": 5.86,
+          "on_s": 6.04,
+          "travel_m": 0.03621973469853401
+        },
+        {
+          "side": 1,
+          "off_s": 6.24,
+          "on_s": 6.44,
+          "travel_m": 0.03965718299150467
+        },
+        {
+          "side": 1,
+          "off_s": 6.640000000000001,
+          "on_s": 6.84,
+          "travel_m": 0.03977460041642189
+        },
+        {
+          "side": 1,
+          "off_s": 7.04,
+          "on_s": 7.24,
+          "travel_m": 0.04098835960030556
+        },
+        {
+          "side": 1,
+          "off_s": 7.44,
+          "on_s": 7.640000000000001,
+          "travel_m": 0.04148820415139198
+        }
+      ],
+      "discounted_return": 10.848468666284752,
+      "peak_tilt_deg": 15.476369857788086
+    }
+  ],
+  "summary": [
+    {
+      "mode": "mean600",
+      "cases": 24,
+      "falls": 7,
+      "nonfall_settled": 17,
+      "cases_with_post_push_time_steps": 4
+    },
+    {
+      "mode": "fixed_reference",
+      "cases": 24,
+      "falls": 7,
+      "nonfall_settled": 17,
+      "cases_with_post_push_time_steps": 0
+    },
+    {
+      "mode": "iid_small",
+      "cases": 24,
+      "falls": 9,
+      "nonfall_settled": 15,
+      "cases_with_post_push_time_steps": 4
+    },
+    {
+      "mode": "iid_large",
+      "cases": 24,
+      "falls": 20,
+      "nonfall_settled": 4,
+      "cases_with_post_push_time_steps": 24
+    },
+    {
+      "mode": "held_large",
+      "cases": 24,
+      "falls": 24,
+      "nonfall_settled": 0,
+      "cases_with_post_push_time_steps": 22
+    },
+    {
+      "mode": "walker_zero",
+      "cases": 24,
+      "falls": 5,
+      "nonfall_settled": 0,
+      "cases_with_post_push_time_steps": 22
+    }
+  ],
+  "limitations": "Finite open-loop exploration diagnostics are not trained policies or a PPO comparison. Cases after first failure are excluded from return; foot steps alone do not establish effective recovery. Same initial qpos/qvel and nominal mechanics, not a claim of bitwise identical GPU evolution."
+}

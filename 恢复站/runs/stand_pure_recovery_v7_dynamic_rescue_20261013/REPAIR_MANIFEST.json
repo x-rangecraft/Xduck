@@ -1,0 +1,170 @@
+{
+  "source_checkpoint": "/home/xingchen/Xduck/stand_pure_recovery_v6_keep_pose_20261013/block_20/final.pt",
+  "source_sha256": "e98c34ae7c2568e48886ccb8f64378bd721d8561f9e780b3fa8d3d5672c462ed",
+  "source_lineage_updates": 2400,
+  "sensor_changes": [
+    {
+      "sensor": "pure_floor_found_2",
+      "old_geom": "left_hip_visual",
+      "new_geom": "base_link_collision",
+      "expected_id": 2
+    },
+    {
+      "sensor": "pure_floor_found_4",
+      "old_geom": "left_hip_yaw_visual",
+      "new_geom": "left_hip_collision",
+      "expected_id": 4
+    },
+    {
+      "sensor": "pure_floor_found_6",
+      "old_geom": "left_hip_roll_visual",
+      "new_geom": "left_hip_yaw_collision",
+      "expected_id": 6
+    },
+    {
+      "sensor": "pure_floor_found_8",
+      "old_geom": "left_hip_pitch_visual",
+      "new_geom": "left_hip_roll_collision",
+      "expected_id": 8
+    },
+    {
+      "sensor": "pure_floor_found_10",
+      "old_geom": "left_knee_pitch_visual",
+      "new_geom": "left_hip_pitch_collision",
+      "expected_id": 10
+    },
+    {
+      "sensor": "pure_floor_found_12",
+      "old_geom": "left_ankle_pitch_joint_visual",
+      "new_geom": "left_knee_pitch_collision",
+      "expected_id": 12
+    },
+    {
+      "sensor": "pure_floor_found_17",
+      "old_geom": "head_pitch_visual",
+      "new_geom": "neck_pitch_collision",
+      "expected_id": 17
+    },
+    {
+      "sensor": "pure_floor_found_19",
+      "old_geom": "head_yaw_visual",
+      "new_geom": "head_pitch_collision",
+      "expected_id": 19
+    },
+    {
+      "sensor": "pure_floor_found_21",
+      "old_geom": "head_roll_visual",
+      "new_geom": "head_yaw_collision",
+      "expected_id": 21
+    },
+    {
+      "sensor": "pure_floor_found_23",
+      "old_geom": "control-box_visual",
+      "new_geom": "head_roll_collision",
+      "expected_id": 23
+    },
+    {
+      "sensor": "pure_floor_found_25",
+      "old_geom": "right_hip_visual",
+      "new_geom": "control-box_collision",
+      "expected_id": 25
+    },
+    {
+      "sensor": "pure_floor_found_27",
+      "old_geom": "right_hip_yaw_visual",
+      "new_geom": "right_hip_collision",
+      "expected_id": 27
+    },
+    {
+      "sensor": "pure_floor_found_29",
+      "old_geom": "right_hip_roll_visual",
+      "new_geom": "right_hip_yaw_collision",
+      "expected_id": 29
+    },
+    {
+      "sensor": "pure_floor_found_31",
+      "old_geom": "right_hip_pitch_visual",
+      "new_geom": "right_hip_roll_collision",
+      "expected_id": 31
+    },
+    {
+      "sensor": "pure_floor_found_33",
+      "old_geom": "right_knee_pitch_visual",
+      "new_geom": "right_hip_pitch_collision",
+      "expected_id": 33
+    },
+    {
+      "sensor": "pure_floor_found_35",
+      "old_geom": "right_ankle_pitch_visual",
+      "new_geom": "right_knee_pitch_collision",
+      "expected_id": 35
+    },
+    {
+      "sensor": "pure_floor_found_40",
+      "old_geom": "IMU_visual",
+      "new_geom": "Battery_collision",
+      "expected_id": 40
+    },
+    {
+      "sensor": "pure_floor_found_42",
+      "old_geom": "imu_marker",
+      "new_geom": "IMU_collision",
+      "expected_id": 42
+    },
+    {
+      "sensor": "pure_floor_found_45",
+      "old_geom": "floor",
+      "new_geom": "power-strip_collision",
+      "expected_id": 45
+    }
+  ],
+  "mechanical_arrays_equal": [
+    "body_mass",
+    "body_inertia",
+    "body_pos",
+    "body_quat",
+    "body_ipos",
+    "jnt_axis",
+    "jnt_pos",
+    "jnt_range",
+    "dof_armature",
+    "dof_damping",
+    "dof_frictionloss",
+    "jnt_stiffness",
+    "actuator_gainprm",
+    "actuator_biasprm",
+    "actuator_dynprm",
+    "actuator_ctrlrange",
+    "actuator_forcerange",
+    "actuator_gaintype",
+    "actuator_biastype",
+    "actuator_dyntype",
+    "geom_friction",
+    "geom_pos",
+    "geom_quat",
+    "geom_contype",
+    "geom_conaffinity",
+    "key_qpos",
+    "key_ctrl"
+  ],
+  "actor_dimension": 61,
+  "critic_dimension": 76,
+  "critic_phase_feature": "last formerly-zero body-command slot",
+  "actor_observation_unchanged": true,
+  "actor_std_preserved": true,
+  "optimizer_moments_reset_at_first_resume": true,
+  "critic_new_phase_column_initialized_zero": true,
+  "pure_RL": true,
+  "teacher_or_trajectory_training": false,
+  "level": 3,
+  "DR_multiplier": 2.5,
+  "flexible_joints": false,
+  "mechanical_dt": 0.001,
+  "num_envs": 4096,
+  "rollout_steps": 20,
+  "save_and_evaluate_every": 100,
+  "gaelambda": 0.98,
+  "termination": "actual nonfoot contact or root height <45% or body tilt >100deg",
+  "pose_return_schedule": "Tilted reset: after2s ramp0.5s; physical push: after release+0.2s ramp0.5s; independent of robot motion",
+  "all_eight_push_directions_balanced": true
+}

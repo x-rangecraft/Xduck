@@ -1,0 +1,106 @@
+{
+  "confirmed_course_fault": "After 300, promotion in polish checks rescue_gain>=0.7 but ignores loss of quiet/pose success; 400,500 tests all0 settled still promote harder levels.",
+  "training_quiet_reward_300": {
+    "mean": 0.0038,
+    "maximum": 2.0,
+    "fraction": 0.0019
+  },
+  "training_quiet_reward_600": {
+    "mean": 0.0044,
+    "maximum": 3.0,
+    "fraction": 0.0014666666666666667
+  },
+  "reward_gate_mismatch": {
+    "correct_pose_reward_rate": 12.75,
+    "wide_hips_reward_rate": 11.481164071087978,
+    "wide_hips_reward_fraction": 0.9004834565559199,
+    "leg_pose_credit_fraction": 0.7706254395991309,
+    "quiet_credit_fraction": 0.7706254395991309,
+    "strict_pose_gate_accepts_wide_hips": false,
+    "synthetic_fixed_posture_probe_not_physical_rollout": true
+  },
+  "middle_case_control": "Mean output of the checkpoint under test controls from first frame; no walk policy, no action sequence, no Gaussian exploration, no external force in pitch10 moving fixture.",
+  "steps": [
+    {
+      "updates": 300,
+      "case": 8,
+      "mode": "model",
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.26,
+          "landing_s": 0.36000000000000004,
+          "air_s": 0.1,
+          "landing_shift_cm": 7.39,
+          "body_origin_lift_cm": 1.62,
+          "preceded_by_3_contact_frames": true,
+          "leg_target_excursion_deg": 11.411121982561326
+        },
+        {
+          "side": 1,
+          "off_s": 0.38,
+          "landing_s": 0.52,
+          "air_s": 0.14,
+          "landing_shift_cm": 9.36,
+          "body_origin_lift_cm": 2.71,
+          "preceded_by_3_contact_frames": true,
+          "leg_target_excursion_deg": 14.14801239605389
+        }
+      ],
+      "force_max_N": 0.0
+    },
+    {
+      "updates": 300,
+      "case": 72,
+      "mode": "fixed_default",
+      "steps": [],
+      "force_max_N": 0.0
+    },
+    {
+      "updates": 600,
+      "case": 8,
+      "mode": "model",
+      "steps": [
+        {
+          "side": 0,
+          "off_s": 0.12000000000000001,
+          "landing_s": 0.26,
+          "air_s": 0.14,
+          "landing_shift_cm": 9.58,
+          "body_origin_lift_cm": 2.11,
+          "preceded_by_3_contact_frames": true,
+          "leg_target_excursion_deg": 18.333791162615242
+        },
+        {
+          "side": 0,
+          "off_s": 0.34,
+          "landing_s": 0.44,
+          "air_s": 0.1,
+          "landing_shift_cm": 2.56,
+          "body_origin_lift_cm": 0.62,
+          "preceded_by_3_contact_frames": true,
+          "leg_target_excursion_deg": 10.573473843046223
+        },
+        {
+          "side": 1,
+          "off_s": 0.26,
+          "landing_s": 0.38,
+          "air_s": 0.12,
+          "landing_shift_cm": 4.43,
+          "body_origin_lift_cm": 2.18,
+          "preceded_by_3_contact_frames": true,
+          "leg_target_excursion_deg": 10.223225078528491
+        }
+      ],
+      "force_max_N": 0.0
+    },
+    {
+      "updates": 600,
+      "case": 72,
+      "mode": "fixed_default",
+      "steps": [],
+      "force_max_N": 0.0
+    }
+  ],
+  "causal_limits": "Reward-phase and difficulty changes occurred together; no separate controlled training ablation. Wide stance as a survival tradeoff is an inference, not proven sole cause. Synthetic reward probe holds height/orientation/motion fixed."
+}
