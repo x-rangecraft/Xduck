@@ -155,6 +155,18 @@ pub struct MotorPositionLimit {
     pub max_mrad: i32,
 }
 
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct OvercurrentReport {
+    pub motor_id: u8,
+    pub write: bool,
+    pub result: u8,
+    pub stage: u8,
+    pub original_a: Option<f32>,
+    pub requested_a: Option<f32>,
+    pub written_a: Option<f32>,
+    pub saved_a: Option<f32>,
+}
+
 pub trait RobotIo {
     /// One transaction: joints and IMU together.
     fn read(&mut self) -> Result<Sensors>;
@@ -200,6 +212,9 @@ pub trait RobotIo {
     fn position_limits_ready(&self) -> Option<bool> { None }
     fn mark_motor_zero(&mut self, _motor_id: u8) -> Result<()> {
         Err(IoError::Bus("此后端不支持电机零位标定".into()))
+    }
+    fn motor_overcurrent(&mut self, _motor_id: u8, _amps: Option<f32>) -> Result<OvercurrentReport> {
+        Err(IoError::Bus("此后端不支持相电流阈值测试".into()))
     }
 
     /// Supply voltage and case temperatures, in one extra transaction.

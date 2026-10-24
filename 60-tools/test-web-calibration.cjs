@@ -31,9 +31,9 @@ for (const [,joint] of ids) {sensors.motor_flags[joint]=3;sensors.joints[joint]=
 let now = 10, sequence = 0, fail = false;
 const sent = [];
 const logs = [], timers = [], listeners = {};
-let connected = true, readError = null;
+let connected = true, readError = null, lastParams = null;
 const context = vm.createContext({
-  $:element, MOTOR_JOINTS:ids.map(([id,joint]) => [id,joint,'joint']),
+  $:element, MOTOR_JOINTS:ids.map(([id,joint]) => [id,joint,'joint']), operationLocked:()=>false,
   postureState: {state:sensors,received:now}, performance:{now:()=>now}, open:()=>connected,
   reportConnectionIssue(...args){logs.push(args);},
   setInterval(callback,ms){timers.push({callback,ms});},setTimeout(callback){callback();},
@@ -41,8 +41,13 @@ const context = vm.createContext({
   async call(method, params, quiet) {
     sent.push({method,params,quiet});
     if (params.action === 'get' && readError) throw readError;
-    if(params.action !== 'get') { sequence++; return {request_id:sequence,busy:true}; }
-    return {config,motors:ids.map(pair=>[...pair]),request_id:sequence,busy:false,editable:true,synced:true,error:fail?'STM32 拒绝标定':null};
+    if(params.action !== 'get') { lastParams=params; sequence++; return {request_id:sequence,busy:true}; }
+    const write=lastParams?.action==='write_overcurrent';
+    const overcurrent=lastParams?.action?.includes('overcurrent') ? {
+      motor_id:lastParams.motor_id,write,result:fail?8:0,stage:fail?4:write?5:1,
+      original_a:10,requested_a:write?20:null,written_a:write?20:null,saved_a:write&&!fail?20:null,
+    }:null;
+    return {config,motors:ids.map(pair=>[...pair]),request_id:sequence,busy:false,editable:true,synced:true,overcurrent,error:fail?'STM32 拒绝标定':null};
   },
 });
 vm.runInContext(html.slice(start,end),context);
@@ -74,7 +79,7 @@ vm.runInContext(html.slice(start,end),context);
   element('cal-min-2').value='';
   assert.throws(()=>vm.runInContext('calibrationNumber("cal-min-2")',context));
   await vm.runInContext('submitCalibration({action:"mark_zero",motor_id:2})',context);
-  assert(element('calibration-feedback').textContent.includes('已确认电机失能'));
+  assert(element('calibration-feedback').textContent.includes('通过失能轮询确认位置接近 0 rad'));
   assert.equal(sent.filter(x=>x.params.action==='mark_zero').length,1);
   element('cal-home-2').value='0.25';
   element('calibration-home').onclick();
@@ -88,6 +93,31 @@ vm.runInContext(html.slice(start,end),context);
   sensors.motor_flags[1]=0;
   assert(!vm.runInContext('calibrationEditable()',context),'configured but offline motor must still block writes');
   sensors.motor_flags[1]=3; fail=false;
+  let currentCalls=sent.length;
+  await vm.runInContext('submitOvercurrent(false)',context);
+  assert.equal(sent.length,currentCalls,'no default motor/broadcast');
+  element('overcurrent-motor').value='4';
+  await vm.runInContext('submitOvercurrent(false)',context);
+  assert.equal(sent.findLast(x=>x.params.action==='read_overcurrent').params.motor_id,4);
+  assert(element('overcurrent-result').textContent.includes('原值：10 A'));
+  for(const invalid of ['', '0', '-1', 'Infinity', '1e100', '1e-100']) {
+    element('overcurrent-amps').value=invalid;currentCalls=sent.length;
+    await vm.runInContext('submitOvercurrent(true)',context);
+    assert.equal(sent.length,currentCalls,'invalid current rejected before write');
+  }
+  element('overcurrent-amps').value='20';
+  await vm.runInContext('submitOvercurrent(true)',context);
+  const writes=sent.filter(x=>x.params.action==='write_overcurrent');
+  assert.equal(writes.length,1);
+  assert.deepEqual(JSON.parse(JSON.stringify(writes[0].params)),{action:'write_overcurrent',motor_id:4,amps:20});
+  assert(element('overcurrent-result').textContent.includes('保存后读回：20 A'));
+  assert(element('calibration-feedback').textContent.includes('掉电保留需重新上电'));
+  fail=true;
+  await vm.runInContext('submitOvercurrent(true)',context);
+  assert(element('overcurrent-result').textContent.includes('已尝试保存'));
+  assert(element('overcurrent-result').textContent.includes('保存后读回：未确认'));
+  assert.equal(sent.filter(x=>x.params.action==='write_overcurrent').length,2,'failed save is never automatically retried');
+  fail=false;
   const poll=timers.find(timer=>timer.ms===10_000).callback;
   let count=sent.length;
   await poll();
@@ -125,4 +155,5 @@ vm.runInContext(html.slice(start,end),context);
   assert(sent.filter(x=>x.params.action==='get' && x.quiet).length>0);
   console.log('PASS: collapsed/hidden/disconnected polling guards, immediate opening refresh, quiet requests, error logging and external changes with draft protection');
   console.log('PASS: calibration rendering, enabled/offline/stale guards, capture without motion, validation, result confirmation and no automatic zero retry');
+  console.log('PASS: explicit single motor, float32 validation, read/write/save results, partial failure and no automatic flash retry');
 })().catch(error=>{console.error(error);process.exitCode=1;});

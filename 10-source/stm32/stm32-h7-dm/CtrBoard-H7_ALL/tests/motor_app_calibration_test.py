@@ -27,6 +27,8 @@ pre = r'''
 #include <cmath>
 #include <cstdio>
 #include <cstdint>
+#include <cstring>
+#include <initializer_list>
 #include "h7spi_protocol.h"
 #include "dmusb_protocol.h"
 #include "imu_task.h"
@@ -55,6 +57,10 @@ struct Motor_t {
  unsigned state=0, online=1, mos=30, rotor=30, disabled=0, run=0, clears=0;
  unsigned rx_count=0, disable_waits=0, save_zero_waits=0;
  unsigned tx_ok=1, feedback_on_wait=1, apply_saved_zero=1;
+ unsigned oc=0x41200000, reads=0, writes=0, saves=0, fail_read=0, fail_write=0, fail_save=0, mismatch=0;
+ unsigned ReadRegister(unsigned reg,unsigned *out){assert(reg==3);reads++;if(reads==fail_read)return 0;*out=oc;return 1;}
+ unsigned WriteRegister(unsigned reg,unsigned value,unsigned save){assert(reg==3 && !save);writes++;if(fail_write)return 0;oc=mismatch?value+1:value;return 1;}
+ unsigned SaveParametersOnce(){saves++;return !fail_save;}
  uint32_t last_rx=now_ms;
  float GetPosition(){return position;} float GetSpeed(){return speed;}
  unsigned GetState(){return state;}
@@ -94,7 +100,9 @@ code = ''.join(function(signature) for signature in [
     'static unsigned char MotorApp_WaitForDisabledFeedback(Motor_t *Motor,\n                                                      unsigned int Before,\n                                                      unsigned int TimeoutMs)',
     'static unsigned char MotorApp_MarkZeroDisableAndConfirm(Motor_t *Motor)',
     'static unsigned char MotorApp_MarkZeroAndVerify(Motor_t *Motor)',
+    'static unsigned char MotorApp_AllDisabled(void)',
     'static unsigned char MotorApp_CalibrationAllowed(void)',
+    'void MotorApp_Overcurrent(const dmusb_overcurrent_request_t *request,\n                          dmusb_overcurrent_result_t *response)',
     'unsigned char MotorApp_SetPositionLimits(const dmusb_position_limit_t *limits, unsigned char count)',
     'static unsigned char MotorApp_ImuHealthy(void)',
     'static void MotorApp_PrepareFallbackCommands(void)',
@@ -148,6 +156,37 @@ void recovered_but_disabled(){
  assert(MotorApp_GetLastFaultMotorID()==6 && MotorApp_GetLastFaultRouteIndex()==5);
 }
 int main(){
+ // The maintenance transaction changes exactly one selected motor, with a single save.
+ dmusb_overcurrent_request_t oc={42,1,4,0x41a00000};
+ dmusb_overcurrent_result_t report;
+ reset();MotorApp_Overcurrent(&oc,&report);
+ assert(report.result==0 && report.stage==5 && report.original_bits==0x41200000);
+ assert(report.written_bits==oc.value_bits && report.saved_bits==oc.value_bits);
+ for(unsigned i=0;i<14;i++)assert(motors[i].writes==(i==3) && motors[i].saves==(i==3));
+ assert(!g_motorAppRegisterBusy && !g_motorAppEnabled);
+ reset();oc.action=0;MotorApp_Overcurrent(&oc,&report);
+ assert(report.result==0 && report.stage==1 && motors[3].reads==1 && !motors[3].writes && !motors[3].saves);
+ oc.action=1;
+ for(unsigned id: {0u,15u,255u}){reset();oc.motor_id=id;MotorApp_Overcurrent(&oc,&report);assert(report.result!=0 && !motors[3].reads);}
+ oc.motor_id=4;
+ for(unsigned invalid: {0u,0x7f800000u,0x7fc00000u,0xbf800000u}){
+  reset();oc.value_bits=invalid;MotorApp_Overcurrent(&oc,&report);assert(report.result!=0 && !motors[3].reads);
+ }
+ oc.value_bits=0x41a00000;
+ reset();motors[3].oc=0xffffffff;MotorApp_Overcurrent(&oc,&report);
+ assert(report.result!=0 && !motors[3].writes && !motors[3].saves);
+ for(unsigned problem=0;problem<3;problem++){
+  reset();if(problem==0)motors[9].state=1;if(problem==1)motors[9].online=0;if(problem==2)g_motorAppRegisterBusy=1;
+  MotorApp_Overcurrent(&oc,&report);assert(report.result!=0 && !motors[3].reads && !motors[3].saves);
+ }
+ for(unsigned problem=0;problem<6;problem++){
+  reset();auto &m=motors[3];
+  if(problem==0)m.fail_read=1;if(problem==1)m.fail_write=1;if(problem==2)m.fail_read=2;
+  if(problem==3)m.mismatch=1;if(problem==4)m.fail_save=1;if(problem==5)m.fail_read=3;
+  MotorApp_Overcurrent(&oc,&report);
+  assert(report.result!=0 && report.stage<5 && !g_motorAppRegisterBusy);
+  assert(m.saves==(problem>=4?1u:0u));
+ }
  assert(MotorApp_IsHardwareFaultState(13));
  // Zeroing matches the production motor flow: confirm disabled, send 0xFE once,
  // then poll with disable frames until fresh feedback reports the new zero.

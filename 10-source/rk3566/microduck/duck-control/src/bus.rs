@@ -448,6 +448,28 @@ impl RobotIo for DynamixelIo {
         p[2] = 3; p[3] = 1; p[4] = motor_id;
         self.calibration_request(MSG_ADMIN, 3, p, 1, Some(motor_id))
     }
+    fn motor_overcurrent(&mut self, motor_id: u8, amps: Option<f32>) -> Result<crate::io::OvercurrentReport> {
+        let mut payload = encode_overcurrent(motor_id, amps)?;
+        self.read_state()?;
+        self.calibration_ready()?;
+        if self.control_capabilities & 0x0040 == 0 {
+            return Err(IoError::Bus("STM32 固件不支持相电流阈值测试，请先更新固件".into()));
+        }
+        let seq = self.next_seq();
+        put_u16(&mut payload[..2], seq);
+        self.write_all(&pack(15, seq, self.tick_us(), 0, &payload))?;
+        // A maintenance transaction runs only while disabled. Never resend the transaction/save.
+        let deadline = Instant::now() + Duration::from_secs(5);
+        while let Some(frame) = self.read_frame_until(deadline)? {
+            if frame.msg_type == MSG_STATE { self.parse_and_observe_state(&frame.payload)?; }
+            if frame.msg_type == 16 && frame.payload.len() == 32
+                && get_u16(&frame.payload[..2]) == seq {
+                return decode_overcurrent(&frame.payload, motor_id, amps);
+            }
+            if Instant::now() >= deadline { break; }
+        }
+        Err(IoError::Bus("相电流阈值操作未确认，可能已写入或保存；请先读取核对，勿自动重试保存".into()))
+    }
     fn motor_control_error(&self) -> Option<&'static str> {
         if self.position_limits_ready() == Some(false) {
             return Some("STM32 尚未装载位置限位，不能开启控制");
@@ -461,6 +483,44 @@ impl RobotIo for DynamixelIo {
         motor_control_problem(self.control_capabilities, self.gateway_faults,
             self.last_motor_state.as_ref().map(|(sensors, at)| (sensors, at.elapsed())))
     }
+}
+
+fn encode_overcurrent(motor_id: u8, amps: Option<f32>) -> Result<Vec<u8>> {
+    if !CONFIGURED_MOTOR_IDS.contains(&motor_id) || motor_id == 0 {
+        return Err(IoError::Bus("必须指定一个已配置的电机 ID".into()));
+    }
+    if amps.is_some_and(|a| !a.is_finite() || a <= 0.0) {
+        return Err(IoError::Bus("电流阈值必须为可表示的正有限 float32，单位 A".into()));
+    }
+    let mut payload = vec![0u8; 8];
+    payload[2] = u8::from(amps.is_some());
+    payload[3] = motor_id;
+    payload[4..8].copy_from_slice(&amps.unwrap_or(0.0).to_le_bytes());
+    Ok(payload)
+}
+
+fn decode_overcurrent(p: &[u8], motor_id: u8, amps: Option<f32>) -> Result<crate::io::OvercurrentReport> {
+    if p.len() != 32 || p[2] != u8::from(amps.is_some()) || p[3] != motor_id
+        || p[5] > 5 || (amps.is_some() && get_u32(&p[12..16]) != amps.unwrap().to_bits()) {
+        return Err(IoError::Bus("相电流阈值回复与请求不匹配，保存状态未知".into()));
+    }
+    let value = |offset| {
+        let a = f32::from_bits(get_u32(&p[offset..offset + 4]));
+        (a.is_finite() && a > 0.0).then_some(a)
+    };
+    let report = crate::io::OvercurrentReport {
+        motor_id, write: amps.is_some(), result: p[4], stage: p[5],
+        original_a: (p[5] >= 1).then(|| value(8)).flatten(),
+        requested_a: amps,
+        written_a: (p[5] >= 3).then(|| value(16)).flatten(),
+        saved_a: (p[5] >= 5).then(|| value(20)).flatten(),
+    };
+    if report.result == 0 && (report.original_a.is_none()
+        || (amps.is_none() && report.stage != 1)
+        || (amps.is_some() && (report.stage != 5 || report.written_a != amps || report.saved_a != amps))) {
+        return Err(IoError::Bus("STM32 返回成功但阈值读回验证不完整，保存未确认".into()));
+    }
+    Ok(report)
 }
 
 pub fn configured_motors_disabled(sensors: &Sensors) -> bool {
@@ -872,6 +932,36 @@ fn put_f32(p: &mut [u8], v: f32) { p[..4].copy_from_slice(&v.to_le_bytes()); }
 mod tests {
     use super::*;
 
+    #[test]
+    fn overcurrent_only_encodes_one_explicit_motor_and_finite_float32() {
+        assert_eq!(encode_overcurrent(4, Some(20.0)).unwrap(), [0,0,1,4,0,0,0xa0,0x41]);
+        assert_eq!(encode_overcurrent(4, None).unwrap(), [0,0,0,4,0,0,0,0]);
+        for id in [0,15,255] { assert!(encode_overcurrent(id, Some(20.0)).is_err()); }
+        for a in [0.0,-1.0,f32::NAN,f32::INFINITY] { assert!(encode_overcurrent(4, Some(a)).is_err()); }
+    }
+
+    #[test]
+    fn overcurrent_requires_matching_id_action_target_and_verified_values() {
+        let mut p = vec![0;32];
+        p[2]=1; p[3]=4; p[5]=5;
+        put_u32(&mut p[8..12], 10.0f32.to_bits());
+        for offset in [12,16,20] { put_u32(&mut p[offset..offset+4],20.0f32.to_bits()); }
+        let report=decode_overcurrent(&p,4,Some(20.0)).unwrap();
+        assert_eq!(report.original_a,Some(10.0));
+        assert_eq!(report.saved_a,Some(20.0));
+        assert!(decode_overcurrent(&p,5,Some(20.0)).is_err());
+        assert!(decode_overcurrent(&p,4,None).is_err());
+        assert!(decode_overcurrent(&p,4,Some(30.0)).is_err());
+        p[5]=4;
+        assert!(decode_overcurrent(&p,4,Some(20.0)).is_err());
+        p[4]=8;
+        let partial=decode_overcurrent(&p,4,Some(20.0)).unwrap();
+        assert_eq!(partial.stage,4);
+        assert_eq!(partial.saved_a,None);
+        p[4]=0;p[5]=5;p[20]=1;
+        assert!(decode_overcurrent(&p,4,Some(20.0)).is_err());
+    }
+
     #[cfg(unix)]
     #[test]
     fn battery_meter_suffix_requires_capability_and_valid_sample() {
@@ -1055,6 +1145,48 @@ mod tests {
         wire.resize(HEADER_LEN + len, 0);
         port.read_exact(&mut wire[HEADER_LEN..]).unwrap();
         take_frame(&mut wire).unwrap().unwrap()
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn overcurrent_serial_transaction_is_single_target_and_never_retried() {
+        use serialport::SerialPort;
+        for (amps, fail) in [(None, false), (Some(20.0f32), false), (Some(20.0), true)] {
+            let (mut firmware, mut host) = serialport::TTYPort::pair().unwrap();
+            host.set_timeout(IO_TIMEOUT).unwrap();
+            firmware.set_timeout(Duration::from_secs(1)).unwrap();
+            let mut io = DynamixelIo::from_port(Box::new(host));
+            let task = std::thread::spawn(move || {
+                let mut state = test_state_payload(false);
+                put_u16(&mut state[14..16], 0x0077);
+                firmware.write_all(&pack(MSG_STATE, 1, 0, 0, &state)).unwrap();
+                let request = read_test_frame(&mut firmware);
+                assert_eq!(request.msg_type, 15);
+                assert_eq!(&request.payload[2..], &encode_overcurrent(4, amps).unwrap()[2..]);
+                let mut reply = vec![0;32];
+                reply[..4].copy_from_slice(&request.payload[..4]);
+                reply[4] = if fail { 8 } else { 0 };
+                reply[5] = if fail { 4 } else if amps.is_some() { 5 } else { 1 };
+                put_u32(&mut reply[8..12], 10.0f32.to_bits());
+                reply[12..16].copy_from_slice(&request.payload[4..8]);
+                for offset in [16,20] { put_u32(&mut reply[offset..offset+4],20.0f32.to_bits()); }
+                firmware.write_all(&pack(16, 2, 0, 0, &reply)).unwrap();
+                // Leave the peer open until the host consumes the response.
+                std::thread::sleep(Duration::from_millis(20));
+            });
+            let report = io.motor_overcurrent(4, amps).unwrap();
+            assert_eq!(report.motor_id, 4);
+            assert_eq!(report.result != 0, fail);
+            assert_eq!(io.frame_seq, 1, "one request even on a failed save");
+            task.join().unwrap();
+        }
+        let (mut firmware, host) = serialport::TTYPort::pair().unwrap();
+        let mut io = DynamixelIo::from_port(Box::new(host));
+        let mut state = test_state_payload(false);
+        put_u16(&mut state[14..16], 0x0037);
+        firmware.write_all(&pack(MSG_STATE, 1, 0, 0, &state)).unwrap();
+        assert!(io.motor_overcurrent(4, Some(20.0)).unwrap_err().to_string().contains("固件不支持"));
+        assert_eq!(io.frame_seq, 0, "old firmware must not receive writes");
     }
 
     #[cfg(unix)]

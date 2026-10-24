@@ -43,6 +43,8 @@ typedef struct {
 
 void MotorApp_ConfigDefault(void);
 unsigned char MotorApp_PositionLimitsReady(void);
+void MotorApp_Overcurrent(const dmusb_overcurrent_request_t *request,
+                          dmusb_overcurrent_result_t *response);
 unsigned char MotorApp_SetPositionLimits(const dmusb_position_limit_t *limits, unsigned char count);
 unsigned char MotorApp_ConfigureStartupRegisters(void);
 unsigned char MotorApp_RequestEnableDefault(void);

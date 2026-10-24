@@ -148,6 +148,7 @@ pub struct Status {
     pub editable: bool,
     pub error: Option<String>,
     pub home_error: Option<String>,
+    pub overcurrent: Option<duck_control::io::OvercurrentReport>,
 }
 
 struct Inner {
@@ -173,6 +174,7 @@ impl Default for Calibration {
                 editable: false,
                 error: None,
                 home_error: None,
+                overcurrent: None,
             },
             pending: None,
             path: None,
@@ -246,7 +248,15 @@ impl Calibration {
                     .try_into()
                     .map_err(|_| "默认站姿需要 15 个关节值")?;
             }
-            CalibrationParams::MarkZero { motor_id } => {
+            CalibrationParams::WriteOvercurrent { motor_id, amps } => {
+                if !amps.is_finite() || *amps <= 0.0 || !(*amps as f32).is_finite() || (*amps as f32) <= 0.0 {
+                    return Err("电流阈值必须为可表示的正有限 float32，单位 A".into());
+                }
+                if *motor_id == 0 || !STM32_MOTOR_IDS.contains(motor_id) {
+                    return Err("未知电机 ID".into());
+                }
+            }
+            CalibrationParams::MarkZero { motor_id } | CalibrationParams::ReadOvercurrent { motor_id } => {
                 if *motor_id == 0 || !STM32_MOTOR_IDS.contains(motor_id) {
                     return Err("未知电机 ID".into());
                 }
@@ -262,6 +272,9 @@ impl Calibration {
         inner.status.request_id += 1;
         inner.status.busy = true;
         inner.status.error = None;
+        if matches!(request, CalibrationParams::ReadOvercurrent { .. } | CalibrationParams::WriteOvercurrent { .. }) {
+            inner.status.overcurrent = None;
+        }
         inner.pending = Some(request.clone());
         Ok(inner.status.clone())
     }
@@ -319,6 +332,7 @@ impl Calibration {
         };
         let mut next = config.clone();
         let mut synced = !needs_sync;
+        let mut overcurrent = None;
         let result = (|| -> Result<(), String> {
             if needs_sync {
                 safety
@@ -343,6 +357,20 @@ impl Calibration {
                         .mark_motor_zero(*motor_id)
                         .map_err(|e| e.to_string())?;
                 }
+                Some(CalibrationParams::ReadOvercurrent { motor_id } | CalibrationParams::WriteOvercurrent { motor_id, .. }) => {
+                    let amps = match &request {
+                        Some(CalibrationParams::WriteOvercurrent { amps, .. }) => Some(*amps as f32),
+                        _ => None,
+                    };
+                    let report = safety.motor_overcurrent(*motor_id, amps).map_err(|e| e.to_string())?;
+                    let failed = report.result != 0;
+                    let stage = report.stage;
+                    tracing::info!(motor_id, ?amps, ?report, "temporary motor overcurrent maintenance");
+                    overcurrent = Some(report);
+                    if failed {
+                        return Err(format!("电机 {motor_id} 阈值操作失败，完成阶段 {stage}；可能已修改，先读取核对，勿自动重试保存"));
+                    }
+                }
                 _ => {}
             }
             if matches!(
@@ -366,6 +394,9 @@ impl Calibration {
             inner.status.config = next;
         }
         inner.status.error = result.err();
+        if matches!(request, Some(CalibrationParams::ReadOvercurrent { .. } | CalibrationParams::WriteOvercurrent { .. })) {
+            inner.status.overcurrent = overcurrent;
+        }
         inner.status.home_error = inner.status.config.home_error();
         inner.status.busy = false;
     }
@@ -374,6 +405,32 @@ impl Calibration {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn overcurrent_validates_selection_and_float32_and_rechecks_disabled_state() {
+        let store = Calibration::default();
+        let mut io = Safety::new(duck_control::FakeIo::new(), Default::default());
+        let sensors = io.read().unwrap();
+        let request = CalibrationParams::WriteOvercurrent { motor_id: 4, amps: 20.0 };
+        assert!(store.request(&request).is_err());
+        store.tick(&mut io, Some(&sensors), true);
+        for amps in [0.0, -1.0, f64::NAN, f64::INFINITY, f64::MAX, f64::MIN_POSITIVE] {
+            assert!(store.request(&CalibrationParams::WriteOvercurrent { motor_id: 4, amps }).is_err());
+        }
+        for motor_id in [0,15,255] {
+            assert!(store.request(&CalibrationParams::ReadOvercurrent { motor_id }).is_err());
+        }
+        store.request(&request).unwrap();
+        assert!(store.request(&request).is_err());
+        store.tick(&mut io, Some(&sensors), false);
+        assert!(store.status().error.unwrap().contains("失能"));
+        assert!(store.status().overcurrent.is_none());
+        store.tick(&mut io, Some(&sensors), true);
+        store.request(&CalibrationParams::ReadOvercurrent { motor_id: 4 }).unwrap();
+        store.disconnected();
+        assert!(!store.status().busy);
+        assert!(store.status().error.unwrap().contains("断开"));
+        assert!(store.status().overcurrent.is_none());
+    }
     #[test]
     fn feedback_must_be_fresh_and_inside_each_calibrated_limit() {
         let config = Config::default();

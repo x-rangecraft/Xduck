@@ -43,6 +43,7 @@
 | Android 构建/测试日志 | `50-logs/{build,test}/android/` |
 | 策略模型管理/转换源码 | 唯一的两文件策略路径由 `robotd/src/models.rs`、`custom_policy.rs`、`custom_policy_worker.py` 与 `default_*_policy.py` 槽位默认消费者管理；网页上传 `.pt/.pth/.onnx` 模型并可选上传策略代码，缺省时按目标槽位写入对应默认消费者；旧单文件清单会在启动时原子迁移并绑定默认策略，不再保留单文件导入或运行分支；仅供研发分发、不上传板端的自包含资料包位于 `00-docs/XDUCK_POLICY_SDK/`；兼容权重转换保留 `model_import.py`；IPC 由 `duck-ipc-proto` 定义，Web 面板由 `mediad` 提供 |
 | 模型导入回归工具与日志 | `60-tools/test-model-import.py`、`test-web-models.cjs`；`50-logs/test/model-*` |
+| 临时单电机过流阈值入口 | 网页“电机标定与默认站姿”下的临时测试区；复用 `robotd/src/calibration.rs` 请求队列，由控制线程经 DMUSB v4 消息 15/16 操作固定 RID 0x03；规范见 `STM32_DMUSB_V4_PROTOCOL.md` §9。只保存明确选择的一个电机，软件回退不恢复电机 Flash |
 | 电机实验接口 | `robotd/src/experiment.rs` 为控制与数据所有者；`mediad/src/experiment_tasks_http.rs` 提供 HTTP 适配；文档和 PC 示例统一位于 `mediad/webclient/motor-experiment/`；`robotd/src/experiment_tasks.rs` 管理预上传任务、固定缓冲执行和 `/var/lib/robotd/experiments/` 持久数据，`mediad/src/experiment_tasks_http.rs` 只流式转发文件。任务结果由电脑下载校验后显式删除；同目录 `joint_sine_sweep.py` 为离线正弦扫描任务生成示例 |
 | 策略实验接口 | `robotd/src/policy_experiment.rs` 管理初始化、只推理/闭环执行、固定缓冲记录和 `/var/lib/robotd/policy-experiments/` 结果；`mediad/src/policy_experiment_http.rs` 提供 HTTP 适配，文档和 PC 示例位于 `mediad/webclient/policy-experiment/`。`robotd/src/control_owner.rs` 是策略导入、电机实验和策略实验的唯一互斥仲裁器；占用期间只开放状态读取、所属操作管理、放松和关机；自由策略实验只计时记录，ready/running 期间允许普通操作者控制，仍禁止标定、模型替换和其他实验 |
 | 本体日志下载接口 | `mediad/src/journal_http.rs` 按请求流式读取 Journal，不在设备保存导出副本 |

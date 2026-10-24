@@ -373,6 +373,18 @@
     </div>
     <p class="hint">保存设置不会使能或移动电机。点击“初始化”才会前往默认站姿。STM32 将超范围的位置给定裁剪到边界。</p>
     <p id="calibration-feedback" role="status" aria-live="polite">等待连接。标定操作仅在未使能时可用。</p>
+    <details id="overcurrent-details">
+      <summary>临时测试：单电机相电流过流阈值</summary>
+      <p class="hint">读写 OC_Value（0x03，单位 A）。先放松，等待全部电机在线且失能。每次只处理所选电机；保存指令会保存该电机当前参数。阈值应依据电机规格填写。</p>
+      <div class="row">
+        <label>电机 <select id="overcurrent-motor" data-calibration-edit disabled><option value="">请选择电机 ID</option></select></label>
+        <label>目标阈值（A）<input id="overcurrent-amps" type="number" step="any" min="0" placeholder="填写目标电流" data-calibration-edit disabled></label>
+        <button id="overcurrent-read" data-calibration-edit disabled>读取阈值</button>
+        <button id="overcurrent-write" data-calibration-edit disabled>写入、保存并验证</button>
+      </div>
+      <pre id="overcurrent-result" role="status" aria-live="polite">尚未读取。</pre>
+      <p class="hint">保存后读回通过表示当前值一致。重新上电后选同一电机并“读取阈值”，核对保存值以验证掉电保留。回退软件版本不会恢复电机 Flash 参数；恢复原值需重新写入并保存。</p>
+    </details>
 </details>
 
 <details id="experiment-panel">
@@ -1643,6 +1655,10 @@ function renderCalibration(config) {
   calibrationSnapshot = JSON.stringify({config, motors: CALIBRATION_MOTORS});
   calibrationDirty = false;
   calibrationConflict = false;
+  const selectedMotor = $("overcurrent-motor").value;
+  $("overcurrent-motor").innerHTML = '<option value="">请选择电机 ID</option>'
+    + CALIBRATION_MOTORS.map(([id]) => `<option value="${id}">ID ${id}</option>`).join("");
+  $("overcurrent-motor").value = CALIBRATION_MOTORS.some(([id]) => String(id) === selectedMotor) ? selectedMotor : "";
   $("calibration-rows").innerHTML = MOTOR_JOINTS.map(([expectedId, joint, name]) => {
     const id = CALIBRATION_MOTORS.find(([, index]) => index === joint)?.[0];
     const limit = config.limits.find(value => value.motor_id === id);
@@ -1708,7 +1724,14 @@ async function submitCalibration(params) {
       if (status.request_id !== queued.request_id) throw new Error("另一端提交了新标定，请重新读取设置核对。");
       if (status.busy) continue;
       calibrationStatus = status;
+      const currentTest = params.action === "read_overcurrent" || params.action === "write_overcurrent";
+      if (currentTest) renderOvercurrent(status.overcurrent, status.error);
       if (status.error) throw new Error(status.error);
+      if (currentTest) {
+        if (!status.overcurrent) throw new Error("未收到阈值操作结果，请先读取核对。");
+        calibrationFeedback(params.action === "read_overcurrent" ? "已读取所选电机阈值。" : "写入、保存后读回一致；掉电保留需重新上电后读取确认。");
+        return;
+      }
       CALIBRATION_MOTORS = status.motors || [];
       renderCalibration(status.config);
       calibrationFeedback(params.action === "mark_zero"
@@ -1717,10 +1740,15 @@ async function submitCalibration(params) {
         Boolean(status.home_error));
       return;
     }
-    throw new Error("未确认完成，请重新读取设置核对；不要自动重复零位写入。");
+    throw new Error(params.action === "read_overcurrent" || params.action === "write_overcurrent"
+      ? "阈值操作未确认完成，请先读取核对；不要自动重复保存。"
+      : "未确认完成，请重新读取设置核对；不要自动重复零位写入。");
   } catch (error) {
     reportConnectionIssue("bad", "!! 标定失败：", error.message || JSON.stringify(error));
     calibrationFeedback(error.message || "标定失败", true);
+    if (params.action === "read_overcurrent" || params.action === "write_overcurrent") {
+      $("overcurrent-result").textContent += `\n${error.message || "未确认完成"}；先读取核对，勿自动重试保存。`;
+    }
   }
   finally { calibrationBusy = false; calibrationControls(); }
 }
@@ -1729,6 +1757,35 @@ function calibrationNumber(id) {
   if (field.value.trim() === "" || !field.checkValidity()) throw new Error("请填写 ±12.5 rad 内的有效数值。");
   return Number(field.value);
 }
+function renderOvercurrent(report, error) {
+  if (!report) {
+    $("overcurrent-result").textContent = error || "未收到完整结果，请先读取核对，勿自动重试保存。";
+    return;
+  }
+  const show = value => value == null ? "未确认" : `${value} A`;
+  const stages = ["未执行", "原值已读", "已尝试写入", "写后读回一致", "已尝试保存", "保存后读回一致"];
+  $("overcurrent-result").textContent = `电机 ID ${report.motor_id} · OC_Value (0x03)\n`
+    + `原值：${show(report.original_a)}\n`
+    + (report.write ? `写入目标：${show(report.requested_a)}\n写后读回：${show(report.written_a)}\n保存后读回：${show(report.saved_a)}\n` : "")
+    + `结果：${stages[report.stage] || "未知阶段"}${error ? `；${error}` : ""}`;
+}
+function submitOvercurrent(write) {
+  try {
+    const motor_id = Number($("overcurrent-motor").value);
+    if (!motor_id || !CALIBRATION_MOTORS.some(([id]) => id === motor_id)) throw new Error("请明确选择一个电机 ID。");
+    const params = {action: write ? "write_overcurrent" : "read_overcurrent", motor_id};
+    if (write) {
+      const raw = $("overcurrent-amps").value.trim();
+      const amps = Number(raw), encoded = Math.fround(amps);
+      if (!raw || !Number.isFinite(encoded) || encoded <= 0) throw new Error("请输入可表示的正有限电流值，单位 A。");
+      params.amps = amps;
+    }
+    $("overcurrent-result").textContent = `正在${write ? "写入并保存" : "读取"}电机 ID ${motor_id}…`;
+    return submitCalibration(params);
+  } catch (error) { $("overcurrent-result").textContent = error.message; }
+}
+$("overcurrent-read").onclick = () => submitOvercurrent(false);
+$("overcurrent-write").onclick = () => submitOvercurrent(true);
 $("calibration-refresh").onclick = () => refreshCalibration(true);
 $("calibration-rows").oninput = () => { calibrationDirty = true; };
 $("calibration-limits").onclick = () => {

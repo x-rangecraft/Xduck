@@ -785,6 +785,21 @@ unsigned char Motor_t::ReadRegister(unsigned char Reg, unsigned int *OutValue)
   return Motor_RegisterRead(this, Reg, OutValue);
 }
 
+unsigned char Motor_t::SaveParametersOnce(void)
+{
+  unsigned char data[8] = {0};
+  if (IsConfigured() == 0U || GetState() != 0U ||
+      GetPort() < 1U || GetPort() > 3U || GetCANID() > 0xFFU) return 0U;
+  data[0] = (unsigned char)GetCANID();
+  data[2] = MOTOR_REGISTER_CMD_SAVE;
+  data[3] = MOTOR_REGISTER_SAVE_ARG;
+  /* The manual does not promise a save ACK. Never retry a flash save because
+   * an ACK is absent; the caller reads back after this bounded flash wait. */
+  if (Motor_RegisterSendFrame(GetPort(), 0U, data) == 0U) return 0U;
+  Motor_DelayMs(MOTOR_REGISTER_SAVE_DELAY_MS);
+  return 1U;
+}
+
 unsigned char Motor_t::WriteRegister(unsigned char Reg, unsigned int Value, unsigned char SaveAfterWrite)
 {
   return Motor_RegisterWriteVerified(this, Reg, Value, SaveAfterWrite);

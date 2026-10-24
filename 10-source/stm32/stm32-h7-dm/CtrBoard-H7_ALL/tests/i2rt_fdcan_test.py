@@ -30,6 +30,9 @@ pre = r'''
 #define DM_CAN_FD_MOTOR 1
 #define MOTOR_REGISTER_FRAME_ID 0x7ff
 #define MOTOR_REGISTER_CMD_WRITE 0x55
+#define MOTOR_REGISTER_CMD_SAVE 0xaa
+#define MOTOR_REGISTER_SAVE_ARG 1
+#define MOTOR_REGISTER_SAVE_DELAY_MS 100
 enum { FDCAN_STANDARD_ID, FDCAN_DATA_FRAME, FDCAN_ESI_ACTIVE,
        FDCAN_BRS_OFF, FDCAN_BRS_ON, FDCAN_FD_CAN, FDCAN_NO_TX_EVENTS, FDCAN_STORE_TX_EVENTS };
 enum { FDCAN_DLC_BYTES_4=4, FDCAN_DLC_BYTES_8=8, HAL_OK=0 };
@@ -48,6 +51,13 @@ unsigned HAL_FDCAN_IsTxBufferMessagePending(FDCAN_HandleTypeDef*,unsigned){
 }
 unsigned HAL_GetTick(){return now_ms;}
 void osDelay(unsigned ms){now_ms+=ms;}
+void Motor_DelayMs(unsigned ms){now_ms+=ms;}
+struct Motor_t {
+ unsigned state=0, configured=1, port=2, id=7;
+ unsigned IsConfigured(){return configured;} unsigned GetState(){return state;}
+ unsigned GetPort(){return port;} unsigned GetCANID(){return id;}
+ unsigned char SaveParametersOnce();
+};
 unsigned HAL_FDCAN_AddMessageToTxFifoQ(FDCAN_HandleTypeDef*, FDCAN_TxHeaderTypeDef* h, unsigned char* p){
  last=*h;std::memcpy(bytes,p,8);sends++;return fail_add;
 }
@@ -59,9 +69,17 @@ body = function(bsp, 'unsigned char BSP_CAN_TrySendStandardFdFrame(')
 body += function(bsp, 'unsigned char BSP_CAN_WaitForLastTx(')
 body += function(motor, 'static unsigned char Motor_PortUsesFd(')
 body += function(motor, 'static unsigned char Motor_RegisterSendFrame(')
+body += function(motor, 'unsigned char Motor_t::SaveParametersOnce(')
 body += function(motor, 'static unsigned char Motor_NormalizeFeedbackState(')
 post = r'''
 int main(){
+ Motor_t motor;
+ unsigned before=sends;
+ assert(motor.SaveParametersOnce() && sends==before+1 && now_ms==100);
+ assert(bytes[0]==7 && bytes[1]==0 && bytes[2]==0xaa && bytes[3]==1 && last.DataLength==4);
+ motor.state=1;before=sends;assert(!motor.SaveParametersOnce() && sends==before);
+ motor.state=0;fail_add=1;assert(!motor.SaveParametersOnce() && sends==before+1);
+ fail_add=0;now_ms=0;
  for(unsigned port=1;port<=3;port++)for(unsigned retry=0;retry<6;retry++){
   for(unsigned cmd: {0x33u,0x55u,0xaau}){
    unsigned char request[8]={1,0,(unsigned char)cmd,0x23,3,0,0,0};

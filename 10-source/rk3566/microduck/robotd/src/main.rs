@@ -1878,7 +1878,7 @@ async fn control_loop<T: RobotIo>(
                 && fresh.as_ref().is_some_and(duck_control::bus::configured_motors_disabled),
             controller.as_mut());
         state.calibration.tick(&mut safety, fresh.as_ref(),
-            !state.experiment.active() && bringup == Bringup::Limp && !intents.snapshot().enabled);
+            state.control_owner.current().is_none() && bringup == Bringup::Limp && !intents.snapshot().enabled);
         let home = state.calibration.config().home;
         let calibration_error = state.calibration.enable_error();
         if let Some(error) = &calibration_error {
@@ -4098,6 +4098,8 @@ mod tests {
         let _task_files = s.experiment.claim_for_test(&s.calibration.config());
         assert!(!s.safe_to_restart().safe);
         for call in [proto::Call::RobotInit, proto::Call::RobotEnable(proto::EnableParams { on: true, toggle: false }),
+                     proto::Call::RobotCalibration(proto::CalibrationParams::ReadOvercurrent { motor_id: 4 }),
+                     proto::Call::RobotCalibration(proto::CalibrationParams::WriteOvercurrent { motor_id: 4, amps: 20.0 }),
                      proto::Call::RobotCalibration(proto::CalibrationParams::MarkZero { motor_id: 2 })] {
             assert!(dispatch(&s, &intents, proto::Id::Number(2), &call).error.is_some());
         }

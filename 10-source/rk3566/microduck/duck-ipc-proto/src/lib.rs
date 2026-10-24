@@ -753,6 +753,8 @@ pub enum CalibrationParams {
     SetLimits { limits: Vec<CalibrationLimit> },
     SetHome { positions: Vec<f64> },
     MarkZero { motor_id: u8 },
+    ReadOvercurrent { motor_id: u8 },
+    WriteOvercurrent { motor_id: u8, amps: f64 },
 }
 
 /// Chunked two-file policy imports. Paths are always resolved by robotd, never supplied by a peer.
@@ -4388,6 +4390,8 @@ mod tests {
         for params in [
             CalibrationParams::Get {},
             CalibrationParams::MarkZero { motor_id: 2 },
+            CalibrationParams::ReadOvercurrent { motor_id: 4 },
+            CalibrationParams::WriteOvercurrent { motor_id: 4, amps: 20.0 },
             CalibrationParams::SetLimits { limits: vec![CalibrationLimit { motor_id: 2, min_rad: -3.0, max_rad: 4.0 }] },
             CalibrationParams::SetHome { positions: vec![0.0; 15] },
         ] {

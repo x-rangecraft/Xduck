@@ -25,6 +25,31 @@ extern "C" {
 #define DMUSB_ADMIN_MARK_ZERO    3U
 #define DMUSB_ADMIN_SET_LIMITS   4U
 #define DMUSB_MSG_SET_LIMITS     14U
+#define DMUSB_MSG_OVERCURRENT    15U
+#define DMUSB_MSG_OVERCURRENT_RESULT 16U
+#define DMUSB_CAP_OVERCURRENT    0x0040U
+/* Temporary single-motor OC_Value (RID 0x03) maintenance. No broadcast. */
+typedef struct {
+  uint16_t request_seq;
+  uint8_t action; /* 0 read, 1 write + save + verify */
+  uint8_t motor_id;
+  uint32_t value_bits; /* IEEE754 float32 A */
+} dmusb_overcurrent_request_t;
+typedef struct {
+  uint16_t response_seq;
+  uint8_t action;
+  uint8_t motor_id;
+  uint8_t result;
+  uint8_t stage; /* 0 none, 1 original, 2 write attempted, 3 verified,
+                    4 save attempted, 5 post-save verified */
+  uint8_t reserved[2];
+  uint32_t original_bits;
+  uint32_t requested_bits;
+  uint32_t written_bits;
+  uint32_t saved_bits;
+  uint32_t stm32_tick_ms;
+  uint32_t fault_flags;
+} dmusb_overcurrent_result_t;
 /* Backward-compatible capabilities in the state prefix's reserved uint16. */
 #define DMUSB_CAP_SPARSE_COMMAND  0x0001U
 #define DMUSB_CAP_ENABLE_TARGETS  0x0002U

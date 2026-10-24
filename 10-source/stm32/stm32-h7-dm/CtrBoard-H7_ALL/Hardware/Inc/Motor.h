@@ -115,6 +115,7 @@ public:
   void SetRunFlag(unsigned char RunFlag);
   unsigned char SetupTimeout(unsigned int TimeoutMs);
   unsigned char ReadRegister(unsigned char Reg, unsigned int *OutValue);
+  unsigned char SaveParametersOnce(void);
   unsigned char WriteRegister(unsigned char Reg, unsigned int Value, unsigned char SaveAfterWrite);
   void Disable(void);
   void SaveZero(void);

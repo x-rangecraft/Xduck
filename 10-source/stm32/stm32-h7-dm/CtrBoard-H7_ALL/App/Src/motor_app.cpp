@@ -807,12 +807,11 @@ static unsigned char MotorApp_MarkZeroAndVerify(Motor_t *Motor)
   return 0U;
 }
 
-/* Both the gateway state and fresh motor feedback must say disabled. */
-static unsigned char MotorApp_CalibrationAllowed(void)
+static unsigned char MotorApp_AllDisabled(void)
 {
   unsigned char index;
   if (g_motorAppEnabled != 0U || g_motorAppMode != MOTOR_APP_MODE_ADMIN ||
-      g_motorAppAdminOp != MOTOR_APP_ADMIN_NONE || g_motorAppRegisterBusy != 0U)
+      g_motorAppAdminOp != MOTOR_APP_ADMIN_NONE)
     return 0U;
   for (index = 0U; index < MotorApp_GetDefaultCount(); index++) {
     if (MotorApp_IsActiveMitRoute(index) == 0U) continue;
@@ -821,6 +820,68 @@ static unsigned char MotorApp_CalibrationAllowed(void)
         motor->GetState() != 0U) return 0U;
   }
   return 1U;
+}
+
+/* Both the gateway state and fresh motor feedback must say disabled. */
+static unsigned char MotorApp_CalibrationAllowed(void)
+{
+  return g_motorAppRegisterBusy == 0U && MotorApp_AllDisabled() != 0U;
+}
+
+void MotorApp_Overcurrent(const dmusb_overcurrent_request_t *request,
+                          dmusb_overcurrent_result_t *response)
+{
+  unsigned char route;
+  unsigned int value = 0U;
+  float amps;
+  Motor_t *motor;
+  memset(response, 0, sizeof(*response));
+  response->response_seq = request->request_seq;
+  response->action = request->action;
+  response->motor_id = request->motor_id;
+  response->requested_bits = request->value_bits;
+  response->result = H7SPI_RESULT_BAD_TYPE;
+  if (request->action > 1U) return;
+  if (request->motor_id == 0U ||
+      MotorApp_GetRouteIndexByMotorID(request->motor_id, &route) == 0U) {
+    response->result = H7SPI_RESULT_UNKNOWN_MOTOR_ID;
+    return;
+  }
+  memcpy(&amps, &request->value_bits, sizeof(amps));
+  /* Reject NaN, infinity, negative and zero; no unverified model-specific ceiling. */
+  if (request->action == 1U &&
+      (!(amps > 0.0f) || (request->value_bits & 0x7F800000U) == 0x7F800000U)) return;
+  response->result = H7SPI_RESULT_BUSY;
+  if (MotorApp_CalibrationAllowed() == 0U) return;
+  g_motorAppRegisterBusy = 1U;
+  motor = MotorApp_GetRouteMotor(route);
+  response->result = H7SPI_RESULT_FAULT;
+  do {
+    if (motor->ReadRegister(0x03U, &value) == 0U) break;
+    response->original_bits = value;
+    response->stage = 1U;
+    memcpy(&amps, &value, sizeof(amps));
+    if (!(amps > 0.0f) || (value & 0x7F800000U) == 0x7F800000U) break;
+    if (request->action == 0U) { response->result = H7SPI_RESULT_OK; break; }
+    if (MotorApp_AllDisabled() == 0U) break;
+    response->stage = 2U;
+    if (motor->WriteRegister(0x03U, request->value_bits, 0U) == 0U) break;
+    if (motor->ReadRegister(0x03U, &value) == 0U) break;
+    response->written_bits = value;
+    if (value != request->value_bits) break;
+    response->stage = 3U;
+    if (MotorApp_AllDisabled() == 0U) break;
+    response->stage = 4U;
+    if (motor->SaveParametersOnce() == 0U) break;
+    if (motor->ReadRegister(0x03U, &value) == 0U) break;
+    response->saved_bits = value;
+    if (value != request->value_bits) break;
+    response->stage = 5U;
+    response->result = H7SPI_RESULT_OK;
+  } while (0);
+  response->stm32_tick_ms = HAL_GetTick();
+  response->fault_flags = g_motorAppFaultFlags;
+  g_motorAppRegisterBusy = 0U;
 }
 
 unsigned char MotorApp_PositionLimitsReady(void) { return g_positionLimitsReady; }

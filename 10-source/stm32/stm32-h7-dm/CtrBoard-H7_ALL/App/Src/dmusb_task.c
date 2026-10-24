@@ -159,6 +159,20 @@ static void handle_frame(const dmusb_header_t *header, const uint8_t *payload)
                                  cmd->torque_mnm, received_cycle);
     }
 #endif
+  } else if (header->msg_type == DMUSB_MSG_OVERCURRENT) {
+    dmusb_overcurrent_request_t in;
+    dmusb_overcurrent_result_t out;
+    uint16_t frame_len;
+    uint8_t retry;
+    if (header->payload_len != sizeof(in)) return;
+    memcpy(&in, payload, sizeof(in));
+    if (in.request_seq != header->seq) return;
+    MotorApp_Overcurrent(&in, &out);
+    for (retry = 0U; retry < 5U && USB_CDC_TxReady() == 0U; retry++) osDelay(1U);
+    if (USB_CDC_TxReady() != 0U &&
+        DMUSB_Pack(DMUSB_MSG_OVERCURRENT_RESULT, ++g_tx_seq, HAL_GetTick() * 1000U,
+                   out.fault_flags, &out, sizeof(out), g_tx, sizeof(g_tx), &frame_len) != 0U)
+      (void)CDC_Transmit_HS(g_tx, frame_len);
   } else if (header->msg_type == DMUSB_MSG_SET_LIMITS) {
     dmusb_position_limit_t limits[DMUSB_MAX_MOTORS];
     uint8_t count;
@@ -264,7 +278,7 @@ static void publish_state(void)
   out.mode = DMUSB_MODE_MIT;
   out.reserved = DMUSB_CAP_SPARSE_COMMAND | DMUSB_CAP_ENABLE_TARGETS |
                  DMUSB_CAP_CALIBRATION | DMUSB_CAP_FAULT_DIAGNOSTICS |
-                 DMUSB_CAP_BATTERY_METER;
+                 DMUSB_CAP_BATTERY_METER | DMUSB_CAP_OVERCURRENT;
   if (MotorApp_PositionLimitsReady() != 0U) out.reserved |= DMUSB_STATE_LIMITS_READY;
   out.motor_count = source.motor_count;
   (void)IMU_GetSnapshot(&imu);

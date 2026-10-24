@@ -170,6 +170,9 @@ impl<T: RobotIo> Safety<T> {
     pub fn mark_motor_zero(&mut self, motor_id: u8) -> Result<(), IoError> {
         self.io.mark_motor_zero(motor_id)
     }
+    pub fn motor_overcurrent(&mut self, motor_id: u8, amps: Option<f32>) -> Result<crate::io::OvercurrentReport, IoError> {
+        self.io.motor_overcurrent(motor_id, amps)
+    }
 
     pub fn imu_ready(&self) -> bool {
         self.io.imu_ready()
