@@ -9,7 +9,7 @@ use std::{
     fs,
     io::Write,
     path::{Path, PathBuf},
-    sync::{Arc, Mutex},
+    sync::{Arc, Mutex, mpsc},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
@@ -301,7 +301,7 @@ impl Models {
         Self::at(PathBuf::from(ROOT), owner)
     }
 
-    fn at(root: PathBuf, owner: Arc<ControlOwner>) -> Self {
+    pub(crate) fn at(root: PathBuf, owner: Arc<ControlOwner>) -> Self {
         let (records, load_error) = match fs::read(root.join("manifest.json")) {
             Ok(data) => match serde_json::from_slice::<BTreeMap<String, Record>>(&data) {
                 Ok(records) => (records, None),
@@ -602,7 +602,11 @@ impl Models {
                     inner.detail = "正在 RK3566 校验 PPO 权重并转换 ONNX（最长 120 秒）".into();
                 }
                 let this = self.clone();
-                std::thread::spawn(move || this.prepare_bundle(upload));
+                std::thread::spawn(move || {
+                    let alive = this.prepare_bundle(upload);
+                    drop(this);
+                    let _ = alive.recv();
+                });
             }
             ModelParams::Cancel { token } => {
                 if inner.phase != "uploading" { return Err("只能取消尚未完成的上传".into()); }
@@ -636,7 +640,9 @@ impl Models {
                 let this = self.clone();
                 std::thread::spawn(move || {
                     let result = this.prepare_version(slot, version);
-                    this.prepared(result);
+                    let alive = this.prepared_from_worker_thread(result);
+                    drop(this);
+                    let _ = alive.recv();
                 });
             }
             ModelParams::List {} => unreachable!(),
@@ -648,7 +654,7 @@ impl Models {
         }
         result
     }
-    fn prepare_bundle(&self, upload: BundleUpload) {
+    fn prepare_bundle(&self, upload: BundleUpload) -> mpsc::Receiver<()> {
         let model = self.root.join(format!("{}-model.onnx", upload.token));
         let policy = self.root.join(format!("{}-policy.py", upload.token));
         let result = (|| {
@@ -698,7 +704,7 @@ impl Models {
             let _ = fs::remove_file(upload.model.path);
             let _ = fs::remove_file(upload.policy.path);
         }
-        self.prepared(result);
+        self.prepared_from_worker_thread(result)
     }
 
     fn prepare_version(&self, slot: Slot, mut version: Version) -> Result<Pending, String> {
@@ -752,6 +758,17 @@ impl Models {
                 self.owner.release(Owner::PolicyImport);
             }
         }
+    }
+    fn prepared_from_worker_thread(&self, result: Result<Pending, String>) -> mpsc::Receiver<()> {
+        let (keepalive, alive) = mpsc::channel();
+        self.prepared(result.map(|mut pending| {
+            pending.policy.keep_creator_alive(keepalive);
+            pending
+        }));
+        // Linux delivers bwrap's parent-death signal when this spawning thread exits,
+        // even while robotd remains running. The caller releases its Models reference
+        // before waiting, so the pending policy cannot keep Models alive in a cycle.
+        alive
     }
     /// Runs before processing any enable/init intent. Fresh hardware proof is mandatory.
     pub fn tick(&self, relaxed: bool, controller: Option<&mut crate::control::Controller>) {
@@ -1051,6 +1068,55 @@ mod tests {
         store.remove_version_if_unused(&inner, &incoming);
         assert!(incoming.policy_path.as_ref().unwrap().exists());
         assert!(old_stand_model.exists());
+    }
+
+    #[test]
+    #[ignore = "requires root, managed Python and XDUCK_POLICY_TEST_ROOT outside /tmp; no motor IO"]
+    fn background_preparation_keeps_worker_alive_after_handoff() {
+        use std::os::unix::fs::PermissionsExt;
+        let parent = std::env::var_os("XDUCK_POLICY_TEST_ROOT").expect("set a sandbox-visible test root");
+        let dir = tempfile::Builder::new().prefix("policy-lifetime-test-").tempdir_in(parent).unwrap();
+        fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o755)).unwrap();
+        let source = Path::new(env!("CARGO_MANIFEST_DIR")).join("../policies");
+        let walk = dir.path().join("walk.onnx");
+        let stand = dir.path().join("stand.onnx");
+        fs::copy(source.join("alpha_walking.onnx"), &walk).unwrap();
+        fs::copy(source.join("alpha_stand.onnx"), &stand).unwrap();
+        let store = Arc::new(Models::at(dir.path().join("store"), Arc::new(ControlOwner::default())));
+        let mut paths = PolicyPaths { walk, stand: Some(stand), ..Default::default() };
+        store.resolve(&mut paths);
+        let (slot, version) = {
+            let inner = store.inner.lock().unwrap();
+            let slot = inner.slots["walk"].clone();
+            let version = inner.records[&slot.key].active.clone().unwrap();
+            (slot, version)
+        };
+        let worker_store = Arc::clone(&store);
+        let (ready, received) = mpsc::channel();
+        let owner = std::thread::spawn(move || {
+            #[cfg(target_os = "linux")]
+            assert_eq!(unsafe { libc::setpriority(libc::PRIO_PROCESS, 0, 10) }, 0);
+            let result = worker_store.prepare_version(slot, version);
+            #[cfg(target_os = "linux")]
+            assert_eq!(unsafe { libc::getpriority(libc::PRIO_PROCESS, 0) }, 10);
+            let alive = worker_store.prepared_from_worker_thread(result);
+            drop(worker_store);
+            ready.send(()).unwrap();
+            let _ = alive.recv();
+        });
+        received.recv_timeout(Duration::from_secs(30)).unwrap();
+        let mut pending = store.inner.lock().unwrap().pending.take().unwrap();
+        drop(store);
+        pending.policy.mark_reset();
+        pending.policy.step_model(
+            &duck_control::Sensors::default(),
+            &duck_control::obs::Command::default(),
+            crate::custom_policy::PolicyContext::new("walk", None, false),
+            0.02,
+            "walk",
+        ).unwrap();
+        drop(pending);
+        owner.join().unwrap();
     }
 
     #[test]

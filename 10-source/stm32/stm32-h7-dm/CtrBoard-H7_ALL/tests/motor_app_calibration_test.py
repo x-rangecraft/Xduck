@@ -48,16 +48,26 @@ uint32_t g_motorAppFeedbackRecoverySinceMs;
 unsigned long g_motorAppRequestedMask, g_motorAppSucceededMask, g_motorAppFaultFlags;
 unsigned g_motorAppProtectionStartTick, g_motorAppLastHostCommandTickMs;
 unsigned tx_failure, command_clears;
+void osDelay(unsigned ms){now_ms+=ms;}
 imu_snapshot_t snapshot;
 struct Motor_t {
  float position=0, speed=0;
  unsigned state=0, online=1, mos=30, rotor=30, disabled=0, run=0, clears=0;
+ unsigned rx_count=0, disable_waits=0, save_zero_waits=0;
+ unsigned tx_ok=1, feedback_on_wait=1, apply_saved_zero=1;
  uint32_t last_rx=now_ms;
  float GetPosition(){return position;} float GetSpeed(){return speed;}
  unsigned GetState(){return state;}
  unsigned IsOnline(unsigned timeout){return online && uint32_t(now_ms-last_rx)<=timeout;}
  unsigned GetMosTemp(){return mos;} unsigned GetRotorTemp(){return rotor;}
+ unsigned GetRxCount(){return rx_count;}
  void SetRunFlag(unsigned f){run=f;} void SendDisableFrame(){disabled++;}
+ unsigned SendDisableFrameAndWait(unsigned){
+  disable_waits++;now_ms++;
+  if(feedback_on_wait){last_rx=now_ms;rx_count++;state=0;if(save_zero_waits&&apply_saved_zero)position=0;}
+  return tx_ok;
+ }
+ unsigned SendSaveZeroFrameAndWait(unsigned){save_zero_waits++;return tx_ok;}
  void ClearCommand(){clears++;}
 } motors[14];
 unsigned HAL_GetTick(){return now_ms;} unsigned xTaskGetTickCount(){return now_ms;}
@@ -81,6 +91,9 @@ void MotorApp_ClearCommandTracking(){command_clears++;}
 static void MotorApp_EnterFault(unsigned char,unsigned long);
 '''
 code = ''.join(function(signature) for signature in [
+    'static unsigned char MotorApp_WaitForDisabledFeedback(Motor_t *Motor,\n                                                      unsigned int Before,\n                                                      unsigned int TimeoutMs)',
+    'static unsigned char MotorApp_MarkZeroDisableAndConfirm(Motor_t *Motor)',
+    'static unsigned char MotorApp_MarkZeroAndVerify(Motor_t *Motor)',
     'static unsigned char MotorApp_CalibrationAllowed(void)',
     'unsigned char MotorApp_SetPositionLimits(const dmusb_position_limit_t *limits, unsigned char count)',
     'static unsigned char MotorApp_ImuHealthy(void)',
@@ -136,6 +149,19 @@ void recovered_but_disabled(){
 }
 int main(){
  assert(MotorApp_IsHardwareFaultState(13));
+ // Zeroing matches the production motor flow: confirm disabled, send 0xFE once,
+ // then poll with disable frames until fresh feedback reports the new zero.
+ reset();motors[0].position=1.25f;
+ assert(MotorApp_MarkZeroAndVerify(&motors[0]));
+ assert(motors[0].save_zero_waits==1 && motors[0].disable_waits==2);
+ assert(motors[0].rx_count==2 && motors[0].position==0);
+ reset();motors[0].position=1.25f;motors[0].apply_saved_zero=0;
+ assert(!MotorApp_MarkZeroAndVerify(&motors[0]));
+ assert(motors[0].save_zero_waits==1 && motors[0].disable_waits>2);
+ reset();motors[0].feedback_on_wait=0;
+ assert(!MotorApp_MarkZeroAndVerify(&motors[0]));
+ assert(motors[0].disable_waits==MOTOR_APP_MARK_ZERO_DISABLE_ATTEMPTS);
+ assert(motors[0].save_zero_waits==0);
  reset();
  dmusb_position_limit_t limits[14]{};
  unsigned n=0;

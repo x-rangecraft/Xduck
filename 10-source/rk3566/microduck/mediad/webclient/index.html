@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN">
 <meta charset="utf-8">
-<title>xduck1 机器人控制台</title>
+<title>Xduck 机器人控制台</title>
 <!--
   The robot's console. One file, no build step, no dependencies — `mediad` embeds this page and
   serves it, so reaching it is an address and not a command:
@@ -165,7 +165,7 @@
 </style>
 
 <header>
-  <h1 id="robot">xduck1</h1>
+  <h1 id="robot">Xduck</h1>
   <span id="release" class="pill dim">版本未知</span>
   <span id="api" class="pill dim">API 未知</span>
   <span id="connected-clients" class="pill dim" title="已点击连接且连接仍保持的网页客户端">已连接设备 IP：读取中…</span>
@@ -266,10 +266,10 @@
     <div class="row">
       <select id="skill">
         <option value="sit_toggle">坐下 ⇄ 站立</option>
-        <option value="ground_pick">拾取地面物体</option>
-        <option value="kick_left">左脚踢球</option>
-        <option value="kick_right">右脚踢球</option>
-        <option value="roulade">翻滚</option>
+        <option value="ground_pick" disabled>拾取地面物体（暂时禁用）</option>
+        <option value="kick_left" disabled>左脚踢球（暂时禁用）</option>
+        <option value="kick_right" disabled>右脚踢球（暂时禁用）</option>
+        <option value="roulade" disabled>翻滚（暂时禁用）</option>
       </select>
       <button id="do">执行</button>
       <span class="grow"></span>
@@ -284,7 +284,7 @@
       </select>
       <button id="play">播放</button>
     </div>
-    <p id="skill-feedback" role="status" aria-live="polite">动作结果会显示在这里。</p>
+    <p id="skill-feedback" role="status" aria-live="polite">拾取、左右踢球和翻滚策略尚未准备好，暂时禁用；目前仅开放坐下/起立。</p>
     <div class="row" style="margin-top:10px">
       <label for="speaker-volume">扬声器音量</label>
       <input id="speaker-volume" type="range" min="0" max="100" step="1" value="0" disabled style="width:160px" aria-describedby="volume-feedback">
@@ -298,7 +298,7 @@
       手柄中间键：<b>Select/View 短按</b>初始化（长按 2 秒关机），<b>Start/Menu</b>策略开启/关闭，
       <b>Mode/Home</b>放松。<br>
       动作键：<b>十字键下</b>坐下/站立，<b>A</b>拾取，<b>LB/RB</b>左右脚踢球，
-      <b>X</b>翻滚（按住可连续翻滚），<b>RT</b>啾啾，<b>LT</b>按住播放滑行声。
+      <b>X</b>翻滚（拾取、踢球和翻滚快捷键当前均已禁用），<b>RT</b>啾啾，<b>LT</b>按住播放滑行声。
       问候、询问、警报、啄击声和咕咕声没有手柄快捷键。
     </p>
   </section>
@@ -396,6 +396,7 @@
     <a href="/policy-experiment.md" target="_blank" rel="noopener">查看接口说明</a>
     <a href="/policy_experiment.py" download>下载 Python 示例</a>
     <a href="/policy-experiment-example.json" download>下载配置示例</a>
+    <a href="/policy-experiment-free.json" download>下载自由实验配置（60 秒）</a>
     <button id="policy-experiment-capabilities">查询设备能力（只读）</button>
   </div>
   <p id="policy-experiment-status" role="status" aria-live="polite">正在查询策略实验状态。</p>
@@ -444,6 +445,27 @@ const INTENT_HZ = 10;
 const LOOK = { x: 1.0, y: 0.7, z: 0.2, dz: 0.45 };
 
 const $ = (id) => document.getElementById(id);
+function showRobotName(name) {
+  if (typeof name !== "string" || !name.trim()) return;
+  $("robot").textContent = name;
+  document.title = `${name} 机器人控制台`;
+}
+
+// Reading identity does not connect a control session or acquire control ownership.
+async function refreshRobotIdentity() {
+  try {
+    const response = await fetch("/api/control", {
+      method: "POST",
+      headers: {"content-type": "application/json"},
+      cache: "no-store",
+      body: JSON.stringify({jsonrpc: "2.0", id: "page-identity", method: "system.info", params: {}}),
+    });
+    if (!response.ok) return;
+    const message = await response.json();
+    if (!message.error) showRobotName(message.result?.name);
+  } catch { /* Keep the neutral heading until the device can answer. */ }
+}
+refreshRobotIdentity();
 // Keep only the latest connection error; no raw RPC console or message history.
 function reportConnectionIssue(cls, ...parts) {
   if (cls !== "bad") return;
@@ -631,7 +653,7 @@ $("connect").onclick = () => {
         const meta = producer.meta || {};
         producerId = producer.id;
         reportConnectionIssue("dim", "producer:", producer.id, JSON.stringify(meta));
-        if (meta.name) $("robot").textContent = meta.name;
+        showRobotName(meta.name);
         if (meta.release) $("release").textContent = meta.release;
         if (meta.api_version) $("api").textContent = `api v${meta.api_version}`;
         // No `offer`, so the producer offers and we answer. That is the direction webrtcsink
@@ -945,7 +967,7 @@ async function identify() {
 
   try {
     const info = await call("system.info");
-    if (info.name) $("robot").textContent = info.name;
+    showRobotName(info.name);
     $("robot").title = info.serial ? `序列号 ${info.serial}` : "本设备无序列号";
   } catch (e) {
     reportConnectionIssue("bad", "!! system.info failed:", e.message || JSON.stringify(e));
@@ -997,6 +1019,7 @@ function stopTelemetry() {
   pendingPostureEvent = null;
   pendingSkillEvent = null;
   exclusiveControlOwner = null;
+  freeExperimentControl = false;
   $("t-control-owner").textContent = "状态未知";
   $("control-live").textContent = "实时状态：连接已断开，状态未知";
   $("control-status").innerHTML = "<b>当前状态：</b>连接已断开，状态未知";
@@ -1019,8 +1042,8 @@ async function poll() {
     const verdict = health.healthy ? "正常" : (health.degraded ? "降级" : "异常");
     const reason = health.reason
       ? health.reason.replace(
-          /STM32 motor\/IMU gateway unavailable after (\d+) attempts; check power, \/dev\/ttyACM0, and USB wiring/,
-          "STM32 电机/IMU 网关已尝试 $1 次仍不可用；请检查供电、/dev/ttyACM0 和 USB 接线"
+          /STM32 motor\/IMU gateway unavailable after (\d+) attempts; check power, the STM32 by-id serial device, and USB wiring/,
+          "STM32 电机/IMU 网关已尝试 $1 次仍不可用；请检查供电、STM32 固定序列号设备链接和 USB 接线"
         )
       : null;
     $("t-health").textContent = reason ? `${verdict} — ${reason}` : verdict;
@@ -1133,8 +1156,9 @@ function renderOperatorStatus(state) {
     experiment: "当前由电机实验占用",
     policy_import: "当前由策略导入占用",
     policy_experiment_initializing: "策略实验占用：正在初始化",
-    policy_experiment_ready: "策略实验占用：已就绪，等待开始",
+    policy_experiment_ready: "策略实验占用：已就绪（默认站姿或零力矩），等待开始",
     policy_experiment_inference: "策略实验占用：只推理并记录，电机保持站姿",
+    policy_experiment_free: "自由实验：手动控制并记录",
     policy_experiment_closed_loop: "策略实验占用：闭环执行并记录",
     policy_experiment_stopping: "策略实验占用：正在返回站姿",
     powered_off: "当前正在关机或已关机",
@@ -1161,6 +1185,7 @@ function renderOperatorStatus(state) {
 function onState(state) {
   if (!state) return;
   exclusiveControlOwner = state.control_owner || null;
+  freeExperimentControl = Boolean(state.policy_experiment_manual_control);
   const ownerLabels = {
     motor_experiment: "电机实验",
     policy_experiment: "策略实验",
@@ -1574,7 +1599,8 @@ setInterval(async () => {
 
 let postureState = null;
 let exclusiveControlOwner = null;
-function operationLocked() { return Boolean(exclusiveControlOwner); }
+let freeExperimentControl = false;
+function operationLocked(includeFree = false) { return Boolean(exclusiveControlOwner) && (includeFree || !freeExperimentControl); }
 function updateOperationControls() {
   for (const button of document.querySelectorAll("button[data-call]")) {
     if (!["robot.relax", "robot.shutdown"].includes(button.dataset.call)) {
@@ -1596,7 +1622,7 @@ function calibrationFeedback(message, bad = false) {
 }
 function calibrationEditable() {
   const sample = postureState;
-  return open() && !operationLocked() && !calibrationBusy && !calibrationConflict && calibrationStatus?.editable === true
+  return open() && !operationLocked(true) && !calibrationBusy && !calibrationConflict && calibrationStatus?.editable === true
     && CALIBRATION_MOTORS.length > 0
     && sample && performance.now() - sample.received < 1000
     && CALIBRATION_MOTORS.every(([, joint]) =>
@@ -1675,7 +1701,7 @@ async function submitCalibration(params) {
   calibrationFeedback("正在处理，请等待 STM32 与保存结果…");
   try {
     const queued = await call("robot.calibration", params);
-    const deadline = performance.now() + 8000;
+    const deadline = performance.now() + 15000;
     while (performance.now() < deadline && open()) {
       await new Promise(resolve => setTimeout(resolve, 200));
       const status = await call("robot.calibration", {action: "get"}, true);
@@ -1686,7 +1712,7 @@ async function submitCalibration(params) {
       CALIBRATION_MOTORS = status.motors || [];
       renderCalibration(status.config);
       calibrationFeedback(params.action === "mark_zero"
-        ? "零位指令已发送，已确认电机失能且位置接近 0 rad。请重新核对限位和默认站姿。"
+        ? "零位已保存，并通过失能轮询确认位置接近 0 rad。请重新核对限位和默认站姿。"
         : (status.home_error || "设置已保存。限位在 STM32 执行，默认站姿将在下次初始化时使用。"),
         Boolean(status.home_error));
       return;
@@ -1820,7 +1846,8 @@ async function verifyPosture(method, result, started, serial, label) {
   }
   showControlFeedback(`${label}：请求已接受，等待机器人状态确认…`, "warn");
   // An RPC acknowledgment only queues init/relax. Verify fresh observations separately.
-  while (performance.now() - started < 8000 && serial === actionSerial && open()) {
+  const timeoutMs = (method === "robot.init" || method === "robot.enable") ? 300000 : 8000;
+  while (performance.now() - started < timeoutMs && serial === actionSerial && open()) {
     const sample = postureState;
     if (sample && sample.received > started && performance.now() - sample.received < 1500) {
       const state = sample.state;
@@ -2154,7 +2181,7 @@ let modelStatusAt = 0, modelSlotsKey = "", modelHistoryKey = "", modelClientErro
 function modelLocked() { return modelBusy || ["converting","validating","pending"].includes(modelStatus?.phase); }
 function modelEditable() { return open() && modelStatus?.editable === true && Date.now()-modelStatusAt < 3000; }
 function modelControls() {
-  const safe = modelEditable() && (!operationLocked() || exclusiveControlOwner === "policy_import");
+  const safe = modelEditable() && (!operationLocked(true) || exclusiveControlOwner === "policy_import");
   $("model-import").disabled = !safe || modelLocked() || !$("model-file").files.length || !$("model-slot").value;
   for (const id of ["model-slot","model-file","model-policy-file","model-activation","model-epsilon"]) $(id).disabled = modelLocked();
   for (const button of $("model-history").querySelectorAll("button")) button.disabled = !safe || modelLocked();

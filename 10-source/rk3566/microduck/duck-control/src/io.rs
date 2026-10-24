@@ -186,6 +186,9 @@ pub trait RobotIo {
     /// update must leave a standing robot standing: torque comes on when someone enables the policy,
     /// never because a process began.
     fn set_torque(&mut self, on: bool) -> Result<()>;
+    /// Submit a disable without waiting for an acknowledgement. Success only
+    /// means submitted; the control loop must confirm fresh disabled feedback.
+    fn request_torque_off(&mut self) -> Result<()> { self.set_torque(false) }
 
     fn write_motor_commands(&mut self, _commands: &[duck_ipc_proto::MotorCommand]) -> Result<u16> {
         Err(IoError::Bus("backend does not support MIT experiments".into()))

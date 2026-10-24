@@ -3,7 +3,10 @@ import contextlib
 import importlib.util
 import json
 import math
+import faulthandler
+import signal
 import sys
+import time
 
 
 JOINT_NAMES = [
@@ -139,10 +142,13 @@ def as_json(value):
 def run_step(instance, contract, session, frame, feedback):
     import numpy as np
 
+    started = time.perf_counter_ns()
+    cpu_started = time.process_time_ns()
     validate_frame(frame)
 
     with contextlib.redirect_stdout(sys.stderr):
         inputs = instance.preprocess(frame, feedback)
+    preprocessed = time.perf_counter_ns()
     if isinstance(inputs, dict) and inputs.get("ready") is False:
         reason = inputs.get("reason", "策略尚未就绪")
         return {"ok": True, "ready": False, "reason": str(reason)}, feedback
@@ -160,7 +166,9 @@ def run_step(instance, contract, session, frame, feedback):
         if np.issubdtype(array.dtype, np.floating) and not np.isfinite(array).all():
             raise ValueError(f"输入 {port.name} 含 NaN/Inf")
         feed[port.name] = array
+    prepared = time.perf_counter_ns()
     values = session.run(None, feed)
+    inferred = time.perf_counter_ns()
     outputs = {}
     for port, value in zip(session.get_outputs(), values):
         wanted = tuple(contract["outputs"][port.name]["shape"])
@@ -171,6 +179,7 @@ def run_step(instance, contract, session, frame, feedback):
         outputs[port.name] = value
     with contextlib.redirect_stdout(sys.stderr):
         targets = instance.postprocess(outputs, frame)
+    postprocessed = time.perf_counter_ns()
     if isinstance(targets, dict) and "targets" in targets and set(targets).issubset({"targets"}):
         targets = targets["targets"]
     if not isinstance(targets, dict) or set(targets) != set(CONTROLLED_JOINTS):
@@ -185,11 +194,23 @@ def run_step(instance, contract, session, frame, feedback):
         if not all(math.isfinite(value) for value in clean[joint].values()):
             raise ValueError(f"关节 {joint} 包含 NaN/Inf")
     next_feedback = {"outputs": as_json(outputs), "requested_targets": clean}
-    return {"ok": True, "ready": True, "targets": clean}, next_feedback
+    finished = time.perf_counter_ns()
+    timing = {
+        "preprocess_ms": (preprocessed - started) / 1_000_000,
+        "input_ms": (prepared - preprocessed) / 1_000_000,
+        "onnx_ms": (inferred - prepared) / 1_000_000,
+        "output_ms": (postprocessed - inferred) / 1_000_000,
+        "validate_ms": (finished - postprocessed) / 1_000_000,
+        "worker_total_ms": (finished - started) / 1_000_000,
+        "worker_cpu_ms": (time.process_time_ns() - cpu_started) / 1_000_000,
+    }
+    return {"ok": True, "ready": True, "targets": clean, "timing": timing}, next_feedback
 
 
 def main():
     import onnxruntime as ort
+
+    faulthandler.register(signal.SIGUSR1, file=sys.stderr, all_threads=True)
 
     policy_cls = load_policy(sys.argv[1])
     options = ort.SessionOptions()
@@ -218,12 +239,31 @@ def main():
     instance = None
     feedback = None
     for line in sys.stdin:
+        received_ns = time.monotonic_ns()
         try:
             request = json.loads(line)
             action = request.get("action")
             if action == "reset":
-                instance = make_instance(policy_cls, contract, request["frame"])
-                feedback = None
+                frame = request["frame"]
+                handoff = request.get("handoff_targets")
+                if handoff is not None:
+                    if set(handoff) != set(CONTROLLED_JOINTS):
+                        raise ValueError("handoff requires all controlled joints")
+                    fields = {"position", "velocity", "torque_ff", "kp", "kd"}
+                    if any(set(target) != fields or not all(math.isfinite(float(v)) for v in target.values())
+                           for target in handoff.values()):
+                        raise ValueError("handoff requires complete finite MIT targets")
+                    # reset seeds private target integrators; preprocess still receives
+                    # the real measured frame, with the SAME target in feedback.
+                    first_frame = dict(frame)
+                    first_frame["handoff_targets"] = handoff
+                    first_frame["positions"] = [handoff[name]["position"] if name in handoff else frame["positions"][i]
+                                                for i, name in enumerate(frame["joint_names"])]
+                    instance = make_instance(policy_cls, contract, first_frame)
+                    feedback = {"outputs": {}, "requested_targets": handoff, "handoff": True}
+                else:
+                    instance = make_instance(policy_cls, contract, frame)
+                    feedback = None
                 emit({"ok": True, "reset": True})
             elif action == "step":
                 if instance is None:
@@ -235,6 +275,9 @@ def main():
                     raise ValueError("走/站模型选择必须与 policy_context.action 一致")
                 session = sessions[slot]
                 reply, feedback = run_step(instance, contract, session, request["frame"], feedback)
+                if "timing" in reply:
+                    reply["timing"]["worker_received_ns"] = received_ns
+                    reply["timing"]["worker_reply_start_ns"] = time.monotonic_ns()
                 emit(reply)
             else:
                 raise ValueError("未知 worker 操作")

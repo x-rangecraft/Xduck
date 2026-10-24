@@ -4204,6 +4204,7 @@ mod tests {
             policy: "stand".to_owned(),
             control_state: "policy_on".to_owned(),
             control_owner: None,
+            policy_experiment_manual_control: false,
             sound_state: None,
             control_source: proto::ControlSource::Gamepad,
             gamepad_connected: false,

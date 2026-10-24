@@ -180,7 +180,9 @@ pub const JSONRPC_VERSION: &str = "2.0";
 /// # v21 — normal skills in controlled policy experiments
 /// Policy experiment segments can trigger the normal controller's sit/stand, ground-pick,
 /// kick and roulade state machines.
-pub const API_VERSION: u32 = 21;
+/// # v22 — free experiment recording
+/// Duration-only free sessions retain normal operator control and publish its availability.
+pub const API_VERSION: u32 = 22;
 
 /// The longest an update may legitimately go quiet, in seconds — the pre-install hook's ceiling.
 ///
@@ -653,6 +655,7 @@ pub enum ExperimentTaskParams {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PolicyExperimentMode {
+    Free,
     InferenceOnly,
     ClosedLoop,
 }
@@ -692,17 +695,36 @@ pub struct PolicyExperimentSegment {
     pub body: [f64; 3],
 }
 
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PolicyExperimentInitialPose {
+    #[default]
+    SavedHome,
+    ZeroTorque,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct PolicyExperimentConfig {
+    /// Preparation before explicit start; old clients retain saved-home initialization.
+    #[serde(default)]
+    pub initial_pose: PolicyExperimentInitialPose,
     pub mode: PolicyExperimentMode,
+    #[serde(default = "default_experiment_policy")]
     pub policy: PolicyExperimentPolicy,
+    #[serde(default)]
     pub segments: Vec<PolicyExperimentSegment>,
+    /// Free mode records normal operator control for this duration.
+    #[serde(default)]
+    pub duration_ms: Option<u64>,
+    #[serde(default = "default_experiment_temperature")]
     pub max_temperature_c: f64,
     #[serde(default = "default_true")]
     pub stop_on_fall: bool,
 }
 
+fn default_experiment_policy() -> PolicyExperimentPolicy { PolicyExperimentPolicy::Auto }
+fn default_experiment_temperature() -> f64 { 60.0 }
 fn default_true() -> bool { true }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -2830,6 +2852,8 @@ pub struct RobotState {
     /// Exclusive long-running operation currently owning policy/motor control.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub control_owner: Option<String>,
+    #[serde(default)]
+    pub policy_experiment_manual_control: bool,
     /// What currently owns the robot's single PCM device. Absent after playback has ended.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sound_state: Option<String>,
@@ -4198,6 +4222,8 @@ mod tests {
     #[test]
     fn policy_experiment_configuration_and_lifecycle_round_trip() {
         let config = PolicyExperimentConfig {
+            duration_ms: None,
+            initial_pose: PolicyExperimentInitialPose::SavedHome,
             mode: PolicyExperimentMode::InferenceOnly,
             policy: PolicyExperimentPolicy::Walk,
             segments: vec![PolicyExperimentSegment {
@@ -4863,6 +4889,7 @@ mod tests {
             policy: "stand".into(),
             control_state: "policy_on".into(),
             control_owner: None,
+            policy_experiment_manual_control: false,
             sound_state: None,
             control_source: ControlSource::Gamepad,
             gamepad_connected: false,
@@ -4938,6 +4965,7 @@ mod tests {
             policy: "walk".into(),
             control_state: "policy_on".into(),
             control_owner: None,
+            policy_experiment_manual_control: false,
             sound_state: None,
             control_source: ControlSource::Gamepad,
             gamepad_connected: true,

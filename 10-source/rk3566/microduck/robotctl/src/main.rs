@@ -350,7 +350,7 @@ enum SystemCommand {
 
 #[derive(Subcommand, Debug)]
 enum RobotCommand {
-    /// Power the joints and ramp to the home pose, over about two seconds.
+    /// Power the joints and move to the home pose at the configured angular speed.
     ///
     /// **This moves every joint.** Have the robot on its stand, or hold it. Needs no policy — a
     /// robot with no walking network can still stand — and it is what the gamepad's Start does on
@@ -2232,7 +2232,7 @@ fn run_robot(socket: &Path, command: RobotCommand) -> Result<(), Failure> {
         return Err(Failure::new(exit::REFUSED, reason));
     }
     match command {
-        RobotCommand::Init { .. } => println!("standing up — about two seconds to the home pose"),
+        RobotCommand::Init { .. } => println!("standing up — moving toward the home pose at the configured angular speed"),
         RobotCommand::Relax { .. } => println!("torque off"),
         RobotCommand::Do { skill, .. } => println!("{skill:?} queued"),
         RobotCommand::Mode { .. } | RobotCommand::Look { .. } => unreachable!("answered above"),

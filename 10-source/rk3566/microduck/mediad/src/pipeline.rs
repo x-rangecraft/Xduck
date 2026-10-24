@@ -81,6 +81,7 @@
 
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
+use std::path::Path;
 use std::time::Duration;
 
 use anyhow::{Context, Result, anyhow, bail};
@@ -264,7 +265,7 @@ pub struct Channel {
 /// The always-on WebRTC pipeline plus the independently restartable camera capture.
 ///
 /// Keeping both handles here is load-bearing: dropping the output pipeline closes every peer and
-/// its datachannel, while dropping only the capture side merely makes `intervideosrc` emit black.
+/// its datachannel, while dropping only the capture side leaves the output pipeline online.
 pub struct Pipelines {
     output: gst::Pipeline,
     _capture: Option<CaptureSupervisor>,
@@ -437,6 +438,15 @@ pub fn start(
     // Its own queue, so this branch runs on its own thread. Without one, `tee` pushes to both
     // branches from a single thread and whichever is slower holds up the other.
     let video_queue = make("queue")?;
+    // The intervideo bridge produces black frames after the camera disappears. Encoding those
+    // frames needlessly exercises RGA and can flood the kernel journal on this board.
+    let camera_video_gate = if matches!(&source, Source::Camera(_)) {
+        Some(gst::ElementFactory::make("valve")
+            .property("drop", true)
+            .property_from_str("drop-mode", "forward-sticky-events")
+            .build()
+            .map_err(|_| anyhow!("no valve element; gstreamer core is incomplete"))?)
+    } else { None };
 
     // `mppjpegdec` owns its output pool, so the buffers are not writable while the tee and decoder
     // retain references. `webrtcsink` requires writable raw buffers to attach routing metadata;
@@ -635,6 +645,9 @@ pub fn start(
     pipeline
         .add_many([&capsfilter, &video_queue, &sink])
         .context("could not add elements to the pipeline")?;
+    if let Some(gate) = camera_video_gate.as_ref() {
+        pipeline.add(gate).context("could not add camera video gate")?;
+    }
     if raw_frames {
         pipeline
             .add_many([&tee, &raw_queue, appsink.upcast_ref()])
@@ -675,12 +688,16 @@ pub fn start(
         "could not link the source to the video path. A caps failure here means the source cannot \
          produce NV12 at the requested size and rate.",
     )?;
+    let video_source = if let Some(gate) = camera_video_gate.as_ref() {
+        video_queue.link(gate).context("could not link camera video gate")?;
+        gate
+    } else { &video_queue };
     match uvc_encoded_video.as_ref() {
         Some((encoder, parser, filter)) => {
-            gst::Element::link_many([&video_queue, encoder, parser, filter, &sink])
+            gst::Element::link_many([video_source, encoder, parser, filter, &sink])
                 .context("could not link the USB camera H.264 branch to webrtcsink")?;
         }
-        None => gst::Element::link_many([&video_queue, &sink])
+        None => gst::Element::link_many([video_source, &sink])
             .context("could not link the video queue to webrtcsink")?,
     }
     if raw_frames {
@@ -720,6 +737,7 @@ pub fn start(
             fps,
             capture_format,
             camera_status.clone(),
+            camera_video_gate,
         )?),
         Source::Test => None,
     };
@@ -754,6 +772,7 @@ fn spawn_capture_supervisor(
     fps: u32,
     format: &'static str,
     status: crate::session::CameraStatus,
+    video_gate: Option<gst::Element>,
 ) -> Result<CaptureSupervisor> {
     // Fail now, rather than forever in a worker, if the intervideo plugin is not installed.
     make("intervideosink")?;
@@ -763,14 +782,28 @@ fn spawn_capture_supervisor(
         .name("camera-capture".into())
         .spawn(move || {
             let mut last_start_error: Option<String> = None;
+            let mut reported_missing = false;
             while !worker_stop.load(Ordering::Relaxed) {
-                match start_capture_pipeline(&camera, width, height, fps, format, status.clone()) {
+                if !Path::new(&camera.device).exists() {
+                    status.set(crate::session::CameraState::Disconnected);
+                    if let Some(gate) = video_gate.as_ref() { gate.set_property("drop", true); }
+                    if !reported_missing {
+                        tracing::warn!(device = %camera.device,
+                            "camera absent; capture paused until device returns");
+                        reported_missing = true;
+                    }
+                    std::thread::sleep(CAMERA_RETRY);
+                    continue;
+                }
+                reported_missing = false;
+                match start_capture_pipeline(&camera, width, height, fps, format, status.clone(), video_gate.clone()) {
                     Ok(pipeline) => {
                         last_start_error = None;
                         let Some(bus) = pipeline.bus() else {
                             tracing::error!("camera capture has no bus; retrying");
                             let _ = pipeline.set_state(gst::State::Null);
                             status.set(crate::session::CameraState::Disconnected);
+                            if let Some(gate) = video_gate.as_ref() { gate.set_property("drop", true); }
                             std::thread::sleep(CAMERA_RETRY);
                             continue;
                         };
@@ -799,10 +832,12 @@ fn spawn_capture_supervisor(
                             }
                         }
                         status.set(crate::session::CameraState::Disconnected);
+                        if let Some(gate) = video_gate.as_ref() { gate.set_property("drop", true); }
                         let _ = pipeline.set_state(gst::State::Null);
                     }
                     Err(error) => {
                         status.set(crate::session::CameraState::Disconnected);
+                        if let Some(gate) = video_gate.as_ref() { gate.set_property("drop", true); }
                         let message = format!("{error:#}");
                         if last_start_error.as_deref() != Some(message.as_str()) {
                             tracing::warn!(
@@ -834,6 +869,7 @@ fn start_capture_pipeline(
     fps: u32,
     format: &'static str,
     status: crate::session::CameraStatus,
+    video_gate: Option<gst::Element>,
 ) -> Result<gst::Pipeline> {
     let pipeline = gst::Pipeline::new();
     let source = camera_source(camera, width, height, fps)?;
@@ -871,6 +907,7 @@ fn start_capture_pipeline(
         .add_probe(gst::PadProbeType::BUFFER, move |_, _| {
             if first_frame.get() != crate::session::CameraState::Connected {
                 first_frame.set(crate::session::CameraState::Connected);
+                if let Some(gate) = video_gate.as_ref() { gate.set_property("drop", false); }
                 tracing::info!("camera connected; live video restored without reconnecting control");
             }
             gst::PadProbeReturn::Ok

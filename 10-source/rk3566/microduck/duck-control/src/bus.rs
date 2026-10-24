@@ -25,7 +25,13 @@ const MOTOR_OBSERVATION_LEN: usize = 20;
 const COMMAND_PREFIX_LEN: usize = 8;
 const STATE_PREFIX_LEN: usize = 64;
 const IO_TIMEOUT: Duration = Duration::from_millis(60);
+// State reception shares the control thread with command transmission. Bound
+// the entire state read, including fragmented frames, at the original 60 ms
+// timeout; serialport's timeout alone only bounds an individual read.
+const STATE_READ_TIMEOUT: Duration = IO_TIMEOUT;
+const MOTOR_STATE_MAX_AGE: Duration = Duration::from_millis(500);
 const ADMIN_TIMEOUT: Duration = Duration::from_millis(250);
+const ZERO_POSITION_TOLERANCE_RAD: f64 = 0.05;
 const IMU_SENSOR_OK: u8 = 1 << 0;
 const IMU_CALIBRATED: u8 = 1 << 1;
 const STM32_MOTOR_COUNT: usize = 14;
@@ -136,7 +142,7 @@ impl DynamixelIo {
         result
     }
 
-    fn request_torque(&mut self, on: bool) -> Result<()> {
+    fn submit_torque(&mut self, on: bool) -> Result<u16> {
         let op = if on { 1 } else { 2 };
         let request_seq = self.next_seq();
         let mut payload = vec![0u8; 28];
@@ -146,6 +152,12 @@ impl DynamixelIo {
         payload[4..4 + CONFIGURED_MOTOR_IDS.len()].copy_from_slice(&CONFIGURED_MOTOR_IDS);
         let wire = pack(MSG_ADMIN, request_seq, self.tick_us(), 0, &payload);
         self.write_all(&wire)?;
+        Ok(request_seq)
+    }
+
+    fn request_torque(&mut self, on: bool) -> Result<()> {
+        let op = if on { 1 } else { 2 };
+        let request_seq = self.submit_torque(on)?;
         let deadline = Instant::now() + ADMIN_TIMEOUT;
         let mut acknowledged = false;
         let mut feedback_enabled = false;
@@ -171,19 +183,32 @@ impl DynamixelIo {
             }
             if acknowledged && feedback_enabled { return Ok(()); }
         }
-        Err(IoError::Bus("STM32 管理命令或电机使能反馈超时".into()))
+        Err(IoError::Bus(if on { "STM32 使能命令或使能反馈超时" }
+            else { "STM32 失能命令确认超时" }.into()))
     }
 
-    pub fn interpolate_to(&mut self, target: &[f64; NUM_JOINTS], duration: Duration,
+    pub fn interpolate_to(&mut self, target: &[f64; NUM_JOINTS], speed_rad_s: f64,
                           step: Duration) -> Result<()> {
+        if !speed_rad_s.is_finite() || speed_rad_s <= 0.0 || !step.as_secs_f64().is_finite() || step.is_zero() {
+            return Err(IoError::Bus("初始化角速度必须为正有限值".into()));
+        }
         let start = self.present_positions()?;
-        let steps = (duration.as_secs_f64() / step.as_secs_f64()).ceil().max(1.0) as u32;
-        for i in 1..=steps {
-            let t = i as f64 / steps as f64;
-            let mut next = [0.0; NUM_JOINTS];
-            for j in 0..NUM_JOINTS { next[j] = start[j] + (target[j] - start[j]) * t; }
+        let distance = start.iter().zip(target).map(|(from, to)| (to - from).abs())
+            .fold(0.0_f64, f64::max);
+        let step_rad = speed_rad_s * step.as_secs_f64();
+        let estimated_steps = (distance / step_rad).ceil().max(1.0);
+        if !estimated_steps.is_finite() || estimated_steps > 1_000_000.0 {
+            return Err(IoError::Bus("初始化速度过低或目标距离过大".into()));
+        }
+        let mut next = start;
+        let steps = estimated_steps as u32;
+        for index in 0..steps {
+            for j in 0..NUM_JOINTS {
+                next[j] += (target[j] - next[j]).clamp(-step_rad, step_rad);
+            }
+            if index + 1 == steps { next = *target; }
             self.write_targets(&JointTargets::new(next))?;
-            std::thread::sleep(step);
+            if index + 1 < steps { std::thread::sleep(step); }
         }
         Ok(())
     }
@@ -209,10 +234,17 @@ impl DynamixelIo {
         let seq = self.next_seq();
         put_u16(&mut payload[..2], seq);
         self.write_all(&pack(msg, seq, self.tick_us(), 0, &payload))?;
-        let deadline = Instant::now() + Duration::from_millis(700);
+        // MARK_ZERO is completed and verified inside STM32. Matching the proven
+        // Jetson186 sequence can take three one-second disabled confirmations plus
+        // a two-second zero readback window, during which USB state publication pauses.
+        let deadline = Instant::now() + if zero_id.is_some() {
+            Duration::from_secs(12)
+        } else {
+            Duration::from_millis(700)
+        };
         let mut ack_tick = None;
         while Instant::now() < deadline {
-            let frame = self.read_frame()?;
+            let Some(frame) = self.read_frame_until(deadline)? else { break };
             if frame.msg_type == MSG_ADMIN_RESULT && frame.payload.len() >= 28
                 && get_u16(&frame.payload[..2]) == seq && frame.payload[2] == op {
                 if frame.payload[3] != 0 {
@@ -235,13 +267,25 @@ impl DynamixelIo {
                     if after_ack > 0 && after_ack < 0x8000_0000
                         && configured_motors_disabled(&sensors)
                         && sensors.motor_feedback_age_ms[joint] <= 50
-                        && sensors.positions[joint].abs() <= 0.01 {
+                        && sensors.positions[joint].abs() <= ZERO_POSITION_TOLERANCE_RAD {
                         return Ok(());
                     }
                 }
             }
         }
         Err(IoError::Bus("标定未确认完成；请刷新位置核对，勿自动重复零位写入".into()))
+    }
+
+    fn read_frame_until(&mut self, deadline: Instant) -> Result<Option<Frame>> {
+        loop {
+            match self.read_frame() {
+                Ok(frame) => return Ok(Some(frame)),
+                Err(IoError::Bus(message))
+                    if message == "STM32 state frame timed out" && Instant::now() < deadline => {}
+                Err(error) => return Err(error),
+            }
+            if Instant::now() >= deadline { return Ok(None); }
+        }
     }
 
     fn next_seq(&mut self) -> u16 { self.frame_seq = self.frame_seq.wrapping_add(1); self.frame_seq }
@@ -278,9 +322,42 @@ impl DynamixelIo {
     }
 
     fn read_state(&mut self) -> Result<Sensors> {
+        let deadline = Instant::now() + STATE_READ_TIMEOUT;
+        let result = self.read_state_before(deadline);
+        // Restore the administration/write timeout on both success and failure.
+        let restored = self.port.set_timeout(IO_TIMEOUT)
+            .map_err(|e| IoError::Bus(format!("USB timeout: {e}")));
+        match result {
+            Err(error) => Err(error),
+            Ok(sensors) => { restored?; Ok(sensors) }
+        }
+    }
+
+    fn read_state_before(&mut self, deadline: Instant) -> Result<Sensors> {
         loop {
-            let frame = self.read_frame()?;
-            if frame.msg_type == MSG_STATE { return self.parse_and_observe_state(&frame.payload); }
+            if Instant::now() >= deadline {
+                return Err(IoError::Bus("STM32 state frame timed out".into()));
+            }
+            if let Some(frame) = take_frame(&mut self.rx)? {
+                if frame.msg_type == MSG_STATE {
+                    return self.parse_and_observe_state(&frame.payload);
+                }
+                continue;
+            }
+            self.port.set_timeout(deadline.saturating_duration_since(Instant::now()))
+                .map_err(|e| IoError::Bus(format!("USB timeout: {e}")))?;
+            let mut chunk = [0u8; 512];
+            match self.port.read(&mut chunk) {
+                Ok(0) => continue,
+                Ok(n) => self.rx.extend_from_slice(&chunk[..n]),
+                Err(e) if e.kind() == std::io::ErrorKind::TimedOut =>
+                    return Err(IoError::Bus("STM32 state frame timed out".into())),
+                Err(e) => return Err(IoError::Bus(format!("USB read: {e}"))),
+            }
+            if self.rx.len() > 4096 {
+                self.rx.clear();
+                return Err(IoError::Bus("STM32 USB receive buffer overflow".into()));
+            }
         }
     }
 
@@ -342,6 +419,7 @@ impl RobotIo for DynamixelIo {
     fn write(&mut self, targets: &JointTargets) -> Result<()> { self.write_targets(targets) }
     fn set_gain(&mut self, kp: u16) -> Result<()> { self.kp_centi = kp.saturating_mul(100); Ok(()) }
     fn set_torque(&mut self, on: bool) -> Result<()> { DynamixelIo::set_torque(self, on) }
+    fn request_torque_off(&mut self) -> Result<()> { self.submit_torque(false).map(|_| ()) }
     fn slow_sensors(&mut self) -> Result<SlowSensors> {
         // Motor temperatures come from the 50 Hz state stream. The optional battery
         // meter is exposed separately so its voltage is never used for motor control.
@@ -419,7 +497,7 @@ fn motor_control_problem(capabilities: u16, faults: u32,
     if capabilities & CONTROL_CAPABILITIES != CONTROL_CAPABILITIES {
         return Some("STM32 固件尚未支持空槽控制及电机列表使能，请先更新电机固件");
     }
-    if age > Duration::from_millis(500) { return Some("STM32 电机状态已过期"); }
+    if age > MOTOR_STATE_MAX_AGE { return Some("STM32 电机状态已过期"); }
     // HOST_COMMAND_STALE is a recoverable stop, cleared by an explicit enable.
     if faults & 0x20 != 0 { return Some("STM32 CAN 发送失败或队列已满，电机控制已停止"); }
     if faults & 0x100 != 0 { return Some("STM32 IMU 保护已触发，全电机控制已停止"); }
@@ -459,7 +537,8 @@ fn admin_failure(payload: &[u8]) -> String {
         payload[2], payload[3], payload[23], payload[22], payload[21])
 }
 
-fn configured_motors_enabled(sensors: &Sensors) -> bool {
+/// Whether fresh feedback confirms every configured route is enabled and healthy.
+pub fn configured_motors_enabled(sensors: &Sensors) -> bool {
     STM32_TO_CONTROL_JOINT.iter().enumerate().all(|(slot, &joint)|
         STM32_MOTOR_IDS[slot] == 0 || sensors.motor_flags[joint] & 0x07 == 0x07)
 }
@@ -872,7 +951,7 @@ mod tests {
         let (firmware, host) = serialport::TTYPort::pair().unwrap();
         let mut io = DynamixelIo::from_port(Box::new(host));
         let mut payload = test_state_payload(false);
-        put_u16(&mut payload[14..16], 0x1f);
+        put_u16(&mut payload[14..16], 0x1f | BATTERY_METER_CAPABILITY);
         payload[61] = 11;
         payload[62] = 10;
         tracing::subscriber::with_default(capture.clone(), || {
@@ -979,6 +1058,67 @@ mod tests {
     }
 
     #[cfg(unix)]
+    #[test]
+    fn fragmented_state_has_one_deadline_and_preserves_partial_frame() {
+        use serialport::SerialPort;
+        let (mut firmware, mut host) = serialport::TTYPort::pair().unwrap();
+        firmware.set_timeout(Duration::from_secs(2)).unwrap();
+        host.set_timeout(IO_TIMEOUT).unwrap();
+        let mut io = DynamixelIo::from_port(Box::new(host));
+        let wire = pack(MSG_STATE, 1, 0, 0, &test_state_payload(false));
+        let (ready, begin) = std::sync::mpsc::channel();
+        let (done, finished) = std::sync::mpsc::channel();
+        let peer = std::thread::spawn(move || {
+            begin.recv().unwrap();
+            // Every byte arrives before the old per-read 60 ms timeout, but the
+            // complete frame arrives after the control read's total deadline.
+            for byte in &wire[..10] {
+                firmware.write_all(&[*byte]).unwrap();
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            firmware.write_all(&wire[10..]).unwrap();
+            done.send(()).unwrap();
+            // Keep the PTY peer open until the preserved frame is consumed.
+            std::thread::sleep(Duration::from_millis(200));
+        });
+        ready.send(()).unwrap();
+        assert!(io.read_state().is_err(), "partial input must not extend the state deadline");
+        assert_eq!(io.port.timeout(), IO_TIMEOUT);
+        finished.recv_timeout(Duration::from_secs(2)).unwrap();
+        assert!(io.read_state().is_ok(), "the next read must retain the partial frame");
+        assert_eq!(io.port.timeout(), IO_TIMEOUT);
+        peer.join().unwrap();
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn motor_state_retains_original_500ms_freshness_limit() {
+        let sensors = parse_state(&test_state_payload(true)).unwrap().sensors;
+        assert!(motor_control_problem(CONTROL_CAPABILITIES, 0,
+            Some((&sensors, MOTOR_STATE_MAX_AGE))).is_none());
+        assert!(motor_control_problem(CONTROL_CAPABILITIES, 0,
+            Some((&sensors, MOTOR_STATE_MAX_AGE + Duration::from_millis(1))))
+            .unwrap().contains("已过期"));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn disable_submission_does_not_wait_for_a_missing_reply() {
+        use serialport::SerialPort;
+        let (mut firmware, host) = serialport::TTYPort::pair().unwrap();
+        firmware.set_timeout(Duration::from_secs(1)).unwrap();
+        let mut io = DynamixelIo::from_port(Box::new(host));
+        let started = Instant::now();
+        io.request_torque_off().unwrap();
+        assert!(started.elapsed() < IO_TIMEOUT);
+        let frame = read_test_frame(&mut firmware);
+        assert_eq!(frame.msg_type, MSG_ADMIN);
+        assert_eq!(frame.payload[2], 2);
+        assert_eq!(&frame.payload[4..4 + CONFIGURED_MOTOR_IDS.len()], &CONFIGURED_MOTOR_IDS);
+        assert!(io.last_motor_state.is_none(), "submission must not fabricate disabled feedback");
+    }
+
+    #[cfg(unix)]
     fn respond_to_test_admin(port: &mut serialport::TTYPort, request: &Frame) {
         assert_eq!(request.msg_type, MSG_ADMIN);
         assert_eq!(&request.payload[4..4 + CONFIGURED_MOTOR_IDS.len()], &CONFIGURED_MOTOR_IDS);
@@ -1054,7 +1194,13 @@ mod tests {
             host.set_timeout(Duration::from_millis(100)).unwrap();
             let mut io = DynamixelIo::from_port(Box::new(host));
             let mut state = test_state_payload(enabled);
-            put_u16(&mut state[14..16], 7);
+            put_u16(&mut state[14..16], 7 | BATTERY_METER_CAPABILITY);
+            // 40 mrad is inside the same ±0.05 rad acceptance band used by STM32/Jetson186.
+            put_i32(
+                &mut state[STATE_PREFIX_LEN + MOTOR_OBSERVATION_LEN
+                    ..STATE_PREFIX_LEN + MOTOR_OBSERVATION_LEN + 4],
+                40,
+            );
             let peer = std::thread::spawn(move || {
                 firmware.write_all(&pack(MSG_STATE, 1, 0, 0, &state)).unwrap();
                 if !enabled {
@@ -1065,6 +1211,10 @@ mod tests {
                     ack[..3].copy_from_slice(&request.payload[..3]);
                     ack[21] = 1; ack[22] = 1;
                     put_u32(&mut ack[4..8], 100);
+                    // STM32 now performs the physical disable/zero/verify exchange before
+                    // replying. Cross at least one serial read timeout to exercise the
+                    // operation-level deadline rather than requiring an immediate ACK.
+                    std::thread::sleep(Duration::from_millis(150));
                     firmware.write_all(&pack(MSG_ADMIN_RESULT, 2, 0, 0, &ack)).unwrap();
                     // First buffered sample is zero but predates the request: it is not proof.
                     put_u32(&mut state[4..8], 110);

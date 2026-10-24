@@ -253,6 +253,7 @@ detect_board_profile() {
     if [ -z "$MOTOR_PORT" ]; then
         case "$BOARD_PROFILE" in
             radxa-zero3) MOTOR_PORT=/dev/ttyS2 ;;
+            kickpi-k11c) MOTOR_PORT=/dev/serial/by-id/usb-STMicroelectronics_STM32_Virtual_ComPort_385933373134-if00 ;;
             *) MOTOR_PORT=/dev/ttyACM0 ;;
         esac
     fi

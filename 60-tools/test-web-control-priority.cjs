@@ -81,3 +81,18 @@ receiveHeadState({head_mode: false});
 assert.equal(element('t-head-mode').textContent, '正常模式');
 assert.equal(element('t-head-requested').textContent, '颈俯仰 0.000 · 头俯仰 0.000 · 头偏航 0.000 · 头横滚 0.000 rad');
 console.log('PASS: web handoff clears held input; no stale motion or hardware source impersonation');
+
+// Free recording opens operator controls while management controls retain the lease.
+const lockFunction = html.match(/function operationLocked\([^\n]+/)[0];
+const locks = vm.createContext({exclusiveControlOwner:null, freeExperimentControl:false});
+vm.runInContext(lockFunction, locks);
+for (const owner of [null, 'policy_experiment', 'motor_experiment', 'policy_import']) {
+  locks.exclusiveControlOwner = owner;
+  locks.freeExperimentControl = false;
+  assert.equal(vm.runInContext('operationLocked()', locks), Boolean(owner));
+}
+locks.exclusiveControlOwner = 'policy_experiment';
+locks.freeExperimentControl = true;
+assert.equal(vm.runInContext('operationLocked()', locks), false);
+assert.equal(vm.runInContext('operationLocked(true)', locks), true);
+console.log('PASS: free experiments open manual controls and keep model/calibration management locked');

@@ -25,6 +25,7 @@ void BSP_CAN_ClearTxMailboxes(unsigned char Port);
 unsigned char BSP_CAN_TrySendStandardDataMessage(unsigned char Port, unsigned int ID, unsigned char *Data);
 unsigned char BSP_CAN_TrySendStandardFdDataMessage(unsigned char Port, unsigned int ID, unsigned char *Data, unsigned char BitRateSwitch);
 unsigned char BSP_CAN_TrySendStandardFdFrame(unsigned char Port, unsigned int ID, unsigned char *Data, unsigned char Length, unsigned char BitRateSwitch);
+unsigned char BSP_CAN_WaitForLastTx(unsigned char Port, unsigned int TimeoutMs);
 void BSP_CAN_SendStandardDataMessage(unsigned char Port, unsigned int ID, unsigned char *Data);
 void BSP_CAN_AddRxCallBackFunction(BSP_CAN_FunCallBack_t Function);
 unsigned char BSP_CAN_ReconfigurePortTiming(unsigned char Port,

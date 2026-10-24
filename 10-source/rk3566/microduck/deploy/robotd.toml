@@ -14,7 +14,7 @@
 
 [bus]
 # STM32 H7 DM motor gateway over USB CDC.
-port = "/dev/ttyACM0"
+port = "/dev/serial/by-id/usb-STMicroelectronics_STM32_Virtual_ComPort_385933373134-if00"
 # Reserved for a future second IMU; it is not opened today. The primary BMI088 travels in
 # the STM32 DMUSB-v3 stream on `port` above.
 imu_port = "/dev/ttyS2"
@@ -33,6 +33,10 @@ imu_port = "/dev/ttyS2"
 # in microduck_runtime reports achieved rate, jitter, bus utilisation and error counts at a
 # given rate, and the loop's own five-minute summary reports the same from inside robotd.
 hz = 50
+
+# Maximum target-position speed during initialization, in rad/s. Each joint moves
+# directly through its signed encoder coordinates toward the saved home position.
+init_speed_rad_s = 0.1
 
 # Per-tick EMA smoothing on incoming commands: `cmd += alpha * (target - cmd)`. The
 # prototype's `--cmd-alpha` / `--head-alpha` — a stick snap becomes a ramp the gait can

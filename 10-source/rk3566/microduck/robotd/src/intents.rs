@@ -107,6 +107,14 @@ impl Default for PoseIntent {
     }
 }
 
+/// Temporary operator lock while the other action policies are unfinished.
+/// Keep this whitelist shared by requests, notifications and controller entry points.
+pub const SKILL_DISABLED_REASON: &str = "该动作策略尚未准备好，暂时禁用；目前仅开放坐下/起立";
+
+pub fn skill_enabled(skill: duck_ipc_proto::Skill) -> bool {
+    matches!(skill, duck_ipc_proto::Skill::SitToggle)
+}
+
 /// Pending one-shot skill requests, taken once per tick.
 ///
 /// Booleans rather than a queue: within one 20 ms tick a second press of the same button
@@ -411,6 +419,7 @@ impl Intents {
 
     /// Queue a one-shot skill for the loop's next tick.
     pub fn request_skill(&self, skill: duck_ipc_proto::Skill) {
+        if !skill_enabled(skill) { return; }
         let bit = match skill {
             duck_ipc_proto::Skill::GroundPick => SKILL_GROUND_PICK,
             duck_ipc_proto::Skill::KickLeft => SKILL_KICK_LEFT,

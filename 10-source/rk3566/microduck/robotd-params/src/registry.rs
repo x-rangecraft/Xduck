@@ -95,6 +95,11 @@ pub const REGISTRY: &[Entry] = &[
         Kind::Float,
         "EMA smoothing on head targets, 1.0 = pass-through",
     ),
+    entry(
+        "control.init_speed_rad_s",
+        Kind::Float,
+        "Maximum joint target speed during initialization, rad/s (0, 5]",
+    ),
     // ── [update_gate] ────────────────────────────────────────────────────────
     entry(
         "update_gate.min_achieved_hz",

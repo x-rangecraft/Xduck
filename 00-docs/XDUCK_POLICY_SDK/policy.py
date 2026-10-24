@@ -46,7 +46,9 @@ class Policy:
         if robot_info["joint_names"] != JOINTS:
             raise ValueError("joint order does not match the locomotion policy")
         self.last_action = np.zeros(14, dtype=np.float32)
-        self.previous_targets = None
+        handoff = first_frame.get("handoff_targets")
+        self.previous_targets = (np.asarray([handoff[name]["position"] for name in CONTROLLED], dtype=np.float32)
+                                 if handoff is not None else None)
 
     def preprocess(self, frame, feedback):
         positions = np.asarray(frame["positions"], dtype=np.float32)[CONTROLLED_INDEX]

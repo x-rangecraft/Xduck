@@ -285,6 +285,17 @@ static unsigned char Motor_SendSpecialFrame(unsigned char Port, unsigned short C
   return 1U;
 }
 
+static unsigned char Motor_SendSpecialFrameAndWait(unsigned char Port, unsigned short CANID,
+                                                   unsigned char Tail, unsigned int TimeoutMs)
+{
+  if (Motor_SendSpecialFrame(Port, CANID, Tail) == 0U ||
+      BSP_CAN_WaitForLastTx(Port, TimeoutMs) == 0U) {
+    g_motorTxFailure = 1U;
+    return 0U;
+  }
+  return 1U;
+}
+
 static int Motor_FindCodeByFeedback(unsigned char Port, unsigned int MasterID, unsigned char FeedbackID)
 {
   int AnyCode = -1;
@@ -351,6 +362,7 @@ Motor_t::Motor_t()
   Private_RotorTemp = 0U;
   Private_State = Motor_State_Disable;
   Private_LastRxTick = 0U;
+  Private_RxCount = 0U;
 
   Private_Position_Set = 0.0f;
   Private_Speed_Set = 0.0f;
@@ -546,6 +558,28 @@ void Motor_t::SendClearErrorFrame(void)
     return;
   }
   (void)Motor_SendSpecialFrame(Private_Port, Private_CANID, MOTOR_SPECIAL_CLEAR_ERR);
+}
+
+unsigned char Motor_t::SendDisableFrameAndWait(unsigned int TimeoutMs)
+{
+  if (Private_UseFlag == 0U || Private_Port < 1U || Private_Port > 3U) {
+    return 0U;
+  }
+  Private_RunFlag = 0U;
+  Private_SpecialCommand = MOTOR_SPECIAL_NONE;
+  return Motor_SendSpecialFrameAndWait(Private_Port, Private_CANID,
+                                       MOTOR_SPECIAL_DISABLE, TimeoutMs);
+}
+
+unsigned char Motor_t::SendSaveZeroFrameAndWait(unsigned int TimeoutMs)
+{
+  if (Private_UseFlag == 0U || Private_Port < 1U || Private_Port > 3U) {
+    return 0U;
+  }
+  Private_RunFlag = 0U;
+  Private_SpecialCommand = MOTOR_SPECIAL_NONE;
+  return Motor_SendSpecialFrameAndWait(Private_Port, Private_CANID,
+                                       MOTOR_SPECIAL_SAVE_ZERO, TimeoutMs);
 }
 
 void Motor_t::SetRunFlag(unsigned char RunFlag)
@@ -761,6 +795,11 @@ TickType_t Motor_t::GetLastRxTick(void)
   return Private_LastRxTick;
 }
 
+unsigned int Motor_t::GetRxCount(void)
+{
+  return Private_RxCount;
+}
+
 void Motor_CAN_Back(unsigned char Code, unsigned char Err, unsigned char *RxData)
 {
   unsigned short PositionInt;
@@ -782,6 +821,7 @@ void Motor_CAN_Back(unsigned char Code, unsigned char Err, unsigned char *RxData
   Motor[Code].Private_RotorTemp = RxData[7];
   now_tick = xTaskGetTickCountFromISR();
   Motor[Code].Private_LastRxTick = now_tick;
+  Motor[Code].Private_RxCount++;
 }
 
 unsigned char Motor_CAN_Send(unsigned char Code)

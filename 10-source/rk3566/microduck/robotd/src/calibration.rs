@@ -31,8 +31,8 @@ impl Default for Config {
                 .filter(|&&id| id != 0)
                 .map(|&id| CalibrationLimit {
                     motor_id: id,
-                    min_rad: -3.0,
-                    max_rad: 3.0,
+                    min_rad: -1.0,
+                    max_rad: 1.0,
                 })
                 .collect(),
             home: [0.0; NUM_JOINTS],
@@ -41,6 +41,27 @@ impl Default for Config {
 }
 
 impl Config {
+    pub fn feedback_limit_error(&self, sensors: &Sensors, require_hardware_flags: bool) -> Option<String> {
+        for (&id, joint) in STM32_MOTOR_IDS.iter().zip(STM32_TO_CONTROL_JOINT) {
+            if id == 0 { continue; }
+            let Some(limit) = self.limits.iter().find(|limit| limit.motor_id == id) else {
+                return Some(format!("电机 {id} 缺少位置限位，不能初始化"));
+            };
+            let position = sensors.positions[joint];
+            if (require_hardware_flags && (sensors.motor_flags[joint] & 0x03 != 0x03
+                || sensors.motor_feedback_age_ms[joint] > 500)) || !position.is_finite()
+            {
+                return Some(format!("电机 {id} 反馈无效或过期，不能初始化"));
+            }
+            let min = (limit.min_rad * 1000.0).ceil() / 1000.0;
+            let max = (limit.max_rad * 1000.0).floor() / 1000.0;
+            if position < min || position > max {
+                return Some(format!("电机 {id} 当前位置 {position:.3} rad 超出限位 [{min:.3}, {max:.3}] rad，不能初始化"));
+            }
+        }
+        None
+    }
+
     fn validate(&self) -> Result<(), String> {
         if self.version != 1 {
             return Err("标定文件版本不支持".into());
@@ -354,6 +375,23 @@ impl Calibration {
 mod tests {
     use super::*;
     #[test]
+    fn feedback_must_be_fresh_and_inside_each_calibrated_limit() {
+        let config = Config::default();
+        let mut sensors = Sensors::default();
+        for (&id, joint) in STM32_MOTOR_IDS.iter().zip(STM32_TO_CONTROL_JOINT) {
+            if id != 0 { sensors.motor_flags[joint] = 3; }
+        }
+        assert!(config.feedback_limit_error(&sensors, true).is_none());
+        let joint = STM32_TO_CONTROL_JOINT[0];
+        sensors.positions[joint] = 1.001;
+        assert!(config.feedback_limit_error(&sensors, true).unwrap().contains("超出限位"));
+        sensors.positions[joint] = -1.001;
+        assert!(config.feedback_limit_error(&sensors, true).unwrap().contains("超出限位"));
+        sensors.positions[joint] = 1.0;
+        sensors.motor_feedback_age_ms[joint] = 501;
+        assert!(config.feedback_limit_error(&sensors, true).unwrap().contains("反馈无效或过期"));
+    }
+    #[test]
     fn validates_motor_set_and_quantized_bounds() {
         let mut config = Config::default();
         assert!(config.validate().is_ok());
@@ -405,7 +443,7 @@ mod tests {
         store.tick(&mut io, Some(&sensors), true);
         assert_eq!(store.config().home[0], 0.75);
         assert!(store.status().error.is_none());
-        assert_eq!(store.config().limits[0].max_rad, 3.0);
+        assert_eq!(store.config().limits[0].max_rad, 1.0);
         // FakeIo refuses hardware zero; saving the home succeeded without ever zeroing it.
         store
             .request(&CalibrationParams::MarkZero { motor_id: 2 })

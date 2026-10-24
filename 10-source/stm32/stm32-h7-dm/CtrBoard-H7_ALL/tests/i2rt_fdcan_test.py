@@ -24,6 +24,7 @@ def function(source, signature):
 
 pre = r'''
 #include <cassert>
+#include <cstdint>
 #include <cstring>
 #include <cstdio>
 #define DM_CAN_FD_MOTOR 1
@@ -37,10 +38,16 @@ struct FDCAN_TxHeaderTypeDef {
  unsigned Identifier, IdType, TxFrameType, DataLength, ErrorStateIndicator;
  unsigned BitRateSwitch, FDFormat, TxEventFifoControl, MessageMarker;
 } last;
-unsigned free_level=1, fail_add=0, sends=0;
+unsigned free_level=1, fail_add=0, sends=0, now_ms=0, latest_tx_buffer=1, pending_cycles=0;
 unsigned char bytes[8];
 FDCAN_HandleTypeDef *BSP_CAN_GetHandleByPort(unsigned char p){return p>=1&&p<=3?&handle:nullptr;}
 unsigned HAL_FDCAN_GetTxFifoFreeLevel(FDCAN_HandleTypeDef*){return free_level;}
+unsigned HAL_FDCAN_GetLatestTxFifoQRequestBuffer(FDCAN_HandleTypeDef*){return latest_tx_buffer;}
+unsigned HAL_FDCAN_IsTxBufferMessagePending(FDCAN_HandleTypeDef*,unsigned){
+ if(pending_cycles){pending_cycles--;return 1;}return 0;
+}
+unsigned HAL_GetTick(){return now_ms;}
+void osDelay(unsigned ms){now_ms+=ms;}
 unsigned HAL_FDCAN_AddMessageToTxFifoQ(FDCAN_HandleTypeDef*, FDCAN_TxHeaderTypeDef* h, unsigned char* p){
  last=*h;std::memcpy(bytes,p,8);sends++;return fail_add;
 }
@@ -49,6 +56,7 @@ unsigned char BSP_CAN_TrySendStandardDataMessage(unsigned char,unsigned,unsigned
 }
 '''
 body = function(bsp, 'unsigned char BSP_CAN_TrySendStandardFdFrame(')
+body += function(bsp, 'unsigned char BSP_CAN_WaitForLastTx(')
 body += function(motor, 'static unsigned char Motor_PortUsesFd(')
 body += function(motor, 'static unsigned char Motor_RegisterSendFrame(')
 body += function(motor, 'static unsigned char Motor_NormalizeFeedbackState(')
@@ -74,6 +82,10 @@ int main(){
  free_level=1;fail_add=1;assert(!BSP_CAN_TrySendStandardFdFrame(1,1,captured,8,1));
  fail_add=0;assert(!BSP_CAN_TrySendStandardFdFrame(0,1,captured,8,1));
  assert(!BSP_CAN_TrySendStandardFdFrame(1,1,captured,6,1));
+ now_ms=0;pending_cycles=2;assert(BSP_CAN_WaitForLastTx(1,25));assert(now_ms==2);
+ now_ms=0;pending_cycles=30;assert(!BSP_CAN_WaitForLastTx(1,25));assert(now_ms==25);
+ assert(!BSP_CAN_WaitForLastTx(0,25));
+ latest_tx_buffer=0;assert(!BSP_CAN_WaitForLastTx(1,25));
  puts("production I2RT FD: all ports/retries FD+BRS, 4/8-byte requests, HAL failures, raw states preserved");
 }
 '''

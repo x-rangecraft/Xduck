@@ -26,8 +26,8 @@ use crate::custom_policy::PolicyContext;
 const GROUND_PICK_END_PHASE: f64 = 0.7;
 
 /// How long the sitstand network rises (posture flag 0) before the main policy takes over.
-/// 1 s is enough on the robot — velstand owns the tail of the rise fine.
-const RISE_SECS: f64 = 1.0;
+/// Keep the rise policy in charge for 2 s before handing back to locomotion.
+const RISE_SECS: f64 = 2.0;
 
 /// How recently a roulade request must have arrived, at the end of a roll, for another to
 /// chain. The prototype chains on "X still held at the window boundary"; here the client
@@ -162,6 +162,7 @@ pub struct Controller {
     /// One consumer instance owns feedback/filter history; only its ONNX session switches.
     locomotion: Option<crate::custom_policy::CustomPolicy>,
     entry: PolicyEntry,
+    applied_targets: Option<[duck_control::MitTarget; NUM_JOINTS]>,
     has_standing: bool,
     has_sitstand: bool,
     has_ground_pick: bool,
@@ -191,6 +192,7 @@ impl Controller {
             custom_policies: Vec::new(),
             locomotion: None,
             entry: PolicyEntry::default(),
+            applied_targets: None,
             has_standing: paths.stand.is_some(),
             has_sitstand: paths.sitstand.is_some(),
             has_ground_pick: paths.ground_pick.is_some(),
@@ -228,8 +230,48 @@ impl Controller {
 
     pub fn reset(&mut self) {
         self.entry = PolicyEntry::default();
-        if let Some(policy) = &mut self.locomotion { policy.mark_reset(); }
-        for (_, policy) in &mut self.custom_policies { policy.mark_reset(); }
+        self.applied_targets = None;
+        if let Some(policy) = &mut self.locomotion {
+            policy.mark_reset();
+        }
+        for (_, policy) in &mut self.custom_policies {
+            policy.mark_reset();
+        }
+        self.recover_failed_workers();
+    }
+
+    /// Called by the bus owner only after a successful safety-layer write.
+    pub fn applied(&mut self, positions: [f64; NUM_JOINTS], mit: Option<[duck_control::MitTarget; NUM_JOINTS]>) {
+        let mut targets = mit.unwrap_or([duck_control::MitTarget::default(); NUM_JOINTS]);
+        for (target, position) in targets.iter_mut().zip(positions) { target.position = position; }
+        self.applied_targets = Some(targets);
+    }
+
+    pub fn begin_fall(&mut self) {
+        // Only commands successfully written during this recovery are valid for handoff.
+        self.applied_targets = None;
+    }
+
+    fn recovery_targets(&self, measured: [f64; NUM_JOINTS]) -> [duck_control::MitTarget; NUM_JOINTS] {
+        self.applied_targets.unwrap_or_else(|| measured.map(|position|
+            duck_control::MitTarget { position, ..Default::default() }))
+    }
+
+    /// One handoff after the platform pose ramp. Never reuse the suspended policy cache.
+    pub fn resume_after_fall(&mut self, measured: [f64; NUM_JOINTS]) {
+        let targets = self.recovery_targets(measured);
+        self.entry = PolicyEntry::default();
+        if let Some(policy) = self.locomotion.as_mut() {
+            policy.handoff(targets);
+        }
+        for (net, policy) in &mut self.custom_policies {
+            if matches!(net, Net::Walk | Net::Stand) { policy.handoff(targets); }
+        }
+    }
+
+    pub fn recover_failed_workers(&mut self) {
+        if let Some(policy) = &mut self.locomotion { policy.recover_failed(); }
+        for (_, policy) in &mut self.custom_policies { policy.recover_failed(); }
     }
 
     pub fn set_standing_disabled(&mut self, disabled: bool) {
@@ -282,6 +324,9 @@ impl Controller {
     /// network existing and the move not already running — a pick can even preempt a kick's
     /// tail, and that stays as it was.
     pub fn start_ground_pick(&mut self) -> Result<(), &'static str> {
+        if !crate::intents::skill_enabled(duck_ipc_proto::Skill::GroundPick) {
+            return Err(crate::intents::SKILL_DISABLED_REASON);
+        }
         if !self.has_ground_pick {
             return Err("no ground-pick policy loaded");
         }
@@ -295,6 +340,9 @@ impl Controller {
 
     /// Start a kick window. Blocked while any scripted move runs, as the prototype blocks it.
     pub fn start_kick(&mut self, left: bool) -> Result<(), &'static str> {
+        if !crate::intents::skill_enabled(if left { duck_ipc_proto::Skill::KickLeft } else { duck_ipc_proto::Skill::KickRight }) {
+            return Err(crate::intents::SKILL_DISABLED_REASON);
+        }
         if !(if left { self.has_kick_left } else { self.has_kick_right }) {
             return Err("no kick policy loaded for that leg");
         }
@@ -313,6 +361,9 @@ impl Controller {
     /// X press on nothing but the ground pick — a roulade can preempt a kick's tail or roll
     /// out of the seat, and both stay as they were.
     pub fn request_roulade(&mut self) -> Result<bool, &'static str> {
+        if !crate::intents::skill_enabled(duck_ipc_proto::Skill::Roulade) {
+            return Err(crate::intents::SKILL_DISABLED_REASON);
+        }
         if self.roulade.is_some() {
             self.roulade_chain = ROULADE_CHAIN_WINDOW;
             return Ok(false);
@@ -481,6 +532,18 @@ impl Controller {
             }
         };
 
+        let returning_to_locomotion = matches!(net, Net::Walk | Net::Stand)
+            && self.entry.active.is_some_and(|(prior, _)| !matches!(prior, Net::Walk | Net::Stand));
+        if returning_to_locomotion {
+            let targets = self.applied_targets.ok_or_else(|| PolicyError::Inference(
+                "策略交接缺少成功下发的目标；保持当前姿态".into()))?;
+            if self.has_standing {
+                if let Some(policy) = self.locomotion.as_mut() { policy.handoff(targets); }
+            } else if let Some((_, policy)) = self.custom_policies.iter_mut().find(|(candidate, _)| *candidate == net) {
+                policy.handoff(targets);
+            }
+            tracing::info!(from = ?self.entry.active, to = label, targets = ?targets.map(|t| t.position), "policy target handoff");
+        }
         let output = if matches!(net, Net::Walk | Net::Stand) && self.has_standing {
             let model = if net == Net::Walk { "walk" } else { "stand" };
             self.locomotion.as_mut()
@@ -618,6 +681,33 @@ mod tests {
     }
 
     #[test]
+    fn fall_handoff_uses_recovery_writes_or_measured_joints() {
+        let mut controller = skill_controller();
+        controller.applied([0.9; NUM_JOINTS], None); // Pre-fall command is obsolete.
+        controller.begin_fall();
+        assert_eq!(controller.recovery_targets([0.2; NUM_JOINTS]).map(|t| t.position), [0.2; NUM_JOINTS]);
+        let mit = [duck_control::MitTarget { position: 9.0, kp: 60.0, ..Default::default() }; NUM_JOINTS];
+        controller.applied([0.4; NUM_JOINTS], Some(mit));
+        let targets = controller.recovery_targets([0.2; NUM_JOINTS]);
+        assert!(targets.iter().all(|t| t.position == 0.4 && t.kp == 60.0));
+        controller.resume_after_fall([0.2; NUM_JOINTS]);
+        assert_eq!(controller.applied_targets, Some(targets));
+    }
+
+    #[test]
+    fn skill_return_requires_a_successful_applied_target() {
+        let mut controller = skill_controller();
+        controller.entry.entered(Net::SitStand, "rise");
+        let result = controller.step(&duck_control::Sensors::default(), &Command::default(), false, 0.02, 1.0);
+        assert!(result.unwrap_err().to_string().contains("成功下发"));
+        let requested = [duck_control::MitTarget { position:9.0, kp:60.0, ..Default::default() }; NUM_JOINTS];
+        controller.applied([0.4; NUM_JOINTS], Some(requested));
+        assert!(controller.applied_targets.unwrap().iter().all(|t| t.position == 0.4 && t.kp == 60.0));
+        controller.reset();
+        assert!(controller.applied_targets.is_none());
+    }
+
+    #[test]
     fn chained_roll_queues_entry_before_dispatch_and_failure_keeps_it_pending() {
         let mut c = skill_controller();
         c.entry.entered(Net::Roulade, "roulade");
@@ -636,26 +726,12 @@ mod tests {
     #[test]
     fn accepted_starts_queue_reset_but_held_or_rejected_requests_do_not() {
         let mut c = skill_controller();
-        c.start_ground_pick().unwrap();
-        assert!(c.entry.pending.contains(&Net::GroundPick));
-        c.entry.entered(Net::GroundPick, "ground_pick");
-        assert!(c.start_ground_pick().is_err());
+        assert_eq!(c.start_ground_pick(), Err(crate::intents::SKILL_DISABLED_REASON));
+        assert_eq!(c.start_kick(true), Err(crate::intents::SKILL_DISABLED_REASON));
+        assert_eq!(c.start_kick(false), Err(crate::intents::SKILL_DISABLED_REASON));
+        assert_eq!(c.request_roulade(), Err(crate::intents::SKILL_DISABLED_REASON));
         assert!(c.entry.pending.is_empty());
-        c.ground_pick = None;
-        for left in [true, false] {
-            let net = if left { Net::KickLeft } else { Net::KickRight };
-            c.start_kick(left).unwrap();
-            assert!(c.entry.pending.contains(&net));
-            c.entry.entered(net, "kick");
-            assert!(c.start_kick(left).is_err());
-            assert!(c.entry.pending.is_empty());
-            c.kick = None;
-        }
-        assert!(c.request_roulade().unwrap());
-        assert!(c.entry.pending.contains(&Net::Roulade));
-        c.entry.entered(Net::Roulade, "roulade");
-        assert!(!c.request_roulade().unwrap());
-        assert!(c.entry.pending.is_empty());
+        assert!(c.ground_pick.is_none() && c.kick.is_none() && c.roulade.is_none());
         c.sit_toggle().unwrap();
         assert!(c.entry.pending.contains(&Net::SitStand));
         // A queued lower-priority skill is not consumed by another slot's execution.
@@ -723,6 +799,6 @@ mod tests {
     #[test]
     fn the_ground_pick_cutoff_is_the_prototypes() {
         assert_eq!(GROUND_PICK_END_PHASE, 0.7);
-        assert_eq!(RISE_SECS, 1.0);
+        assert_eq!(RISE_SECS, 2.0);
     }
 }

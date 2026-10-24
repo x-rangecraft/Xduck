@@ -838,6 +838,8 @@ pub struct Control {
     pub cmd_alpha: f64,
     /// Same, for head targets and the body pose.
     pub head_alpha: f64,
+    /// Maximum commanded joint speed while moving to the saved home pose, in rad/s.
+    pub init_speed_rad_s: f64,
 }
 
 /// Thresholds that decide `healthy` — and therefore whether an update is kept.
@@ -878,7 +880,7 @@ pub struct UpdateGate {
 impl Default for Bus {
     fn default() -> Self {
         Self {
-            port: "/dev/ttyACM0".into(),
+            port: "/dev/serial/by-id/usb-STMicroelectronics_STM32_Virtual_ComPort_385933373134-if00".into(),
             imu_port: "/dev/ttyS2".into(),
         }
     }
@@ -890,6 +892,7 @@ impl Default for Control {
             hz: 50,
             cmd_alpha: 0.2,
             head_alpha: 0.2,
+            init_speed_rad_s: 0.1,
         }
     }
 }
@@ -925,6 +928,8 @@ pub enum ParamsError {
     },
     #[error("{path}: control.hz must be between 1 and 1000, got {got}")]
     Rate { path: String, got: u32 },
+    #[error("{path}: control.init_speed_rad_s must be finite and in (0, 5] rad/s, got {got}")]
+    InitSpeed { path: String, got: f64 },
     #[error(
         "{path}: media.bitrate must be between {min} and {max} bits per second, got {got} — \
          the unit is bits, so 2 Mb/s is 2000000"
@@ -1009,10 +1014,14 @@ impl Params {
             .is_some();
         if !has_imu_port && params.bus.port == "/dev/ttyS2" {
             tracing::warn!(
-                "migrating legacy shared motor/IMU port: STM32=/dev/ttyACM0, IMU=/dev/ttyS2"
+                "migrating legacy shared motor/IMU port to the stable STM32 USB device, IMU=/dev/ttyS2"
             );
-            params.bus.port = "/dev/ttyACM0".into();
+            params.bus.port = Bus::default().port;
             params.bus.imu_port = "/dev/ttyS2".into();
+        }
+        if params.bus.port == "/dev/ttyACM0" {
+            tracing::warn!("migrating unstable STM32 USB port /dev/ttyACM0 to its by-id device");
+            params.bus.port = Bus::default().port;
         }
 
         params.validate(path)?;
@@ -1026,6 +1035,15 @@ impl Params {
             return Err(ParamsError::Rate {
                 path: path.display().to_string(),
                 got: self.control.hz,
+            });
+        }
+        if !self.control.init_speed_rad_s.is_finite()
+            || !(0.0..=5.0).contains(&self.control.init_speed_rad_s)
+            || self.control.init_speed_rad_s == 0.0
+        {
+            return Err(ParamsError::InitSpeed {
+                path: path.display().to_string(),
+                got: self.control.init_speed_rad_s,
             });
         }
         // Checked here rather than in `mediad`, so `robotctl configure` refuses to write it:
@@ -1177,8 +1195,16 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let path = write(dir.path(), "[bus]\nport = \"/dev/ttyS2\"\n");
         let p = Params::load(&path, true).unwrap();
-        assert_eq!(p.bus.port, "/dev/ttyACM0");
+        assert_eq!(p.bus.port, Bus::default().port);
         assert_eq!(p.bus.imu_port, "/dev/ttyS2");
+    }
+
+    #[test]
+    fn legacy_ttyacm0_config_uses_stable_stm32_device() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = write(dir.path(), "[bus]\nport = \"/dev/ttyACM0\"\nimu_port = \"/dev/ttyS2\"\n");
+        let p = Params::load(&path, true).unwrap();
+        assert_eq!(p.bus.port, Bus::default().port);
     }
 
     /// [`QUALITY_LABELS`] is what the registry offers and what the file may contain, and
@@ -1269,6 +1295,7 @@ mod tests {
         assert_eq!(from_file.control.hz, built_in.control.hz);
         assert_eq!(from_file.control.cmd_alpha, built_in.control.cmd_alpha);
         assert_eq!(from_file.control.head_alpha, built_in.control.head_alpha);
+        assert_eq!(from_file.control.init_speed_rad_s, built_in.control.init_speed_rad_s);
         assert_eq!(from_file.policy.resolved(), built_in.policy.resolved());
         assert_eq!(from_file.safety.limp_fall, built_in.safety.limp_fall);
         assert_eq!(
@@ -1360,6 +1387,7 @@ mod tests {
         let c = Control::default();
         assert_eq!(c.cmd_alpha, 0.2);
         assert_eq!(c.head_alpha, 0.2);
+        assert_eq!(c.init_speed_rad_s, 0.1);
     }
 
     /// One line — `mode = "roller"` — must reproduce the prototype's whole roller preset,

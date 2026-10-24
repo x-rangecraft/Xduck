@@ -14,6 +14,7 @@ use duck_control::{Command, Sensors, model::NUM_JOINTS, obs::BodyPose, policy::N
 use duck_ipc_proto::{
     PolicyExperimentAction as Action,
     PolicyExperimentConfig as Config, PolicyExperimentMode as Mode,
+    PolicyExperimentInitialPose as InitialPose,
     PolicyExperimentParams as Params, PolicyExperimentPolicy as Policy,
 };
 use serde::Serialize;
@@ -34,7 +35,7 @@ const MAX_SEGMENTS: usize = 256;
 const MAX_DURATION_MS: u64 = 30 * 60 * 1000;
 const RECORD_BUFFER: usize = 64;
 const INITIALIZE_TIMEOUT_SECS: u64 = 30;
-const READY_TIMEOUT_SECS: u64 = 60;
+const READY_TIMEOUT_SECS: u64 = 240;
 
 #[derive(Clone, Serialize)]
 struct Session {
@@ -63,6 +64,8 @@ struct Active {
     recorder: Option<Recorder>,
     phase_at: Instant,
     action_segment: Option<usize>,
+    zero_written: bool,
+    zero_armed: bool,
 }
 
 struct Inner {
@@ -83,6 +86,7 @@ pub struct Drive {
     pub policy: Option<Net>,
     pub action: Option<Action>,
     pub inference_only: bool,
+    pub manual: bool,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -171,7 +175,7 @@ impl PolicyExperiment {
         Self::at(PathBuf::from(ROOT), owner)
     }
 
-    fn at(root: PathBuf, owner: Arc<ControlOwner>) -> Self {
+    pub(crate) fn at(root: PathBuf, owner: Arc<ControlOwner>) -> Self {
         let sessions = load_sessions(&root);
         Self {
             root,
@@ -186,11 +190,64 @@ impl PolicyExperiment {
 
     pub fn active(&self) -> bool { self.inner.lock().unwrap().active.is_some() }
 
+    pub fn manual_control_allowed(&self) -> bool {
+        self.inner.lock().unwrap().active.as_ref().is_some_and(|active|
+            active.config.mode == Mode::Free && matches!(active.phase, Phase::Ready | Phase::Running))
+    }
+
+    /// During preparation the bus loop sends explicit zero-gain MIT commands instead of holds.
+    pub fn zero_torque_preparation(&self) -> bool {
+        self.inner.lock().unwrap().active.as_ref().is_some_and(|active|
+            active.config.initial_pose == InitialPose::ZeroTorque
+                && matches!(active.phase, Phase::Initializing | Phase::Ready))
+    }
+
+    /// Called only by the bus owner. Never use measured torque to decide this mode.
+    pub fn prepare_zero_torque<I: duck_control::io::RobotIo>(
+        &self,
+        safety: &mut duck_control::safety::Safety<I>,
+        sensors: &Sensors,
+        calibration: &crate::calibration::Config,
+    ) -> Result<bool, String> {
+        let temperature_limit = {
+            let inner = self.inner.lock().unwrap();
+            let Some(active) = inner.active.as_ref() else { return Ok(false) };
+            active.config.max_temperature_c
+        };
+        if let Some(error) = calibration.feedback_limit_error(sensors, true) { return Err(error); }
+        if sensors.motor_temperatures_c.iter().any(|t| !t.is_finite() || *t >= temperature_limit) {
+            return Err("zero-torque preparation motor temperature limit".into());
+        }
+        if safety.position_limits_ready() != Some(true) {
+            return Err("zero-torque preparation requires hardware position limits".into());
+        }
+        if duck_control::bus::configured_motors_disabled(sensors) {
+            let mut inner = self.inner.lock().unwrap();
+            let active = inner.active.as_mut().ok_or("zero-torque preparation ended")?;
+            if active.zero_armed { return Err("zero-torque motors lost enable feedback".into()); }
+            active.zero_armed = true;
+            drop(inner);
+            safety.set_torque(true).map_err(|e| e.to_string())?;
+        } else if !duck_control::bus::configured_motors_enabled(sensors) {
+            return Err("zero-torque preparation requires consistent motor enable feedback".into());
+        }
+        // Wait for the enable transaction's feedback before submitting MIT commands.
+        if safety.motor_torque_enabled() != Some(true) { return Ok(false); }
+        let commands = zero_torque_commands(calibration);
+        safety.write_motor_commands(&commands, &calibration.wire_limits()).map_err(|e| e.to_string())?;
+        if let Some(active) = self.inner.lock().unwrap().active.as_mut() {
+            active.zero_written = duck_control::bus::configured_motors_enabled(sensors);
+            active.zero_armed = true;
+        }
+        Ok(true)
+    }
+
     pub fn phase(&self) -> Option<&'static str> {
         self.inner.lock().unwrap().active.as_ref().map(|active| match active.phase {
             Phase::Initializing => "policy_experiment_initializing",
             Phase::Ready => "policy_experiment_ready",
             Phase::Running => match active.config.mode {
+                Mode::Free => "policy_experiment_free",
                 Mode::InferenceOnly => "policy_experiment_inference",
                 Mode::ClosedLoop => "policy_experiment_closed_loop",
             },
@@ -208,8 +265,8 @@ impl PolicyExperiment {
         match params {
             Params::Capabilities {} => {
                 let control_owner = self.owner.current().map(Owner::as_str);
-                let inner = self.inner.lock().unwrap();
-                let latest = inner.latest.as_ref().filter(|(_, at)| at.elapsed().as_millis() < 100)
+                let latest = self.inner.lock().unwrap().latest;
+                let latest = latest.as_ref().filter(|(_, at)| at.elapsed().as_millis() < 100)
                     .map(|(sensors, _)| json!({
                         "positions": sensors.positions,
                         "velocities": sensors.velocities,
@@ -221,7 +278,7 @@ impl PolicyExperiment {
                 Ok(json!({
                     "version": 2,
                     "period_ms": 20,
-                    "modes": ["inference_only", "closed_loop"],
+                    "modes": ["free", "inference_only", "closed_loop"],
                     "policies": {"auto":available.walk,"walk":available.walk,"stand":available.stand},
                     "actions": {
                         "sit_toggle": available.sitstand,
@@ -233,16 +290,18 @@ impl PolicyExperiment {
                     "policy_identity": policy_identity,
                     "max_segments": MAX_SEGMENTS,
                     "max_duration_ms": MAX_DURATION_MS,
+                    "ready_timeout_s": READY_TIMEOUT_SECS,
                     "initial_pose": "saved_home",
+                    "initial_poses": ["saved_home", "zero_torque"],
                     "current": latest,
                     "control_owner": control_owner,
                 }))
             }
             Params::List {} => {
                 let control_owner = self.owner.current().map(Owner::as_str);
-                let inner = self.inner.lock().unwrap();
+                let sessions = self.inner.lock().unwrap().sessions.values().cloned().collect::<Vec<_>>();
                 Ok(json!({
-                    "sessions": inner.sessions.values().collect::<Vec<_>>(),
+                    "sessions": sessions,
                     "limits": {"max_sessions":MAX_SESSIONS,"max_segments":MAX_SEGMENTS,"max_duration_ms":MAX_DURATION_MS},
                     "control_owner": control_owner,
                 }))
@@ -251,9 +310,11 @@ impl PolicyExperiment {
             Params::Status { id } => self.status(id),
             Params::Initialize { id } => {
                 self.initialize(id, &policy_identity)?;
-                intents.stop();
-                intents.set_enabled(false);
-                intents.request_init();
+                if !self.manual_control_allowed() {
+                    intents.stop();
+                    intents.set_enabled(false);
+                    if !self.zero_torque_preparation() { intents.request_init(); }
+                }
                 self.status(id)
             }
             Params::Start { id } => self.start(id),
@@ -269,7 +330,7 @@ impl PolicyExperiment {
     fn configure(&self, config: Config, available: Availability, policy_identity: Value) -> Result<Value, String> {
         validate(&config)?;
         let supported = match config.policy { Policy::Auto|Policy::Walk=>available.walk, Policy::Stand=>available.stand };
-        if !supported { return Err("所选策略槽位当前没有可运行的策略".into()); }
+        if config.mode != Mode::Free && !supported { return Err("所选策略槽位当前没有可运行的策略".into()); }
         if let Some(action) = config.segments.iter().find_map(|segment| segment.action.filter(|action| !available.action(*action))) {
             return Err(format!("动作 {action:?} 当前没有可运行的策略"));
         }
@@ -303,14 +364,16 @@ impl PolicyExperiment {
             if &session.policy_identity != policy_identity {
                 return Err("策略模型已在配置后变更；请重新配置实验".into());
             }
-            session.state = "initializing".into();
+            session.state = if session.config.mode == Mode::Free { "ready" } else { "initializing" }.into();
             session.reason = None;
             let config = session.config.clone();
             inner.active = Some(Active {
-                id: id.into(), config, phase: Phase::Initializing, started: None,
+                id: id.into(), phase: if config.mode == Mode::Free { Phase::Ready } else { Phase::Initializing }, config, started: None,
                 run_token: None, outcome: "stopped".into(), reason: "stopped".into(), recorder: None,
                 phase_at: Instant::now(),
                 action_segment: None,
+                zero_written: false,
+                zero_armed: false,
             });
             Ok(())
         })();
@@ -324,6 +387,13 @@ impl PolicyExperiment {
             let inner = self.inner.lock().unwrap();
             let active = inner.active.as_ref().ok_or("请先初始化策略实验")?;
             if active.id != id || active.phase != Phase::Ready { return Err("策略实验尚未就绪".into()); }
+            if active.config.initial_pose == InitialPose::ZeroTorque {
+                let fresh = inner.latest.as_ref().is_some_and(|(s, at)|
+                    at.elapsed().as_millis() < 80
+                        && duck_control::bus::configured_motors_enabled(s)
+                        && s.motor_temperatures_c.iter().all(|t| t.is_finite() && *t < active.config.max_temperature_c));
+                if !active.zero_written || !fresh { return Err("零力矩准备状态或使能反馈已失效".into()); }
+            }
             let identity=inner.sessions.get(id).unwrap().policy_identity.clone();
             (active.config.clone(), identity, self.root.join(format!("{id}.jsonl")))
         };
@@ -349,6 +419,11 @@ impl PolicyExperiment {
         if active.phase == Phase::Running && active.run_token.as_deref() != token {
             return Err("run token 不属于当前策略实验".into());
         }
+        if active.config.mode == Mode::Free {
+            drop(inner);
+            self.finish_active("stopped", reason);
+            return Ok(());
+        }
         active.phase = Phase::ReturningHome;
         active.phase_at = Instant::now();
         active.outcome = "stopped".into();
@@ -356,6 +431,10 @@ impl PolicyExperiment {
         let session_id = active.id.clone();
         inner.sessions.get_mut(&session_id).unwrap().state = "returning_home".into();
         Ok(())
+    }
+
+    pub fn finish_zero_torque_failure(&self, reason: &str) {
+        self.finish_active("failed", reason);
     }
 
     pub fn abort(&self, reason: &str) {
@@ -377,24 +456,41 @@ impl PolicyExperiment {
             let mut inner = self.inner.lock().unwrap();
             inner.latest = sensors.map(|value| (*value, Instant::now()));
             let Some(mut active) = inner.active.take() else { return None };
-            match active.phase {
+            if active.config.mode == Mode::Free {
+                if active.phase == Phase::Ready {
+                    if active.phase_at.elapsed().as_secs() >= READY_TIMEOUT_SECS {
+                        finish = Some(("stopped".into(), "ready state expired before start".into()));
+                    }
+                } else if active.phase == Phase::Running {
+                    let elapsed = active.started.unwrap().elapsed().as_millis() as u64;
+                    if elapsed >= active.config.duration_ms.unwrap() {
+                        finish = Some(("completed".into(), "configured duration completed".into()));
+                    } else {
+                        result = Some(Drive { command: Command::default(), policy: None, action: None, inference_only: false, manual: true });
+                    }
+                }
+            } else { match active.phase {
                 Phase::Initializing => {
-                    if healthy && imu_ready && homed && at_home {
+                    if healthy && imu_ready && homed
+                        && match active.config.initial_pose {
+                            InitialPose::SavedHome => at_home,
+                            InitialPose::ZeroTorque => active.zero_written,
+                        } {
                         active.phase = Phase::Ready;
                         active.phase_at = Instant::now();
                         inner.sessions.get_mut(&active.id).unwrap().state = "ready".into();
                     } else if active.phase_at.elapsed().as_secs() >= INITIALIZE_TIMEOUT_SECS {
-                        finish = Some(("failed".into(), "initialization did not reach a healthy home pose within 30 seconds".into()));
+                        finish = Some(("failed".into(), "preparation did not become healthy and ready within 30 seconds".into()));
                     }
                 }
                 Phase::Ready => {
-                    if !healthy || !homed { finish = Some(("failed".into(), "hardware became unavailable while ready".into())); }
+                    if !healthy || !imu_ready || !homed { finish = Some(("failed".into(), "hardware became unavailable while ready".into())); }
                     else if active.phase_at.elapsed().as_secs() >= READY_TIMEOUT_SECS {
                         finish = Some(("stopped".into(), "ready state expired before start".into()));
                     }
                 }
                 Phase::Running => {
-                    if !healthy { active.phase = Phase::ReturningHome; active.phase_at=Instant::now(); active.outcome="failed".into(); active.reason="feedback, IMU or motor control fault".into(); }
+                    if !healthy || !imu_ready || !homed { active.phase = Phase::ReturningHome; active.phase_at=Instant::now(); active.outcome="failed".into(); active.reason="feedback, IMU or motor control fault".into(); }
                     else if fallen && active.config.stop_on_fall { active.phase=Phase::ReturningHome; active.phase_at=Instant::now(); active.outcome="failed".into(); active.reason="fall detected".into(); }
                     else if sensors.is_some_and(|s| s.motor_temperatures_c.iter().copied().fold(0.0, f64::max) >= active.config.max_temperature_c) {
                         active.phase=Phase::ReturningHome; active.phase_at=Instant::now(); active.outcome="failed".into(); active.reason="motor temperature limit".into();
@@ -412,6 +508,7 @@ impl PolicyExperiment {
                                 policy: match active.config.policy { Policy::Auto=>None, Policy::Walk=>Some(Net::Walk), Policy::Stand=>Some(Net::Stand) },
                                 action,
                                 inference_only: active.config.mode == Mode::InferenceOnly,
+                                manual: false,
                             });
                         } else {
                             active.phase=Phase::ReturningHome; active.phase_at=Instant::now(); active.outcome="completed".into(); active.reason="configured duration completed".into();
@@ -422,8 +519,13 @@ impl PolicyExperiment {
                     }
                 }
                 Phase::ReturningHome => {
-                    if at_home { finish = Some((active.outcome.clone(), active.reason.clone())); }
+                    if sensors.is_some_and(duck_control::bus::configured_motors_disabled) {
+                        // A relaxed robot cannot return home. Release the lease only
+                        // after fresh per-motor feedback confirms physical disable.
+                        finish = Some(("failed".into(), format!("{}; all motors disabled before return home", active.reason)));
+                    } else if at_home { finish = Some((active.outcome.clone(), active.reason.clone())); }
                 }
+            }
             }
             inner.active = Some(active);
         }
@@ -442,6 +544,10 @@ impl PolicyExperiment {
     }
 
     fn fail_running(&self, reason: &str) {
+        if self.manual_control_allowed() {
+            self.finish_active("failed", reason);
+            return;
+        }
         let mut inner = self.inner.lock().unwrap();
         if let Some(active) = inner.active.as_mut() {
             active.phase = Phase::ReturningHome;
@@ -517,8 +623,7 @@ impl PolicyExperiment {
     }
 
     fn status(&self, id: &str) -> Result<Value, String> {
-        let inner = self.inner.lock().unwrap();
-        let session = inner.sessions.get(id).ok_or("策略实验不存在")?;
+        let session = self.inner.lock().unwrap().sessions.get(id).cloned().ok_or("策略实验不存在")?;
         serde_json::to_value(session).map_err(|e| e.to_string())
     }
 
@@ -588,7 +693,30 @@ impl Recorder {
     }
 }
 
+fn zero_torque_commands(calibration: &crate::calibration::Config) -> Vec<duck_ipc_proto::MotorCommand> {
+    calibration.limits.iter().map(|limit| duck_ipc_proto::MotorCommand {
+        motor_id: limit.motor_id,
+        // p is irrelevant with kp=0 but must still satisfy the wire position limits.
+        p: ((limit.min_rad * 1000.0).ceil() / 1000.0).max(0.0)
+            .min((limit.max_rad * 1000.0).floor() / 1000.0),
+        v: 0.0, tau: 0.0, kp: 0.0, kd: 0.0,
+    }).collect()
+}
+
 fn validate(config: &Config) -> Result<(), String> {
+    if config.mode == Mode::Free {
+        if config.initial_pose != InitialPose::SavedHome || config.policy != Policy::Auto || !config.segments.is_empty() {
+            return Err("free 模式只接受 duration_ms，不接受初始化姿态、指定策略或指令段".into());
+        }
+        return match config.duration_ms {
+            Some(duration) if duration > 0 && duration <= MAX_DURATION_MS && duration % 20 == 0 => Ok(()),
+            _ => Err("free duration_ms 须为 20 ms 的正整数倍，最长 30 分钟".into()),
+        };
+    }
+    if config.duration_ms.is_some() { return Err("duration_ms 仅用于 free 模式".into()); }
+    if config.initial_pose == InitialPose::ZeroTorque && config.mode != Mode::ClosedLoop {
+        return Err("zero_torque 启动仅支持 closed_loop；只推理模式需要保持默认站姿".into());
+    }
     if config.segments.is_empty() || config.segments.len() > MAX_SEGMENTS { return Err("指令段数量须为 1..256".into()); }
     let mut duration = 0u64;
     for segment in &config.segments {
@@ -683,12 +811,62 @@ fn load_sessions(root: &PathBuf) -> BTreeMap<String, Session> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn queried_sessions_are_detached_from_control_state() {
+        let root = tempfile::tempdir().unwrap();
+        let experiment = PolicyExperiment::at(root.path().into(), Arc::new(ControlOwner::default()));
+        let configured = experiment.configure(config(Mode::InferenceOnly), available(), json!({})).unwrap();
+        let id = configured["id"].as_str().unwrap().to_owned();
+        let listed = experiment.request(&Params::List {}, &Intents::new(), available(), json!({})).unwrap();
+        let before = experiment.status(&id).unwrap();
+        experiment.inner.lock().unwrap().sessions.get_mut(&id).unwrap().state = "running".into();
+        assert_eq!(listed["sessions"][0]["state"], before["state"]);
+        assert_eq!(experiment.status(&id).unwrap()["state"], "running");
+    }
+
+    #[test]
+    fn free_mode_preserves_control_and_finishes_without_returning_home() {
+        let root = tempfile::tempdir().unwrap();
+        let owner = Arc::new(ControlOwner::default());
+        let experiment = PolicyExperiment::at(root.path().into(), owner.clone());
+        let config: Config = serde_json::from_value(json!({"mode":"free","duration_ms":60000})).unwrap();
+        let intents = Intents::new();
+        intents.set_enabled(true);
+        let id = experiment.configure(config, available(), json!({})).unwrap()["id"].as_str().unwrap().to_owned();
+        experiment.request(&Params::Initialize { id:id.clone() }, &intents, available(), json!({})).unwrap();
+        assert!(intents.snapshot().enabled);
+        assert!(experiment.manual_control_allowed());
+        experiment.start(&id).unwrap();
+        let drive = experiment.before_policy(Some(&Sensors::default()), false, false, false, false, true).unwrap();
+        assert!(drive.manual);
+        assert!(experiment.manual_control_allowed());
+        let step = Step { targets:[0.2;NUM_JOINTS], label:"hold", gain:0, pd:None, mit:None,
+            busy:false, base_command:Command::default(), policy_context:PolicyContext::new("hold",None,false) };
+        experiment.record(Command::default(), &step, [0.2;NUM_JOINTS], true, &[], &Sensors::default(), 1, 20_000);
+        assert_eq!(experiment.status(&id).unwrap()["frames"], 1);
+        experiment.inner.lock().unwrap().active.as_mut().unwrap().started = Some(Instant::now()-std::time::Duration::from_secs(61));
+        assert!(experiment.before_policy(None, false, false, false, false, true).is_none());
+        assert!(!experiment.active());
+        assert_eq!(owner.current(), None);
+        assert!(intents.snapshot().enabled);
+    }
+
+    #[test]
+    fn free_mode_rejects_commands_and_requires_a_bounded_duration() {
+        for wire in [json!({"mode":"free"}), json!({"mode":"free","duration_ms":0}),
+            json!({"mode":"free","duration_ms":21}), json!({"mode":"free","duration_ms":1800020}),
+            json!({"mode":"free","duration_ms":20,"policy":"stand"}),
+            json!({"mode":"free","duration_ms":20,"segments":[{"duration_ms":20}]})] {
+            assert!(validate(&serde_json::from_value(wire).unwrap()).is_err());
+        }
+    }
+
     fn available() -> Availability {
         Availability { walk:true, stand:true, sitstand:true, ground_pick:true,
             kick_left:true, kick_right:true, roulade:true }
     }
     fn config(mode: Mode) -> Config {
-        Config { mode, policy:Policy::Auto, segments:vec![duck_ipc_proto::PolicyExperimentSegment { duration_ms:40, action:None, twist:[0.1,0.0,0.0], head:[0.0;4], body:[0.0;3] }], max_temperature_c:60.0, stop_on_fall:true }
+        Config { duration_ms:None, initial_pose:InitialPose::SavedHome, mode, policy:Policy::Auto, segments:vec![duck_ipc_proto::PolicyExperimentSegment { duration_ms:40, action:None, twist:[0.1,0.0,0.0], head:[0.0;4], body:[0.0;3] }], max_temperature_c:60.0, stop_on_fall:true }
     }
     #[test]
     fn schedule_has_a_hard_end() {
@@ -764,4 +942,147 @@ mod tests {
         assert_eq!(owner.current(),None);
         assert_eq!(experiment.status(&id).unwrap()["state"],"configured");
     }
+    #[test]
+    fn old_configs_default_to_saved_home_and_zero_torque_requires_closed_loop() {
+        let mut wire=serde_json::to_value(config(Mode::InferenceOnly)).unwrap();
+        wire.as_object_mut().unwrap().remove("initial_pose");
+        assert_eq!(serde_json::from_value::<Config>(wire).unwrap().initial_pose, InitialPose::SavedHome);
+        let mut c=config(Mode::InferenceOnly);
+        c.initial_pose=InitialPose::ZeroTorque;
+        assert!(validate(&c).is_err());
+        c.mode=Mode::ClosedLoop;
+        assert!(validate(&c).is_ok());
+    }
+
+    fn enabled_sample(enabled: bool) -> Sensors {
+        let mut s=Sensors::default();
+        for (&id,j) in duck_control::bus::STM32_MOTOR_IDS.iter().zip(duck_control::bus::STM32_TO_CONTROL_JOINT) {
+            if id != 0 { s.motor_flags[j]=if enabled { 7 } else { 3 }; }
+        }
+        s
+    }
+
+    #[test]
+    fn stopping_waits_for_feedback_then_releases_disabled_robot_away_from_home() {
+        let root = tempfile::tempdir().unwrap();
+        let owner = Arc::new(ControlOwner::default());
+        let experiment = PolicyExperiment::at(root.path().into(), owner.clone());
+        let id = experiment.configure(config(Mode::ClosedLoop), available(), json!({})).unwrap()["id"].as_str().unwrap().to_owned();
+        experiment.initialize(&id, &json!({})).unwrap();
+        experiment.before_policy(Some(&enabled_sample(true)), true, true, true, true, false);
+        let started = experiment.start(&id).unwrap();
+        experiment.stop(&id, started["run_token"].as_str(), "test stop").unwrap();
+        experiment.before_policy(None, false, false, false, false, false);
+        assert_eq!(owner.current(), Some(Owner::PolicyExperiment));
+        let mut partial = enabled_sample(false);
+        partial.motor_flags[0] = 7;
+        experiment.before_policy(Some(&partial), true, true, false, false, false);
+        assert!(experiment.active());
+        experiment.before_policy(Some(&enabled_sample(false)), true, true, false, false, false);
+        assert!(!experiment.active());
+        assert_eq!(owner.current(), None);
+        let deadline = Instant::now() + std::time::Duration::from_secs(2);
+        while experiment.status(&id).unwrap()["state"] == "finalizing" && Instant::now() < deadline {
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        assert_eq!(experiment.status(&id).unwrap()["state"], "failed");
+    }
+
+    #[derive(Default)]
+    struct ZeroTrace {
+        enables: Vec<bool>,
+        commands: Vec<Vec<duck_ipc_proto::MotorCommand>>,
+    }
+    struct ZeroIo(Arc<Mutex<ZeroTrace>>);
+    impl duck_control::io::RobotIo for ZeroIo {
+        fn read(&mut self) -> Result<Sensors,duck_control::io::IoError> { Ok(enabled_sample(true)) }
+        fn write(&mut self,_: &duck_control::io::JointTargets) -> Result<(),duck_control::io::IoError> { panic!("zero preparation must not write position holds") }
+        fn set_gain(&mut self,_:u16) -> Result<(),duck_control::io::IoError> { panic!("zero preparation must not set position gains") }
+        fn set_torque(&mut self,on:bool) -> Result<(),duck_control::io::IoError> { self.0.lock().unwrap().enables.push(on); Ok(()) }
+        fn slow_sensors(&mut self) -> Result<duck_control::io::SlowSensors,duck_control::io::IoError> {
+            Ok(duck_control::io::SlowSensors { volts:0.0,temps_c:[0.0;NUM_JOINTS] })
+        }
+        fn motor_torque_enabled(&self) -> Option<bool> { Some(self.0.lock().unwrap().enables.last().copied().unwrap_or(true)) }
+        fn position_limits_ready(&self) -> Option<bool> { Some(true) }
+        fn write_motor_commands(&mut self,c:&[duck_ipc_proto::MotorCommand]) -> Result<u16,duck_control::io::IoError> {
+            self.0.lock().unwrap().commands.push(c.to_vec()); Ok(1)
+        }
+    }
+
+    #[test]
+    fn zero_torque_enables_without_homing_and_starts_from_a_fallen_pose() {
+        let root=tempfile::tempdir().unwrap();
+        let experiment=PolicyExperiment::at(root.path().into(),Arc::new(ControlOwner::default()));
+        let mut c=config(Mode::ClosedLoop); c.initial_pose=InitialPose::ZeroTorque; c.stop_on_fall=false;
+        let id=experiment.configure(c,available(),json!({})).unwrap()["id"].as_str().unwrap().to_owned();
+        let intents=Intents::new();
+        experiment.request(&Params::Initialize{id:id.clone()},&intents,available(),json!({})).unwrap();
+        assert!(intents.take_power_request().is_none(),"zero mode must not request the ordinary init ramp");
+        let trace=Arc::new(Mutex::new(ZeroTrace::default()));
+        let mut safety=duck_control::safety::Safety::new(ZeroIo(trace.clone()),duck_control::safety::SafetyConfig::default());
+        let calibration=crate::calibration::Config::default();
+        assert!(experiment.prepare_zero_torque(&mut safety,&enabled_sample(false),&calibration).unwrap());
+        experiment.before_policy(Some(&enabled_sample(false)),true,true,true,false,true);
+        assert_eq!(experiment.status(&id).unwrap()["state"],"initializing");
+        assert!(experiment.start(&id).is_err());
+        let mut s=enabled_sample(true); s.positions[0]=0.4; s.motor_torques_nm[0]=0.3;
+        experiment.prepare_zero_torque(&mut safety,&s,&calibration).unwrap();
+        experiment.before_policy(Some(&s),true,true,true,false,true);
+        assert_eq!(experiment.status(&id).unwrap()["state"],"ready");
+        experiment.start(&id).unwrap();
+        assert!(experiment.before_policy(Some(&s),true,true,true,false,true).is_some());
+        let t=trace.lock().unwrap();
+        assert_eq!(t.enables,vec![true]);
+        assert_eq!(t.commands.len(),2);
+        for c in t.commands.iter().flatten() { assert_eq!((c.kp,c.kd,c.tau,c.v),(0.0,0.0,0.0,0.0)); }
+        assert_eq!(t.commands[0].len(),calibration.limits.len());
+        experiment.abort("test complete");
+    }
+
+    #[test]
+    fn zero_torque_rejects_overheat_and_lost_enable_without_reenabling() {
+        let root=tempfile::tempdir().unwrap();
+        let experiment=PolicyExperiment::at(root.path().into(),Arc::new(ControlOwner::default()));
+        let mut c=config(Mode::ClosedLoop); c.initial_pose=InitialPose::ZeroTorque;
+        let id=experiment.configure(c,available(),json!({})).unwrap()["id"].as_str().unwrap().to_owned();
+        experiment.initialize(&id,&json!({})).unwrap();
+        let trace=Arc::new(Mutex::new(ZeroTrace::default()));
+        let mut safety=duck_control::safety::Safety::new(ZeroIo(trace.clone()),duck_control::safety::SafetyConfig::default());
+        let calibration=crate::calibration::Config::default();
+        let mut hot=enabled_sample(true); hot.motor_temperatures_c[0]=60.0;
+        assert!(experiment.prepare_zero_torque(&mut safety,&hot,&calibration).is_err());
+        assert!(trace.lock().unwrap().commands.is_empty());
+        experiment.prepare_zero_torque(&mut safety,&enabled_sample(true),&calibration).unwrap();
+        assert!(experiment.prepare_zero_torque(&mut safety,&enabled_sample(false),&calibration).is_err());
+        assert!(trace.lock().unwrap().enables.is_empty());
+        experiment.abort("test complete");
+    }
+
+    #[test]
+    fn saved_home_still_requires_home_and_zero_ready_expires() {
+        let root=tempfile::tempdir().unwrap();
+        let owner=Arc::new(ControlOwner::default());
+        let experiment=PolicyExperiment::at(root.path().into(),owner.clone());
+        let id=experiment.configure(config(Mode::ClosedLoop),available(),json!({})).unwrap()["id"].as_str().unwrap().to_owned();
+        experiment.initialize(&id,&json!({})).unwrap();
+        experiment.before_policy(Some(&enabled_sample(true)),true,true,true,false,false);
+        assert!(experiment.start(&id).is_err());
+        experiment.abort("test");
+        let mut c=config(Mode::ClosedLoop); c.initial_pose=InitialPose::ZeroTorque;
+        let id=experiment.configure(c,available(),json!({})).unwrap()["id"].as_str().unwrap().to_owned();
+        experiment.initialize(&id,&json!({})).unwrap();
+        let trace=Arc::new(Mutex::new(ZeroTrace::default()));
+        let mut safety=duck_control::safety::Safety::new(ZeroIo(trace),duck_control::safety::SafetyConfig::default());
+        experiment.prepare_zero_torque(&mut safety,&enabled_sample(true),&crate::calibration::Config::default()).unwrap();
+        experiment.before_policy(Some(&enabled_sample(true)),true,true,true,false,true);
+        experiment.inner.lock().unwrap().active.as_mut().unwrap().phase_at=Instant::now()-std::time::Duration::from_secs(61);
+        experiment.before_policy(Some(&enabled_sample(true)),true,true,true,false,true);
+        assert_eq!(experiment.status(&id).unwrap()["state"],"ready","manual posing may take longer than one minute");
+        experiment.inner.lock().unwrap().active.as_mut().unwrap().phase_at=Instant::now()-std::time::Duration::from_secs(READY_TIMEOUT_SECS);
+        experiment.before_policy(Some(&enabled_sample(true)),true,true,true,false,true);
+        assert!(!experiment.active());
+        assert_eq!(owner.current(),None);
+        assert!(experiment.start(&id).is_err());
+    }
+
 }

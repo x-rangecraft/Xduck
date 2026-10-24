@@ -205,6 +205,32 @@ unsigned char BSP_CAN_TrySendStandardFdFrame(unsigned char Port, unsigned int ID
   return 1U;
 }
 
+unsigned char BSP_CAN_WaitForLastTx(unsigned char Port, unsigned int TimeoutMs)
+{
+  FDCAN_HandleTypeDef *CanHandle;
+  uint32_t TxBufferIndex;
+  uint32_t StartedMs;
+
+  CanHandle = BSP_CAN_GetHandleByPort(Port);
+  if (CanHandle == 0) {
+    return 0U;
+  }
+
+  TxBufferIndex = HAL_FDCAN_GetLatestTxFifoQRequestBuffer(CanHandle);
+  if (TxBufferIndex == 0U) {
+    return 0U;
+  }
+
+  StartedMs = HAL_GetTick();
+  while (HAL_FDCAN_IsTxBufferMessagePending(CanHandle, TxBufferIndex) != 0U) {
+    if ((uint32_t)(HAL_GetTick() - StartedMs) >= TimeoutMs) {
+      return 0U;
+    }
+    osDelay(1U);
+  }
+  return 1U;
+}
+
 void BSP_CAN_SendStandardDataMessage(unsigned char Port, unsigned int ID, unsigned char *Data)
 {
   (void)BSP_CAN_TrySendStandardDataMessage(Port, ID, Data);

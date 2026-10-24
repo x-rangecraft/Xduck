@@ -196,6 +196,10 @@ impl<T: RobotIo> Safety<T> {
         self.io.set_torque(on)
     }
 
+    pub fn request_torque_off(&mut self) -> Result<(), IoError> {
+        self.io.request_torque_off()
+    }
+
     /// The gain last written to the servos, or `None` before the first write. This is what
     /// the robot is running at, which is not always what the caller asked for.
     pub fn gain(&self) -> Option<u16> {

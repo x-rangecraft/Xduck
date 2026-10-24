@@ -205,6 +205,7 @@ with tempfile.TemporaryDirectory() as directory:
          helper.make_tensor_value_info("hidden_out", TensorProto.FLOAT, [1, 4])],
     )
     generated = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 17)])
+    generated.ir_version = 10
     checker.check_model(generated)
     dynamic_model.write_bytes(generated.SerializeToString())
     controlled = [name for name in joint_names if name != "mouth"]

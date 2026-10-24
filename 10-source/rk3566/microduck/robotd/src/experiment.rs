@@ -128,12 +128,18 @@ impl Experiment {
             return Err("task operation requires async IPC handler".into());
         }
         let control_owner = self.owner.current().map(Owner::as_str);
-        let g = self.inner.lock().unwrap();
-        let current=g.latest.as_ref().filter(|(_,t)|t.elapsed()<Duration::from_millis(100)).map(|(s,_)|STM32_MOTOR_IDS.iter().zip(STM32_TO_CONTROL_JOINT).filter(|(id,_)|**id!=0).map(|(&id,j)|json!({"motor_id":id,"p":s.positions[j],"v":s.velocities[j],"flags":s.motor_flags[j],"temperature_c":s.motor_temperatures_c[j]})).collect::<Vec<_>>());
+        // The control loop reads this same mutex every tick. Snapshot only the response
+        // fields here; allocation-heavy JSON construction must happen after unlocking.
+        let (latest, task_id, owned, running, stopping, error, ready_at) = {
+            let g = self.inner.lock().unwrap();
+            (g.latest, g.task_id.clone(), g.owned, g.running, g.stopping,
+                g.error.clone(), g.ready_at)
+        };
+        let current=latest.as_ref().filter(|(_,t)|t.elapsed()<Duration::from_millis(100)).map(|(s,_)|STM32_MOTOR_IDS.iter().zip(STM32_TO_CONTROL_JOINT).filter(|(id,_)|**id!=0).map(|(&id,j)|json!({"motor_id":id,"p":s.positions[j],"v":s.velocities[j],"flags":s.motor_flags[j],"temperature_c":s.motor_temperatures_c[j]})).collect::<Vec<_>>());
         Ok(
-            json!({"version":4,"mode":"uploaded_tasks","period_ms":20,"task_id":g.task_id,"active":g.owned,"running":g.running,"stopping":g.stopping,"last_error":g.error,
+            json!({"version":4,"mode":"uploaded_tasks","period_ms":20,"task_id":task_id,"active":owned,"running":running,"stopping":stopping,"last_error":error,
             "control_owner":control_owner,
-            "ready":!g.owned&&g.ready_at.is_some_and(|(t,_)|t.elapsed()<Duration::from_millis(100)),
+            "ready":!owned&&ready_at.is_some_and(|(t,_)|t.elapsed()<Duration::from_millis(100)),
             "start_states":["relaxed","initialized"],
             "end_behavior":"return_to_initialized_home","fault_behavior":"disable_all",
             "disconnect_policy":"continue","enable_scope":"all_configured","unselected":"zero_gains_velocity_and_feedforward","current_motors":current,
@@ -143,18 +149,21 @@ impl Experiment {
     /// Called only on a blocking IPC worker, never on the control thread.
     fn runtime_status(&self, mut value: Value) -> Value {
         let control_owner = self.owner.current().map(Owner::as_str);
-        let g = self.inner.lock().unwrap();
+        let (owned, task_id, stopping, running, error) = {
+            let g = self.inner.lock().unwrap();
+            (g.owned, g.task_id.clone(), g.stopping, g.running, g.error.clone())
+        };
         value["control_owner"] = json!(control_owner);
-        if g.owned && value.get("id").and_then(Value::as_str) == g.task_id.as_deref() {
-            value["state"] = json!(if g.stopping {
+        if owned && value.get("id").and_then(Value::as_str) == task_id.as_deref() {
+            value["state"] = json!(if stopping {
                 "stopping"
-            } else if g.running {
+            } else if running {
                 "running"
             } else {
                 "preparing"
             });
-            if g.error.is_some() {
-                value["reason"] = json!(g.error);
+            if error.is_some() {
+                value["reason"] = json!(error);
             }
         }
         value
@@ -163,7 +172,7 @@ impl Experiment {
         &self,
         p: &Task,
         cfg: &Config,
-        _normal_enabled: bool,
+        normal_enabled: bool,
     ) -> Result<Value, String> {
         let store = self.store()?;
         match p {
@@ -202,6 +211,9 @@ impl Experiment {
                 }
             }
             Task::Start { id } => {
+                if normal_enabled {
+                    return Err("stop the policy before starting a motor experiment".into());
+                }
                 // Generate before claiming the controller: even a broken entropy source must leave
                 // the robot unowned rather than wedged in a task with no usable stop token.
                 let run_token = experiment_tasks::random_id()?;
@@ -275,7 +287,9 @@ impl Experiment {
             }
             g.ready_at = None;
             let Some(run) = g.task.take() else {
-                return true;
+                // The IPC worker may still be validating the entire uploaded file. Keep the
+                // ordinary 50 Hz hold writes flowing until a prefetched task can take over.
+                return false;
             };
             run
         };
@@ -497,10 +511,36 @@ mod tests {
     use super::*;
     use duck_control::io::{FakeIo, IoError, JointTargets, SlowSensors};
     use duck_control::safety::SafetyConfig;
+    #[test]
+    fn capabilities_preserve_feedback_and_expire_stale_readiness() {
+        let experiment = Experiment::default();
+        let config = Config::default();
+        {
+            let mut inner = experiment.inner.lock().unwrap();
+            inner.latest = Some((Sensors::default(), Instant::now()));
+            inner.ready_at = Some((Instant::now(), NormalState::Relaxed));
+        }
+        let fresh = experiment.request(&ExperimentParams::Capabilities {}, &config, false).unwrap();
+        assert_eq!(fresh["active"], false);
+        assert_eq!(fresh["ready"], true);
+        assert_eq!(fresh["current_motors"].as_array().unwrap().len(),
+            STM32_MOTOR_IDS.iter().filter(|&&id| id != 0).count());
+        {
+            let mut inner = experiment.inner.lock().unwrap();
+            let stale = Instant::now() - Duration::from_secs(1);
+            inner.latest.as_mut().unwrap().1 = stale;
+            inner.ready_at = Some((stale, NormalState::Relaxed));
+        }
+        let stale = experiment.request(&ExperimentParams::Capabilities {}, &config, false).unwrap();
+        assert_eq!(stale["ready"], false);
+        assert!(stale["current_motors"].is_null());
+    }
+
     #[derive(Default)]
     struct Trace {
         enabled: Vec<bool>,
         commands: usize,
+        normal_writes: usize,
     }
     struct Io(Arc<Mutex<Trace>>, FakeIo);
     impl RobotIo for Io {
@@ -508,6 +548,7 @@ mod tests {
             self.1.read()
         }
         fn write(&mut self, t: &JointTargets) -> Result<(), IoError> {
+            self.0.lock().unwrap().normal_writes += 1;
             self.1.write(t)
         }
         fn set_gain(&mut self, kp: u16) -> Result<(), IoError> {
@@ -544,6 +585,37 @@ mod tests {
         let cfg = Config::default();
         e.tick(&mut safety, Some(&sample(false)), &cfg, NormalState::Relaxed, 0, 0);
         (e, safety, trace, cfg)
+    }
+    #[test]
+    fn preparing_leaves_the_normal_hold_writer_active() {
+        let (e, mut safety, trace, cfg) = setup();
+        safety.set_torque(true).unwrap();
+        let sensors = sample(true);
+        e.tick(&mut safety, Some(&sensors), &cfg, NormalState::Initialized, 1, 20_000);
+        e.owner.acquire(Owner::MotorExperiment).unwrap();
+        {
+            let mut g = e.inner.lock().unwrap();
+            g.owned = true;
+            g.task = None; // Start is still validating and prefetching the file.
+        }
+        for tick in 2..10 {
+            assert!(!e.tick(&mut safety, Some(&sensors), &cfg, NormalState::Initialized, tick, tick * 20_000));
+            safety.apply_with_control(cfg.home, cfg.home, 100, None, None).unwrap();
+        }
+        assert_eq!(trace.lock().unwrap().normal_writes, 8);
+        assert_eq!(trace.lock().unwrap().commands, 0);
+    }
+    #[test]
+    fn start_rejects_a_running_policy_before_claiming_control() {
+        let (e, _safety, _trace, cfg) = setup();
+        let dir = tempfile::tempdir().unwrap();
+        let store = Arc::new(Store::open(dir.path().into()).unwrap());
+        let id = experiment_tasks::fixture(&store, &cfg, 3, 0.0);
+        e.store.set(Ok(store)).ok().unwrap();
+        assert!(e.task_request(&Task::Start { id }, &cfg, true)
+            .unwrap_err().contains("stop the policy"));
+        assert!(!e.active());
+        assert_eq!(e.owner.current(), None);
     }
     #[test]
     fn stop_before_first_tick_never_enables() {

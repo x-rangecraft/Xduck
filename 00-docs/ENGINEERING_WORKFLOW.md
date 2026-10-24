@@ -44,7 +44,7 @@
 | 策略模型管理/转换源码 | 唯一的两文件策略路径由 `robotd/src/models.rs`、`custom_policy.rs`、`custom_policy_worker.py` 与 `default_*_policy.py` 槽位默认消费者管理；网页上传 `.pt/.pth/.onnx` 模型并可选上传策略代码，缺省时按目标槽位写入对应默认消费者；旧单文件清单会在启动时原子迁移并绑定默认策略，不再保留单文件导入或运行分支；仅供研发分发、不上传板端的自包含资料包位于 `00-docs/XDUCK_POLICY_SDK/`；兼容权重转换保留 `model_import.py`；IPC 由 `duck-ipc-proto` 定义，Web 面板由 `mediad` 提供 |
 | 模型导入回归工具与日志 | `60-tools/test-model-import.py`、`test-web-models.cjs`；`50-logs/test/model-*` |
 | 电机实验接口 | `robotd/src/experiment.rs` 为控制与数据所有者；`mediad/src/experiment_tasks_http.rs` 提供 HTTP 适配；文档和 PC 示例统一位于 `mediad/webclient/motor-experiment/`；`robotd/src/experiment_tasks.rs` 管理预上传任务、固定缓冲执行和 `/var/lib/robotd/experiments/` 持久数据，`mediad/src/experiment_tasks_http.rs` 只流式转发文件。任务结果由电脑下载校验后显式删除；同目录 `joint_sine_sweep.py` 为离线正弦扫描任务生成示例 |
-| 策略实验接口 | `robotd/src/policy_experiment.rs` 管理初始化、只推理/闭环执行、固定缓冲记录和 `/var/lib/robotd/policy-experiments/` 结果；`mediad/src/policy_experiment_http.rs` 提供 HTTP 适配，文档和 PC 示例位于 `mediad/webclient/policy-experiment/`。`robotd/src/control_owner.rs` 是策略导入、电机实验和策略实验的唯一互斥仲裁器；占用期间只开放状态读取、所属操作管理、放松和关机 |
+| 策略实验接口 | `robotd/src/policy_experiment.rs` 管理初始化、只推理/闭环执行、固定缓冲记录和 `/var/lib/robotd/policy-experiments/` 结果；`mediad/src/policy_experiment_http.rs` 提供 HTTP 适配，文档和 PC 示例位于 `mediad/webclient/policy-experiment/`。`robotd/src/control_owner.rs` 是策略导入、电机实验和策略实验的唯一互斥仲裁器；占用期间只开放状态读取、所属操作管理、放松和关机；自由策略实验只计时记录，ready/running 期间允许普通操作者控制，仍禁止标定、模型替换和其他实验 |
 | 本体日志下载接口 | `mediad/src/journal_http.rs` 按请求流式读取 Journal，不在设备保存导出副本 |
 | RK3566 Microduck Rust workspace | `10-source/rk3566/microduck/` |
 | STM32↔RK3566 DMUSB v4 协议事实源 | `10-source/rk3566/STM32_DMUSB_V4_PROTOCOL.md` |
@@ -57,6 +57,7 @@
 | STM32 CMake 输出 | `20-build/stm32/stm32-h7-dm/` |
 | Python 虚拟环境与缓存 | `20-build/tools/motor/gf43x40-10-i2rt/` |
 | 电机采集数据与拟合结果 | `50-logs/test/motor/gf43x40-10-i2rt/data/` |
+| N100 与主 BMI088 IMU 的只读同步采集工具 | `60-tools/capture-imu-comparison.py`；CSV 和分析记录放在 `50-logs/test/imu/` |
 
 源码中的 `data` 和 `.venv` 允许使用相对符号链接指向上述固定位置，以兼容脚本默认参数；真实文件不得复制成多份。
 
@@ -101,6 +102,24 @@ Walk/Stand 同时存在时为共享消费组：一个隔离 Python 进程预加�
 ```
 
 配置文件位于 `40-deploy/rk3566/ssh/config`，固定公钥位于 `40-deploy/rk3566/ssh/known_hosts`。如果 SSH 报主机公钥变化，应停止并在现场核实设备；禁止使用 `StrictHostKeyChecking=no`、删除 known_hosts 或静默接受新公钥。
+
+### 三台同构开发设备（2026-10-19）
+
+`ssh-rk3566.sh` 默认仍为 121，可用 `--device 122` / `--device 124` 显式选择
+`xrange-rk3566-2`（192.168.50.122，xduck2，rk3566-2）和 `xrange-rk3566-3`
+（192.168.50.124，xduck3，rk3566-3），端口均为 888。新增 SSH 公钥取自 Mac 已保存的
+known_hosts；122、124 均已实连核实。镜像原始 machine-id 和 SSH 主机密钥
+在三台重复，不能单独作为目标身份依据；新增设备须同时核对 hostname、SoC 序列号、
+STM32 串口序列号和 SSH 目标。首次初始化时为新设备分配独立 machine-id 并记录前后值。
+
+三台发布范围见 `THREE_DEVICE_RELEASE_PLAN.md`。新设备的首次部署允许复用 121 正在
+运行的已签名不可变发布包，不在新设备重新构建；需校验签名、清单 SHA256、实际运行
+二进制及硬件兼容性。只分发签名公钥，私钥留在原签名端。部署输入、公共运行依赖归档
+和校验清单放 `30-artifacts/rk3566/fleet/<版本>/`，设备首次安装脚本放
+`40-deploy/rk3566/fleet/`，逐台过程日志放 `50-logs/deploy/rk3566/fleet/`。
+各新设备工程根为对应用户的 `~/xrange`，沿用一级分区。原有同步、构建和部署脚本仍
+仅服务 121，不得通过修改其固定身份绕过校验。模型、用户策略和标定不从 121 克隆；
+无历史数据的新设备使用发布包开发种子，后续模型/策略独立管理。
 
 ## 4. Microduck 架构边界
 
@@ -162,6 +181,10 @@ Walk/Stand 同时存在时为共享消费组：一个隔离 Python 进程预加�
 
 板端构建固定执行 `cargo build --locked --release --bins`，使用 workspace 的 `default-members`，不构建仅供开发机使用的 `duckctl`。`--locked` 保证板端不得自行改写依赖锁；锁文件不完整时构建必须失败并回到本地修正。`CARGO_TARGET_DIR` 固定指向 `20-build/`，构建日志固定写入 `50-logs/build/`。
 
+单独构建入口与部署入口均从本地事实源读取 Git HEAD 并传入 `DUCK_REVISION`，确保板端
+身份可追溯且两条入口使用一致的编译环境。工作区包含未提交变更时，提交号不代表全部
+源码内容，仍须保留本次变更及发布校验清单。
+
 成功后仅将发布工作流列出的九个板端程序归档：`btd`、`configd`、`mediad`、`padd`、`robotctl`、`robotd`、`sounds`、`tofd`、`updaterd`。归档必须同时包含 `SHA256SUMS` 与 `BUILD-INFO.txt`，并验证每个文件为 ARM aarch64 ELF。
 
 编译验证不等于部署。未经单独确认，不得写入 `/opt/robot`、修改 systemd unit、启动 daemon 或访问电机总线。
@@ -180,24 +203,46 @@ Walk/Stand 同时存在时为共享消费组：一个隔离 Python 进程预加�
 
 这台样机当前也没有连接 ToF 传感器。`tofd` 二进制和 unit 必须随发布包保留，但 `tofd.service` 保持 disabled/inactive，不进行无意义的硬件轮询；以后接入传感器并确认 I²C 设备、权限和采样稳定后，再显式执行 `sudo systemctl enable --now tofd.service`。
 
-STM32 H7 通过 `[bus].port = "/dev/ttyACM0"` 同时提供电机状态和主 BMI088 IMU 数据；主 IMU 不再占用独立 USB。通信唯一事实源是上述 DMUSB v4 文档，禁止凭旧版帧布局修改实现。`[bus].imu_port` 只作为未来双 IMU 的预留接口保留，当前版本不得打开或依赖它。运行中 STM32 USB 连续读失败达到门限时，`robotd` 必须清空速度和使能、标记为安全降级状态、关闭失效串口并在同一进程内循环重新打开和校验；重插 USB 不得要求重启 `robotd`。重连成功后保持未使能，必须由操作者重新初始化/使能，禁止自动恢复此前运动。STM32 固件自身在 100 ms 收不到主机命令时关闭全部电机路由，Linux 侧安全状态不能替代这条板端保护。电机控制要求 DMUSB v4 能力位 `0x0007`（空槽、完整使能列表和安全标定），并先同步位置限位；状态位 `0x0008` 表示本次启动已装载限位，旧固件仍保持只读。标定与默认站姿由 robotd 持久保存到 `/var/lib/robotd/motor-calibration.json`（systemd `StateDirectory=robotd`），重连后重新同步 STM32 RAM 限位。STM32 的 `App/Src/dmusb_motor_bridge.c` 负责固定槽到实际电机命令的转换，RK3566 在使能前检查固件能力、配置映射和在线/故障反馈。STM32 构建继续保持 `H7DM_MOTOR_AUTO_ENABLE=0`，开放权限不会自动使能。
+STM32 H7 在这台 K11C 上通过 `[bus].port = "/dev/serial/by-id/usb-STMicroelectronics_STM32_Virtual_ComPort_385933373134-if00"` 同时提供电机状态和主 BMI088 IMU 数据；主 IMU 不再占用独立 USB。USB 重新枚举时串口可能从 `/dev/ttyACM0` 变为 `/dev/ttyACM1`，部署配置必须使用按序列号生成的稳定路径。通信唯一事实源是上述 DMUSB v4 文档，禁止凭旧版帧布局修改实现。`[bus].imu_port` 只作为未来双 IMU 的预留接口保留，当前版本不得打开或依赖它。运行中 STM32 USB 连续读失败达到门限时，`robotd` 必须清空速度和使能、标记为安全降级状态、关闭失效串口并在同一进程内循环重新打开和校验；重插 USB 不得要求重启 `robotd`。重连成功后保持未使能，必须由操作者重新初始化/使能，禁止自动恢复此前运动。STM32 固件自身在 100 ms 收不到主机命令时关闭全部电机路由，Linux 侧安全状态不能替代这条板端保护。电机控制要求 DMUSB v4 能力位 `0x0007`（空槽、完整使能列表和安全标定），并先同步位置限位；状态位 `0x0008` 表示本次启动已装载限位，旧固件仍保持只读。标定与默认站姿由 robotd 持久保存到 `/var/lib/robotd/motor-calibration.json`（systemd `StateDirectory=robotd`），重连后重新同步 STM32 RAM 限位。STM32 的 `App/Src/dmusb_motor_bridge.c` 负责固定槽到实际电机命令的转换，RK3566 在使能前检查固件能力、配置映射和在线/故障反馈。STM32 构建继续保持 `H7DM_MOTOR_AUTO_ENABLE=0`，开放权限不会自动使能。
 
 电机反馈超时恢复与重新使能分离：STM32 在全体配置电机持续 1 秒反馈新鲜、实际失能且温度正常，IMU 健康、管理操作空闲、无其他锁存故障时，自动清除反馈超时位；仍保持失能并丢弃旧控制命令，必须由操作者重新初始化/使能。其他故障不由该路径清除。DMUSB 可选能力 `0x0010` 提供最近保护故障的电机 ID/槽位，`duck-control` 将故障发生与清除分别写入 robotd 的 Journal，当前故障清除不得删除历史。详细字段和恢复条件见协议 §7.4。
 
 `robotd.service` 的停止超时固定为 5 秒。USB CDC 驱动异常时阻塞读可能无法响应 SIGTERM；systemd 必须在 5 秒后结束旧进程，避免一次更新把 30 秒健康门控窗口全部耗在停止旧版本上。不得通过延长健康门控掩盖这个退出问题。
 
+RK3566 状态读取保持原 60 ms 超时，整帧新鲜度保持原 500 ms，管理命令保持
+250 ms；STM32 的 500 ms 单电机反馈保护及 100 ms 主机命令看门狗不变。
+分片输入不得反复重置整个状态读取的 60 ms 时限。控制循环中的放松仅提交失能命令，
+由后续普通读取确认全部电机实际失能；缺失确认时按 250 ms 间隔重试，禁止在每周期
+同步等待管理回复。确认前不得重新使能或发送普通运动目标。新鲜反馈确认全部失能后
+清除本次放松确认错误；策略实验无法回到原位时，以全部失能确认结束停止并释放占用，
+保留实验失败原因和历史记录。
+
 K11C 的策略调度固定为：`robotd` 及其全部隔离 Python worker 通过 systemd
 `AllowedCPUs=3` 约束在 CPU3，并使用 `CPUWeight=10000`；`mediad` 约束在 CPU0–2，避免媒体
-管线与 50 Hz 控制/推理争用同一核心。`robot-policy-performance.service` 与 `robotd` 生命周期
-绑定，在 resident policy worker 启动前把所有 cpufreq policy 切到 `performance`，在 robotd
-正常停止、失败或重启时恢复 `ondemand`。唯一的 sysfs 写权限属于这个 root oneshot；
+管线与 50 Hz 控制/推理争用同一核心。`irqbalance` 必须通过
+`IRQBALANCE_BANNED_CPULIST=3` 排除 CPU3，避免 STM32 所在
+`xhci-hcd:usb1` 等设备中断抢占控制/推理核心；受管部署安装其 systemd drop-in 并重启
+`irqbalance` 后验证 IRQ 的 effective affinity 不包含 CPU3。`robotd` 的 Tokio IPC 运行时
+及其阻塞线程使用 `SCHED_OTHER`、线程级 `nice=10`，控制线程与它启动的隔离 Python
+策略运行器保持 `SCHED_OTHER`、`nice=0`。所有策略创建路径（开机、网页导入、回滚、
+故障重建）必须在降权前显式设置子进程调度，策略回复读取线程也必须显式设置
+`SCHED_OTHER`、`nice=0`；禁止继承 IPC 的 `nice=10`，也不得提升创建者 IPC 线程。
+设置失败必须拒绝加载策略。禁止对共享控制状态锁的 IPC 使用 `SCHED_IDLE`：
+后台策略加载持续占用 CPU 时，低优先级持锁线程可能饥饿并阻塞电机命令超过 100 ms。
+实验状态查询必须先复制状态、释放锁后构造 JSON；网页轮询产生的 IPC 突发仍须验证
+不会把已唤醒的策略运行器拖过 18 ms 回复时限。
+`robot-policy-performance.service`
+通过 `PartOf=robotd.service` 跟随受管停止与重启，不得用 `BindsTo` 把一次 `robotd`
+异常退出变成停止作业、取消其 `Restart=always`。辅助 unit 必须等待 `cpufrequtils.service`
+完成 `ondemand` 设置，再在 resident policy worker 启动前切到 `performance`；受管停止
+或重启时恢复 `ondemand`，异常退出的自动重启期间保持 `performance`。唯一的 sysfs 写权限属于这个 root oneshot；
 `robotd` 保持 `ProtectKernelTunables=yes`，上传的 `robot-policy` Python 进程不获得额外权限。
 若 governor 不可用或写入验证失败，辅助 unit 必须失败并阻止 robotd 启动，禁止静默退回不确定
 调度。
 
 K11C 厂商内核启用了 uinput，但没有 `xpad`、`joydev` 或可加载的内核模块。飞智 Dune Fox 接收器以 Xbox 360 兼容设备 `045e:028e` 枚举，但 Debian `xboxdrv 0.8.8` 不能把它的输入包转换成 evdev 事件。因此硬件适配固定在底层 `10-source/rk3566/microduck/drivers/flydigi-xpad/`：`xpad-usbd.service` 独占 USB interface 0，把 20 字节 Xbox 360 报告转换为标准 `/dev/input/event*`，`padd` 只读取标准 evdev，禁止在 `padd` 中解析该接收器的私有 USB 数据。驱动支持拔插自动重连，断开时立即销毁虚拟输入设备，使 `padd` 上报手柄不可用并触发安全回退。运行日志读取：`journalctl -u xpad-usbd -b`。
 
-验收至少检查：当前 release 链接、服务的 active/enabled 状态、`systemctl --failed`、`robotctl health`、各进程实际可执行路径、30 秒 CPU/load/内存/温度采样。缺少 `/dev/ttyACM0` 时 `robotd` 的 degraded 是真实硬件状态，不能写成“全部功能正常”。
+验收至少检查：当前 release 链接、服务的 active/enabled 状态、`systemctl --failed`、`robotctl health`、各进程实际可执行路径、30 秒 CPU/load/内存/温度采样。稳定 STM32 串口路径不存在时 `robotd` 的 degraded 是真实硬件状态，不能写成“全部功能正常”。
 
 ## 8. 日志系统：三个唯一事实源
 

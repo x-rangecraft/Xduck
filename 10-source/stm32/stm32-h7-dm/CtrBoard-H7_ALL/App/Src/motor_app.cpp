@@ -9,6 +9,7 @@
 #define MOTOR_APP_ADMIN_NONE       (0U)
 #define MOTOR_APP_ADMIN_ENABLE_ALL (1U)
 #define MOTOR_APP_ADMIN_CLEAR_ERROR (2U)
+#define MOTOR_APP_ADMIN_MARK_ZERO  (3U)
 
 #define MOTOR_APP_PHASE_IDLE        (0U)
 #define MOTOR_APP_PHASE_ROUTE_SEND  (1U)
@@ -25,6 +26,12 @@
 #define MOTOR_APP_FEEDBACK_RECOVERY_MS (1000U)
 #define MOTOR_APP_HOST_COMMAND_TIMEOUT_MS (100U)
 #define MOTOR_APP_ADMIN_POLL_INTERVAL_MS (5U)
+#define MOTOR_APP_ADMIN_TX_COMPLETE_TIMEOUT_MS (25U)
+#define MOTOR_APP_MARK_ZERO_DISABLE_ATTEMPTS (3U)
+#define MOTOR_APP_MARK_ZERO_FEEDBACK_TIMEOUT_MS (1000U)
+#define MOTOR_APP_MARK_ZERO_VERIFY_TIMEOUT_MS (2000U)
+#define MOTOR_APP_MARK_ZERO_POLL_INTERVAL_MS (50U)
+#define MOTOR_APP_MARK_ZERO_TOLERANCE_RAD (0.05f)
 #define MOTOR_APP_MOS_OVER_TEMP_C     (75U)
 #define MOTOR_APP_ROTOR_OVER_TEMP_C   (80U)
 #define MOTOR_APP_REG_CAN_BR          (0x23U)
@@ -733,12 +740,71 @@ static void MotorApp_AdminDisableOne(Motor_t *Motor)
   Motor->SendDisableFrame();
 }
 
-static void MotorApp_AdminMarkZeroOne(Motor_t *Motor)
+static unsigned char MotorApp_WaitForDisabledFeedback(Motor_t *Motor,
+                                                      unsigned int Before,
+                                                      unsigned int TimeoutMs)
 {
-  if (Motor == 0) {
-    return;
+  uint32_t started_ms = HAL_GetTick();
+  while ((uint32_t)(HAL_GetTick() - started_ms) < TimeoutMs) {
+    if (Motor->GetRxCount() != Before && Motor->GetState() == 0U) {
+      return 1U;
+    }
+    osDelay(1U);
   }
-  Motor->SaveZero();
+  return 0U;
+}
+
+static unsigned char MotorApp_MarkZeroDisableAndConfirm(Motor_t *Motor)
+{
+  unsigned char attempt;
+  for (attempt = 0U; attempt < MOTOR_APP_MARK_ZERO_DISABLE_ATTEMPTS; attempt++) {
+    unsigned int before = Motor->GetRxCount();
+    Motor_ClearTxFailure();
+    if (Motor->SendDisableFrameAndWait(MOTOR_APP_ADMIN_TX_COMPLETE_TIMEOUT_MS) != 0U &&
+        MotorApp_WaitForDisabledFeedback(Motor, before,
+                                         MOTOR_APP_MARK_ZERO_FEEDBACK_TIMEOUT_MS) != 0U) {
+      Motor->SetRunFlag(0U);
+      Motor->ClearCommand();
+      return 1U;
+    }
+  }
+  return 0U;
+}
+
+static unsigned char MotorApp_MarkZeroAndVerify(Motor_t *Motor)
+{
+  uint32_t verify_started_ms;
+  float position_after;
+
+  if (Motor == 0 || MotorApp_MarkZeroDisableAndConfirm(Motor) == 0U) {
+    return 0U;
+  }
+
+  Motor_ClearTxFailure();
+  if (Motor->SendSaveZeroFrameAndWait(MOTOR_APP_ADMIN_TX_COMPLETE_TIMEOUT_MS) == 0U) {
+    return 0U;
+  }
+
+  verify_started_ms = HAL_GetTick();
+  do {
+    unsigned int before;
+    osDelay(MOTOR_APP_MARK_ZERO_POLL_INTERVAL_MS);
+    before = Motor->GetRxCount();
+    Motor_ClearTxFailure();
+    if (Motor->SendDisableFrameAndWait(MOTOR_APP_ADMIN_TX_COMPLETE_TIMEOUT_MS) == 0U ||
+        MotorApp_WaitForDisabledFeedback(Motor, before,
+                                         MOTOR_APP_MARK_ZERO_FEEDBACK_TIMEOUT_MS) == 0U) {
+      continue;
+    }
+    position_after = Motor->GetPosition();
+    if (position_after >= -MOTOR_APP_MARK_ZERO_TOLERANCE_RAD &&
+        position_after <= MOTOR_APP_MARK_ZERO_TOLERANCE_RAD) {
+      return 1U;
+    }
+  } while ((uint32_t)(HAL_GetTick() - verify_started_ms) <
+           MOTOR_APP_MARK_ZERO_VERIFY_TIMEOUT_MS);
+
+  return 0U;
 }
 
 /* Both the gateway state and fresh motor feedback must say disabled. */
@@ -1134,19 +1200,28 @@ unsigned char MotorApp_ApplySpiAdminOp(const h7spi_admin_op_frame_t *AdminOp)
   }
 
   if (AdminOp->op == H7SPI_ADMIN_OP_MARK_ZERO) {
+    unsigned char failed = 0U;
     if (MotorApp_CalibrationAllowed() == 0U) return H7SPI_RESULT_BUSY;
     result = MotorApp_PrepareAdminTargets(AdminOp->motor_codes, AdminOp->motor_count, route_indices);
     if (result != H7SPI_RESULT_OK) return result;
-    Motor_ClearTxFailure();
+    g_motorAppAdminOp = MOTOR_APP_ADMIN_MARK_ZERO;
     for (index = 0U; index < g_motorAppRequestedCount; index++) {
-      MotorApp_AdminMarkZeroOne(MotorApp_GetRouteMotor(route_indices[index]));
-      (void)Motor_SendAllOnce();
-      if (Motor_HasTxFailure() != 0U) return H7SPI_RESULT_FAULT;
-      MotorApp_RecordAdminSuccess(route_indices[index]);
+      if (MotorApp_MarkZeroAndVerify(MotorApp_GetRouteMotor(route_indices[index])) != 0U) {
+        MotorApp_RecordAdminSuccess(route_indices[index]);
+      } else {
+        if (failed == 0U) {
+          g_motorAppFailedMotorID =
+              (unsigned char)kMotorAppDefaultConfig[route_indices[index]].can_id;
+          g_motorAppFailedRouteIndex = route_indices[index];
+          g_motorAppFailedPhase = H7SPI_GATEWAY_PHASE_MOTOR_OFF;
+        }
+        failed = 1U;
+      }
     }
     MotorApp_ClearCommandTracking();
     MotorApp_PrepareFallbackCommands();
-    return H7SPI_RESULT_OK;
+    g_motorAppAdminOp = MOTOR_APP_ADMIN_NONE;
+    return failed == 0U ? H7SPI_RESULT_OK : H7SPI_RESULT_FAULT;
   }
 
   if (AdminOp->op == H7SPI_ADMIN_OP_CLEAR_ERROR) {

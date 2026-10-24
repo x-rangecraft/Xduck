@@ -4,7 +4,12 @@
 
 [Unit]
 Description=Policy inference CPU-frequency governor
-BindsTo=robotd.service
+# Debian's cpufrequtils oneshot writes ondemand during boot. Let it finish first,
+# then set performance before robotd and its policy workers start.
+Requires=cpufrequtils.service
+After=cpufrequtils.service
+# PartOf follows managed stop/restart. BindsTo would turn an unexpected robotd exit into a
+# stop job, cancelling robotd's Restart=always and leaving the web without telemetry.
 PartOf=robotd.service
 Before=robotd.service
 

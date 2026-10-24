@@ -139,6 +139,10 @@ fi
 if [[ ! -f /etc/robot/robotd.toml ]]; then
     sudo install -m 0644 "$SOURCE/deploy/robotd.toml" /etc/robot/robotd.toml
 fi
+# Keep the K11C STM32 port stable when USB re-enumeration changes ttyACM0 to
+# ttyACM1. The by-id link is maintained by udev from this board's USB serial.
+sudo sed -i '/^\[bus\]/,/^\[/ s|^port[[:space:]]*=.*|port = "/dev/serial/by-id/usb-STMicroelectronics_STM32_Virtual_ComPort_385933373134-if00"|' \
+    /etc/robot/robotd.toml
 # This K11C uses the BL-1080P-S10 UVC camera (05a3:9230). Keep the USB transport
 # compressed and decode it in MPP; its only native 16:9 30 fps mode is 1080p30.
 sudo sed -i 's/^# camera = true$/camera = true/' /etc/robot/robotd.toml
@@ -191,7 +195,11 @@ sudo install -m 0644 "$CAMERA_RULE" /etc/udev/rules.d/99-xrange-camera.rules
 sudo install -d -m 0755 /etc/systemd/system/robotd.service.d
 sudo install -m 0644 "$ROBOTD_STOP_TIMEOUT" \
     /etc/systemd/system/robotd.service.d/10-stop-timeout.conf
+sudo install -d -m 0755 /etc/systemd/system/irqbalance.service.d
+sudo install -m 0644 "$SOURCE/robotd/systemd/irqbalance.service.d/10-policy-cpu.conf" \
+    /etc/systemd/system/irqbalance.service.d/10-policy-cpu.conf
 sudo systemctl daemon-reload
+sudo systemctl restart irqbalance.service
 sudo udevadm control --reload-rules
 sudo udevadm trigger --subsystem-match=video4linux
 sudo udevadm settle

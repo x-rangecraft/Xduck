@@ -4,11 +4,11 @@ use serde_json::{Value, json};
 use std::{
     collections::BTreeMap,
     ffi::CString,
-    io::{BufRead, BufReader, Write},
-    path::Path,
+    io::{BufRead, BufReader, Read, Write},
+    path::{Path, PathBuf},
     process::{Child, ChildStdin, Command as ProcessCommand, Stdio},
     sync::{Arc, Mutex, mpsc},
-    time::Duration,
+    time::{Duration, Instant},
 };
 use std::os::unix::process::CommandExt;
 
@@ -91,6 +91,24 @@ struct Reply {
     reason: Option<String>,
     targets: Option<BTreeMap<String, WireTarget>>,
     contract: Option<Value>,
+    timing: Option<StepTiming>,
+    #[serde(skip)]
+    reader_received_ns: u64,
+    #[serde(skip)]
+    host_received_ns: u64,
+}
+
+#[derive(Deserialize)]
+struct StepTiming {
+    preprocess_ms: f64,
+    input_ms: f64,
+    onnx_ms: f64,
+    output_ms: f64,
+    validate_ms: f64,
+    worker_total_ms: f64,
+    worker_cpu_ms: f64,
+    worker_received_ns: u64,
+    worker_reply_start_ns: u64,
 }
 
 #[derive(Deserialize)]
@@ -109,13 +127,21 @@ pub struct CustomOutput {
 }
 
 pub struct CustomPolicy {
+    policy_path: PathBuf,
+    model_paths: Vec<(Net, PathBuf)>,
+    // bwrap's --die-with-parent watches the thread that spawned it. Keep background
+    // preparation and recovery threads alive until their worker is dropped.
+    keepalive: Option<mpsc::Sender<()>>,
     child: Arc<Mutex<Child>>,
     input: ChildStdin,
-    lines: mpsc::Receiver<Result<String, String>>,
+    lines: mpsc::Receiver<(Result<String, String>, u64)>,
     contract: Value,
     sequence: u64,
     failed: bool,
+    recovery: Option<mpsc::Receiver<Result<Box<CustomPolicy>, String>>>,
+    recovery_error: Option<String>,
     needs_reset: bool,
+    handoff_targets: Option<[MitTarget; NUM_JOINTS]>,
     period_s: f64,
     elapsed_s: f64,
     last_output: Option<CustomOutput>,
@@ -203,6 +229,9 @@ impl CustomPolicy {
             .current_dir("/");
         unsafe {
             child.pre_exec(|| {
+                // Imports/rollbacks originate on nice +10 IPC threads. Restore priority
+                // before bwrap/setpriv drops privileges, without changing the caller.
+                set_policy_scheduling()?;
                 if libc::setgroups(0, std::ptr::null()) != 0 {
                     return Err(std::io::Error::last_os_error());
                 }
@@ -219,21 +248,27 @@ impl CustomPolicy {
             .map_err(|error| format!("无法启动受限两文件策略运行器（需要 bubblewrap）：{error}"))?;
         let input = child.stdin.take().ok_or("策略运行器缺少 stdin")?;
         let output = child.stdout.take().ok_or("策略运行器缺少 stdout")?;
-        let child = Arc::new(Mutex::new(child));
         let (send, lines) = mpsc::channel();
-        std::thread::spawn(move || {
-            for line in BufReader::new(output).lines() {
-                if send.send(line.map_err(|error| error.to_string())).is_err() { break; }
-            }
-        });
+        if let Err(error) = spawn_policy_reply_reader(output, send) {
+            let _ = child.kill();
+            let _ = child.wait();
+            return Err(format!("无法启动策略回复读取线程：{error}"));
+        }
+        let child = Arc::new(Mutex::new(child));
         let mut policy = Self {
+            policy_path: policy.to_path_buf(),
+            model_paths: models.iter().map(|(net, path)| (*net, path.to_path_buf())).collect(),
+            keepalive: None,
             child,
             input,
             lines,
             contract: Value::Null,
             sequence: 0,
             failed: false,
+            recovery: None,
+            recovery_error: None,
             needs_reset: false,
+            handoff_targets: None,
             period_s: 0.02,
             elapsed_s: 0.0,
             last_output: None,
@@ -280,17 +315,87 @@ impl CustomPolicy {
         Ok(())
     }
 
-    pub fn mark_reset(&mut self) { self.needs_reset = true; }
+    pub fn mark_reset(&mut self) { self.needs_reset = true; self.handoff_targets = None; }
+
+    /// A different controller drove while this worker was suspended. Rebuild its
+    /// private history and seed feedback from the last successful bus write.
+    pub fn handoff(&mut self, targets: [MitTarget; NUM_JOINTS]) {
+        self.mark_reset();
+        self.handoff_targets = Some(targets);
+    }
+
+    pub(crate) fn keep_creator_alive(&mut self, keepalive: mpsc::Sender<()>) {
+        self.keepalive = Some(keepalive);
+    }
+
+    /// Rebuild after a worker timeout without blocking the 50 Hz motor loop. Only an explicit
+    /// controller reset starts recovery; ordinary failed frames continue to hold the pose.
+    pub fn recover_failed(&mut self) {
+        if !self.failed || self.recovery.is_some() { return; }
+        self.recovery_error = None;
+        let policy_path = self.policy_path.clone();
+        let model_paths = self.model_paths.clone();
+        let (send, receive) = mpsc::channel();
+        let (keepalive, alive) = mpsc::channel();
+        self.recovery = Some(receive);
+        std::thread::spawn(move || {
+            let models: Vec<_> = model_paths.iter().map(|(net, path)| (*net, path.as_path())).collect();
+            let result = Self::load_models(&policy_path, &models).map(|mut worker| {
+                worker.keep_creator_alive(keepalive);
+                Box::new(worker)
+            });
+            let _ = send.send(result);
+            // When the owner drops the worker, it drops the sender and releases this thread.
+            // A failed load also drops the sender immediately.
+            let _ = alive.recv();
+        });
+        tracing::warn!("rebuilding failed policy worker after explicit initialization");
+    }
+
+    fn finish_recovery(&mut self) -> Result<(), String> {
+        let Some(receive) = self.recovery.as_ref() else {
+            return self.recovery_error.as_ref().map_or(Ok(()), |error| Err(error.clone()));
+        };
+        match receive.try_recv() {
+            Ok(Ok(mut replacement)) => {
+                replacement.mark_reset();
+                if let Some(targets) = self.handoff_targets { replacement.handoff(targets); }
+                *self = *replacement;
+                tracing::warn!("failed policy worker rebuilt and warmed");
+                Ok(())
+            }
+            Ok(Err(error)) => {
+                self.recovery = None;
+                self.recovery_error = Some(format!("策略运行器重建失败：{error}"));
+                Err(self.recovery_error.as_ref().unwrap().clone())
+            }
+            Err(mpsc::TryRecvError::Empty) => Err("策略运行器正在重建；保持当前姿态".into()),
+            Err(mpsc::TryRecvError::Disconnected) => {
+                self.recovery = None;
+                self.recovery_error = Some("策略运行器重建线程意外退出".into());
+                Err(self.recovery_error.as_ref().unwrap().clone())
+            }
+        }
+    }
 
     pub fn step(&mut self, sensors: &Sensors, command: &Command, context: PolicyContext, dt: f64) -> Result<CustomOutput, String> {
         self.step_model(sensors, command, context, dt, "default")
     }
 
     pub fn step_model(&mut self, sensors: &Sensors, command: &Command, context: PolicyContext, dt: f64, model: &str) -> Result<CustomOutput, String> {
+        self.finish_recovery()?;
         if self.needs_reset {
             self.sequence = 0;
             let frame = self.frame(sensors, command, context, dt);
-            self.transact(json!({"action":"reset", "frame":frame}), STEP_TIMEOUT)?;
+            let handoff = self.handoff_targets.map(|targets| JOINT_NAMES.iter().enumerate()
+                .filter(|(_, name)| **name != "mouth")
+                .map(|(index, name)| {
+                    let t = targets[index];
+                    (*name, json!({"position":t.position,"velocity":t.velocity,
+                        "torque_ff":t.torque_ff,"kp":t.kp,"kd":t.kd}))
+                }).collect::<BTreeMap<_, _>>());
+            self.transact(json!({"action":"reset", "frame":frame, "handoff_targets":handoff}), STEP_TIMEOUT)?;
+            self.handoff_targets = None;
             self.needs_reset = false;
             self.elapsed_s = 0.0;
             self.last_output = None;
@@ -356,22 +461,73 @@ impl CustomPolicy {
 
     fn transact(&mut self, request: Value, timeout: Duration) -> Result<Reply, String> {
         if self.failed { return Err("策略运行器已失效，需重新初始化/使能".into()); }
+        let action = request.get("action").and_then(Value::as_str).unwrap_or("unknown").to_owned();
+        let model = request.get("model").and_then(Value::as_str).unwrap_or("default").to_owned();
+        let sequence = request.get("frame").and_then(|frame| frame.get("sequence")).and_then(Value::as_u64).unwrap_or(0);
         let mut data = serde_json::to_vec(&request).map_err(|error| error.to_string())?;
         data.push(b'\n');
+        let started = Instant::now();
+        let host_started_ns = monotonic_ns();
         self.input.write_all(&data).and_then(|_| self.input.flush())
             .map_err(|error| self.stop(format!("写入策略运行器失败：{error}")))?;
-        self.receive(timeout)
+        let host_written_ns = monotonic_ns();
+        let reply = self.receive(timeout);
+        let roundtrip_ms = started.elapsed().as_secs_f64() * 1000.0;
+        match &reply {
+            Ok(reply) if action == "step" && roundtrip_ms >= 10.0 => {
+                if let Some(timing) = &reply.timing {
+                    tracing::warn!(%model, sequence, roundtrip_ms,
+                        preprocess_ms = timing.preprocess_ms,
+                        input_ms = timing.input_ms,
+                        onnx_ms = timing.onnx_ms,
+                        output_ms = timing.output_ms,
+                        validate_ms = timing.validate_ms,
+                        worker_total_ms = timing.worker_total_ms,
+                        worker_cpu_ms = timing.worker_cpu_ms,
+                        transport_and_scheduling_ms = roundtrip_ms - timing.worker_total_ms,
+                        host_write_ms = ns_ms(host_started_ns, host_written_ns),
+                        worker_wakeup_ms = ns_ms(host_written_ns, timing.worker_received_ns),
+                        worker_dispatch_ms = ns_ms(timing.worker_received_ns, timing.worker_reply_start_ns) - timing.worker_total_ms,
+                        worker_emit_and_pipe_ms = ns_ms(timing.worker_reply_start_ns, reply.reader_received_ns),
+                        reader_to_control_ms = ns_ms(reply.reader_received_ns, reply.host_received_ns),
+                        "slow policy step");
+                } else {
+                    tracing::warn!(%model, sequence, roundtrip_ms, "slow policy step without worker timing");
+                }
+            }
+            Err(error) if error.contains("18 ms 时限") => {
+                tracing::error!(%action, %model, sequence, roundtrip_ms,
+                    "policy worker timed out; SIGUSR1 Python stack dump requested");
+            }
+            _ => {}
+        }
+        reply
     }
 
     fn receive(&mut self, timeout: Duration) -> Result<Reply, String> {
-        let line = match self.lines.recv_timeout(timeout) {
-            Ok(Ok(line)) => line,
-            Ok(Err(error)) => return Err(self.stop(format!("读取策略运行器失败：{error}"))),
-            Err(mpsc::RecvTimeoutError::Timeout) => return Err(self.stop(format!("策略运行超过 {} ms 时限", timeout.as_millis()))),
+        let (line, reader_received_ns) = match self.lines.recv_timeout(timeout) {
+            Ok((Ok(line), received_ns)) => (line, received_ns),
+            Ok((Err(error), _)) => return Err(self.stop(format!("读取策略运行器失败：{error}"))),
+            Err(mpsc::RecvTimeoutError::Timeout) => {
+                if let Ok(child) = self.child.lock() {
+                    // bwrap is the direct child; with --unshare-pid it forks another bwrap
+                    // process before execing Python. Signal Python, not either supervisor.
+                    let parent = child.id();
+                    if let Some(pid) = policy_python_pid(parent) {
+                        unsafe { libc::kill(pid, libc::SIGUSR1); }
+                    } else {
+                        tracing::warn!(parent, "could not find policy Python PID for timeout stack dump");
+                    }
+                }
+                std::thread::sleep(Duration::from_millis(5));
+                return Err(self.stop(format!("策略运行超过 {} ms 时限", timeout.as_millis())));
+            }
             Err(mpsc::RecvTimeoutError::Disconnected) => return Err(self.stop("策略运行器已退出".into())),
         };
-        let reply: Reply = serde_json::from_str(&line)
+        let mut reply: Reply = serde_json::from_str(&line)
             .map_err(|error| self.stop(format!("策略运行器返回无效数据：{error}")))?;
+        reply.reader_received_ns = reader_received_ns;
+        reply.host_received_ns = monotonic_ns();
         if !reply.ok {
             // A policy exception is a failed frame, not a broken pipe. Keep the worker so
             // an explicit controller reset can rebuild the Policy instance. Protocol
@@ -388,7 +544,66 @@ impl CustomPolicy {
     }
 }
 
-fn set_limit(resource: libc::__rlimit_resource_t, value: libc::rlim_t) -> std::io::Result<()> {
+#[cfg(target_os = "linux")]
+fn set_policy_scheduling() -> std::io::Result<()> {
+    let priority = libc::sched_param { sched_priority: 0 };
+    if unsafe { libc::sched_setscheduler(0, libc::SCHED_OTHER, &priority) } != 0 {
+        return Err(std::io::Error::last_os_error());
+    }
+    if unsafe { libc::setpriority(libc::PRIO_PROCESS, 0, 0) } != 0 {
+        return Err(std::io::Error::last_os_error());
+    }
+    Ok(())
+}
+
+#[cfg(not(target_os = "linux"))]
+fn set_policy_scheduling() -> std::io::Result<()> { Ok(()) }
+
+fn spawn_policy_reply_reader(
+    output: impl Read + Send + 'static,
+    send: mpsc::Sender<(Result<String, String>, u64)>,
+) -> std::io::Result<std::thread::JoinHandle<()>> {
+    std::thread::Builder::new().name("policy-reply".into()).spawn(move || {
+        // A ready Python reply must not wait behind IPC before reaching control.
+        // Report setup failure through the normal startup channel; never run degraded.
+        if let Err(error) = set_policy_scheduling() {
+            let _ = send.send((Err(format!("无法设置策略回复线程调度：{error}")), monotonic_ns()));
+            return;
+        }
+        for line in BufReader::new(output).lines() {
+            let received_ns = monotonic_ns();
+            if send.send((line.map_err(|error| error.to_string()), received_ns)).is_err() { break; }
+        }
+    })
+}
+
+fn monotonic_ns() -> u64 {
+    let mut time = libc::timespec { tv_sec: 0, tv_nsec: 0 };
+    unsafe { libc::clock_gettime(libc::CLOCK_MONOTONIC, &mut time); }
+    time.tv_sec as u64 * 1_000_000_000 + time.tv_nsec as u64
+}
+
+fn ns_ms(start: u64, end: u64) -> f64 {
+    (end as i128 - start as i128) as f64 / 1_000_000.0
+}
+
+fn policy_python_pid(parent: u32) -> Option<libc::pid_t> {
+    let mut pid = parent;
+    for _ in 0..4 {
+        let children = std::fs::read_to_string(format!("/proc/{pid}/task/{pid}/children")).ok()?;
+        pid = children.split_whitespace().next()?.parse().ok()?;
+        let comm = std::fs::read_to_string(format!("/proc/{pid}/comm")).ok()?;
+        if comm.trim().starts_with("python") { return Some(pid as libc::pid_t); }
+    }
+    None
+}
+
+#[cfg(target_os = "linux")]
+type LimitResource = libc::__rlimit_resource_t;
+#[cfg(not(target_os = "linux"))]
+type LimitResource = libc::c_int;
+
+fn set_limit(resource: LimitResource, value: libc::rlim_t) -> std::io::Result<()> {
     let limit = libc::rlimit { rlim_cur: value, rlim_max: value };
     if unsafe { libc::setrlimit(resource, &limit) } == 0 {
         Ok(())
@@ -412,5 +627,100 @@ fn policy_identity() -> Result<(u32, u32), String> {
 impl Drop for CustomPolicy {
     fn drop(&mut self) {
         if let Ok(mut child) = self.child.lock() { let _ = child.kill(); let _ = child.wait(); }
+    }
+}
+
+#[cfg(test)]
+mod recovery_tests {
+    use super::*;
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    #[ignore = "requires root/CAP_SYS_NICE; no model or motor IO"]
+    fn ipc_creator_keeps_low_priority_while_child_and_reply_reader_use_normal_priority() {
+        std::thread::spawn(|| {
+            assert_eq!(unsafe { libc::setpriority(libc::PRIO_PROCESS, 0, 10) }, 0);
+            let mut command = ProcessCommand::new("sh");
+            command.args(["-c", "ps -o ni= -p $$"]);
+            unsafe { command.pre_exec(set_policy_scheduling); }
+            let output = command.output().unwrap();
+            assert!(output.status.success());
+            assert_eq!(String::from_utf8(output.stdout).unwrap().trim(), "0");
+            assert_eq!(unsafe { libc::getpriority(libc::PRIO_PROCESS, 0) }, 10);
+
+            let (reader, mut writer) = std::os::unix::net::UnixStream::pair().unwrap();
+            let (send, receive) = mpsc::channel();
+            let handle = spawn_policy_reply_reader(reader, send).unwrap();
+            writer.write_all(b"ready\n").unwrap();
+            assert_eq!(receive.recv_timeout(Duration::from_secs(2)).unwrap().0.unwrap(), "ready");
+            let readers: Vec<_> = std::fs::read_dir("/proc/self/task").unwrap()
+                .filter_map(Result::ok)
+                .filter(|task| std::fs::read_to_string(task.path().join("comm"))
+                    .is_ok_and(|name| name.trim() == "policy-reply"))
+                .collect();
+            assert!(!readers.is_empty());
+            for reader in readers {
+                let stat = std::fs::read_to_string(reader.path().join("stat")).unwrap();
+                let fields: Vec<_> = stat.rsplit_once(") ").unwrap().1.split_whitespace().collect();
+                assert_eq!(fields[16], "0", "reply reader must have nice 0");
+                let tid = reader.file_name().to_string_lossy().parse::<i32>().unwrap();
+                assert_eq!(unsafe { libc::sched_getscheduler(tid) }, libc::SCHED_OTHER);
+            }
+            assert_eq!(unsafe { libc::getpriority(libc::PRIO_PROCESS, 0) }, 10);
+            drop(writer);
+            handle.join().unwrap();
+        }).join().unwrap();
+    }
+
+    fn placeholder(failed: bool) -> CustomPolicy {
+        let mut child = ProcessCommand::new("sleep")
+            .arg("10")
+            .stdin(Stdio::piped())
+            .spawn()
+            .unwrap();
+        let input = child.stdin.take().unwrap();
+        let (_send, lines) = mpsc::channel();
+        CustomPolicy {
+            policy_path: PathBuf::new(),
+            model_paths: Vec::new(),
+            keepalive: None,
+            child: Arc::new(Mutex::new(child)),
+            input,
+            lines,
+            contract: Value::Null,
+            sequence: 0,
+            failed,
+            recovery: None,
+            recovery_error: None,
+            needs_reset: false,
+            handoff_targets: None,
+            period_s: 0.02,
+            elapsed_s: 0.0,
+            last_output: None,
+        }
+    }
+
+    #[test]
+    fn a_warmed_replacement_replaces_the_failed_worker_and_resets_on_first_frame() {
+        let mut failed = placeholder(true);
+        let (send, receive) = mpsc::channel();
+        let (keepalive, alive) = mpsc::channel();
+        let (released, release) = mpsc::channel();
+        let owner = std::thread::spawn(move || {
+            let _ = alive.recv();
+            let _ = released.send(());
+        });
+        let mut replacement = placeholder(false);
+        replacement.keepalive = Some(keepalive);
+        failed.recovery = Some(receive);
+        assert!(send.send(Ok(Box::new(replacement))).is_ok());
+        failed.finish_recovery().unwrap();
+        assert!(!failed.failed);
+        assert!(failed.needs_reset);
+        assert!(failed.recovery.is_none());
+        assert!(release.try_recv().is_err());
+        drop(failed);
+        assert!(release.recv_timeout(Duration::from_secs(1)).is_ok());
+        owner.join().unwrap();
     }
 }

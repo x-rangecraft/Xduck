@@ -503,6 +503,16 @@ motors through `apply` like anything else — no exemption, no back door. Nothin
 needs telling, precisely because the verdict gates nothing: the pose ramp moves a robot lying
 on the floor like any other tick.
 
+Recovery completion is a separate latch from `Safety::fallen`: clearing the large-angle
+fall verdict does not rearm the predictor. A predicted or confirmed fall inhibits prediction
+until fresh, converged IMU samples show tilt strictly below 20° and total gyro magnitude
+strictly below 0.4 rad/s continuously for 1 s. A missing or unstable sample restarts that
+second. The pose ramp runs once; during the following stand-up the policy keeps its instance
+and target history, including across brief sensor pauses, without another pose or reset.
+At the single handoff after the ramp, history is seeded from the last successful motor
+write during recovery, falling back to measured joint positions if no such target exists.
+Pre-fall applied targets are invalidated when the sequence starts.
+
 The tuning is the feature, and it is asymmetric: a false positive is a fall the robot
 *caused*, which is worse than the stiff landing it was trying to avoid. The defaults sit
 deliberately on the late side.

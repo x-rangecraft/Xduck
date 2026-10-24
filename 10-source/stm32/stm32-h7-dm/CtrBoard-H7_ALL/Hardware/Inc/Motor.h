@@ -60,6 +60,7 @@ private:
   unsigned char Private_RotorTemp;
   unsigned char Private_State;
   TickType_t Private_LastRxTick;
+  unsigned int Private_RxCount;
 
   float Private_Position_Set;
   float Private_Speed_Set;
@@ -109,6 +110,8 @@ public:
   void SendEnableFrame(void);
   void SendDisableFrame(void);
   void SendClearErrorFrame(void);
+  unsigned char SendDisableFrameAndWait(unsigned int TimeoutMs);
+  unsigned char SendSaveZeroFrameAndWait(unsigned int TimeoutMs);
   void SetRunFlag(unsigned char RunFlag);
   unsigned char SetupTimeout(unsigned int TimeoutMs);
   unsigned char ReadRegister(unsigned char Reg, unsigned int *OutValue);
@@ -126,6 +129,7 @@ public:
   unsigned char IsEnable(void);
   unsigned char IsOnline(unsigned int Timeout_ms);
   TickType_t GetLastRxTick(void);
+  unsigned int GetRxCount(void);
 
   friend void Motor_CAN_Back(unsigned char Code, unsigned char Err, unsigned char *RxData);
   friend unsigned char Motor_CAN_Send(unsigned char Code);

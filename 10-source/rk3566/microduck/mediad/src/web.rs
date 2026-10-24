@@ -181,6 +181,7 @@ fn router(page: String, clients: ConnectedClients) -> Router {
         .route("/policy-experiment.md", get(|| async { ([("content-type","text/plain; charset=utf-8")], include_str!("../webclient/policy-experiment/policy-experiment.md")) }))
         .route("/policy_experiment.py", get(|| async { ([("content-type","text/x-python; charset=utf-8"),("content-disposition","attachment; filename=policy_experiment.py")], include_str!("../webclient/policy-experiment/policy_experiment.py")) }))
         .route("/policy-experiment-example.json", get(|| async { ([("content-type","application/json"),("content-disposition","attachment; filename=policy-experiment-example.json")], include_str!("../webclient/policy-experiment/example.json")) }))
+        .route("/policy-experiment-free.json", get(|| async { ([("content-type","application/json"),("content-disposition","attachment; filename=policy-experiment-free.json")], include_str!("../webclient/policy-experiment/free.json")) }))
         .layer(axum::extract::DefaultBodyLimit::max(CONTROL_BODY_LIMIT))
         .with_state(clients)
 }

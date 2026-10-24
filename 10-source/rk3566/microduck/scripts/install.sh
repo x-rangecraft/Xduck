@@ -961,7 +961,7 @@ EOF
 # the board, not to a daemon release. But installing a robot daemon onto a board with no bus
 # is worth saying out loud: the install will succeed, `robotd` will start, fail to open the
 # bus, and report unhealthy. That is honest behaviour, and an easy thing to stare past.
-MOTOR_PORT="${DUCK_MOTOR_PORT:-${MOTOR_PORT:-/dev/ttyACM0}}"
+MOTOR_PORT="${DUCK_MOTOR_PORT:-${MOTOR_PORT:-/dev/serial/by-id/usb-STMicroelectronics_STM32_Virtual_ComPort_385933373134-if00}}"
 
 check_board() {
     if [ -e "$MOTOR_PORT" ]; then

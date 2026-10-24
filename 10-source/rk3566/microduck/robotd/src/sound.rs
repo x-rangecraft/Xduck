@@ -71,9 +71,8 @@ const SPEAKER_ROLLOFF_HZ: f64 = 300.0;
 
 /// Keep `SIGPIPE` off a writer thread.
 ///
-/// `robotd` restores its default disposition at startup — so that piping its stdout behaves — which
-/// would make a write into a dead `aplay` kill the whole daemon. Blocked here, every such write is
-/// merely a failed write, which every writer below already treats as "this voice is over".
+/// The daemon ignores SIGPIPE globally; blocking it here also protects a writer used by the
+/// one-shot CLI, which retains default Unix pipeline behavior. A dead `aplay` is a failed write.
 fn block_sigpipe() {
     // SAFETY: masking one signal on the calling thread; nothing else observes the mask.
     unsafe {
@@ -797,10 +796,8 @@ impl Sound {
             .name("wheee".into())
             .spawn(move || {
                 use std::io::Write;
-                // robotd restores SIGPIPE's default disposition at startup (so piping its
-                // stdout behaves), which would make a write into a dead aplay kill the
-                // whole daemon. Block it on this thread — the writes then fail with EPIPE,
-                // which every `send` below already treats as "the ride is over".
+                // Block SIGPIPE for callers using the one-shot CLI's default disposition.
+                // A dead aplay then produces EPIPE, which `send` treats as the end of the ride.
                 unsafe {
                     let mut set: libc::sigset_t = std::mem::zeroed();
                     libc::sigemptyset(&mut set);

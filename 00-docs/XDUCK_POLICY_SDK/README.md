@@ -98,7 +98,9 @@ return {
 
 多输入和不同 shape 直接增加键即可。也可返回 `{"ready": False, "reason": "等待历史帧"}`，但未就绪帧不会驱动电机。
 
-`feedback` 首轮为 `None`；以后包含上一轮具名 ONNX 输出和上一轮后处理请求的 MIT 目标。实际电机响应必须读取新一帧 `frame`，不能把请求目标当成测量结果。
+技能结束返回走/站时，宿主丢弃暂停期间的旧走/站实例和反馈，以最后一次成功下发（经过安全层）的目标交接。`reset` 的 `first_frame.positions` 在交接时为该目标，并额外携带完整的 `handoff_targets`；其余传感器仍为当前值。紧随其后的 `preprocess` 使用真实测量帧，并收到同一份 `feedback.requested_targets`、`handoff=true` 和空 `outputs`。消费代码应以该目标初始化私有滤波/积分器及目标历史，不得复用暂停前缓存；不依赖原始 ONNX 输出。普通走↔站切换继续共享实例、不 reset。
+
+`feedback` 普通冷启动首轮为 `None`；以后包含上一轮具名 ONNX 输出和上一轮后处理请求的 MIT 目标。实际电机响应必须读取新一帧 `frame`，不能把请求目标当成测量结果。
 
 ### postprocess(outputs, frame)
 

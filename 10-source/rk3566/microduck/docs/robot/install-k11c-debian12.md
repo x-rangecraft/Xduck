@@ -33,11 +33,11 @@ Push the branch and let its build finish first: provisioning fetches the board-s
 release artifacts from that ref. Omit `--ref` after these changes are on the repository default
 branch.
 
-The STM32 H7 motor/IMU gateway is expected at `/dev/ttyACM0`. Confirm it before expecting the
+The STM32 H7 motor/IMU gateway is expected at `/dev/serial/by-id/usb-STMicroelectronics_STM32_Virtual_ComPort_385933373134-if00`. Confirm it before expecting the
 control health check to pass:
 
 ```sh
-ls -l /dev/ttyACM0
+ls -l /dev/serial/by-id/usb-STMicroelectronics_STM32_Virtual_ComPort_385933373134-if00
 dmesg | grep -i ttyACM
 ```
 
