@@ -37,6 +37,7 @@
 
 | 内容 | 固定位置 |
 |---|---|
+| 机械外形与 CAD 设计版本 | `10-source/models/<版本名>/`；`head_v1/` 保存头部 SolidCraft 源设计、配套几何、预览及版本校验清单，外壳表面网格不等同于打印定稿 |
 | Android BLE App 源码 | `10-source/android/duck-ble/` |
 | Android SDK/JDK/Gradle 与构建缓存 | `20-build/android/` |
 | Android APK 与校验清单 | `30-artifacts/android/` |
